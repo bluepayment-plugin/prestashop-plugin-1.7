@@ -572,7 +572,7 @@ class BluePayment extends PaymentModule
         $status_error_pay_id = Configuration::get($this->name_upper.'_STATUS_ERROR_PAY_ID');
 
         // Status płatności
-        $payment_status = $transaction->paymentStatus;
+        $payment_status = (string)$transaction->paymentStatus;
 
         // Id transakcji nadany przez bramkę
         $remote_id = $transaction->remoteID;
@@ -618,9 +618,6 @@ class BluePayment extends PaymentModule
         // Suma zamówienia
         $total_paid = $order->total_paid;
         $amount = number_format(round($total_paid, 2), 2, '.', '');
-
-        $payment_status = (string)$payment_status;
-
         // Jeśli zamówienie jest otwarte i status zamówienia jest różny od pustej wartości
         if (!($this->isOrderCompleted($order)) && $payment_status != '')
         {
@@ -636,8 +633,8 @@ class BluePayment extends PaymentModule
                         $new_history->id_order = $order_id;
                         $new_history->id_order_state = $status_waiting_pay_id;
                         $new_history->addWithemail(true);
-                        break;
                     }
+                    break;
                 // Jeśli transakcja została zakończona poprawnie
                 case self::PAYMENT_STATUS_SUCCESS:
 
@@ -672,9 +669,8 @@ class BluePayment extends PaymentModule
                         $new_history->id_order = $order_id;
                         $new_history->id_order_state = $status_error_pay_id;
                         $new_history->addWithemail(true);
-
-                        break;
                     }
+                    break;
                 default:
                     break;
             }
