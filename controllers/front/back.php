@@ -11,7 +11,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015
+ * @copyright      Copyright (c) 2015-2016
  * @license        http://opensource.org/licenses/mit-license.php MIT License
  */
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * BlueMedia_BluePayment extension
  *
@@ -11,15 +12,15 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015
+ * @copyright      Copyright (c) 2015-2016
  * @license        http://opensource.org/licenses/mit-license.php MIT License
  */
 
 if (!defined('_PS_VERSION_'))
     exit;
 
-class BluePayment extends PaymentModule
-{
+class BluePayment extends PaymentModule {
+
     private $html = '';
 
     /**
@@ -32,6 +33,7 @@ class BluePayment extends PaymentModule
         'payment',
         'paymentReturn',
     );
+    private $_checkHashArray = [];
 
     /**
      * Stałe statusów płatności
@@ -43,25 +45,21 @@ class BluePayment extends PaymentModule
     /**
      * Stałe potwierdzenia autentyczności transakcji
      */
-    const TRANSACTION_CONFIRMED    = "CONFIRMED";
+    const TRANSACTION_CONFIRMED = "CONFIRMED";
     const TRANSACTION_NOTCONFIRMED = "NOTCONFIRMED";
 
     /**
      * Konstruktor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->name = 'bluepayment';
         $this->name_upper = strtoupper($this->name);
         // Kompatybilność wstecz dla wersji 1.4
-        if (_PS_VERSION_ < '1.5')
-        {
-            require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
-            require_once(_PS_MODULE_DIR_.$this->name.'/config/config.inc.php');
-        }
-        else
-        {
-            require_once(dirname(__FILE__).'/config/config.inc.php');
+        if (_PS_VERSION_ < '1.5') {
+            require(_PS_MODULE_DIR_ . $this->name . '/backward_compatibility/backward.php');
+            require_once(_PS_MODULE_DIR_ . $this->name . '/config/config.inc.php');
+        } else {
+            require_once(dirname(__FILE__) . '/config/config.inc.php');
         }
         $this->tab = 'payments_gateways';
         $this->version = BP_VERSION;
@@ -77,8 +75,6 @@ class BluePayment extends PaymentModule
         $this->description = $this->l('Plugin supports online payments implemented by payment gateway Blue Media company.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-
-
     }
 
     /**
@@ -86,17 +82,14 @@ class BluePayment extends PaymentModule
      *
      * @return bool
      */
-    public function install()
-    {
-        if (parent::install())
-        {
-            foreach ($this->hooks as $hook)
-            {
+    public function install() {
+        if (parent::install()) {
+            foreach ($this->hooks as $hook) {
                 if (!$this->registerHook($hook))
                     return false;
             }
             // Domyślne ustawienie aktywnego trybu testowego
-            Configuration::updateValue($this->name_upper.'_TEST_MODE', 1);
+            Configuration::updateValue($this->name_upper . '_TEST_MODE', 1);
 
             return true;
         }
@@ -108,22 +101,19 @@ class BluePayment extends PaymentModule
      *
      * @return bool
      */
-    public function uninstall()
-    {
-        if (parent::uninstall())
-        {
-            foreach ($this->hooks as $hook)
-            {
+    public function uninstall() {
+        if (parent::uninstall()) {
+            foreach ($this->hooks as $hook) {
                 if (!$this->unregisterHook($hook))
                     return false;
             }
             // Usunięcie aktualnych wartości konfiguracyjnych
-            Configuration::deleteByName($this->name_upper.'_TEST_MODE');
-            Configuration::deleteByName($this->name_upper.'_SERVICE_PARTNER_ID');
-            Configuration::deleteByName($this->name_upper.'_SHARED_KEY');
-            Configuration::deleteByName($this->name_upper.'_STATUS_WAIT_PAY_ID');
-            Configuration::deleteByName($this->name_upper.'_STATUS_ACCEPT_PAY_ID');
-            Configuration::deleteByName($this->name_upper.'_STATUS_ERROR_PAY_ID');
+            Configuration::deleteByName($this->name_upper . '_TEST_MODE');
+            Configuration::deleteByName($this->name_upper . '_SERVICE_PARTNER_ID');
+            Configuration::deleteByName($this->name_upper . '_SHARED_KEY');
+            Configuration::deleteByName($this->name_upper . '_STATUS_WAIT_PAY_ID');
+            Configuration::deleteByName($this->name_upper . '_STATUS_ACCEPT_PAY_ID');
+            Configuration::deleteByName($this->name_upper . '_STATUS_ERROR_PAY_ID');
 
             return true;
         }
@@ -135,28 +125,25 @@ class BluePayment extends PaymentModule
      *
      * @return string
      */
-    public function getContent()
-    {
+    public function getContent() {
         $output = null;
 
         // Kompatybilność wstecz dla wersji 1.4
-        if (_PS_VERSION_ < '1.5')
-        {
+        if (_PS_VERSION_ < '1.5') {
             $this->postProcess();
             return $this->displayForm();
         }
 
-        if (Tools::isSubmit('submit'.$this->name))
-        {
-            Configuration::updateValue($this->name_upper.'_TEST_MODE', (int)Tools::getValue($this->name_upper.'_TEST_MODE'));
-            Configuration::updateValue($this->name_upper.'_SERVICE_PARTNER_ID', Tools::getValue($this->name_upper.'_SERVICE_PARTNER_ID'));
-            Configuration::updateValue($this->name_upper.'_SHARED_KEY', Tools::getValue($this->name_upper.'_SHARED_KEY'));
-            Configuration::updateValue($this->name_upper.'_STATUS_WAIT_PAY_ID', Tools::getValue($this->name_upper.'_STATUS_WAIT_PAY_ID'));
-            Configuration::updateValue($this->name_upper.'_STATUS_ACCEPT_PAY_ID', Tools::getValue($this->name_upper.'_STATUS_ACCEPT_PAY_ID'));
-            Configuration::updateValue($this->name_upper.'_STATUS_ERROR_PAY_ID', Tools::getValue($this->name_upper.'_STATUS_ERROR_PAY_ID'));
+        if (Tools::isSubmit('submit' . $this->name)) {
+            Configuration::updateValue($this->name_upper . '_TEST_MODE', (int) Tools::getValue($this->name_upper . '_TEST_MODE'));
+            Configuration::updateValue($this->name_upper . '_SERVICE_PARTNER_ID', Tools::getValue($this->name_upper . '_SERVICE_PARTNER_ID'));
+            Configuration::updateValue($this->name_upper . '_SHARED_KEY', Tools::getValue($this->name_upper . '_SHARED_KEY'));
+            Configuration::updateValue($this->name_upper . '_STATUS_WAIT_PAY_ID', Tools::getValue($this->name_upper . '_STATUS_WAIT_PAY_ID'));
+            Configuration::updateValue($this->name_upper . '_STATUS_ACCEPT_PAY_ID', Tools::getValue($this->name_upper . '_STATUS_ACCEPT_PAY_ID'));
+            Configuration::updateValue($this->name_upper . '_STATUS_ERROR_PAY_ID', Tools::getValue($this->name_upper . '_STATUS_ERROR_PAY_ID'));
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
-        return $output.$this->renderForm();
+        return $output . $this->renderForm();
     }
 
     /**
@@ -164,10 +151,9 @@ class BluePayment extends PaymentModule
      *
      * @return mixed
      */
-    public function renderForm()
-    {
+    public function renderForm() {
         // Domyślny język
-        $id_default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+        $id_default_lang = (int) Configuration::get('PS_LANG_DEFAULT');
 
         // Dostępne statusy
         $statuses = OrderState::getOrderStates($id_default_lang);
@@ -183,7 +169,7 @@ class BluePayment extends PaymentModule
                     'type' => 'switch',
                     'label' => $this->l('Test mode'),
                     'required' => true,
-                    'name' => $this->name_upper.'_TEST_MODE',
+                    'name' => $this->name_upper . '_TEST_MODE',
                     'values' => array(
                         array(
                             'id' => 'active_on',
@@ -200,20 +186,20 @@ class BluePayment extends PaymentModule
                 array(
                     'type' => 'text',
                     'label' => $this->l('Service partner ID'),
-                    'name' => $this->name_upper.'_SERVICE_PARTNER_ID',
+                    'name' => $this->name_upper . '_SERVICE_PARTNER_ID',
                     'size' => 40,
                     'required' => true
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Shared key'),
-                    'name' => $this->name_upper.'_SHARED_KEY',
+                    'name' => $this->name_upper . '_SHARED_KEY',
                     'size' => 40,
                     'required' => true
                 ),
                 array(
                     'type' => 'select',
-                    'name' => $this->name_upper.'_STATUS_WAIT_PAY_ID',
+                    'name' => $this->name_upper . '_STATUS_WAIT_PAY_ID',
                     'label' => $this->l('Status waiting payment'),
                     'options' => array(
                         'query' => $statuses,
@@ -223,7 +209,7 @@ class BluePayment extends PaymentModule
                 ),
                 array(
                     'type' => 'select',
-                    'name' => $this->name_upper.'_STATUS_ACCEPT_PAY_ID',
+                    'name' => $this->name_upper . '_STATUS_ACCEPT_PAY_ID',
                     'label' => $this->l('Status accept payment'),
                     'options' => array(
                         'query' => $statuses,
@@ -233,7 +219,7 @@ class BluePayment extends PaymentModule
                 ),
                 array(
                     'type' => 'select',
-                    'name' => $this->name_upper.'_STATUS_ERROR_PAY_ID',
+                    'name' => $this->name_upper . '_STATUS_ERROR_PAY_ID',
                     'label' => $this->l('Status error payment'),
                     'options' => array(
                         'query' => $statuses,
@@ -254,7 +240,7 @@ class BluePayment extends PaymentModule
         $helper->module = $this;
         $helper->name_controller = $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
 
         // Domyślny język
         $helper->default_form_language = $id_default_lang;
@@ -264,18 +250,18 @@ class BluePayment extends PaymentModule
         $helper->title = $this->displayName;
         $helper->show_toolbar = true;
         $helper->toolbar_scroll = true;
-        $helper->submit_action = 'submit'.$this->name;
+        $helper->submit_action = 'submit' . $this->name;
         $helper->toolbar_btn = array(
             'save' =>
-                array(
-                    'desc' => $this->l('Save'),
-                    'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.
-                        '&token='.Tools::getAdminTokenLite('AdminModules'),
-                ),
+            array(
+                'desc' => $this->l('Save'),
+                'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&save' . $this->name .
+                '&token=' . Tools::getAdminTokenLite('AdminModules'),
+            ),
             'back' =>
-                array(
-                    'href' => AdminController::$currentIndex.'&token='.Tools::getAdminTokenLite('AdminModules'),
-                    'desc' => $this->l('Back to list')
+            array(
+                'href' => AdminController::$currentIndex . '&token=' . Tools::getAdminTokenLite('AdminModules'),
+                'desc' => $this->l('Back to list')
             )
         );
         $helper->tpl_vars = array(
@@ -292,48 +278,42 @@ class BluePayment extends PaymentModule
      *
      * @return array
      */
-    public function getConfigFieldsValues()
-    {
+    public function getConfigFieldsValues() {
         return array(
-            $this->name_upper.'_TEST_MODE' => Tools::getValue($this->name_upper.
-                '_TEST_MODE', Configuration::get($this->name_upper.'_TEST_MODE')),
-            $this->name_upper.'_SERVICE_PARTNER_ID' => Tools::getValue($this->name_upper.
-                '_SERVICE_PARTNER_ID', Configuration::get($this->name_upper.'_SERVICE_PARTNER_ID')),
-            $this->name_upper.'_SHARED_KEY' => Tools::getValue($this->name_upper.
-                '_SHARED_KEY', Configuration::get($this->name_upper.'_SHARED_KEY')),
-            $this->name_upper.'_STATUS_WAIT_PAY_ID' => Tools::getValue($this->name_upper.
-                '_STATUS_WAIT_PAY_ID', Configuration::get($this->name_upper.'_STATUS_WAIT_PAY_ID')),
-            $this->name_upper.'_STATUS_ACCEPT_PAY_ID' => Tools::getValue($this->name_upper.
-                '_STATUS_ACCEPT_PAY_ID', Configuration::get($this->name_upper.'_STATUS_ACCEPT_PAY_ID')),
-            $this->name_upper.'_STATUS_ERROR_PAY_ID' => Tools::getValue($this->name_upper.
-                '_STATUS_ERROR_PAY_ID', Configuration::get($this->name_upper.'_STATUS_ERROR_PAY_ID'))
+            $this->name_upper . '_TEST_MODE' => Tools::getValue($this->name_upper .
+                    '_TEST_MODE', Configuration::get($this->name_upper . '_TEST_MODE')),
+            $this->name_upper . '_SERVICE_PARTNER_ID' => Tools::getValue($this->name_upper .
+                    '_SERVICE_PARTNER_ID', Configuration::get($this->name_upper . '_SERVICE_PARTNER_ID')),
+            $this->name_upper . '_SHARED_KEY' => Tools::getValue($this->name_upper .
+                    '_SHARED_KEY', Configuration::get($this->name_upper . '_SHARED_KEY')),
+            $this->name_upper . '_STATUS_WAIT_PAY_ID' => Tools::getValue($this->name_upper .
+                    '_STATUS_WAIT_PAY_ID', Configuration::get($this->name_upper . '_STATUS_WAIT_PAY_ID')),
+            $this->name_upper . '_STATUS_ACCEPT_PAY_ID' => Tools::getValue($this->name_upper .
+                    '_STATUS_ACCEPT_PAY_ID', Configuration::get($this->name_upper . '_STATUS_ACCEPT_PAY_ID')),
+            $this->name_upper . '_STATUS_ERROR_PAY_ID' => Tools::getValue($this->name_upper .
+                    '_STATUS_ERROR_PAY_ID', Configuration::get($this->name_upper . '_STATUS_ERROR_PAY_ID'))
         );
     }
 
     /**
      * Hak do kroku wyboru płatności
      */
-    public function hookPayment()
-    {
+    public function hookPayment() {
         if (!$this->active)
             return;
 
         // Kompatybilność wstecz dla wersji 1.4
-        if (_PS_VERSION_ < '1.5')
-        {
+        if (_PS_VERSION_ < '1.5') {
             global $smarty;
             $this->smarty = $smarty;
         }
 
-        if (method_exists('Link', 'getModuleLink'))
-        {
+        if (method_exists('Link', 'getModuleLink')) {
             $moduleLink = $this->context->link->getModuleLink('bluepayment', 'payment', array(), true);
             $tpl = 'payment.tpl';
-        }
-        else
-        {
+        } else {
             $tpl = '/views/templates/hook/payment.tpl';
-            $moduleLink = __PS_BASE_URI__.'modules/'.$this->name.'/payment.php';
+            $moduleLink = __PS_BASE_URI__ . 'modules/' . $this->name . '/payment.php';
         }
 
         $this->smarty->assign(array(
@@ -351,9 +331,41 @@ class BluePayment extends PaymentModule
      * @param $params
      * @return bool|void
      */
-    public function hookPaymentReturn($params)
-    {
+    public function hookPaymentReturn($params) {
         // @todo: zastanowić się nad jego wykorzystaniem
+    }
+
+    /**
+     * Waliduje zgodność otrzymanego XML'a
+     * @param XML $response
+     * @return boolen 
+     */
+    public function _validAllTransaction($response) {
+
+        $service_id = Configuration::get($this->name_upper . '_SERVICE_PARTNER_ID');
+        $shared_key = Configuration::get($this->name_upper . '_SHARED_KEY');
+        if ($service_id != $response->serviceID)
+            return false;
+
+        $this->_checkHashArray = [];
+        $hash = (string) $response->hash;
+        $this->_checkHashArray[] = (string) $response->serviceID;
+
+        foreach ($response->transactions->transaction as $trans) {
+            $this->_checkInList($trans);
+        }
+        $this->_checkHashArray[] = $shared_key;
+        return hash(HASH_ALGORITHM, implode(HASH_SEPARATOR, $this->_checkHashArray)) == $hash;
+    }
+
+    private function _checkInList($list) {
+        foreach ((array) $list as $row) {
+            if (is_object($row)) {
+                $this->_checkInList($row);
+            } else {
+                $this->_checkHashArray[] = $row;
+            }
+        }
     }
 
     /**
@@ -362,8 +374,7 @@ class BluePayment extends PaymentModule
      * @param array $data
      * @return string
      */
-    public function generateAndReturnHash($data)
-    {
+    public function generateAndReturnHash($data) {
         $values_array = array_values($data);
 
         $values_array_filter = array_filter($values_array);
@@ -382,13 +393,11 @@ class BluePayment extends PaymentModule
      *
      * @return string
      */
-    public function getUrlGateway()
-    {
+    public function getUrlGateway() {
         // Aktywny tryb usługi
-        $mode = Configuration::get($this->name_upper.'_TEST_MODE');
+        $mode = Configuration::get($this->name_upper . '_TEST_MODE');
 
-        if ($mode)
-        {
+        if ($mode) {
             return TEST_ADDRESS_URL;
         }
         return PROD_ADDRESS_URL;
@@ -397,9 +406,8 @@ class BluePayment extends PaymentModule
     /**
      * Haczyk dla nagłówków stron
      */
-    public function hookHeader()
-    {
-        $this->context->controller->addCSS($this->_path.'/css/front.css');
+    public function hookHeader() {
+        $this->context->controller->addCSS($this->_path . '/css/front.css');
     }
 
     /**
@@ -410,13 +418,12 @@ class BluePayment extends PaymentModule
      *
      * @return XML
      */
-    protected function returnConfirmation($order_id, $confirmation)
-    {
+    protected function returnConfirmation($order_id, $confirmation) {
         // Id serwisu partnera
-        $service_id = Configuration::get($this->name_upper.'_SERVICE_PARTNER_ID');
+        $service_id = Configuration::get($this->name_upper . '_SERVICE_PARTNER_ID');
 
         // Klucz współdzielony
-        $shared_key = Configuration::get($this->name_upper.'_SHARED_KEY');
+        $shared_key = Configuration::get($this->name_upper . '_SHARED_KEY');
 
         // Tablica danych z których wygenerować hash
         $hash_data = array($service_id, $order_id, $confirmation, $shared_key);
@@ -458,88 +465,25 @@ class BluePayment extends PaymentModule
      * @param array $transactions
      * @param string $hash
      */
-    public function processStatusPayment($transactions, $hash)
-    {
+    public function processStatusPayment($response) {
         // Kompatybilność wstecz dla wersji 1.4
-        if (_PS_VERSION_ < '1.5')
-        {
+        if (_PS_VERSION_ < '1.5') {
             $logger = new Logger();
-        }
-        else
-        {
+        } else {
             $logger = new PrestaShopLogger();
         }
 
-        // Id serwisu partnera
-        $service_id = Configuration::get($this->name_upper.'_SERVICE_PARTNER_ID');
-
-        // Klucz współdzielony
-        $shared_key = Configuration::get($this->name_upper.'_SHARED_KEY');
-
-        foreach ($transactions as $transaction_xml)
-        {
-            // Obiekt transakcji
-            $transaction = $transaction_xml->transaction;
-
-            // Id zamówienia
-            $order_id = $transaction->orderID;
-
-            // Objekt zamówienia
-            $order = new Order($order_id);
-
-            if(!Validate::isLoadedObject($order))
-            {
-                $message = $this->name_upper.' - Order not found';
-                $logger->addLog($message, 3, null, 'Order', $order_id);
-                $this->returnConfirmation($order_id, $message);
-            }
-
-            // Kod waluty transakcji zamówienia
-            $order_currency_id = $order->id_currency;
-            $order_currency = Currency::getCurrency($order_currency_id);
-            $order_currency_iso_code = $order_currency['iso_code'];
-
-            // Suma zamówienia
-            $total_paid = $order->total_paid;
-            $amount = number_format(round($total_paid, 2), 2, '.', '');
-
-            // Id transakcji nadany przez bramkę
-            $remote_id = $transaction->remoteID;
-
-            // Id kanału płatności
-            $gateway_id = $transaction->gatewayID;
-
-            // Data i czas płatności
-            $payment_datetime = $transaction->paymentDate;
-
-            // Status płatności
-            $payment_status = $transaction->paymentStatus;
-
-            // Szczegóły status płatności
-            $payment_status_details = $transaction->paymentStatusDetails;
-
-            // Tablica danych z których wygenerować hash
-            $hash_data = array($service_id, $order_id, $remote_id, $amount, $order_currency_iso_code, $gateway_id,
-                $payment_datetime, $payment_status, $payment_status_details, $shared_key);
-
-            // Klucz hash
-            $hash_local = $this->generateAndReturnHash($hash_data);
-
-            // Sprawdznenie poprawności kluczy hash
-            if($hash == $hash_local)
-            {
-                // Potwierdzenie zwrotne o transakcji autentycznej
-                $this->returnConfirmation($order_id, self::TRANSACTION_CONFIRMED);
-                // Aktualizacja statusu zamówienia i transakcji
-                $this->updateStatusTransactionAndOrder($transaction);
-            }
-            else
-            {
-                $message = $this->name_upper.' - Invalid hash: '.$hash_local;
-                $logger->addLog($message, 3, null, 'Order', $order_id);
-                // Potwierdzenie zwrotne o transakcji nie autentycznej
-                $this->returnConfirmation($order_id, self::TRANSACTION_NOTCONFIRMED);
-            }
+        if ($this->_validAllTransaction($response)) {
+            $transaction_xml = $response->transactions->transaction;
+            // Aktualizacja statusu zamówienia i transakcji
+            $this->updateStatusTransactionAndOrder($transaction_xml);
+            
+        } else {
+            $message = $this->name_upper . ' - Invalid hash: ' . $response->hash;
+            // Potwierdzenie zwrotne o transakcji nie autentycznej
+            $transaction_xml = $response->transactions->transaction;
+            $logger->addLog($message, 3, null, 'Order', $transaction_xml->orderID);
+            $this->returnConfirmation($transaction_xml->orderID, self::TRANSACTION_NOTCONFIRMED);
         }
     }
 
@@ -550,8 +494,7 @@ class BluePayment extends PaymentModule
      *
      * @return boolean
      */
-    public function isOrderCompleted($order)
-    {
+    public function isOrderCompleted($order) {
         $status = $order->getCurrentState();
         $stateOrderTab = array(6);
 
@@ -564,71 +507,65 @@ class BluePayment extends PaymentModule
      * @param $transaction
      * @throws Exception
      */
-    protected function updateStatusTransactionAndOrder($transaction)
-    {
+    protected function updateStatusTransactionAndOrder($transaction) {
         // Identyfikatory statusów płatności
-        $status_accept_pay_id = Configuration::get($this->name_upper.'_STATUS_ACCEPT_PAY_ID');
-        $status_waiting_pay_id = Configuration::get($this->name_upper.'_STATUS_WAIT_PAY_ID');
-        $status_error_pay_id = Configuration::get($this->name_upper.'_STATUS_ERROR_PAY_ID');
+        
+        $status_accept_pay_id = Configuration::get($this->name_upper . '_STATUS_ACCEPT_PAY_ID');
+        $status_waiting_pay_id = Configuration::get($this->name_upper . '_STATUS_WAIT_PAY_ID');
+        $status_error_pay_id = Configuration::get($this->name_upper . '_STATUS_ERROR_PAY_ID');
 
         // Status płatności
-        $payment_status = (string)$transaction->paymentStatus;
+        $payment_status = (string) $transaction->paymentStatus;
 
         // Id transakcji nadany przez bramkę
-        $remote_id = $transaction->remoteID;
+        $remote_id = (string)$transaction->remoteID;
 
         // Id zamówienia
-        $order_id = $transaction->orderID;
+        $order_id = (string)$transaction->orderID;
 
         // Objekt zamówienia
         $order = new OrderCore($order_id);
-
+        //var_dump($order->getOrderPaymentCollection());
         // Kompatybilność wstecz dla wersji 1.4
-        if (_PS_VERSION_ < '1.5')
-        {
+        if (_PS_VERSION_ < '1.5') {
             $logger = new Logger();
             // Obiekt płatności zamówienia
             $order_payment = new PaymentCC();
-        }
-        else
-        {
+        } else {
             // Obiekt płatności zamówienia
             $order_payments = $order->getOrderPaymentCollection();
-            if(count($order_payments) > 0)
-            {
+            if (count($order_payments) > 0) {
                 $order_payment = $order_payments[0];
+            } else {
+                $order_payment = new OrderPaymentCore();
             }
             $logger = new PrestaShopLogger();
         }
 
-        if(!Validate::isLoadedObject($order))
-        {
-            $message = $this->name_upper.' - Order not found';
+        if (!Validate::isLoadedObject($order)) {
+            $message = $this->name_upper . ' - Order not found';
             $logger->addLog($message, 3, null, 'Order', $order_id);
-            $this->returnConfirmation($order_id, $message);
+            $this->returnConfirmation($order_id, self::TRANSACTION_NOTCONFIRMED);
+            return;
         }
 
-        if(!is_object($order_payment))
-        {
-            $message = $this->name_upper.' - Order payment not found';
+        if (!is_object($order_payment)) {
+            $message = $this->name_upper . ' - Order payment not found';
             $logger->addLog($message, 3, null, 'OrderPayment', $order_id);
-            $this->returnConfirmation($order_id, $message);
+            $this->returnConfirmation($order_id, self::TRANSACTION_NOTCONFIRMED);
+            return;
         }
 
         // Suma zamówienia
         $total_paid = $order->total_paid;
         $amount = number_format(round($total_paid, 2), 2, '.', '');
         // Jeśli zamówienie jest otwarte i status zamówienia jest różny od pustej wartości
-        if (!($this->isOrderCompleted($order)) && $payment_status != '')
-        {
-            switch ($payment_status)
-            {
+        if (!($this->isOrderCompleted($order)) && $payment_status != '') {
+            switch ($payment_status) {
                 // Jeśli transakcja została rozpoczęta
                 case self::PAYMENT_STATUS_PENDING:
-
                     // Jeśli aktualny status zamówienia jest różny od ustawionego jako "oczekiwanie na płatność"
-                    if($order->current_state != $status_waiting_pay_id)
-                    {
+                    if ($order->current_state != $status_waiting_pay_id) {
                         $new_history = new OrderHistory();
                         $new_history->id_order = $order_id;
                         $new_history->id_order_state = $status_waiting_pay_id;
@@ -637,34 +574,29 @@ class BluePayment extends PaymentModule
                     break;
                 // Jeśli transakcja została zakończona poprawnie
                 case self::PAYMENT_STATUS_SUCCESS:
-
-                    if(count($order_payments) > 0)
-                    {
-                        $order_payment->amount = $amount;
-                        $order_payment->transaction_id = (string)$remote_id;
-                        $order_payment->update();
-                    }
-                    elseif(is_object($order_payment))
-                    {
-                        $order_payment->id_order = $order_id;
-                        $order_payment->id_currency = $order->id_currency;
-                        $order_payment->amount = $amount;
-                        $order_payment->transaction_id = (string)$remote_id;
-                        $order_payment->add();
-                    }
-
-                    $new_history = new OrderHistory();
-                    $new_history->id_order = $order_id;
-                    $new_history->id_order_state = $status_accept_pay_id;
-                    $new_history->addWithemail(true);
-
+                    //if ($order->current_state != $status_accept_pay_id){
+                        if (count($order_payments) > 0) {
+                            $order_payment->amount = $amount;
+                            $order_payment->transaction_id = $remote_id;
+                            $order_payment->update();
+                        } elseif (is_object($order_payment)) {
+                            $order_payment->order_reference = $order->reference;
+                            $order_payment->id_currency = $order->id_currency;
+                            $order_payment->payment_method = $this->displayName;
+                            $order_payment->amount = $amount;
+                            $order_payment->transaction_id = $remote_id;
+                            $order_payment->add();
+                        }
+                        $new_history = new OrderHistory();
+                        $new_history->id_order = $order_id;
+                        $new_history->id_order_state = $status_accept_pay_id;
+                        $new_history->addWithemail(true);
+                   // }
                     break;
                 // Jeśli transakcja nie została zakończona poprawnie
                 case self::PAYMENT_STATUS_FAILURE:
-
                     // Jeśli aktualny status zamówienia jest równy ustawionemu jako "oczekiwanie na płatność"
-                    if($order->current_state == $status_waiting_pay_id)
-                    {
+                    if ($order->current_state == $status_waiting_pay_id) {
                         $new_history = new OrderHistory();
                         $new_history->id_order = $order_id;
                         $new_history->id_order_state = $status_error_pay_id;
@@ -674,17 +606,15 @@ class BluePayment extends PaymentModule
                 default:
                     break;
             }
-        }
-        else
-        {
-            $message = $this->name_upper.' - Order status is cancel or payment status unknown';
+            $this->returnConfirmation($order_id, self::TRANSACTION_CONFIRMED);  
+        } else {
+            $message = $this->name_upper . ' - Order status is cancel or payment status unknown';
             $logger->addLog($message, 3, null, 'OrderState', $order_id);
             $this->returnConfirmation($order_id, $message);
         }
     }
 
-    private function displayForm()
-    {
+    private function displayForm() {
         // Opcje wyboru statusu oczekującego
         $options_waiting_status = '';
 
@@ -695,84 +625,83 @@ class BluePayment extends PaymentModule
         $options_error_status = '';
 
         // Domyślny język
-        $id_default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+        $id_default_lang = (int) Configuration::get('PS_LANG_DEFAULT');
 
         // Dostępne statusy
         $statuses = OrderState::getOrderStates($id_default_lang);
 
-        foreach($statuses as $status)
-        {
-            $options_waiting_status .= '<option value="'.$status['id_order_state'].'"'
-                                    . (Configuration::get($this->name_upper.'_STATUS_WAIT_PAY_ID') == $status['id_order_state'] ? 'selected="selected"' : '' ) . '>'
-                                    . $status['name']
-                                    . '</option>';
-            $options_accept_status .= '<option value="'.$status['id_order_state'].'"'
-                                    . (Configuration::get($this->name_upper.'_STATUS_ACCEPT_PAY_ID') == $status['id_order_state'] ? 'selected="selected"' : '' ) . '>'
-                                    . $status['name']
-                                    . '</option>';
-            $options_error_status .= '<option value="'.$status['id_order_state'].'"'
-                                    . (Configuration::get($this->name_upper.'_STATUS_ERROR_PAY_ID') == $status['id_order_state'] ? 'selected="selected"' : '' ) . '>'
-                                    . $status['name']
-                                    . '</option>';
+        foreach ($statuses as $status) {
+            $options_waiting_status .= '<option value="' . $status['id_order_state'] . '"'
+                    . (Configuration::get($this->name_upper . '_STATUS_WAIT_PAY_ID') == $status['id_order_state'] ? 'selected="selected"' : '' ) . '>'
+                    . $status['name']
+                    . '</option>';
+            $options_accept_status .= '<option value="' . $status['id_order_state'] . '"'
+                    . (Configuration::get($this->name_upper . '_STATUS_ACCEPT_PAY_ID') == $status['id_order_state'] ? 'selected="selected"' : '' ) . '>'
+                    . $status['name']
+                    . '</option>';
+            $options_error_status .= '<option value="' . $status['id_order_state'] . '"'
+                    . (Configuration::get($this->name_upper . '_STATUS_ERROR_PAY_ID') == $status['id_order_state'] ? 'selected="selected"' : '' ) . '>'
+                    . $status['name']
+                    . '</option>';
         }
 
-        $this->html .= '<h2>'.$this->displayName.'</h2>';
-        $this->html .= '<form action="'.Tools::htmlentitiesUTF8($_SERVER['REQUEST_URI']).'" method="post">
+        $this->html .= '<h2>' . $this->displayName . '</h2>';
+        $this->html .= '<form action="' . Tools::htmlentitiesUTF8($_SERVER['REQUEST_URI']) . '" method="post">
 			<fieldset>
-			<legend><img src="../img/admin/tab-preferences.gif" />'.$this->l('Settings').'</legend>
+			<legend><img src="../img/admin/tab-preferences.gif" />' . $this->l('Settings') . '</legend>
 				<table border="0" cellpadding="5" cellspacing="5" id="form">
 					<tr>
-						<td style="text-align: right;">'.$this->l('Test mode').'</td>
+						<td style="text-align: right;">' . $this->l('Test mode') . '</td>
 						<td>
-						    <select name="'.$this->name_upper.'_TEST_MODE">
+						    <select name="' . $this->name_upper . '_TEST_MODE">
 						        <option value="1"'
-                                .(Configuration::get($this->name_upper.'_TEST_MODE') == 1 ? 'selected="selected"' : '' )
-                                .'>'.$this->l('Yes').'</option>
+                . (Configuration::get($this->name_upper . '_TEST_MODE') == 1 ? 'selected="selected"' : '' )
+                . '>' . $this->l('Yes') . '</option>
 						        <option value="0"'
-                                .(Configuration::get($this->name_upper.'_TEST_MODE') == 0 ? 'selected="selected"' : '' )
-                                .'>'.$this->l('No').'</option>
+                . (Configuration::get($this->name_upper . '_TEST_MODE') == 0 ? 'selected="selected"' : '' )
+                . '>' . $this->l('No') . '</option>
                             </select>
 						</td>
 					</tr>
 					<tr>
-					    <td style="text-align: right;">'.$this->l('Service partner ID').'</td>
+					    <td style="text-align: right;">' . $this->l('Service partner ID') . '</td>
 					    <td>
-					        <input type="text" name="'.$this->name_upper.'_SERVICE_PARTNER_ID"
-					        value="'.htmlentities(Tools::getValue($this->name_upper.'_SERVICE_PARTNER_ID', Configuration::get($this->name_upper.'_SERVICE_PARTNER_ID')), ENT_COMPAT, 'UTF-8').'" style="width: 300px;" />
+					        <input type="text" name="' . $this->name_upper . '_SERVICE_PARTNER_ID"
+					        value="' . htmlentities(Tools::getValue($this->name_upper . '_SERVICE_PARTNER_ID', Configuration::get($this->name_upper . '_SERVICE_PARTNER_ID')), ENT_COMPAT, 'UTF-8') . '" style="width: 300px;" />
 					    </td>
                     </tr>
 					<tr>
-					    <td style="text-align: right;">'.$this->l('Shared key').'</td>
+					    <td style="text-align: right;">' . $this->l('Shared key') . '</td>
 					    <td>
-					        <input type="text" name="'.$this->name_upper.'_SHARED_KEY"
-					        value="'.htmlentities(Tools::getValue($this->name_upper.'_SHARED_KEY', Configuration::get($this->name_upper.'_SHARED_KEY')), ENT_COMPAT, 'UTF-8').'" style="width: 300px;" />
+					        <input type="text" name="' . $this->name_upper . '_SHARED_KEY"
+					        value="' . htmlentities(Tools::getValue($this->name_upper . '_SHARED_KEY', Configuration::get($this->name_upper . '_SHARED_KEY')), ENT_COMPAT, 'UTF-8') . '" style="width: 300px;" />
 					    </td>
                     </tr>
 					<tr>
-						<td style="text-align: right;">'.$this->l('Status waiting payment').'</td>
+						<td style="text-align: right;">' . $this->l('Status waiting payment') . '</td>
 						<td>
-						    <select name="'.$this->name_upper.'_STATUS_WAIT_PAY_ID">
-						        '.$options_waiting_status.'
+						    <select name="' . $this->name_upper . '_STATUS_WAIT_PAY_ID">
+						        ' . $options_waiting_status . '
                             </select>
 						</td>
 					</tr>
 					<tr>
-						<td style="text-align: right;">'.$this->l('Status accept payment').'</td>
+						<td style="text-align: right;">' . $this->l('Status accept payment') . '</td>
 						<td>
-						    <select name="'.$this->name_upper.'_STATUS_ACCEPT_PAY_ID">
-						        '.$options_accept_status.'
+						    <select name="' . $this->name_upper . '_STATUS_ACCEPT_PAY_ID">
+						        ' . $options_accept_status . '
                             </select>
 						</td>
                     </tr>
 					</tr>
-						<td style="text-align: right;">'.$this->l('Status error payment').'</td>
+						<td style="text-align: right;">' . $this->l('Status error payment') . '</td>
 						<td>
-						    <select name="'.$this->name_upper.'_STATUS_ERROR_PAY_ID">
-						        '.$options_error_status.'
+						    <select name="' . $this->name_upper . '_STATUS_ERROR_PAY_ID">
+						        ' . $options_error_status . '
                             </select>
 						</td>
 					</tr>
-					<tr><td colspan="2" align="center"><input class="button" name="submit'.$this->name.'" value="'.$this->l('Save').'" type="submit" /></td></tr>
+					<tr><td colspan="2" align="center"><input class="button" name="submit' . $this->name . '" value="' . $this->l('Save') . '" type="submit" /></td></tr>
 				</table>
 			</fieldset>
 		</form>';
@@ -784,16 +713,13 @@ class BluePayment extends PaymentModule
      * Pobiera dane z tablicy POST i zapisuje je do tabeli konfiguracyjnej
      *
      */
-    private function postProcess()
-    {
-        if (Tools::isSubmit('submit'.$this->name))
-        {
+    private function postProcess() {
+        if (Tools::isSubmit('submit' . $this->name)) {
             unset($_POST['submitbluepayment']);
-            foreach ($_POST as $key => $val)
-            {
+            foreach ($_POST as $key => $val) {
                 Configuration::updateValue($key, $val);
             }
-            $this->html .= '<div class="conf confirm"><img src="../img/admin/ok.gif" alt="'.$this->l('ok').'" /> '.$this->l('Settings updated').'</div>';
+            $this->html .= '<div class="conf confirm"><img src="../img/admin/ok.gif" alt="' . $this->l('ok') . '" /> ' . $this->l('Settings updated') . '</div>';
         }
     }
 
@@ -802,8 +728,8 @@ class BluePayment extends PaymentModule
      *
      * @return string
      */
-    public function getPathUri()
-    {
+    public function getPathUri() {
         return $this->_path;
     }
+
 }

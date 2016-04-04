@@ -11,7 +11,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015
+ * @copyright      Copyright (c) 2015-2016
  * @license        http://opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -31,17 +31,7 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
             // Odczytanie parametrów z xml-a
             $simple_xml = simplexml_load_string($base64transactions);
 
-            // Lista transakcji
-            $transactions = $simple_xml->transactions;
-
-            // Klucz hash
-            $hash = $simple_xml->hash;
-
-            // Jeśli istnieją transakcje
-            if (count($transactions) > 0)
-            {
-                $this->module->processStatusPayment($transactions, $hash);
-            }
+            $this->module->processStatusPayment($simple_xml);
         }
         exit;
     }
