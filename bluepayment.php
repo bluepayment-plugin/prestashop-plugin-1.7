@@ -574,7 +574,7 @@ class BluePayment extends PaymentModule {
                     break;
                 // Jeśli transakcja została zakończona poprawnie
                 case self::PAYMENT_STATUS_SUCCESS:
-                    //if ($order->current_state != $status_accept_pay_id){
+                    if ($order->current_state == $status_waiting_pay_id){
                         if (count($order_payments) > 0) {
                             $order_payment->amount = $amount;
                             $order_payment->transaction_id = $remote_id;
@@ -591,7 +591,7 @@ class BluePayment extends PaymentModule {
                         $new_history->id_order = $order_id;
                         $new_history->id_order_state = $status_accept_pay_id;
                         $new_history->addWithemail(true);
-                   // }
+                    }
                     break;
                 // Jeśli transakcja nie została zakończona poprawnie
                 case self::PAYMENT_STATUS_FAILURE:
