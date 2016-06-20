@@ -33,7 +33,7 @@ class BluePayment extends PaymentModule {
         'payment',
         'paymentReturn',
     );
-    private $_checkHashArray = [];
+    private $_checkHashArray = array();
 
     /**
      * Stałe statusów płatności
@@ -347,7 +347,7 @@ class BluePayment extends PaymentModule {
         if ($service_id != $response->serviceID)
             return false;
 
-        $this->_checkHashArray = [];
+        $this->_checkHashArray = array();
         $hash = (string) $response->hash;
         $this->_checkHashArray[] = (string) $response->serviceID;
 
