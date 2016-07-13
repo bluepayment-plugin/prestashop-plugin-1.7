@@ -21,5 +21,3 @@ $_MODULE['<{bluepayment}prestashop>payment_e2b7dec8fa4b498156dfee6e4c84b156'] = 
 $_MODULE['<{bluepayment}prestashop>payment_6f9b3faae4f5c4cd1e598644a7760e20'] = 'Prosimy czekać..';
 $_MODULE['<{bluepayment}prestashop>payment_return_d15feee53d81ea16269e54d4784fa123'] = 'Wystąpił problem z realizacją zamówienia. Aby poznać więcej szczegółów prosimy o kontakt';
 $_MODULE['<{bluepayment}prestashop>payment_return_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'z obsługą wsparcia klienta';
-$_MODULE['<{bluepayment}prestashop>payment_84ec5465a3789f5bc518fbb28da1e11f'] = 'Zapłać przez system Blue Media';
-$_MODULE['<{bluepayment}prestashop>payment_1f1992e666226eb43ad3dae177ac4f69'] = 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.';

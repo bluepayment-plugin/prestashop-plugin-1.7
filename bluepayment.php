@@ -76,6 +76,11 @@ class BluePayment extends PaymentModule {
         $this->description = $this->l('Plugin supports online payments implemented by payment gateway Blue Media company.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
+        
+        if (empty(Tools::getValue($this->name_upper . '_PAYMENT_NAME', Configuration::get($this->name_upper . '_PAYMENT_NAME')))) {
+            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Zapłać przez system Blue Media');
+            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.');
+        }
     }
 
     /**
@@ -91,11 +96,14 @@ class BluePayment extends PaymentModule {
             }
             // Domyślne ustawienie aktywnego trybu testowego
             Configuration::updateValue($this->name_upper . '_TEST_MODE', 1);
-
+            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Zapłać przez system Blue Media');
+            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.');
+            
             return true;
         }
         return false;
     }
+    
 
     /**
      * Usunięcie dodatku
@@ -115,6 +123,8 @@ class BluePayment extends PaymentModule {
             Configuration::deleteByName($this->name_upper . '_STATUS_WAIT_PAY_ID');
             Configuration::deleteByName($this->name_upper . '_STATUS_ACCEPT_PAY_ID');
             Configuration::deleteByName($this->name_upper . '_STATUS_ERROR_PAY_ID');
+            Configuration::deleteByName($this->name_upper . '_PAYMENT_NAME');
+            Configuration::deleteByName($this->name_upper . '_PAYMENT_NAME_EXTRA');
 
             return true;
         }
@@ -142,6 +152,8 @@ class BluePayment extends PaymentModule {
             Configuration::updateValue($this->name_upper . '_STATUS_WAIT_PAY_ID', Tools::getValue($this->name_upper . '_STATUS_WAIT_PAY_ID'));
             Configuration::updateValue($this->name_upper . '_STATUS_ACCEPT_PAY_ID', Tools::getValue($this->name_upper . '_STATUS_ACCEPT_PAY_ID'));
             Configuration::updateValue($this->name_upper . '_STATUS_ERROR_PAY_ID', Tools::getValue($this->name_upper . '_STATUS_ERROR_PAY_ID'));
+            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', Tools::getValue($this->name_upper . '_PAYMENT_NAME'));
+            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', Tools::getValue($this->name_upper . '_PAYMENT_NAME_EXTRA'));
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
         return $output . $this->renderForm();
@@ -227,6 +239,20 @@ class BluePayment extends PaymentModule {
                         'id' => 'id_order_state',
                         'name' => 'name'
                     ),
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Payment name'),
+                    'name' => $this->name_upper . '_PAYMENT_NAME',
+                    'size' => 40,
+                    'required' => true
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Payment name extra'),
+                    'name' => $this->name_upper . '_PAYMENT_NAME_EXTRA',
+                    'size' => 40,
+                    'required' => true
                 )
             ),
             'submit' => array(
@@ -292,7 +318,11 @@ class BluePayment extends PaymentModule {
             $this->name_upper . '_STATUS_ACCEPT_PAY_ID' => Tools::getValue($this->name_upper .
                     '_STATUS_ACCEPT_PAY_ID', Configuration::get($this->name_upper . '_STATUS_ACCEPT_PAY_ID')),
             $this->name_upper . '_STATUS_ERROR_PAY_ID' => Tools::getValue($this->name_upper .
-                    '_STATUS_ERROR_PAY_ID', Configuration::get($this->name_upper . '_STATUS_ERROR_PAY_ID'))
+                    '_STATUS_ERROR_PAY_ID', Configuration::get($this->name_upper . '_STATUS_ERROR_PAY_ID')),
+            $this->name_upper . '_PAYMENT_NAME' => Tools::getValue($this->name_upper .
+                    '_PAYMENT_NAME', Configuration::get($this->name_upper . '_PAYMENT_NAME')),
+            $this->name_upper . '_PAYMENT_NAME_EXTRA' => Tools::getValue($this->name_upper .
+                    '_PAYMENT_NAME_EXTRA', Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA'))
         );
     }
 
@@ -320,7 +350,9 @@ class BluePayment extends PaymentModule {
         $this->smarty->assign(array(
             'module_link' => $moduleLink,
             'ps_version' => _PS_VERSION_,
-            'module_dir' => $this->_path
+            'module_dir' => $this->_path,
+            'payment_name' => Tools::getValue($this->name_upper . '_PAYMENT_NAME', Configuration::get($this->name_upper . '_PAYMENT_NAME')),
+            'payment_name_extra' => Tools::getValue($this->name_upper .'_PAYMENT_NAME_EXTRA', Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA'))
         ));
 
         return $this->display(__FILE__, $tpl);
@@ -702,6 +734,20 @@ class BluePayment extends PaymentModule {
                             </select>
 						</td>
 					</tr>
+                                        					<tr>
+					    <td style="text-align: right;">' . $this->l('Payment name') . '</td>
+					    <td>
+					        <input type="text" name="' . $this->name_upper . '_PAYMENT_NAME"
+					        value="' . htmlentities(Tools::getValue($this->name_upper . '_PAYMENT_NAME', Configuration::get($this->name_upper . '_PAYMENT_NAME')), ENT_COMPAT, 'UTF-8') . '" style="width: 300px;" />
+					    </td>
+                    </tr>
+                    					<tr>
+					    <td style="text-align: right;">' . $this->l('Payment name extra') . '</td>
+					    <td>
+					        <input type="text" name="' . $this->name_upper . '_PAYMENT_NAME_EXTRA"
+					        value="' . htmlentities(Tools::getValue($this->name_upper . '_PAYMENT_NAME_EXTRA', Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA')), ENT_COMPAT, 'UTF-8') . '" style="width: 300px;" />
+					    </td>
+                    </tr>
 					<tr><td colspan="2" align="center"><input class="button" name="submit' . $this->name . '" value="' . $this->l('Save') . '" type="submit" /></td></tr>
 				</table>
 			</fieldset>

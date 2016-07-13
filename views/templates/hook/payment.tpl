@@ -15,17 +15,17 @@
  *}
 <p class="payment_module">
     {if $ps_version < '1.5'}
-        <a href="{$module_link}" title="{l s='Pay with Blue Media system' mod='bluepayment'}">
+        <a href="{$module_link}" title="{$payment_name}">
             <span>
-                <img src="{$module_dir}logo.png" alt="{l s='Pay with Blue Media system' mod='bluepayment'}" />
-                {l s='Pay with Blue Media system' mod='bluepayment'}
-                ({l s='You will be redirected to the Blue Media secure system payment after submitting the order.' mod='bluepayment'})
+                <img src="{$module_dir}logo.png" alt="{$payment_name}" />
+                {$payment_name}
+                ({$payment_name_extra})
             </span>
         </a>
     {else}
-        <a class="logo_background" href="{$module_link}" title="{l s='Pay with Blue Media system' mod='bluepayment'}">
-            &nbsp;{l s='Pay with Blue Media system' mod='bluepayment'}
-            <span>({l s='You will be redirected to the Blue Media secure system payment after submitting the order.' mod='bluepayment'})</span>
+        <a class="logo_background" href="{$module_link}" title="{$payment_name}">
+            &nbsp;{$payment_name}
+            <span>({$payment_name_extra})</span>
         </a>
     {/if}
 </p>
