@@ -20,10 +20,13 @@
 if (!defined('_PS_VERSION_'))
     exit;
 
+include_once dirname(__FILE__).'/classes/BlueGateway.php';
+
 class BluePayment extends PaymentModule {
 
     private $html = '';
 
+    public $name_upper;
     /**
      * Haki używane przez moduł
      *
@@ -77,7 +80,7 @@ class BluePayment extends PaymentModule {
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
         
-        if (empty(Tools::getValue($this->name_upper . '_PAYMENT_NAME', Configuration::get($this->name_upper . '_PAYMENT_NAME')))) {
+        if (empty(Configuration::get($this->name_upper . '_PAYMENT_NAME'))) {
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Zapłać przez system Blue Media');
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.');
         }
@@ -89,6 +92,7 @@ class BluePayment extends PaymentModule {
      * @return bool
      */
     public function install() {
+        
         if (parent::install()) {
             foreach ($this->hooks as $hook) {
                 if (!$this->registerHook($hook))
@@ -96,9 +100,11 @@ class BluePayment extends PaymentModule {
             }
             // Domyślne ustawienie aktywnego trybu testowego
             Configuration::updateValue($this->name_upper . '_TEST_MODE', 1);
+            Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY', 0);
+            Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY_LOGO', 1);
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Zapłać przez system Blue Media');
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.');
-            
+            $this->installTab();
             return true;
         }
         return false;
@@ -111,6 +117,7 @@ class BluePayment extends PaymentModule {
      * @return bool
      */
     public function uninstall() {
+        $this->uninstallTab();
         if (parent::uninstall()) {
             foreach ($this->hooks as $hook) {
                 if (!$this->unregisterHook($hook))
@@ -125,6 +132,8 @@ class BluePayment extends PaymentModule {
             Configuration::deleteByName($this->name_upper . '_STATUS_ERROR_PAY_ID');
             Configuration::deleteByName($this->name_upper . '_PAYMENT_NAME');
             Configuration::deleteByName($this->name_upper . '_PAYMENT_NAME_EXTRA');
+            Configuration::deleteByName($this->name_upper . '_SHOW_PAYWAY');
+            Configuration::deleteByName($this->name_upper . '_SHOW_PAYWAY_LOGO');
 
             return true;
         }
@@ -154,9 +163,32 @@ class BluePayment extends PaymentModule {
             Configuration::updateValue($this->name_upper . '_STATUS_ERROR_PAY_ID', Tools::getValue($this->name_upper . '_STATUS_ERROR_PAY_ID'));
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', Tools::getValue($this->name_upper . '_PAYMENT_NAME'));
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', Tools::getValue($this->name_upper . '_PAYMENT_NAME_EXTRA'));
+            Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY', (int)Tools::getValue($this->name_upper . '_SHOW_PAYWAY'));
+            Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY_LOGO', (int)Tools::getValue($this->name_upper . '_SHOW_PAYWAY_LOGO'));
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
         return $output . $this->renderForm();
+    }
+    
+    public function installTab() {
+        $tab = new Tab();
+        $tab->active = 1;
+        $tab->class_name = 'AdminBluepayment';
+        $tab->name = array();
+        foreach (Language::getLanguages(true) as $lang)
+            $tab->name[$lang['id_lang']] = $this->l('Blue Payments Gateway Manager');
+        $tab->id_parent = (int) Tab::getIdFromClassName('AdminAdmin');
+        $tab->module = $this->name;
+        return $tab->add();
+    }
+
+    public function uninstallTab() {
+        $id_tab = (int) Tab::getIdFromClassName('AdminBluepayment');
+        if ($id_tab) {
+            $tab = new Tab($id_tab);
+            return $tab->delete();
+        } else
+            return false;
     }
 
     /**
@@ -183,6 +215,42 @@ class BluePayment extends PaymentModule {
                     'label' => $this->l('Test mode'),
                     'required' => true,
                     'name' => $this->name_upper . '_TEST_MODE',
+                    'values' => array(
+                        array(
+                            'id' => 'active_on',
+                            'value' => 1,
+                            'label' => $this->l('Yes')
+                        ),
+                        array(
+                            'id' => 'active_off',
+                            'value' => 0,
+                            'label' => $this->l('No')
+                        )
+                    ),
+                ),
+                array(
+                    'type' => 'switch',
+                    'label' => $this->l('Show payway in shop'),
+                    'required' => true,
+                    'name' => $this->name_upper . '_SHOW_PAYWAY',
+                    'values' => array(
+                        array(
+                            'id' => 'active_on',
+                            'value' => 1,
+                            'label' => $this->l('Yes')
+                        ),
+                        array(
+                            'id' => 'active_off',
+                            'value' => 0,
+                            'label' => $this->l('No')
+                        )
+                    ),
+                ),
+                array(
+                    'type' => 'switch',
+                    'label' => $this->l('Show logo payways'),
+                    'required' => true,
+                    'name' => $this->name_upper . '_SHOW_PAYWAY_LOGO',
                     'values' => array(
                         array(
                             'id' => 'active_on',
@@ -322,7 +390,11 @@ class BluePayment extends PaymentModule {
             $this->name_upper . '_PAYMENT_NAME' => Tools::getValue($this->name_upper .
                     '_PAYMENT_NAME', Configuration::get($this->name_upper . '_PAYMENT_NAME')),
             $this->name_upper . '_PAYMENT_NAME_EXTRA' => Tools::getValue($this->name_upper .
-                    '_PAYMENT_NAME_EXTRA', Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA'))
+                    '_PAYMENT_NAME_EXTRA', Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA')),
+            $this->name_upper . '_SHOW_PAYWAY' => Tools::getValue($this->name_upper .
+                    '_SHOW_PAYWAY', Configuration::get($this->name_upper . '_SHOW_PAYWAY')),
+            $this->name_upper . '_SHOW_PAYWAY_LOGO' => Tools::getValue($this->name_upper .
+                    '_SHOW_PAYWAY_LOGO', Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO'))
         );
     }
 
@@ -346,13 +418,23 @@ class BluePayment extends PaymentModule {
             $tpl = '/views/templates/hook/payment.tpl';
             $moduleLink = __PS_BASE_URI__ . 'modules/' . $this->name . '/payment.php';
         }
-
+        
+        if (Configuration::get($this->name_upper . '_SHOW_PAYWAY')){
+            $gateways = new Collection('BlueGateway', $this->context->language->id);
+            $gateways->sqlWhere('gateway_type = '.Configuration::get($this->name_upper .'_TEST_MODE').' AND gateway_status = 1');
+        } else {
+            $gateways = array();
+        }
+        
         $this->smarty->assign(array(
             'module_link' => $moduleLink,
             'ps_version' => _PS_VERSION_,
             'module_dir' => $this->_path,
-            'payment_name' => Tools::getValue($this->name_upper . '_PAYMENT_NAME', Configuration::get($this->name_upper . '_PAYMENT_NAME')),
-            'payment_name_extra' => Tools::getValue($this->name_upper .'_PAYMENT_NAME_EXTRA', Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA'))
+            'payment_name' => Configuration::get($this->name_upper . '_PAYMENT_NAME'),
+            'payment_name_extra' => Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA'),
+            'selectPayWay' => Configuration::get($this->name_upper . '_SHOW_PAYWAY'),
+            'showPayWayLogo' => Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO'),
+            'gateways' => $gateways
         ));
 
         return $this->display(__FILE__, $tpl);
@@ -441,6 +523,7 @@ class BluePayment extends PaymentModule {
      */
     public function hookHeader() {
         $this->context->controller->addCSS($this->_path . '/css/front.css');
+        $this->context->controller->addJS($this->_path . '/js/front.js');
     }
 
     /**
@@ -692,6 +775,32 @@ class BluePayment extends PaymentModule {
                 . '>' . $this->l('Yes') . '</option>
 						        <option value="0"'
                 . (Configuration::get($this->name_upper . '_TEST_MODE') == 0 ? 'selected="selected"' : '' )
+                . '>' . $this->l('No') . '</option>
+                            </select>
+						</td>
+					</tr>
+                                        <tr>
+						<td style="text-align: right;">' . $this->l('Show payway in shop') . '</td>
+						<td>
+						    <select name="' . $this->name_upper . '_SHOW_PAYWAY">
+						        <option value="1"'
+                . (Configuration::get($this->name_upper . '_SHOW_PAYWAY') == 1 ? 'selected="selected"' : '' )
+                . '>' . $this->l('Yes') . '</option>
+						        <option value="0"'
+                . (Configuration::get($this->name_upper . '_SHOW_PAYWAY') == 0 ? 'selected="selected"' : '' )
+                . '>' . $this->l('No') . '</option>
+                            </select>
+						</td>
+					</tr>
+                                        <tr>
+						<td style="text-align: right;">' . $this->l('Show logo payways') . '</td>
+						<td>
+						    <select name="' . $this->name_upper . '_SHOW_PAYWAY_LOGO">
+						        <option value="1"'
+                . (Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO') == 1 ? 'selected="selected"' : '' )
+                . '>' . $this->l('Yes') . '</option>
+						        <option value="0"'
+                . (Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO') == 0 ? 'selected="selected"' : '' )
                 . '>' . $this->l('No') . '</option>
                             </select>
 						</td>

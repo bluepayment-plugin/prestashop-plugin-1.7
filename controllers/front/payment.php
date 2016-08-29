@@ -80,19 +80,36 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         $shared_key = Configuration::get($this->module->name_upper.'_SHARED_KEY');
 
         // Parametry dla klucza hash
-        $hash_data = array($service_id, $order_id, $amount, $customer_email, $shared_key);
+        
 
+        if (Tools::getValue('gateway_id') !== false){
+            $hash_data = array($service_id, $order_id, $amount, Tools::getValue('gateway_id'), $customer_email, $shared_key);
+        } else {
+            $hash_data = array($service_id, $order_id, $amount, $customer_email, $shared_key);
+        }
         // Klucz hash
         $hash_local = $this->module->generateAndReturnHash($hash_data);
 
         // Parametry dla formularza wysyłane do bramki
-        $params = array(
-            'ServiceID' => $service_id,
-            'OrderID' => $order_id,
-            'Amount' => $amount,
-            'CustomerEmail' => $customer_email,
-            'Hash' => $hash_local
-        );
+        if (Tools::getValue('gateway_id') !== false){
+            $params = array(
+                'ServiceID' => $service_id,
+                'OrderID' => $order_id,
+                'Amount' => $amount,
+                'GatewayID' => Tools::getValue('gateway_id'),
+                'CustomerEmail' => $customer_email,
+                'Hash' => $hash_local
+            );
+        } else {
+            $params = array(
+                'ServiceID' => $service_id,
+                'OrderID' => $order_id,
+                'Amount' => $amount,
+                'CustomerEmail' => $customer_email,
+                'Hash' => $hash_local
+            );
+        }
+        
 
         $this->context->smarty->assign(array(
             'params' => $params,
