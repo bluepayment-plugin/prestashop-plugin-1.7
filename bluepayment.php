@@ -105,6 +105,7 @@ class BluePayment extends PaymentModule {
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Zapłać przez system Blue Media');
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.');
             $this->installTab();
+            $this->installDb();
             return true;
         }
         return false;
@@ -118,6 +119,7 @@ class BluePayment extends PaymentModule {
      */
     public function uninstall() {
         $this->uninstallTab();
+        $this->uninstallDb();
         if (parent::uninstall()) {
             foreach ($this->hooks as $hook) {
                 if (!$this->unregisterHook($hook))
@@ -189,6 +191,25 @@ class BluePayment extends PaymentModule {
             return $tab->delete();
         } else
             return false;
+    }
+    
+    public function installDb(){
+        Db::getInstance()->execute(
+			'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'blue_gateways` (
+                        `gateway_id` int(11) NOT NULL AUTO_INCREMENT,
+                        `gateway_status` int(11) NOT NULL,
+                        `bank_name` varchar(100) NOT NULL,
+                        `gateway_name` varchar(100) NOT NULL,
+                        `gateway_description` varchar(1000) DEFAULT NULL,
+                        `gateway_sort_order` int(11) DEFAULT NULL,
+                        `gateway_type` varchar(50) NOT NULL,
+                        `gateway_logo_url` varchar(500) DEFAULT NULL,
+                        PRIMARY KEY (`gateway_id`)
+                      ) ENGINE='._MYSQL_ENGINE_.'  DEFAULT CHARSET=utf8;');
+    }
+    
+    public function uninstallDb(){
+        Db::getInstance()->execute('DROP TABLE `'._DB_PREFIX_.'blue_gateways`');
     }
 
     /**
@@ -421,7 +442,10 @@ class BluePayment extends PaymentModule {
         
         if (Configuration::get($this->name_upper . '_SHOW_PAYWAY')){
             $gateways = new Collection('BlueGateway', $this->context->language->id);
-            $gateways->sqlWhere('gateway_type = '.Configuration::get($this->name_upper .'_TEST_MODE').' AND gateway_status = 1');
+            $gateway = new BlueGateway();
+            $gateway->syncGateways();
+            $gateways->sqlWhere('gateway_type = '.Configuration::get($this->name_upper .'_TEST_MODE').''
+                    . ' AND gateway_status = 1');
         } else {
             $gateways = array();
         }

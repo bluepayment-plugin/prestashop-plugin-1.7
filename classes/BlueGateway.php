@@ -43,6 +43,7 @@ class BlueGateway extends ObjectModel
         $serviceId = Configuration::get($this->module->name_upper . '_SERVICE_PARTNER_ID');
         $messageId = $this->randomString(self::MESSAGE_ID_STRING_LENGTH);
         $hashKey = Configuration::get($this->module->name_upper . '_SHARED_KEY');
+        $gatewayIds = array();
         
         $loadResult = $this->loadGatewaysFromAPI($hashMethod, $serviceId, $messageId, $hashKey, $gatewayListAPIUrl);
         if ($loadResult){
@@ -55,8 +56,12 @@ class BlueGateway extends ObjectModel
                 $payway->gateway_type = Configuration::get($this->module->name_upper .'_TEST_MODE');
                 $payway->force_id = true;
                 $payway->gateway_id = $gateway->gatewayID;
+                $gatewayIds[]=$gateway->gatewayID;
                 $payway->save();
             }
+            Db::getInstance()->delete('blue_gateways', 
+                    'gateway_type = '.Configuration::get($this->module->name_upper .'_TEST_MODE').' '
+                    . 'AND gateway_id not in (' . implode(', ', $gatewayIds) .')');
             return true;
         }
         return false;
