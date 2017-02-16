@@ -21,6 +21,8 @@ if (!defined('_PS_VERSION_'))
 
 function upgrade_module_1_3_0($object)
 {
+    Configuration::updateValue('BLUEPAYMENT_PAYMENT_NAME', 'Zapłać przez system Blue Media');
+    Configuration::updateValue('BLUEPAYMENT_PAYMENT_NAME_EXTRA', 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.');
 	return Db::getInstance()->execute(
 			'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'blue_gateways` (
                         `gateway_id` int(11) NOT NULL AUTO_INCREMENT,

@@ -79,11 +79,6 @@ class BluePayment extends PaymentModule {
         $this->description = $this->l('Plugin supports online payments implemented by payment gateway Blue Media company.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-        
-        if (empty(Configuration::get($this->name_upper . '_PAYMENT_NAME'))) {
-            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Zapłać przez system Blue Media');
-            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.');
-        }
     }
 
     /**

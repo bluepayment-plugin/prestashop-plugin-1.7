@@ -1,5 +1,5 @@
 <?php
-define('BP_VERSION','1.3.1');
+define('BP_VERSION','1.3.2');
 define('TEST_ADDRESS_URL','https://pay-accept.bm.pl/payment');
 define('PROD_ADDRESS_URL','https://pay.bm.pl/payment');
 define('TEST_ADDRESS_PAYWAY_URL','https://pay-accept.bm.pl/paywayList');

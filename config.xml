@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>bluepayment</name>
+	<displayName><![CDATA[Płatności online BM]]></displayName>
+	<version><![CDATA[1.3.2]]></version>
+	<description><![CDATA[Dodatek obsługuje płatności internetowe realizowane przez bramkę płatniczą firmy Blue Media.]]></description>
+	<author><![CDATA[Blue Media]]></author>
+	<tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall><![CDATA[Czy jesteś pewien, że chcesz usunąć moduł?]]></confirmUninstall>
+	<is_configurable>1</is_configurable>
+	<need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>
