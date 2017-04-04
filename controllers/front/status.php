@@ -26,6 +26,7 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
         // Jeśli parametr 'transactions' istnieje i zawiera przynajmniej jedną transakcję
         if ($param_transactions != '')
         {
+            header("Content-type: text/xml");
             // Odkodowanie parametru transakcji
             $base64transactions = base64_decode($param_transactions);
 
