@@ -20,6 +20,7 @@ $_MODULE['<{bluepayment}prestashop>bluepayment_e39476c39596284de01ec227b0ec8a27'
 $_MODULE['<{bluepayment}prestashop>bluepayment_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
 $_MODULE['<{bluepayment}prestashop>bluepayment_630f6dc397fe74e52d5189e2c80f282b'] = 'Wróć do listy';
 $_MODULE['<{bluepayment}prestashop>bluepayment_6d754b4c833bd86c9781081e9540481a'] = 'Blue Media Zarządzenie kanałami płatności';
+$_MODULE['<{bluepayment}prestashop>bluepayment_f2c57765ee2c7db7f72a507148ac2c23'] = 'Pokaż baner ze sposobami płatności';
 $_MODULE['<{bluepayment}prestashop>payment_e2b7dec8fa4b498156dfee6e4c84b156'] = 'Ta forma płatności jest niedostępna.';
 $_MODULE['<{bluepayment}prestashop>payment_6f9b3faae4f5c4cd1e598644a7760e20'] = 'Prosimy czekać..';
 $_MODULE['<{bluepayment}prestashop>payment_f7edd3ee44c1a314a0dc3051afb9f5aa'] = 'Wybierz bank';
@@ -29,5 +30,6 @@ $_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_6d754b4c833bd86c97
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_0e085e16c0928b6526d2b0084d7114a2'] = 'Pomyślnie pobrano kanały płatności';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_db7455afbd5ad872a333eb4186e2f232'] = 'Błąd pobierania kanałów płatności';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_d896b2d6433f6979e668805601248ba6'] = 'Status kanału płatności zmieniony';
+$_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_f2c57765ee2c7db7f72a507148ac2c23'] = 'Pokaż baner ze sposobami płatności';
 
 return $_MODULE;

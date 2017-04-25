@@ -29,6 +29,9 @@
             &nbsp;{$payment_name}
             <span>({$payment_name_extra})</span>
         </a>
+        {if $showBaner}
+            <img src="{$module_dir}img/baner.png" style="width: 100%;"/>
+        {/if}
         {if $selectPayWay}
             <div id="blue_payway" style="display: none;">
                 <h1 class="page-heading step-num">{l s='Select bank' mod='bluepayment'}</h1>

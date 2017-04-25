@@ -97,6 +97,7 @@ class BluePayment extends PaymentModule {
             Configuration::updateValue($this->name_upper . '_TEST_MODE', 1);
             Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY', 0);
             Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY_LOGO', 1);
+            Configuration::updateValue($this->name_upper . '_SHOW_BANER', 0);
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Zapłać przez system Blue Media');
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'Po złożeniu zamówienia zostaniesz przekierowany do bezpiecznego systemu płatności Blue Media.');
             $this->installTab();
@@ -131,6 +132,7 @@ class BluePayment extends PaymentModule {
             Configuration::deleteByName($this->name_upper . '_PAYMENT_NAME_EXTRA');
             Configuration::deleteByName($this->name_upper . '_SHOW_PAYWAY');
             Configuration::deleteByName($this->name_upper . '_SHOW_PAYWAY_LOGO');
+            Configuration::deleteByName($this->name_upper . '_SHOW_BANER');
 
             return true;
         }
@@ -162,6 +164,7 @@ class BluePayment extends PaymentModule {
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', Tools::getValue($this->name_upper . '_PAYMENT_NAME_EXTRA'));
             Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY', (int)Tools::getValue($this->name_upper . '_SHOW_PAYWAY'));
             Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY_LOGO', (int)Tools::getValue($this->name_upper . '_SHOW_PAYWAY_LOGO'));
+            Configuration::updateValue($this->name_upper . '_SHOW_BANER', (int)Tools::getValue($this->name_upper . '_SHOW_BANER'));
             $output .= $this->displayConfirmation($this->l('Settings updated'));
         }
         return $output . $this->renderForm();
@@ -267,6 +270,24 @@ class BluePayment extends PaymentModule {
                     'label' => $this->l('Show logo payways'),
                     'required' => true,
                     'name' => $this->name_upper . '_SHOW_PAYWAY_LOGO',
+                    'values' => array(
+                        array(
+                            'id' => 'active_on',
+                            'value' => 1,
+                            'label' => $this->l('Yes')
+                        ),
+                        array(
+                            'id' => 'active_off',
+                            'value' => 0,
+                            'label' => $this->l('No')
+                        )
+                    ),
+                ),
+                array(
+                    'type' => 'switch',
+                    'label' => $this->l('Show baner'),
+                    'required' => true,
+                    'name' => $this->name_upper . '_SHOW_BANER',
                     'values' => array(
                         array(
                             'id' => 'active_on',
@@ -410,7 +431,9 @@ class BluePayment extends PaymentModule {
             $this->name_upper . '_SHOW_PAYWAY' => Tools::getValue($this->name_upper .
                     '_SHOW_PAYWAY', Configuration::get($this->name_upper . '_SHOW_PAYWAY')),
             $this->name_upper . '_SHOW_PAYWAY_LOGO' => Tools::getValue($this->name_upper .
-                    '_SHOW_PAYWAY_LOGO', Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO'))
+                    '_SHOW_PAYWAY_LOGO', Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO')),
+            $this->name_upper . '_SHOW_BANER' => Tools::getValue($this->name_upper .
+            '_SHOW_BANER', Configuration::get($this->name_upper . '_SHOW_BANER'))
         );
     }
 
@@ -453,6 +476,7 @@ class BluePayment extends PaymentModule {
             'payment_name_extra' => Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA'),
             'selectPayWay' => Configuration::get($this->name_upper . '_SHOW_PAYWAY'),
             'showPayWayLogo' => Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO'),
+            'showBaner' => Configuration::get($this->name_upper . '_SHOW_BANER'),
             'gateways' => $gateways
         ));
 
@@ -821,6 +845,19 @@ class BluePayment extends PaymentModule {
 						        <option value="0"'
                 . (Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO') == 0 ? 'selected="selected"' : '' )
                 . '>' . $this->l('No') . '</option>
+                            </select>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: right;">' . $this->l('Show baner') . '</td>
+						<td>
+						    <select name="' . $this->name_upper . '_SHOW_BANER">
+						        <option value="1"'
+            . (Configuration::get($this->name_upper . '_SHOW_BANER') == 1 ? 'selected="selected"' : '' )
+            . '>' . $this->l('Yes') . '</option>
+						        <option value="0"'
+            . (Configuration::get($this->name_upper . '_SHOW_BANER') == 0 ? 'selected="selected"' : '' )
+            . '>' . $this->l('No') . '</option>
                             </select>
 						</td>
 					</tr>
