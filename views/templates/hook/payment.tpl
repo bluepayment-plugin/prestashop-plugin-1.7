@@ -30,7 +30,9 @@
             <span>({$payment_name_extra})</span>
         </a>
         {if $showBaner}
-            <img src="{$module_dir}img/baner.png" style="width: 100%;"/>
+            <a href="{$module_link}" title="{$payment_name}" {if $selectPayWay} onclick="return selectBluePayment()"{/if}>
+                <img src="{$module_dir}img/baner.png" style="width: 100%;"/>
+            </a>
         {/if}
         {if $selectPayWay}
             <div id="blue_payway" style="display: none;">
