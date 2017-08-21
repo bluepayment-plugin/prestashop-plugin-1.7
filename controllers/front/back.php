@@ -48,7 +48,7 @@ class BluePaymentBackModuleFrontController extends ModuleFrontController
             )
         );
 
-        $this->setTemplate("payment_return.tpl");
+        $this->setTemplate("module:bluepayment/views/templates/front/payment_return.tpl");
     }
 
 }

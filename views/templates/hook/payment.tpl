@@ -13,44 +13,43 @@
  * @copyright      Copyright (c) 2015-2016
  * @license        https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License
  *}
-
-<p class="payment_module test_module" {$selectPayWay}>
-    {if $ps_version < '1.5'}
-        <a href="{$module_link}" title="{$payment_name}" {if $selectPayWay} onclick="return selectBluePayment()"{/if}>
-            <span>
-                <img src="{$module_dir}logo.png" alt="{$payment_name}" />
-                {$payment_name}
-                ({$payment_name_extra})
-            </span>
-        </a>
-            
-    {else}
-        <a class="logo_background" href="{$module_link}" title="{$payment_name}" {if $selectPayWay} onclick="return selectBluePayment()"{/if}>
-            &nbsp;{$payment_name}
-            <span>({$payment_name_extra})</span>
-        </a>
-        {if $showBaner}
-            <a href="{$module_link}" title="{$payment_name}" {if $selectPayWay} onclick="return selectBluePayment()"{/if}>
-                <img src="{$module_dir}img/baner.png" style="width: 100%;"/>
-            </a>
-        {/if}
+<section>
+    <p class="logo_background">
+        <span>
+            &nbsp;{$payment_name}<br/>
+            ({$payment_name_extra})
+        </span>
         {if $selectPayWay}
-            <div id="blue_payway" style="display: none;">
-                <h1 class="page-heading step-num">{l s='Select bank' mod='bluepayment'}</h1>
-                <div class="row">
-                    {foreach from=$gateways item=row}
-                    <div class="col-xs-3">
-                        <a href="{$module_link}?gateway_id={$row->gateway_id}" class="thumbnail">
-                            {if $showPayWayLogo}<img src="{$row->gateway_logo_url}" alt="{$row->gateway_name}">{/if}
-                            <center>{$row->gateway_name}</center>
-                        </a>
+    <form id="bluepayment-gateway" method="GET">
+        <div id="blue_payway">
+            <h1 class="page-heading step-num">{l s='Select bank' mod='bluepayment'}</h1>
+            <div class="row">
+                {foreach from=$gateways item=row name='gateways'}
+                <div class="col-xs-6">
 
-                    </div>
-                    {/foreach}
-                </div>  
+                    <label>
+                        {*<span class="custom-radio pull-xs-left">*}
+                        <input value="{$row->gateway_id}" name="bluepayment-gateway-gateway-id" type="radio" required="">
+                        {*</span>*}
+
+                        {if $showPayWayLogo}
+                            <img style="width: 60px;" src="{$row->gateway_logo_url}" alt="{$row->gateway_name}">
+                        {/if}
+                        {$row->gateway_name}
+                    </label>
+                </div>
+                {if $smarty.foreach.gateways.iteration is div by 2}
+            </div><div class="row">
+                {/if}
+                {/foreach}
             </div>
-        {/if}
+        </div>
+    </form>
+
     {/if}
-    
-    
-</p>
+    </p>
+    {if $showBaner}
+        <br/>
+        <img src="{$module_dir}img/baner.png" style="width: 100%;"/>
+    {/if}
+</section>

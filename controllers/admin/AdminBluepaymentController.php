@@ -8,7 +8,7 @@ class AdminBluepaymentController extends ModuleAdminController
 	{
 		$this->bootstrap = true;
 		$this->display = 'view';
-		$this->meta_title = $this->l('Blue Payments Gateway Manager');
+//		$this->meta_title = $this->l('Blue Payments Gateway Manager');
 		parent::__construct();
 		if (!$this->module->active)
 			Tools::redirectAdmin($this->context->link->getAdminLink('AdminHome'));

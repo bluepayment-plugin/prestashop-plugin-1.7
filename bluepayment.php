@@ -16,11 +16,17 @@
  * @license        https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License
  */
 
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 if (!defined('_PS_VERSION_'))
     exit;
 
+ini_set("display_errors", 1);
+error_reporting(E_ALL);
+
 include_once dirname(__FILE__).'/classes/BlueGateway.php';
+
+
 
 class BluePayment extends PaymentModule {
 
@@ -34,7 +40,7 @@ class BluePayment extends PaymentModule {
      */
     protected $hooks = array(
         'header',
-        'payment',
+        'paymentOptions',
         'paymentReturn',
     );
     private $_checkHashArray = array();
@@ -58,18 +64,14 @@ class BluePayment extends PaymentModule {
     public function __construct() {
         $this->name = 'bluepayment';
         $this->name_upper = strtoupper($this->name);
-        // Kompatybilność wstecz dla wersji 1.4
-        if (_PS_VERSION_ < '1.5') {
-            require(_PS_MODULE_DIR_ . $this->name . '/backward_compatibility/backward.php');
-            require_once(_PS_MODULE_DIR_ . $this->name . '/config/config.inc.php');
-        } else {
-            require_once(dirname(__FILE__) . '/config/config.inc.php');
-        }
+
+        require_once(dirname(__FILE__) . '/config/config.inc.php');
+
         $this->tab = 'payments_gateways';
         $this->version = BP_VERSION;
         $this->author = 'Blue Media';
         $this->need_instance = 0;
-        $this->ps_versions_compliancy = array('min' => '1.4.5', 'max' => '1.6');
+        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
 
@@ -79,6 +81,7 @@ class BluePayment extends PaymentModule {
         $this->description = $this->l('Plugin supports online payments implemented by payment gateway Blue Media company.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
+
     }
 
     /**
@@ -440,24 +443,16 @@ class BluePayment extends PaymentModule {
     /**
      * Hak do kroku wyboru płatności
      */
-    public function hookPayment() {
+    public function hookPaymentOptions() {
         if (!$this->active)
             return;
 
-        // Kompatybilność wstecz dla wersji 1.4
-        if (_PS_VERSION_ < '1.5') {
-            global $smarty;
-            $this->smarty = $smarty;
-        }
-
         if (method_exists('Link', 'getModuleLink')) {
             $moduleLink = $this->context->link->getModuleLink('bluepayment', 'payment', array(), true);
-            $tpl = 'payment.tpl';
         } else {
-            $tpl = '/views/templates/hook/payment.tpl';
             $moduleLink = __PS_BASE_URI__ . 'modules/' . $this->name . '/payment.php';
         }
-        
+
         if (Configuration::get($this->name_upper . '_SHOW_PAYWAY')){
             $gateways = new Collection('BlueGateway', $this->context->language->id);
             $gateway = new BlueGateway();
@@ -467,7 +462,7 @@ class BluePayment extends PaymentModule {
         } else {
             $gateways = array();
         }
-        
+
         $this->smarty->assign(array(
             'module_link' => $moduleLink,
             'ps_version' => _PS_VERSION_,
@@ -480,7 +475,19 @@ class BluePayment extends PaymentModule {
             'gateways' => $gateways
         ));
 
-        return $this->display(__FILE__, $tpl);
+//        return $this->display(__FILE__, $tpl);
+
+
+        $newOptions = array();
+        $newOption = new PaymentOption();
+        $newOption->setCallToActionText('Płatności online BM')
+//            ->setLogo($this->getPrzelewy24()->getPathUri() . 'views/img/logo_mini.png')
+            ->setAction($moduleLink)
+            ->setAdditionalInformation($this->fetch('module:bluepayment/views/templates/hook/payment.tpl'));
+        $newOptions[] = $newOption;
+//        $newOptions = array_merge($newOptions, $this->getPromotedPayments());
+        return $newOptions;
+
     }
 
     /**

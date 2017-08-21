@@ -80,10 +80,16 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         $shared_key = Configuration::get($this->module->name_upper.'_SHARED_KEY');
 
         // Parametry dla klucza hash
-        
 
-        if (Tools::getValue('gateway_id') !== false){
-            $hash_data = array($service_id, $order_id, $amount, Tools::getValue('gateway_id'), $customer_email, $shared_key);
+        $gateway_id = false;
+
+        if (isset($this->context->cookie->gateway_id)){
+            $gateway_id = $this->context->cookie->gateway_id;
+        }
+        $this->context->cookie->gateway_id = false;
+
+        if ($gateway_id !== false){
+            $hash_data = array($service_id, $order_id, $amount, $gateway_id, $customer_email, $shared_key);
         } else {
             $hash_data = array($service_id, $order_id, $amount, $customer_email, $shared_key);
         }
@@ -91,12 +97,12 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         $hash_local = $this->module->generateAndReturnHash($hash_data);
 
         // Parametry dla formularza wysyłane do bramki
-        if (Tools::getValue('gateway_id') !== false){
+        if ($gateway_id !== false){
             $params = array(
                 'ServiceID' => $service_id,
                 'OrderID' => $order_id,
                 'Amount' => $amount,
-                'GatewayID' => Tools::getValue('gateway_id'),
+                'GatewayID' => $gateway_id,
                 'CustomerEmail' => $customer_email,
                 'Hash' => $hash_local
             );
@@ -109,7 +115,6 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 'Hash' => $hash_local
             );
         }
-        
 
         $this->context->smarty->assign(array(
             'params' => $params,
@@ -117,7 +122,8 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             'form_url' => $form_url,
         ));
 
-        $this->setTemplate("payment.tpl");
+        $this->setTemplate("module:bluepayment/views/templates/front/payment.tpl");
+
     }
 
 }
