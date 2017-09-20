@@ -38,6 +38,7 @@ class BackController extends FrontController
 
         $bp = new BluePayment();
 
+
         // Id serwisu partnera
         $service_id = Configuration::get($bp->name_upper . '_SERVICE_PARTNER_ID');
 
@@ -56,11 +57,11 @@ class BackController extends FrontController
         $hash_local = $bp->generateAndReturnHash($hash_data);
 
         // Jeśli klucz hash jest prawidłowy przekieruj na stronę zamówień
-        if ($hash == $hash_local)
+        if ($this->context->customer->isLogged())
             Tools::redirect('order-history');
 
         $context->smarty->assign(array(
-                'hash_valid' => false
+                'hash_valid' => $hash == $hash_local
             )
         );
 

@@ -18,6 +18,14 @@
 
 class BluePaymentBackModuleFrontController extends ModuleFrontController
 {
+    public function init()
+    {
+        $this->page_name = 'opinion'; // page_name and body id
+        $this->display_column_left = true;
+        $this->display_column_right = true;
+        parent::init();
+    }
+
     public function initContent()
     {
         parent::initContent();
@@ -40,11 +48,15 @@ class BluePaymentBackModuleFrontController extends ModuleFrontController
         $hash_local = $this->module->generateAndReturnHash($hash_data);
 
         // Jeśli klucz hash jest prawidłowy przekieruj na stronę zamówień
-        if ($hash == $hash_local)
+
+        $valid = ($hash == $hash_local);
+
+        if ($valid && $this->context->customer->isLogged())
             Tools::redirect('index.php?controller=order-confirmation&id_module='.$this->module->id.'&id_order='.$order_id);
 
         $this->context->smarty->assign(array(
-                'hash_valid' => false
+                'hash_valid' => $valid,
+                'order' => new OrderCore($order_id)
             )
         );
 
