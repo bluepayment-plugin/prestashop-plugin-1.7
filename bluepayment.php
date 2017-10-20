@@ -21,8 +21,6 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_'))
     exit;
 
-ini_set("display_errors", 1);
-error_reporting(E_ALL);
 
 include_once dirname(__FILE__).'/classes/BlueGateway.php';
 
