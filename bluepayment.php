@@ -732,7 +732,7 @@ class BluePayment extends PaymentModule {
                     if ($order->current_state != $status_waiting_pay_id) {
                         $new_history = new OrderHistory();
                         $new_history->id_order = $order_id;
-                        $new_history->id_order_state = $status_waiting_pay_id;
+                        $new_history->changeIdOrderState($status_waiting_pay_id, $order_id);
                         $new_history->addWithemail(true);
                     }
                     break;
@@ -753,7 +753,7 @@ class BluePayment extends PaymentModule {
                         }
                         $new_history = new OrderHistory();
                         $new_history->id_order = $order_id;
-                        $new_history->id_order_state = $status_accept_pay_id;
+                        $new_history->changeIdOrderState($status_accept_pay_id, $order_id);
                         $new_history->addWithemail(true);
                     }
                     break;
@@ -763,7 +763,7 @@ class BluePayment extends PaymentModule {
                     if ($order->current_state == $status_waiting_pay_id) {
                         $new_history = new OrderHistory();
                         $new_history->id_order = $order_id;
-                        $new_history->id_order_state = $status_error_pay_id;
+                        $new_history->changeIdOrderState($status_error_pay_id, $order_id);
                         $new_history->addWithemail(true);
                     }
                     break;
