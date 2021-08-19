@@ -1,4 +1,4 @@
-![](https://bluemedia.pl/storage/loga/logo-blue-media.svg)
+<img src="https://bluemedia.pl/storage/loga/logo-blue-media.svg" width="160"/>
 
 ## Payment Module for PrestaShop 1.7
 
