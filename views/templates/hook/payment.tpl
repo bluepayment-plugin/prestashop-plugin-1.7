@@ -22,28 +22,35 @@
     {if $showBaner}
         <img src="{$module_dir}views/img/baner.png" style="width: 100%;" />
     {/if}
+
     {if $selectPayWay}
         <form id="bluepayment-gateway" method="GET">
             <div class="bluepayment-agent-info">
                 {l s='The payment order is submitted to your bank via Blue Media S.A. based in Sopot and will be processed in accordance with the terms and conditions specified by your bank.' mod='bluepayment'}
             </div>
-            <div id="blue_payway">
-                <div class="row">
+
+            <div id="blue_payway" class="bluepayment-gateways">
+                <div class="bluepayment-gateways__wrap">
+
                     {foreach from=$gateways item=row name='gateways'}
-                    <div class="col-xs-6 blue-gateway">
-                        <label>
-                            <input type="radio" name="bluepayment-gateway-gateway-id" value="{$row->gateway_id}" required="required">
+                    <div class="bluepayment-gateways__item">
+                        <input type="radio" id="{$row->gateway_name}" class="bluepayment-gateways__radio" name="bluepayment-gateway-gateway-id" value="{$row->gateway_id}" required="required">
+                        <label for="{$row->gateway_name}">
+{*                            <input type="radio" class="bluepayment-gateways__radio" name="bluepayment-gateway-gateway-id" value="{$row->gateway_id}" required="required">*}
                             {if $showPayWayLogo}
-                            <img src="{$row->gateway_logo_url}" alt="{$row->gateway_name}">
+                            <img class="bluepayment-gateways__img" src="{$row->gateway_logo_url}" alt="{$row->gateway_name}">
                             {/if}
-                            <span class="payway-text">{$row->gateway_name}</span>
+                            <span class="bluepayment-gateways__name">{$row->gateway_name}</span>
                         </label>
                     </div>
-                    {if $smarty.foreach.gateways.iteration is div by 2}
-                </div>
-                <div class="row">
-                    {/if}
+
+{*                    {if $smarty.foreach.gateways.iteration is div by 2}*}
+{*                        </div>*}
+{*                        <div class="row">*}
+{*                    {/if}*}
+
                     {/foreach}
+
                 </div>
             </div>
             <!-- wyswietlamy klauzle jezeli mamy przynajmniej jeden kanał PIS (a mamy go gdy regulationsGet zwroci min 1 val )-->
@@ -56,6 +63,8 @@
             </div>
         </form>
     {/if}
+
+
     <script>
         var regulations_get_url = '{$regulations_get}';
         var start_payment_translation = '{$start_payment_translation}';

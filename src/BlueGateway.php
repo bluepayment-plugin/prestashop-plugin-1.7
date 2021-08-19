@@ -12,6 +12,12 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+
+
+//use \Base\Section as BSection;
+
+//namespace PsBlueMedia;
+
 class BlueGateway extends ObjectModel
 {
     const FAILED_CONNECTION_RETRY_COUNT = 5;

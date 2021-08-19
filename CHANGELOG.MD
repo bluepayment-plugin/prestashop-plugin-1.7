@@ -1,4 +1,16 @@
 # Changelog
+
+## [2.6.2] 19.08.2021
+- Added composer
+- Add autoloader class
+- Fixed ITN problem  
+- Fixed payment buttons language
+- Creation of native transactional messages
+- Change of default settings of transaction statuses
+- Change classes directory to 'src'
+- Changing the location of payment methods. Payments are located in the main module configuration
+- Improved appearance of customer-side payment methods
+
 ## [2.6.1] 21.04.2021
 ### Changed
 - Min and max amount for Smarney payments

@@ -13,10 +13,23 @@
  * @copyright      Copyright (c) 2015-2020
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-<p style="text-align: center;"><img src="{$module_dir}views/img/ajax-loader-big.gif" /></p>
-<p style="text-align: center;"><b>{l s='Please wait..' mod='bluepayment'}</b></p>
-<p style="text-align: center;"><img src="{$module_dir}views/img/logo.jpg" /></p>
+<html>
+<head>
+    <link rel="stylesheet" href="{$module_dir}/views/css/front.css" />
+    <title>{l s='Blue Media redirect...' mod='bluepayment'}</title>
+</head>
+<body class="blue-media-body">
+<div class="bm-redirect-page">
+    <div class="bm-redirect-page-content">
+        <img src="{$module_dir}views/img/bm-logo-blue.png" class="logo" />
+        <p>{l s='Redirection to payment in progress.' mod='bluepayment'}</p>
+        <p>{l s='Please wait a moment...' mod='bluepayment'}</p>
+        <img src="{$module_dir}views/img/redirect.gif" class="loader" />
+    </div>
 
-<div>
-    {$form nofilter}
+    <div>
+        {$form nofilter}
+    </div>
 </div>
+</body>
+</html>

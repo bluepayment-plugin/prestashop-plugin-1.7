@@ -1,6 +1,11 @@
 <?php
 
-namespace Dictionaries;
+//namespace Dictionaries;
+
+//namespace PsBlueMedia\OrderStatus;
+
+//namespace PsBlueMedia;
+
 
 abstract class OrderStatusMessageDictionary
 {
@@ -12,7 +17,6 @@ abstract class OrderStatusMessageDictionary
 
     public static function getMessage($order_status_id)
     {
-
         return self::hasKey($order_status_id) ? self::ORDER_STATUS_MESSAGE[$order_status_id] : null;
     }
 

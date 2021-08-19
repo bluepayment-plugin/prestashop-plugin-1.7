@@ -51,24 +51,17 @@ $(document).ready(function () {
                     if (response.status === 'PENDING') {
                         if (typeof response.redirectUrl !== "undefined" && response.redirectUrl.length > 10) {
                             window.location.href = response.redirectUrl;
-
-                            responseMessages.html('<b>' + response.message + '</b>')
-                            responseMessages.show()
-                            bmSubmitBlikData.postOrderId = response.postOrderId
-                            blik_verify_check = setInterval(sendBlikCode(blikAction), 1000)
-                        } else if (response.status === 'SUCCESS') {
-                            clearInterval(blik_verify_check)
-                            window.location.href = response.backUrl
-                        } else {
-                            bmSubmitBlikData.postOrderId = response.postOrderId
-                            clearInterval(blik_verify_check)
-                            bmHideLoader()
-                            responseMessages.parent('div').addClass('has-error')
-                            responseMessages.html(response.message)
-                            responseMessages.show()
-                            submitter.removeAttr('disabled')
                         }
-                    } else if (response.status === 'FAILURE') {
+                        responseMessages.html('<b>' + response.message + '</b>');
+                        responseMessages.show();
+                        bmSubmitBlikData.postOrderId = response.postOrderId;
+                        blik_verify_check = setInterval(sendBlikCode(blikAction), 1000)
+                    }
+                    else if (response.status === 'SUCCESS') {
+                        clearInterval(blik_verify_check);
+                        window.location.href = response.backUrl
+                    }
+                    else if (response.status === 'FAILURE') {
                         let message = typeof response.message !== 'undefined' && response.message.length !== 0
                             ? response.message
                             : 'Transaction ERROR - Empty data.';

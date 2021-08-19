@@ -1,79 +1,204 @@
+/* line 1, front.scss */
 .logo_background {
-    background: url(../logo.png) 10px 15px no-repeat #fbfbfb;
-    padding: 15px 0 15px 120px;
+  background: url(../logo.png) 10px 15px no-repeat #fbfbfb;
+  padding: 15px 0 15px 120px;
 }
 
+/* line 6, front.scss */
 .bluepayment-loader-bg {
-    display: none;
-    width: 100%;
-    height: 100%;
-    margin: auto;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 98;
-    background: #222;
-    opacity: 0.3;
-    filter: alpha(opacity=30); /* For IE8 and earlier */
+  display: none;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 98;
+  background: #222;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+  /* For IE8 and earlier */
 }
 
+/* line 22, front.scss */
 div.payment-option > label > img {
-    width: 70px;
+  width: 70px;
 }
 
+/* line 26, front.scss */
 .bluepayment-loader {
-    display: none;
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #3498db;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    animation: bluepayment_spin 1.5s linear infinite;
-    margin: auto;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 99;
+  display: none;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  animation: bluepayment_spin 1.5s linear infinite;
+  margin: auto;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
 }
 
 @keyframes bluepayment_spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-
+/* line 52, front.scss */
 #blue_payway {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
+/* line 56, front.scss */
 .blue-gateway label {
-    text-align: left;
-    width: 100%;
-    display: inline-block;
+  text-align: left;
+  width: 100%;
+  display: inline-block;
 }
-
-.blue-gateway img {
-    width: 60px;
-}
-
-.payway-text {
-    padding-left: 5px;
-    max-width: 198px;
-    text-align: left;
-    width: 100%;
-    color: black;
+/* line 61, front.scss */
+.blue-gateway label img {
+  width: 60px;
 }
 
 
 @media only screen and (max-width: 1199px) {
-    .payway-text {
-        padding-top: 0;
-    }
+  /* line 76, front.scss */
+  .payway-text {
+    padding-top: 0;
+  }
+}
+/* line 81, front.scss */
+.blue-media-body {
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* line 89, front.scss */
+.blue-media-body .bm-redirect-page-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+/* line 95, front.scss */
+.blue-media-body .bm-redirect-page-content .logo {
+  max-width: 220px;
+  height: auto;
+}
+/* line 99, front.scss */
+.blue-media-body .bm-redirect-page-content .loader {
+  margin-top: 15px;
+}
+/* line 103, front.scss */
+.blue-media-body .bm-redirect-page-content p {
+  margin-bottom: 10px;
+  font-size: 18px;
+  margin-top: 0;
+}
+/* line 110, front.scss */
+.blue-media-body .bm-redirect-page input[type="submit"] {
+  display: none;
+}
+
+
+.bluepayment-gateways {
+
+}
+
+.bluepayment-gateways__wrap {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -0.3rem;
+  margin-right: -0.3rem;
+  margin-bottom: 1rem;
+}
+
+
+
+.bluepayment-gateways__item {
+  padding: 0.3rem;
+  width: 25%;
+}
+
+@media only screen and (max-width: 768px) {
+  .bluepayment-gateways__item {
+    width: 50%;
+  }
+}
+
+@media only screen and (max-width: 1400px) {
+  .bluepayment-gateways__item {
+    width: 33.333%;
+  }
+}
+
+
+.bluepayment-gateways__img {
+  width: 65px;
+  display: table;
+  margin: 0 auto;
+}
+
+/*.bluepayment-gateways__item input:checked ~ .bluepayment-gateways__name { font-weight: bold }*/
+.bluepayment-gateways__item input:checked ~ label {
+  border-color: #005abb;
+  transition: all 0.3s ease;
+
+
+}
+
+.bluepayment-gateways__item label{
+  border: 2px solid #efefef;
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: flex !important;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  align-content: flex-start;
+  align-items: initial;
+  flex-direction: column;
+  justify-content: space-between;
+
+
+
+}
+
+.bluepayment-gateways__item input{
+  display: none;
+}
+
+.bluepayment-gateways__name {
+  text-align: center;
+  width: 100%;
+  color: black;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+  line-height: 1.2;
+}
+
+
+.payment-option {
+  display: flex;
+  align-items: center;
+}
+
+.payment-option label {
+  margin-bottom:0;
 }

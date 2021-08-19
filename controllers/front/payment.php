@@ -103,6 +103,8 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
         $isoCode = $this->context->currency->iso_code;
 
+
+
         // Identyfikator serwisu partnera
         $service_id = (int)$this->module
             ->parseConfigByCurrency($this->module->name_upper.'_SERVICE_PARTNER_ID', $isoCode);
