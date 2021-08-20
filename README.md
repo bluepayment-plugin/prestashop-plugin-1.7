@@ -26,14 +26,14 @@ Do najważniejszych funkcji modułu zalicza się:
 3. Po zalogowaniu się przejdź do zakładki **Moduły > Moduły i usługi** i:
 - kliknij **Dodaj nowy moduł** (widoczny w prawym górnym rogu), by wgrać paczkę plików, którą pobrałeś w poprzednim kroku;
 
-![Dodaj nowy moduł](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/blob/master/docs/img/zaladuj.png)
+![Dodaj nowy moduł](https://user-images.githubusercontent.com/87177993/130194405-94fe13b7-e2f8-4ea9-bea0-8db12ebeeb9e.png)
 *(Po kliknięciu przycisku pojawi się okno umożliwiające wybór pliku z komputera.)*
 
 ● kliknij **Załaduj moduł**
 
 Gdy instalacje się zakończy, system przeniesie cię automatycznie do Konfiguracji modułu.
 
-![Konfiguracja](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/blob/master/docs/img/konfiguracja.png)
+![Konfiguracja](https://user-images.githubusercontent.com/87177993/130194624-c8371417-f31d-44ea-ba0b-872e878de014.png)
 
 ## Konfiguracja
 
@@ -42,11 +42,11 @@ Gdy instalacje się zakończy, system przeniesie cię automatycznie do Konfigura
 1. Zaloguj się za pomocą konta administratora na adres:
    http(s)://domena_sklepu.pl/nazwa_katalogu_administratora
 
-![Logowanie](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/blob/master/docs/img/logowanie.png)
+![Logowanie](https://user-images.githubusercontent.com/87177993/130193963-b91d3de8-57a6-4c62-80e3-64a2ce93d735.png)
 
 2. Przejdź do zakładki **Preferencje ➝ Ruch**, znajdź **Przyjazny adres URL** i włącz klikając **Tak**.
 
-![Przyjazny adres URL](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/blob/master/docs/img/seo.png)
+![Przyjazny adres URL](https://user-images.githubusercontent.com/87177993/130194986-893c69f6-e47c-428d-884e-44e8ffcfc6e6.png)
 
 
 ### Konfiguracja modułu
@@ -57,7 +57,7 @@ Gdy instalacje się zakończy, system przeniesie cię automatycznie do Konfigura
 - http(s)://domena_sklepu.pl/module/bluepayment/back
 - http(s)://domena_sklepu.pl/module/bluepayment/status
 
-![Ustawienia](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/blob/master/docs/img/konfiguracja.png)
+![Ustawienia](https://user-images.githubusercontent.com/87177993/130194624-c8371417-f31d-44ea-ba0b-872e878de014.png)
 
 Opis pól:
 1. Tryb testowy – zmiana trybu pracy bramki na testowy umożliwia weryfikację działania modułu bez konieczności rzeczywistego opłacania zamówienie (w trybie testowym nie pobierane są żadne opłaty za zamówienie).
@@ -107,11 +107,11 @@ Powiadomienia o zmianie statusu płatności wysyłane są w zależności od konf
 
 1. Żeby dokonać aktualizacji – Wystarczy kliknąć Upgrade.
 
-![Upgrade](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/blob/master/docs/img/aktualizacja.png)
+![Upgrade](https://user-images.githubusercontent.com/87177993/130195194-14d14c9a-1cfa-43f8-aa4b-c82e72a28dac.png)
 
 2. Następnie postępuj zgodnie z instrukcją opisaną w sekcji **Instalacja wtyczki**.
 
 ## Odinstalowanie
 Żeby odinstalować moduł – wybierz **Odinstaluj**.
 
-![Odinstaluj](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/blob/master/docs/img/konfiguruj.png)
+![Odinstaluj](https://user-images.githubusercontent.com/87177993/130195263-931b9ac8-a2f0-42c1-841f-0fc853a716b4.png)
