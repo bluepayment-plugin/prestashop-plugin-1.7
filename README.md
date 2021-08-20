@@ -19,6 +19,7 @@ Do najważniejszych funkcji modułu zalicza się:
 ## Instalacja wtyczki
 
 1) Pobierz najnowszą wersję wtyczki klikając [tutaj](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/archive/refs/heads/master.zip).
+
 2) Wejdź na http(s)://domena_sklepu.pl/nazwa_katalogu_administratora i zaloguj się do swojego konta administratora używając loginu i hasła.
 
 ![Logowanie](https://user-images.githubusercontent.com/87177993/130193963-b91d3de8-57a6-4c62-80e3-64a2ce93d735.png)
@@ -53,7 +54,9 @@ Gdy instalacje się zakończy, system przeniesie cię automatycznie do Konfigura
 ### Konfiguracja modułu
 
 1) Przejdź do zakładki **Moduły ➝ Moduły i usługi** i wybierz z listy modułów kategorię: **Płatności, bramki, operatorzy** (lub wyszukaj moduł za pomocą wyszukiwarki).
+
 2) Wybierz **Konfiguruj Płatności online BM** i uzupełnij wszystkie dane (otrzymasz je od nas). Jeżeli przycisk **Konfiguruj** nie jest widoczny – należy ponownie zainstalować moduł.
+
 3) Żeby uzyskać od nas Identyfikator serwisu partnera oraz Klucz współdzielony – prześlij do nas adresy do komunikacji między sklepem a bramką płatniczą:
 - http(s)://domena_sklepu.pl/module/bluepayment/back
 - http(s)://domena_sklepu.pl/module/bluepayment/status
@@ -78,7 +81,9 @@ Po uzupełnieniu wszystkich pól – kliknij **Zapisz**.
 
 1) Zaloguj się za pomocą konta administratora na adres:
    http(s)://domena_sklepu.pl/nazwa_katalogu_administratora
+   
 2) Przejdź do zakładki **Moduły ➝ Menadżer modułów ➝ Płatności online BM ➝ Konfiguruj**
+
 3) Żeby pobrać kanały płatności, kliknij **Odśwież** – po pobraniu powinna się pojawić lista kanałów płatności dla wybranego trybu pracy (testowy/produkcyjny).
 
 Jeżeli podczas pobierania pojawi się błąd – najprawdopodobniej podczas konfiguracji modułu zostały podane nieprawidłowe dane (Klucz współdzielony lub Identyfikator serwisu partnera)
