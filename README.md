@@ -27,6 +27,7 @@ Do najważniejszych funkcji modułu zalicza się:
 - kliknij **Dodaj nowy moduł** (widoczny w prawym górnym rogu), by wgrać paczkę plików, którą pobrałeś w poprzednim kroku;
 
 ![Dodaj nowy moduł](https://user-images.githubusercontent.com/87177993/130194405-94fe13b7-e2f8-4ea9-bea0-8db12ebeeb9e.png)
+
 *(Po kliknięciu przycisku pojawi się okno umożliwiające wybór pliku z komputera.)*
 
 ● kliknij **Załaduj moduł**
@@ -64,12 +65,12 @@ Opis pól:
 2. Pokazuj kanały płatności w sklepie – po wybraniu płatności za pomocą Blue Media prezentowane są możliwe kanały płatności (banki), dzięki czemu użytkownik może wybrać bank już na poziomie sklepu.
 3. Pokazuj logo kanałów płatności – przy nazwach banków wyświetlane są ich logotypy.
 4. Identyfikator serwisu partnera – składa się tylko z cyfr i jest inny dla każdego sklepu (uzyskasz go od Blue Media jest).
-4. Klucz współdzielony – służy do weryfikacji komunikacji w bramką płatności. Zawiera cyfry i małe litery. Nie należy go udostępniać publicznie (uzyskasz go od Blue Media).
-5. Status oczekiwania na płatność – status zamówienia w sklepie – ustawiany natychmiast po rozpoczęciu płatności.
-6. Status prawidłowej odpowiedzi – status zamówienia w sklepie – ustawiany po potwierdzeniu płatności.
-7. Status nieprawidłowej płatności – status ustawiany w przypadku niepowodzenia płatności lub gdy płatności nie została zrealizowana przez dłuży czas (czas ten ustalamy dla każdego sklepu indywidualnie).
-8. Nazwa metody płatności – umożliwia zmianę nazwy metody płatności, prosimy o pozostawienie w tym miejscu słów „Blue Media”.
-9. Dodatkowy opis przy nazwie metody płatności – wyświetlany przy nazwie płatności na stronach koszyka, pole możesz wykorzystać do wyjaśnienie zasady działania płatności z wykorzystaniem modułu Blue Media.
+5. Klucz współdzielony – służy do weryfikacji komunikacji w bramką płatności. Zawiera cyfry i małe litery. Nie należy go udostępniać publicznie (uzyskasz go od Blue Media).
+6. Status oczekiwania na płatność – status zamówienia w sklepie – ustawiany natychmiast po rozpoczęciu płatności.
+7. Status prawidłowej odpowiedzi – status zamówienia w sklepie – ustawiany po potwierdzeniu płatności.
+8. Status nieprawidłowej płatności – status ustawiany w przypadku niepowodzenia płatności lub gdy płatności nie została zrealizowana przez dłuży czas (czas ten ustalamy dla każdego sklepu indywidualnie).
+9. Nazwa metody płatności – umożliwia zmianę nazwy metody płatności, prosimy o pozostawienie w tym miejscu słów „Blue Media”.
+10. Dodatkowy opis przy nazwie metody płatności – wyświetlany przy nazwie płatności na stronach koszyka, pole możesz wykorzystać do wyjaśnienie zasady działania płatności z wykorzystaniem modułu Blue Media.
 
 Po uzupełnieniu wszystkich pól – kliknij **Zapisz**.
 
