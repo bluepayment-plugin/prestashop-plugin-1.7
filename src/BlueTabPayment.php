@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -25,23 +24,17 @@ class BlueTabPayment {
     public function addTab() {
 
 
-        if(empty($this->xml)) {
+        if ( empty( $this->xml ) ) {
             return;
         }
 
-//        if( is_object($this->xml)) {
-//            var_dump( $this->xml );
-            if($this->xml->xpath('//module[@name="bluepayment"]')) {
-                return;
-            }
-//            return;
-//        }
-
-
-
+        if ( $this->xml->xpath( '//module[@name="bluepayment"]' ) ) {
+            return;
+        }
+        
         $highestPosition = 0;
 
-        if(!empty($this->xml)) {
+        if ( !empty( $this->xml ) ) {
             foreach ( $this->getXmlModules() as $module ) {
                 foreach ( $module->attributes() as $name => $attribute ) {
                     if ( $name == 'position' && $attribute[ 0 ] > $highestPosition ) {
@@ -70,7 +63,7 @@ class BlueTabPayment {
 
     public function removeTab() {
 
-        if(!empty($this->xml)) {
+        if ( !empty( $this->xml ) ) {
             foreach ( $this->getXmlModules() as $key => $module ) {
                 foreach ( $module->attributes() as $attribute ) {
                     if ( $attribute == 'bluepayment' ) {
@@ -86,13 +79,11 @@ class BlueTabPayment {
         }
 
 
-
     }
 
     public function getXmlModules() {
         return $this->xml->xpath( '//tab[@class_name="AdminPayment"]/module' );
     }
-
 
 
 }

@@ -59,7 +59,7 @@ class BluePayment extends PaymentModule {
         require_once __DIR__ . '/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.6.2';
+        $this->version = '2.6.3';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [ 'min' => '1.7', 'max' => _PS_VERSION_ ];
@@ -126,9 +126,9 @@ class BluePayment extends PaymentModule {
                 }
             }
             $this->installConfigurationTranslations();
+            $this->addOrderStatuses();
 
 
-            CustomStatus::addOrderStates( $this->context->language->id, $this->name_upper );
             // Domyślne ustawienie aktywnego trybu testowego
             Configuration::updateValue( $this->name_upper . '_TEST_ENV', 1 );
             Configuration::updateValue( $this->name_upper . '_SHOW_PAYWAY', 0 );
@@ -143,6 +143,22 @@ class BluePayment extends PaymentModule {
 
         return false;
     }
+
+
+
+
+
+    public function addOrderStatuses() {
+        try {
+            CustomStatus::addOrderStates( $this->context->language->id, $this->name_upper );
+            return true;
+
+        } catch ( Exception $exception ) {
+            PrestaShopLogger::addLog( 'Add statuses - error', 4 );
+        }
+    }
+
+
 
 
     /**
@@ -295,9 +311,6 @@ class BluePayment extends PaymentModule {
     public function getContent() {
         $output = null;
 
-//        $payment_tab = new BlueTabPayment();
-//        $payment_tab->removeTab();
-
         if ( Tools::isSubmit( 'submit' . $this->name ) ) {
             foreach ( $this->configFields() as $configField ) {
                 $value = Tools::getValue( $configField, Configuration::get( $configField ) );
@@ -351,10 +364,19 @@ class BluePayment extends PaymentModule {
         require_once __DIR__ . '/sql/install.php';
     }
 
-    public function uninstallDb() {
+    public function removeOrderStatuses() {
         try {
             CustomStatus::removeOrderStates();
+        } catch ( Exception $exception ) {
+            PrestaShopLogger::addLog( 'Remove statuses - error', 4 );
+        }
+    }
+
+    public function uninstallDb() {
+        try {
             require_once __DIR__ . '/sql/uninstall.php';
+            $this->removeOrderStatuses();
+
         } catch ( Exception $exception ) {
             PrestaShopLogger::addLog( 'The table cannot be deleted from the database', 4 );
         }

@@ -1,12 +1,5 @@
 <?php
 
-//namespace Dictionaries;
-
-//namespace PsBlueMedia\OrderStatus;
-
-//namespace PsBlueMedia;
-
-
 abstract class OrderStatusMessageDictionary
 {
     const PENDING = 1;

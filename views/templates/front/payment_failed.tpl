@@ -18,13 +18,12 @@
 {block name='content'}
     <section id="main" style="padding: 20px">
         <div class="box">
-            <h2>
-                <a href="http://bluepayment.pl" target="_blank">
-                    <img src="{$module_dir}views/img/logo.jpg"
-                         alt="Bluemedia" />
-                </a>
+            <a href="http://bluepayment.pl" target="_blank">
+                <img src="{$module_dir}views/img/bluepayment.svg" class="payment-brand" alt="Bluemedia" />
+            </a>
+            <h1>
                 {l s='Payment failed' mod='bluepayment'}
-            </h2>
+            </h1>
             <p class="warning">
                 {l s='There was a problem with your orders. Please contact us for more questions' mod='bluepayment'}
             </p>
@@ -35,14 +34,14 @@
                     </strong>
                 </p>
             {/if}
-            <p class="cart_navigation">
+            <div class="payment-navigation cart_navigation">
                 <a href="{$urls.base_url}" class="btn btn-primary">
                     {l s='Return to the shop' mod='bluepayment'}
                 </a>
                 <a class="btn btn-primary" href="{$urls.pages.history}">
                     {l s='View order history' mod='bluepayment'}
                 </a>
-            </p>
+            </div>
         </div>
     </section>
 {/block}

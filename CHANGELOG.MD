@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.6.3] 25.08.2021
+- Fixed status installations when updating a module
+- Improved payment status 
+
 ## [2.6.2] 19.08.2021
 - Added composer
 - Add autoloader class

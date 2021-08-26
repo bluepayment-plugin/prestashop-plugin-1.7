@@ -12,22 +12,22 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-/**
- * @property BluePayment $module
- */
-class BluePaymentStatusModuleFrontController extends ModuleFrontController
+class BluePaymentPaymentStatusModuleFrontController extends ModuleFrontController
 {
+    /**
+     * @throws PrestaShopException
+     * @throws Exception
+     */
     public function initContent()
     {
-        require_once __DIR__ . '/../../sdk/index.php';
-        header('Content-type: text/xml');
+        parent::initContent();
 
-        try {
-            $this->module->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
-        }  catch ( Exception $exception ) {
-            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [], true));
-        }
+        $this->context->smarty->assign([
+            'module_dir' => $this->module->getPathUri(),
+            'home_url'   => _PS_BASE_URL_,
+            'urls'       => $this->getTemplateVarUrls(),
+        ]);
 
-        exit;
+        $this->setTemplate('module:bluepayment/views/templates/front/payment_status.tpl');
     }
 }

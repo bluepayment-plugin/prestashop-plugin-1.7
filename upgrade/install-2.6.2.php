@@ -17,10 +17,14 @@ if ( !defined( '_PS_VERSION_' ) ) {
 
 function upgrade_module_2_6_2( $module ) {
 
-    $result = true;
+    $return = true;
 
-    $result = $result && $module->uninstallTab() && $module->installTab();
-    return $result;
+    $return &= $module->uninstallTab();
+    $return &= $module->installTab();
+    $return &= $module->addOrderStatuses();
+
+    return $return;
+
 
 }
 

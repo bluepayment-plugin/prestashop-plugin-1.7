@@ -202,3 +202,14 @@ div.payment-option > label > img {
 .payment-option label {
   margin-bottom:0;
 }
+
+.payment-brand {
+  display: block;
+  margin-bottom: 24px;
+  max-width: 85px;
+}
+
+.payment-navigation {
+  margin-top: 46px;
+  margin-bottom: 16px;
+}
