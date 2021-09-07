@@ -5,6 +5,7 @@ $_MODULE = array();
 $_MODULE['<{bluepayment}prestashop>bluepayment_3bbf739cedbf82f9f3790f9a351cd363'] = 'Płatności online BM';
 $_MODULE['<{bluepayment}prestashop>bluepayment_8c00d8812bd29a89eed5597a2a94ac91'] = 'Dodatek obsługuje płatności internetowe realizowane przez bramkę płatniczą firmy Blue Media.';
 $_MODULE['<{bluepayment}prestashop>bluepayment_876f23178c29dc2552c0b48bf23cd9bd'] = 'Czy jesteś pewien, że chcesz usunąć moduł?';
+$_MODULE['<{bluepayment}prestashop>bluepayment_d43de0677cb5d543971a8cdbecf99e28'] = 'Blue Media ustawienia';
 $_MODULE['<{bluepayment}prestashop>bluepayment_c888438d14855d7d96a2724ee9c306bd'] = 'Ustawienia zostały uaktualnione';
 $_MODULE['<{bluepayment}prestashop>bluepayment_f4f70727dc34561dfde1a3c529b6205c'] = 'Ustawienia';
 $_MODULE['<{bluepayment}prestashop>bluepayment_b32cfa51d55b8ef69f642dd68a62cbed'] = 'Użyj środowiska testowego';
@@ -72,4 +73,6 @@ $_MODULE['<{bluepayment}prestashop>chargeblik_7569279472c2265bf56b24b24e2a73e3']
 $_MODULE['<{bluepayment}prestashop>chargeblik_2dd485e2578bd9ca38f3b864e97a8fa4'] = 'Upłynął czas ważności kodu. Spróbuj ponownie.';
 $_MODULE['<{bluepayment}prestashop>chargeblik_15353e64372e441517b87fcea7cdf570'] = 'Upłynął czas ważności kodu BLIK';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_8e9d65897be3722c1c15f27add4a0f66'] = 'Nazwa kanału płatności';
+$_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_f86f7b91afe27e79305a6b07bdb0d3c0'] = 'Błąd zmiany statusu';
+$_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_de360c8b5dd9a9fdd592b1c08b3b4a62'] = 'Status został pomyślnie zmieniony';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentcontroller_e90913267ea8d7dd0a783fdc6174d173'] = 'Edycja kanału płatności';

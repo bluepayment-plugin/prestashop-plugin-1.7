@@ -10,17 +10,17 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2020
+ * @copyright      Copyright (c) 2015-2021
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <section>
     <span>
     {if isset($payment_name_extra)}
-        {$payment_name_extra}
+        {$payment_name_extra}<br /><br />
     {/if}
     </span>
     {if $showBaner}
-        <img src="{$module_dir}views/img/baner.png" style="width: 100%;" />
+        <img src="{$module_dir}views/img/baner.png" style="width: 100%; margin-bottom: 16px;" />
     {/if}
 
     {if $selectPayWay}
@@ -31,29 +31,20 @@
 
             <div id="blue_payway" class="bluepayment-gateways">
                 <div class="bluepayment-gateways__wrap">
-
                     {foreach from=$gateways item=row name='gateways'}
                     <div class="bluepayment-gateways__item">
                         <input type="radio" id="{$row->gateway_name}" class="bluepayment-gateways__radio" name="bluepayment-gateway-gateway-id" value="{$row->gateway_id}" required="required">
                         <label for="{$row->gateway_name}">
-{*                            <input type="radio" class="bluepayment-gateways__radio" name="bluepayment-gateway-gateway-id" value="{$row->gateway_id}" required="required">*}
                             {if $showPayWayLogo}
                             <img class="bluepayment-gateways__img" src="{$row->gateway_logo_url}" alt="{$row->gateway_name}">
                             {/if}
                             <span class="bluepayment-gateways__name">{$row->gateway_name}</span>
                         </label>
                     </div>
-
-{*                    {if $smarty.foreach.gateways.iteration is div by 2}*}
-{*                        </div>*}
-{*                        <div class="row">*}
-{*                    {/if}*}
-
                     {/foreach}
-
                 </div>
             </div>
-            <!-- wyswietlamy klauzle jezeli mamy przynajmniej jeden kanał PIS (a mamy go gdy regulationsGet zwroci min 1 val )-->
+
             <div class="bluepayment-agent-info-bottom ajax-psd2-clause" style="display:none; width:100%; min-height:145px;">
                 <div class="text"></div>
             </div>
@@ -63,7 +54,6 @@
             </div>
         </form>
     {/if}
-
 
     <script>
         var regulations_get_url = '{$regulations_get}';

@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -11,12 +10,6 @@
  * @copyright  Since 2015 Blue Media S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
-
-
-
-//use \Base\Section as BSection;
-
-//namespace PsBlueMedia;
 
 class BlueGateway extends ObjectModel
 {
@@ -41,35 +34,35 @@ class BlueGateway extends ObjectModel
      */
     public static $definition
         = [
-            'table' => 'blue_gateways',
+            'table'   => 'blue_gateways',
             'primary' => 'id',
-            'fields' => [
-                'id' => [
-                    'type' => self::TYPE_INT,
+            'fields'  => [
+                'id'                  => [
+                    'type'     => self::TYPE_INT,
                     'validate' => 'isUnsignedId',
                 ],
-                'gateway_id' => [
-                    'type' => self::TYPE_INT,
+                'gateway_id'          => [
+                    'type'     => self::TYPE_INT,
                     'validate' => 'isUnsignedId',
                 ],
-                'gateway_status' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
-                'bank_name' => [
-                    'type' => self::TYPE_STRING,
+                'gateway_status'      => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
+                'bank_name'           => [
+                    'type'     => self::TYPE_STRING,
                     'validate' => 'isGenericName',
                     'required' => true,
-                    'size' => 100,
+                    'size'     => 100,
                 ],
-                'gateway_name' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 100],
+                'gateway_name'        => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 100],
                 'gateway_description' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 1000],
-                'position' => ['type' => self::TYPE_INT, 'validate' => 'isNullOrUnsignedId'],
-                'gateway_currency' => ['type' => self::TYPE_STRING],
-                'gateway_type' => [
-                    'type' => self::TYPE_STRING,
+                'position'            => ['type' => self::TYPE_INT, 'validate' => 'isNullOrUnsignedId'],
+                'gateway_currency'    => ['type' => self::TYPE_STRING],
+                'gateway_type'        => [
+                    'type'     => self::TYPE_STRING,
                     'validate' => 'isGenericName',
-                    'size' => 50,
+                    'size'     => 50,
                     'required' => true,
                 ],
-                'gateway_logo_url' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 500],
+                'gateway_logo_url'    => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 500],
             ],
         ];
 
@@ -80,16 +73,16 @@ class BlueGateway extends ObjectModel
     }
 
     /**
-     * @return void
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @return void
      */
     public function syncGateways()
     {
         $position = 0;
 
         foreach (Currency::getCurrencies() as $currency) {
-            $position = (int) $this->syncGateway($currency, $position);
+            $position = (int)$this->syncGateway($currency, $position);
         }
     }
 
@@ -97,9 +90,9 @@ class BlueGateway extends ObjectModel
      * @param $currency
      * @param int $position
      *
-     * @return bool
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @return bool
      */
     private function syncGateway($currency, $position = 0)
     {
@@ -110,6 +103,8 @@ class BlueGateway extends ObjectModel
             ->parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency['iso_code']);
 
         if ($serviceId > 0 && !empty($hashKey)) {
+            PrestaShopLogger::addLog('BM - Install gateways', 1);
+
             $loadResult = $this->loadGatewaysFromAPI($serviceId, $hashKey);
 
             if ($loadResult) {
@@ -135,6 +130,8 @@ class BlueGateway extends ObjectModel
 
                 return $position;
             }
+        } else {
+            PrestaShopLogger::addLog('BM - No gateways', 1);
         }
 
         return $position;
@@ -142,7 +139,7 @@ class BlueGateway extends ObjectModel
 
     private function loadGatewaysFromAPI($serviceId, $hashKey)
     {
-        require_once __DIR__ . '/../sdk/index.php';
+        require_once dirname(__FILE__) . '/../sdk/index.php';
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ?
@@ -172,8 +169,8 @@ class BlueGateway extends ObjectModel
      * @param $way
      * @param $position
      *
-     * @return bool
      * @throws PrestaShopDatabaseException
+     * @return bool
      */
     public function updatePosition($way, $position)
     {
@@ -227,9 +224,7 @@ class BlueGateway extends ObjectModel
 
     /**
      * @param      $gatewayId
-     *
      * @param      $currency
-     *
      * @param bool $ignoreStatus
      *
      * @return int
@@ -253,9 +248,9 @@ class BlueGateway extends ObjectModel
      * @param $gatewayId
      * @param $currency
      *
-     * @return BlueGateway
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @return BlueGateway
      */
     private static function getByGatewayIdAndCurrency($gatewayId, $currency)
     {

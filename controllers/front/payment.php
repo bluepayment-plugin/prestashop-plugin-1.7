@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -67,11 +66,11 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             $cartId = $cart->id;
 
             $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
-            $amount    = number_format(round($totalPaid, 2), 2, '.', '');
+            $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
             $this->module->validateOrder(
                 $cartId,
-                Configuration::get($this->module->name_upper.'_STATUS_WAIT_PAY_ID'),
+                Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
                 $amount,
                 $this->module->displayName,
                 null,
@@ -81,7 +80,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 $customer->secure_key
             );
 
-            $orderId = $this->module->currentOrder.'-'.time();
+            $orderId = $this->module->currentOrder . '-' . time();
         } else {
             $bluepaymentCartId = Tools::getValue('bluepayment_cart_id', null);
 
@@ -92,31 +91,30 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 $bluepaymentCartId = empty($bluepaymentCartId[0]) ? 0 : $bluepaymentCartId[0];
 
                 $order = Order::getByCartId($bluepaymentCartId);
-                $cart  = Cart::getCartByOrderId($order->id);
+                $cart = Cart::getCartByOrderId($order->id);
 
                 $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
-                $amount    = number_format(round($totalPaid, 2), 2, '.', '');
+                $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
-                $orderId = $order->id.'-'.time();
+                $orderId = $order->id . '-' . time();
             }
         }
 
         $isoCode = $this->context->currency->iso_code;
 
 
-
         // Identyfikator serwisu partnera
         $service_id = (int)$this->module
-            ->parseConfigByCurrency($this->module->name_upper.'_SERVICE_PARTNER_ID', $isoCode);
+            ->parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $isoCode);
 
         // Klucz współdzielony
-        $shared_key = $this->module->parseConfigByCurrency($this->module->name_upper.'_SHARED_KEY', $isoCode);
+        $shared_key = $this->module->parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $isoCode);
 
         $gateway_id = (int)Tools::getValue('bluepayment_gateway', 0);
 
-        require_once __DIR__.'/../../sdk/index.php';
+        require_once dirname(__FILE__) . '/../../sdk/index.php';
 
-        $test_mode    = Configuration::get($this->module->name_upper.'_TEST_ENV');
+        $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ? Gateway::MODE_SANDBOX : Gateway::MODE_LIVE;
 
         $gateway = new Gateway($service_id, $shared_key, $gateway_mode);
@@ -126,8 +124,8 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             ->setAmount($amount)
             ->setCustomerEmail($customer->email)
             ->setCurrency($isoCode)
-            ->setHtmlFormLanguage($this->context->language->iso_code ?: DEFAULT_PAYMENT_FORM_LANGUAGE)
-            ->setLanguage($this->context->language->iso_code ?: DEFAULT_PAYMENT_FORM_LANGUAGE);
+            ->setHtmlFormLanguage($this->context->language->iso_code ? : DEFAULT_PAYMENT_FORM_LANGUAGE)
+            ->setLanguage($this->context->language->iso_code ? : DEFAULT_PAYMENT_FORM_LANGUAGE);
 
 
         $regulationId = Tools::getValue('bluepayment-hidden-psd2-regulation-id', null);

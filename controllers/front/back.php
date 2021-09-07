@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -29,8 +28,8 @@ class BluePaymentBackModuleFrontController extends ModuleFrontController
         $customer = new CustomerCore($order->id_customer);
 
         Tools::redirect(
-            'index.php?controller=order-confirmation&id_cart='.$order->id_cart.'&id_module='.$this->module->id
-            .'&id_order='.$order->id.'&key='.$customer->secure_key
+            'index.php?controller=order-confirmation&id_cart=' . $order->id_cart . '&id_module=' . $this->module->id
+            . '&id_order=' . $order->id . '&key=' . $customer->secure_key
         );
     }
 }

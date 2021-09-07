@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -48,34 +47,35 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
         $price = $this->getTotalAmount();
 
         return [
-            "apiVersion" => 2,
-            "apiVersionMinor" => 0,
-            "merchantInfo" => [
-                'authJwt' => $merchantData['authJwt'],
-                'merchantName' => $merchantData['merchantName'],
+            "apiVersion"            => 2,
+            "apiVersionMinor"       => 0,
+            "merchantInfo"          => [
+                'authJwt'        => $merchantData['authJwt'],
+                'merchantName'   => $merchantData['merchantName'],
                 'merchantOrigin' => $merchantData['merchantOrigin'],
-                'merchantId' => $merchantData['merchantId']
+                'merchantId'     => $merchantData['merchantId']
             ],
-            "allowedPaymentMethods" => [[
-                "type" => 'CARD',
-                "parameters" => [
-                    "allowedAuthMethods" => ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-                    "allowedCardNetworks" => ["MASTERCARD", "VISA"],
-                    "billingAddressRequired" => false
-                ],
-                "tokenizationSpecification" => [
-                    "type" => "PAYMENT_GATEWAY",
-                    "parameters" => [
-                        "gateway" => "bluemedia",
-                        "gatewayMerchantId" => (string)$merchantData['acceptorId'],
+            "allowedPaymentMethods" => [
+                [
+                    "type"                      => 'CARD',
+                    "parameters"                => [
+                        "allowedAuthMethods"     => ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+                        "allowedCardNetworks"    => ["MASTERCARD", "VISA"],
+                        "billingAddressRequired" => false
+                    ],
+                    "tokenizationSpecification" => [
+                        "type"       => "PAYMENT_GATEWAY",
+                        "parameters" => [
+                            "gateway"           => "bluemedia",
+                            "gatewayMerchantId" => (string)$merchantData['acceptorId'],
+                        ]
                     ]
-                ]
+                ],
             ],
-            ],
-            'transactionInfo' => [
-                'currencyCode' => $this->context->currency->iso_code,
+            'transactionInfo'       => [
+                'currencyCode'     => $this->context->currency->iso_code,
                 'totalPriceStatus' => 'FINAL',
-                'totalPrice' => (string)$price,
+                'totalPrice'       => (string)$price,
             ]
         ];
     }
@@ -107,7 +107,7 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
      */
     private function sendRequest()
     {
-        require_once __DIR__ . '/../../sdk/index.php';
+        require_once dirname(__FILE__) . '/../../sdk/index.php';
 
         $currency = $this->context->currency->iso_code;
         $serviceId = $this->module
@@ -125,7 +125,7 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
          * string MerchantDomain for BM should be different than localhost
          */
         $data = [
-            'ServiceID' => $serviceId,
+            'ServiceID'      => $serviceId,
             'MerchantDomain' => Tools::getHttpHost(false)
         ];
 
@@ -153,7 +153,7 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
                 Tools::error_log(
                     'Invalid response from BlueMedia API during get merchant info for G-pay. Dta: ' .
                     print_r($data, 1) .
-                    "\nResponse:\n". print_r($curlResponse, 1)
+                    "\nResponse:\n" . print_r($curlResponse, 1)
                 );
                 return false;
             }

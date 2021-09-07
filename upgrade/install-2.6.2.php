@@ -11,11 +11,12 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-if ( !defined( '_PS_VERSION_' ) ) {
+if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_2_6_2( $module ) {
+function upgrade_module_2_6_2($module)
+{
 
     $return = true;
 
@@ -24,8 +25,4 @@ function upgrade_module_2_6_2( $module ) {
     $return &= $module->addOrderStatuses();
 
     return $return;
-
-
 }
-
-

@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -25,12 +24,12 @@ class BluePaymentGpayModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
 
-        $status        = true;
-        $orderId       = Tools::getValue('OrderID');
+        $status = true;
+        $orderId = Tools::getValue('OrderID');
         $paymentStatus = Tools::getValue('PaymentStatus');
 
-        $order    = new Order($orderId);
-        $cart     = new Cart($order->id_cart);
+        $order = new Order($orderId);
+        $cart = new Cart($order->id_cart);
         $customer = new Customer($order->id_customer);
 
         if (empty($paymentStatus) || $paymentStatus == 'FAILURE') {
@@ -39,8 +38,8 @@ class BluePaymentGpayModuleFrontController extends ModuleFrontController
 
         if ($status) {
             Tools::redirect(
-                'index.php?controller=order-confirmation&id_cart='.(int)$cart->id.'&id_module='.
-                (int)$this->module->id.'&id_order='.$order->id.'&key='.$customer->secure_key
+                'index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' .
+                (int)$this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
             );
         } else {
             Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentFailed', [], true));

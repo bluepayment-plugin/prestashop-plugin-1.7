@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2020
+ * @copyright      Copyright (c) 2015-2021
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <html>

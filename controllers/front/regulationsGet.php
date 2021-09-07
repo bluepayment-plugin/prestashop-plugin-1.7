@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -46,7 +45,7 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
 
     private function regulationsGet()
     {
-        require_once __DIR__ . '/../../sdk/index.php';
+        require_once dirname(__FILE__) . '/../../sdk/index.php';
 
         $currency = $this->context->currency->iso_code;
         $serviceId = $this->module->parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
@@ -91,7 +90,7 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
                 Tools::error_log(
                     'Invalid response from BlueMedia API during get merchant info for G-pay. Dta: ' .
                     print_r($data, 1) .
-                    "\nResponse:\n". print_r($curlResponse, 1)
+                    "\nResponse:\n" . print_r($curlResponse, 1)
                 );
                 return false;
             }

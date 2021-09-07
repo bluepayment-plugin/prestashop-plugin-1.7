@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.5] 7.09.2021
+- Fixed payment form
+
+## [2.6.4] 30.08.2021
+- Fixed language problems
+- Hide payments if only credit cards are available
+
 ## [2.6.3] 25.08.2021
 - Fixed status installations when updating a module
 - Improved payment status 

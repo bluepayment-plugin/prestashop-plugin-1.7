@@ -11,9 +11,11 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-class BluePaymentGatewayModuleFrontController extends ModuleFrontController {
-    public function initContent() {
-        $gateway_id = Tools::getValue( 'gateway_id' );
+class BluePaymentGatewayModuleFrontController extends ModuleFrontController
+{
+    public function initContent()
+    {
+        $gateway_id = Tools::getValue('gateway_id');
         $this->context->cookie->gateway_id = $gateway_id;
         exit;
     }

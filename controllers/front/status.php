@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -19,12 +18,12 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
-        require_once __DIR__ . '/../../sdk/index.php';
+        require_once dirname(__FILE__) . '/../../sdk/index.php';
         header('Content-type: text/xml');
 
         try {
             $this->module->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
-        }  catch ( Exception $exception ) {
+        } catch (Exception $exception) {
             Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [], true));
         }
 

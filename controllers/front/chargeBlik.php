@@ -1,7 +1,6 @@
 <?php
 /**
  * NOTICE OF LICENSE
- *
  * This source file is subject to the GNU Lesser General Public License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
@@ -26,8 +25,8 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
 
-        $status      = true;
-        $blikCode    = pSQL(Tools::getValue('blikCode'));
+        $status = true;
+        $blikCode = pSQL(Tools::getValue('blikCode'));
         $postOrderId = pSQL(Tools::getValue('postOrderId'));
 
         if (preg_match('/[^a-z_\-0-9 ]/i', $blikCode) && Tools::strlen($blikCode) !== BLIK_CODE_LENGTH) {
@@ -44,7 +43,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 // https://stackoverflow.com/questions/42735643/want-to-restore-the-cart-with-the-order-id-and-details-in-prestashop
                 $orderIdItem = explode('-', $postOrderId);
                 $orderIdItem = empty($orderIdItem[0]) ? 0 : $orderIdItem[0];
-                $cart        = Cart::getCartByOrderId($orderIdItem);
+                $cart = Cart::getCartByOrderId($orderIdItem);
             }
         }
 
@@ -72,20 +71,20 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
         $currency = $this->context->currency->iso_code;
 
-        $serviceId  = $this->module->parseConfigByCurrency($this->module->name_upper.'_SERVICE_PARTNER_ID', $currency);
-        $sharedKey  = $this->module->parseConfigByCurrency($this->module->name_upper.'_SHARED_KEY', $currency);
+        $serviceId = $this->module->parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
+        $sharedKey = $this->module->parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
 
         $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
-        $amount    = number_format(round($totalPaid, 2), 2, '.', '');
+        $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
-        $customer      = new Customer($cart->id_customer);
+        $customer = new Customer($cart->id_customer);
         $customerEmail = $customer->email;
 
         if (Validate::isLoadedObject($this->context->cart) && $this->context->cart->OrderExists() == false) {
             $this->moduleValidateOrder($cart->id, $amount, $customer);
         }
 
-        $orderId = $this->module->currentOrder.'-'.time();
+        $orderId = $this->module->currentOrder . '-' . time();
 
         if (!empty($postOrderId)) {
             $orderId = $postOrderId;
@@ -104,7 +103,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 $blikCode
             );
 
-            $result  = $this->validateRequest($request, $orderId, $blikCode);
+            $result = $this->validateRequest($request, $orderId, $blikCode);
         } else {
             $result = $this->validateTransaction($transaction, $orderId);
         }
@@ -131,8 +130,8 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
     {
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \''.pSQL($orderId).'\'')
-            ->where('blik_code = \''.pSQL($blikCode).'\'')
+            ->where('order_id = \'' . pSQL($orderId) . '\'')
+            ->where('blik_code = \'' . pSQL($blikCode) . '\'')
             ->select('*');
 
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
@@ -140,9 +139,9 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
     private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode)
     {
-        require_once __DIR__.'/../../sdk/index.php';
+        require_once dirname(__FILE__) . '/../../sdk/index.php';
 
-        $test_mode    = Configuration::get($this->module->name_upper.'_TEST_ENV');
+        $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ?
             \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX :
             \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
@@ -167,7 +166,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         $hash = $this->module->generateAndReturnHash($hash);
 
         $data['Hash'] = $hash;
-        $fields       = is_array($data) ? http_build_query($data) : $data;
+        $fields = is_array($data) ? http_build_query($data) : $data;
 
         try {
             $curl = curl_init($gateway::getActionUrl($gateway::PAYMENT_ACTON_PAYMENT));
@@ -193,7 +192,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
     private function validateRequest($response, $orderId, $blikCode)
     {
         $array = [];
-        $data  = [
+        $data = [
             'order_id'   => $orderId,
             'blik_code'  => $blikCode,
             'created_at' => date('Y-m-d H:i:s'),
@@ -201,14 +200,14 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \''.pSQL($orderId).'\'')
+            ->where('order_id = \'' . pSQL($orderId) . '\'')
             ->select('*');
 
         $transaction = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
 
         if (isset($response->confirmation) && $response->confirmation == 'CONFIRMED') {
             if ($response->paymentStatus == 'PENDING') {
-                $array               = [
+                $array = [
                     'status'  => 'PENDING',
                     'message' => $this->module->l('Confirm the operation in your bank\'s application.', 'chargeblik'),
                 ];
@@ -217,10 +216,10 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                     Db::getInstance()->insert('blue_transactions', $data);
                 } else {
                     unset($data['order_id']);
-                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \''.pSQL($orderId).'\'');
+                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
                 }
             } elseif ($response->paymentStatus == 'SUCCESS') {
-                $array               = [
+                $array = [
                     'status'  => 'SUCCESS',
                     'message' => $this->module->l('Payment has been successfully completed.', 'chargeblik'),
                 ];
@@ -229,7 +228,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                     Db::getInstance()->insert('blue_transactions', $data);
                 } else {
                     unset($data['order_id']);
-                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \''.pSQL($orderId).'\'');
+                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
                 }
             } else {
                 $array = [
@@ -241,7 +240,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             $response->confirmation == 'NOTCONFIRMED' &&
             $response->reason == 'WRONG_TICKET'
         ) {
-            $array               = [
+            $array = [
                 'status'  => 'FAILURE',
                 'message' => $this->module->l('The entered code is not valid.', 'chargeblik'),
             ];
@@ -252,13 +251,13 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 Db::getInstance()->insert('blue_transactions', $data);
             } else {
                 unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \''.pSQL($orderId).'\'');
+                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
             }
         } elseif (isset($response->confirmation) &&
             $response->confirmation == 'NOTCONFIRMED' &&
             $response->reason == 'MULTIPLY_PAID_TRANSACTION'
         ) {
-            $array               = [
+            $array = [
                 'status'  => 'FAILURE',
                 'message' => $this->module->l('Your BLIK transaction has already been paid for.', 'chargeblik'),
             ];
@@ -267,7 +266,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 Db::getInstance()->insert('blue_transactions', $data);
             } else {
                 unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \''.pSQL($orderId).'\'');
+                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
             }
         }
 
@@ -283,7 +282,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
     private function validateTransaction($transaction, $orderId)
     {
-        $array       = [];
+        $array = [];
         $transaction = (object)$transaction;
 
         if (isset($transaction->blik_status) && $transaction->blik_status == 'SUCCESS') {
@@ -308,7 +307,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             Db::getInstance()->update(
                 'blue_transactions',
                 ['created_at' => date('Y-m-d H:i:s')],
-                'order_id = \''.pSQL($orderId).'\''
+                'order_id = \'' . pSQL($orderId) . '\''
             );
         }
 
@@ -326,7 +325,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
     {
         $this->module->validateOrder(
             $cartId,
-            Configuration::get($this->module->name_upper.'_STATUS_WAIT_PAY_ID', 'bluepayment'),
+            Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID', 'bluepayment'),
             $amount,
             $this->module->displayName,
             null,

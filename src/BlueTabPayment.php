@@ -11,34 +11,33 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-
-class BlueTabPayment {
-
+class BlueTabPayment
+{
     private $xml;
 
-    public function __construct() {
-        $this->xml = @simplexml_load_file( _PS_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST );
+    public function __construct()
+    {
+        $this->xml = @simplexml_load_file(_PS_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST);
     }
 
+    public function addTab()
+    {
 
-    public function addTab() {
-
-
-        if ( empty( $this->xml ) ) {
+        if (empty($this->xml)) {
             return;
         }
 
-        if ( $this->xml->xpath( '//module[@name="bluepayment"]' ) ) {
+        if ($this->xml->xpath('//module[@name="bluepayment"]')) {
             return;
         }
-        
+
         $highestPosition = 0;
 
-        if ( !empty( $this->xml ) ) {
-            foreach ( $this->getXmlModules() as $module ) {
-                foreach ( $module->attributes() as $name => $attribute ) {
-                    if ( $name == 'position' && $attribute[ 0 ] > $highestPosition ) {
-                        $highestPosition = (int)$attribute[ 0 ];
+        if (!empty($this->xml)) {
+            foreach ($this->getXmlModules() as $module) {
+                foreach ($module->attributes() as $name => $attribute) {
+                    if ($name == 'position' && $attribute[0] > $highestPosition) {
+                        $highestPosition = (int)$attribute[0];
                     }
                 }
             }
@@ -46,44 +45,39 @@ class BlueTabPayment {
 
         $highestPosition++;
 
-        @$modules = $this->xml->xpath( '//tab[@class_name="AdminPayment"]' );
-        $modules = $modules[ 0 ];
+        @$modules = $this->xml->xpath('//tab[@class_name="AdminPayment"]');
+        $modules = $modules[0];
 
-        if ( empty( $modules ) ) {
+        if (empty($modules)) {
             return;
         }
 
-        $module = $modules->addChild( 'module' );
-        $module->addAttribute( 'name', 'bluepayment' );
-        $module->addAttribute( 'position', $highestPosition );
-        $this->xml->saveXML( _PS_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST );
-
+        $module = $modules->addChild('module');
+        $module->addAttribute('name', 'bluepayment');
+        $module->addAttribute('position', $highestPosition);
+        $this->xml->saveXML(_PS_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST);
     }
 
+    public function removeTab()
+    {
 
-    public function removeTab() {
-
-        if ( !empty( $this->xml ) ) {
-            foreach ( $this->getXmlModules() as $key => $module ) {
-                foreach ( $module->attributes() as $attribute ) {
-                    if ( $attribute == 'bluepayment' ) {
-                        var_dump( $this->getXmlModules()[ $key ] );
-                        unset( $this->getXmlModules()[ $key ] );
+        if (!empty($this->xml)) {
+            foreach ($this->getXmlModules() as $key => $module) {
+                foreach ($module->attributes() as $attribute) {
+                    if ($attribute == 'bluepayment') {
+                        var_dump($this->getXmlModules()[$key]);
+                        unset($this->getXmlModules()[$key]);
                     }
                 }
             }
 
-            $this->xml->saveXML( _PS_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST );
+            $this->xml->saveXML(_PS_ROOT_DIR_ . Module::CACHE_FILE_TAB_MODULES_LIST);
             Tools::clearXMLCache();
-
         }
-
-
     }
 
-    public function getXmlModules() {
-        return $this->xml->xpath( '//tab[@class_name="AdminPayment"]/module' );
+    public function getXmlModules()
+    {
+        return $this->xml->xpath('//tab[@class_name="AdminPayment"]/module');
     }
-
-
 }
