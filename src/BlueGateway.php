@@ -11,6 +11,10 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class BlueGateway extends ObjectModel
 {
     const FAILED_CONNECTION_RETRY_COUNT = 5;
@@ -207,7 +211,6 @@ class BlueGateway extends ObjectModel
     }
 
     /**
-     * @param int $gatewayId
      *
      * @return int
      */
@@ -233,8 +236,8 @@ class BlueGateway extends ObjectModel
     {
         $query = new DbQuery();
         $query->from('blue_gateways')
-            ->where('gateway_id = ' . $gatewayId)
-            ->where('gateway_currency = "' . $currency . '"')
+            ->where('gateway_id = ' . (int)$gatewayId)
+            ->where('gateway_currency = "' . pSql($currency) . '"')
             ->select('id');
 
         if (!$ignoreStatus) {

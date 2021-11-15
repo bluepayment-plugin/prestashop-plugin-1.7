@@ -243,7 +243,7 @@ class Transformer
             $model->setOrderId((string)$transaction->orderID);
         }
         if (isset($transaction->remoteID)) {
-            $model->setRemoteId((string)$transaction->remoteID);
+            $model->setRemoteId(pSql((string)$transaction->remoteID));
         }
         if (isset($transaction->remoteOutID)) {
             $model->setRemoteOutID((string)$transaction->remoteOutID);

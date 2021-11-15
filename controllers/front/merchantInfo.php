@@ -11,6 +11,10 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * @property BluePayment $module
  */
@@ -95,6 +99,10 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
                 $orderIdItem = explode('-', $postOrderId);
                 $orderIdItem = empty($orderIdItem[0]) ? 0 : $orderIdItem[0];
                 $cart = Cart::getCartByOrderId($orderIdItem);
+
+                if (!Validate::isLoadedObject($cart) || (int) $this->context->cart->id != $cart->id) {
+                    throw new OrderException('Invalid cart provided.');
+                }
             }
         }
 

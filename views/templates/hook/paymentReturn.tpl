@@ -17,22 +17,22 @@
     ga('require', 'ecommerce');
 
     ga('ecommerce:addTransaction', {
-        'id': '{$order_id}',
-        'affiliation': '{$shop_name}',
-        'revenue': '{$revenue}',
-        'shipping': '{$shipping}',
-        'tax': '{$tax}',
-        'currency': '{$currency}'
+        'id': '{$order_id|escape:'html':'UTF-8'}',
+        'affiliation': '{$shop_name|escape:'html':'UTF-8'}',
+        'revenue': '{$revenue|escape:'html':'UTF-8'}',
+        'shipping': '{$shipping|escape:'html':'UTF-8'}',
+        'tax': '{$tax|escape:'html':'UTF-8'}',
+        'currency': '{$currency|escape:'html':'UTF-8'}'
     });
 
     {foreach from=$products item=product}
     ga('ecommerce:addItem', {
-        'id': '{$order_id}',
-        'name': '{$product->name}',
-        'sku': '{$product->sku}',
-        'category': '{$product->category}',
-        'price': '{$product->price}',
-        'quantity': '{$product->quantity}'
+        'id': '{$order_id|escape:'html':'UTF-8'}',
+        'name': '{$product->name|escape:'html':'UTF-8'}',
+        'sku': '{$product->sku|escape:'html':'UTF-8'}',
+        'category': '{$product->category|escape:'html':'UTF-8'}',
+        'price': '{$product->price|escape:'html':'UTF-8'}',
+        'quantity': '{$product->quantity|escape:'html':'UTF-8'}'
     });
     {/foreach}
 

@@ -17,6 +17,11 @@ use BlueMedia\OnlinePayments\Model\TransactionStandard;
 /**
  * @property BluePayment $module
  */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;

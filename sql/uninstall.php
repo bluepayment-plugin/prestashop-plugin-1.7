@@ -11,6 +11,10 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 $sql = [];
 
 $sql[] = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'blue_gateways`';

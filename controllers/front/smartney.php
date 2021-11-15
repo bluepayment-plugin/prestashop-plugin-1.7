@@ -11,6 +11,10 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class BluePaymentSmartneyModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
@@ -31,6 +35,10 @@ class BluePaymentSmartneyModuleFrontController extends ModuleFrontController
         $order = new Order($orderId);
         $cart = new Cart($order->id_cart);
         $customer = new Customer($order->id_customer);
+
+        if (!Validate::isLoadedObject($customer)) {
+            Tools::redirectLink(__PS_BASE_URI__.'order.php?step=1');
+        }
 
         if (empty($paymentStatus) || $paymentStatus == 'FAILURE') {
             $status = false;

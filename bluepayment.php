@@ -35,8 +35,11 @@ class BluePayment extends PaymentModule
             'paymentOptions',
             'paymentReturn',
             'orderConfirmation',
-            'displayBackOfficeHeader'
+            'displayBackOfficeHeader',
+            'adminOrder',
         ];
+    public $id_order = null;
+    public $bm_order_id = '';
 
     private $checkHashArray = [];
 
@@ -61,7 +64,7 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__) . '/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.6.5';
+        $this->version = '2.6.7';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -72,8 +75,10 @@ class BluePayment extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('Online payment BM');
-        $this->description = $this->l('Plugin supports online payments implemented by payment gateway Blue Media company.');
+        $this->displayName = $this->l('Blue Media payments');
+        $this->description = $this->l(
+            'Plugin supports online payments implemented by payment gateway Blue Media company.'
+        );
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
     }
 
@@ -104,7 +109,8 @@ class BluePayment extends PaymentModule
             Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY_LOGO', 1);
             Configuration::updateValue($this->name_upper . '_SHOW_BANER', 0);
             Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Pay via BlueMedia');
-            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'After order redirect to BlueMedia payment system');
+            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'After order redirect to BlueMedia 
+            payment system');
 
             return true;
         }
@@ -448,6 +454,16 @@ class BluePayment extends PaymentModule
                         'name' => 'name',
                     ],
                 ],
+                //                [
+                //                    'type' => 'select',
+                //                    'name' => $this->name_upper . '_STATUS_REFUND_PAY_ID',
+                //                    'label' => $this->l('Status refund payment'),
+                //                    'options' => [
+                //                        'query' => $statuses,
+                //                        'id' => 'id_order_state',
+                //                        'name' => 'name',
+                //                    ],
+                //                ],
                 [
                     'type' => 'select',
                     'name' => $this->name_upper . '_STATUS_ERROR_PAY_ID',
@@ -553,7 +569,9 @@ class BluePayment extends PaymentModule
 
     public function getListContent()
     {
-        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, gateway_name, gateway_logo_url, gateway_type, position, bank_name, gateway_currency, gateway_status, position FROM `' . _DB_PREFIX_ . 'blue_gateways`');
+        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, gateway_name, 
+        gateway_logo_url, gateway_type, position, bank_name, gateway_currency, gateway_status, position 
+        FROM `' . _DB_PREFIX_ . 'blue_gateways`');
         return $gateway;
     }
 
@@ -609,8 +627,6 @@ class BluePayment extends PaymentModule
             ],
 
 
-
-
         ];
     }
 
@@ -648,7 +664,8 @@ class BluePayment extends PaymentModule
             'refresh' =>
                 [
                     'desc' => $this->l('Refresh'),
-                    'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&refreshGateways&token=' . Tools::getAdminTokenLite('AdminModules'),
+                    'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&refreshGateways&token=' .
+                        Tools::getAdminTokenLite('AdminModules'),
                 ],
         ];
 
@@ -700,6 +717,7 @@ class BluePayment extends PaymentModule
             $this->name_upper . '_STATUS_WAIT_PAY_ID',
             $this->name_upper . '_STATUS_ACCEPT_PAY_ID',
             $this->name_upper . '_STATUS_ERROR_PAY_ID',
+            //            $this->name_upper . '_STATUS_REFUND_PAY_ID',
             $this->name_upper . '_PAYMENT_NAME',
             $this->name_upper . '_PAYMENT_NAME_EXTRA',
             $this->name_upper . '_SHOW_PAYWAY',
@@ -707,6 +725,177 @@ class BluePayment extends PaymentModule
             $this->name_upper . '_SHOW_BANER',
             $this->name_upper . '_TEST_ENV',
         ];
+    }
+
+    /**
+     * @throws PrestaShopDatabaseException
+     * @return null|string
+     */
+    public function hookAdminOrder($params)
+    {
+        $this->id_order = $params['id_order'];
+        $order = new Order($this->id_order);
+
+        $output = '';
+
+        if ($order->module !== 'bluepayment') {
+            return $output;
+        }
+        $updateOrderStatusMessage = '';
+
+        $order_payment = $this->getLastOrderPaymentByOrderId($params['id_order']);
+
+        $refundable = $order_payment['payment_status'] === self::PAYMENT_STATUS_SUCCESS;
+
+        $refund_type = Tools::getValue('bm_refund_type', 'full');
+        $refund_amount = $refund_type === 'full'
+            ? $order->total_paid
+            : (float)str_replace(',', '.', Tools::getValue('bm_refund_amount'));
+        $refund_errors = [];
+        $refund_success = [];
+
+        if ($refundable && Tools::getValue('go-to-refund-bm')) {
+            if ($refund_amount > $order->total_paid) {
+                $refund_errors[] = $this->l('The refund amount you entered is greater than paid amount.');
+            } else {
+                $refund = $this->bmOrderRefund(
+                    $refund_amount,
+                    $order_payment['remote_id'],
+                    $order->id
+                );
+
+                if (!empty($refund[1])) {
+                    if ($refund[0] !== true) {
+                        $refund_errors[] = $this->l('Refund error: ') . $refund[1];
+                    }
+                }
+
+
+                if (empty($refund_errors) && $refund[0] === true) {
+                    $history = new OrderHistory();
+                    $history->id_order = (int)$order->id;
+                    $history->id_employee = (int)$this->context->employee->id;
+                    $history->changeIdOrderState(Configuration::get('PS_OS_REFUND'), (int)$order->id);
+                    $history->addWithemail(true, []);
+                    $refund_success[] = $this->l('Successful refund');
+
+                    //Tools::redirectAdmin('index.php?tab=AdminOrders&id_order=' . (int)$order->id . '&vieworder' . '
+                    //&token=' . Tools::getAdminTokenLite('AdminOrders'));
+                }
+            }
+        }
+
+        $this->context->smarty->assign([
+            'BM_ORDERS' => $this->getOrdersByOrderId($params['id_order']),
+            'BM_ORDER_ID' => $this->id_order,
+            'BM_CANCEL_ORDER_MESSAGE' => $updateOrderStatusMessage,
+            'SHOW_REFUND' => $refundable,
+            'REFUND_FULL_AMOUNT' => number_format($order->total_paid, 2, '.', ''),
+            'REFUND_ERRORS' => $refund_errors,
+            'REFUND_SUCCESS' => $refund_success,
+            'REFUND_TYPE' => $refund_type,
+            'REFUND_AMOUNT' => $refund_amount,
+        ]);
+
+        return $this->fetch('module:bluepayment/views/templates/admin/status.tpl');
+        //        return $this->setTemplate('/views/templates/admin/status.tpl');
+    }
+
+
+    private function bmOrderRefund($amount, $remote_id, $id_order)
+    {
+        $amount = number_format($amount, 2, '.', '');
+        $order = new OrderCore($id_order);
+        $currency = new Currency($order->id_currency);
+        $service_id = $this->parseConfigByCurrency(
+            $this->name_upper . '_SERVICE_PARTNER_ID',
+            $currency->iso_code
+        );
+        $shared_key = $this->parseConfigByCurrency($this->name_upper . '_SHARED_KEY', $currency->iso_code);
+        $message_id = $this->randomString(32);
+        // Tablica danych z których wygenerować hash
+
+        $hash_data = [$service_id, $message_id, $remote_id, $amount, $currency->iso_code, $shared_key];
+        // Klucz hash
+        $hash_confirmation = $this->generateAndReturnHash($hash_data);
+
+        $curl = curl_init();
+        $postfields = 'ServiceID=' . $service_id .
+            '&MessageID=' . $message_id .
+            '&RemoteID=' . $remote_id .
+            '&Amount=' . $amount .
+            '&Currency=' . $currency->iso_code .
+            '&Hash=' . $hash_confirmation;
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => 'https://pay-accept.bm.pl/transactionRefund',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $postfields,
+        ]);
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $xml = simplexml_load_string($response, "SimpleXMLElement", LIBXML_NOCDATA);
+        $result_success = false;
+        $info = false;
+        if ($xml->messageID) {
+            if ($xml->messageID == $message_id) {
+                $result_success = true;
+            }
+        } else {
+            $info = $xml->description;
+        }
+        return [$result_success, $info];
+    }
+
+    public function randomString($length = 8)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, Tools::strlen($characters) - 1)];
+        }
+
+        return $randomString;
+    }
+
+    /**
+     * @param $id_order
+     *
+     * @return bool | array
+     */
+    private function getLastOrderPaymentByOrderId($id_order)
+    {
+        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'blue_transactions
+			WHERE order_id like "' . pSQL($id_order) . '-%"
+			ORDER BY created_at DESC';
+
+        $result = Db::getInstance()->getRow($sql, false);
+
+        return $result ? $result : false;
+    }
+
+    /**
+     * @param $id_order
+     *
+     * @throws PrestaShopDatabaseException
+     * @return bool | array
+     */
+    private function getOrdersByOrderId($id_order)
+    {
+        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'blue_transactions
+			WHERE order_id like "' . pSQL($id_order) . '-%"
+			ORDER BY created_at DESC';
+
+        $result = Db::getInstance()->executeS($sql, true, false);
+
+        return $result ? $result : false;
     }
 
 
@@ -758,9 +947,9 @@ class BluePayment extends PaymentModule
             $gateways->orderBy('position');
             $gateways = $gateways->getResults();
         } else {
-            $gateways = array(
+            $gateways = [
                 'gateways_payments' => false
-            );
+            ];
         }
 
         $this->smarty->assign([
@@ -864,7 +1053,10 @@ class BluePayment extends PaymentModule
             $newOptions[] = $gpayOption;
         }
 
-        if ($smartney && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) >= (float)SMARTNEY_MIN_AMOUNT && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) <= (float)SMARTNEY_MAX_AMOUNT) {
+        if ($smartney
+            && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) >= (float)SMARTNEY_MIN_AMOUNT
+            && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) <= (float)SMARTNEY_MAX_AMOUNT
+        ) {
             $smartneyGateway = new BlueGateway($smartney);
             $smartneyMerchantInfo = $this->context->link->getModuleLink('bluepayment', 'merchantInfo', [], true);
             $smartney_moduleLinkCharge = $this->context->link->getModuleLink('bluepayment', 'chargeSmartney', [], true);
@@ -961,7 +1153,12 @@ class BluePayment extends PaymentModule
         $comma_separated = implode(',', $values_array_filter);
 
         $replaced = str_replace(',', HASH_SEPARATOR, $comma_separated);
-
+        //        if($test) {
+        Configuration::updateValue(
+            $this->name_upper . '_' . time(),
+            $replaced . '|||' . hash(Gateway::HASH_SHA256, $replaced)
+        );
+        //        }
         return hash(Gateway::HASH_SHA256, $replaced);
     }
 
@@ -1144,7 +1341,6 @@ class BluePayment extends PaymentModule
         $confirmation_list->appendChild($dom_hash);
 
         $dom->appendChild($confirmation_list);
-
         echo $dom->saveXML();
     }
 
@@ -1168,7 +1364,7 @@ class BluePayment extends PaymentModule
         } else {
             $message = $this->name_upper . ' - Invalid hash: ' . $response->hash;
             // Potwierdzenie zwrotne o transakcji nie autentycznej
-            PrestaShopLogger::addLog('BM - '.$message, 3, null, 'Order', $transaction_xml->orderID);
+            PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'Order', $transaction_xml->orderID);
             $this->returnConfirmation($transaction_xml->orderID, null, self::TRANSACTION_NOTCONFIRMED);
         }
     }
@@ -1205,15 +1401,16 @@ class BluePayment extends PaymentModule
         $status_accept_pay_id = Configuration::get($this->name_upper . '_STATUS_ACCEPT_PAY_ID');
         $status_waiting_pay_id = Configuration::get($this->name_upper . '_STATUS_WAIT_PAY_ID');
         $status_error_pay_id = Configuration::get($this->name_upper . '_STATUS_ERROR_PAY_ID');
+        //        $status_refund_pay_id = Configuration::get($this->name_upper . '_STATUS_REFUND_PAY_ID');
 
         // Status płatności
-        $payment_status = (string)$transaction->paymentStatus;
+        $payment_status = pSql((string)$transaction->paymentStatus);
 
         // Id transakcji nadany przez bramkę
-        $remote_id = (string)$transaction->remoteID;
+        $remote_id = pSql((string)$transaction->remoteID);
 
         // Id zamówienia
-        $realOrderId = (string)$transaction->orderID;
+        $realOrderId = pSql((string)$transaction->orderID);
         $order_id = explode('-', $realOrderId)[0];
 
         // Objekt zamówienia
@@ -1230,7 +1427,7 @@ class BluePayment extends PaymentModule
 
         if (!Validate::isLoadedObject($order)) {
             $message = $this->name_upper . ' - Order not found';
-            PrestaShopLogger::addLog('BM - '.$message, 3, null, 'Order', $order_id);
+            PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'Order', $order_id);
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_NOTCONFIRMED);
 
             return;
@@ -1238,20 +1435,20 @@ class BluePayment extends PaymentModule
 
         if (!is_object($order_payment)) {
             $message = $this->name_upper . ' - Order payment not found';
-            PrestaShopLogger::addLog('BM - '.$message, 3, null, 'OrderPayment', $order_id);
+            PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'OrderPayment', $order_id);
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_NOTCONFIRMED);
 
             return;
         }
 
         $transactionData = [
-            'remote_id' => (string)$transaction->remoteID,
-            'amount' => (string)$transaction->amount,
-            'currency' => (string)$transaction->currency,
-            'gateway_id' => (string)$transaction->gatewayID,
+            'remote_id' => pSql((string)$transaction->remoteID),
+            'amount' => pSql((string)$transaction->amount),
+            'currency' => pSql((string)$transaction->currency),
+            'gateway_id' => pSql((string)$transaction->gatewayID),
             'payment_date' => date('Y-m-d H:i:s', strtotime($transaction->paymentDate)),
-            'payment_status' => (string)$transaction->paymentStatus,
-            'payment_status_details' => (string)$transaction->paymentStatusDetails,
+            'payment_status' => pSql((string)$transaction->paymentStatus),
+            'payment_status_details' => pSql((string)$transaction->paymentStatusDetails),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
         Db::getInstance()->update('blue_transactions', $transactionData, 'order_id = \'' . pSQL($realOrderId) . '\'');
@@ -1314,7 +1511,7 @@ class BluePayment extends PaymentModule
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_CONFIRMED);
         } else {
             $message = $this->name_upper . ' - Order status is cancel or payment status unknown';
-            PrestaShopLogger::addLog('BM - '.$message, 3, null, 'OrderState', $order_id);
+            PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'OrderState', $order_id);
             $this->returnConfirmation($realOrderId, $order_id, $message);
         }
     }
@@ -1327,14 +1524,34 @@ class BluePayment extends PaymentModule
         foreach (Language::getLanguages() as $lang) {
             if ($lang['locale'] === "pl-PL") {
                 $name_langs[$lang['id_lang']] =
-                    $this->trans('Zapłać przez BlueMedia', [], 'Modules.Bluepayment', $lang['locale']);
+                    $this->trans(
+                        'Zapłać przez Blue Media',
+                        [],
+                        'Modules.Bluepayment',
+                        $lang['locale']
+                    );
                 $name_langs_extra[$lang['id_lang']] =
-                    $this->trans('Po zamówieniu przekieruje cię do systemu płatności BlueMedia', [], 'Modules.Bluepayment', $lang['locale']);
+                    $this->trans(
+                        'Po zamówieniu przekieruje cię do systemu płatności Blue Media',
+                        [],
+                        'Modules.Bluepayment',
+                        $lang['locale']
+                    );
             } else {
                 $name_langs[$lang['id_lang']] =
-                    $this->trans('Pay via BlueMedia', [], 'Modules.Bluepayment', $lang['locale']);
+                    $this->trans(
+                        'Pay via Blue Media',
+                        [],
+                        'Modules.Bluepayment',
+                        $lang['locale']
+                    );
                 $name_langs_extra[$lang['id_lang']] =
-                    $this->trans('After order redirect to BlueMedia payment system', [], 'Modules.Bluepayment', $lang['locale']);
+                    $this->trans(
+                        'After order redirect to Blue Media payment system',
+                        [],
+                        'Modules.Bluepayment',
+                        $lang['locale']
+                    );
             }
         }
 

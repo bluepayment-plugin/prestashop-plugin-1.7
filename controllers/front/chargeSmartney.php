@@ -14,6 +14,11 @@
 /**
  * @property BluePayment $module
  */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontController
 {
     const INVALID_REQUEST = 'Invalid request';
@@ -46,9 +51,12 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
                 $orderIdItem = explode('-', $postOrderId);
                 $orderIdItem = empty($orderIdItem[0]) ? 0 : $orderIdItem[0];
                 $cart = Cart::getCartByOrderId($orderIdItem);
+
+                if (!Validate::isLoadedObject($cart) || (int) $this->context->cart->id != $cart->id) {
+                    throw new OrderException('Invalid cart provided.');
+                }
             }
         }
-
         if ($cart->id_customer === 0 ||
             $cart->id_address_delivery === 0 ||
             $cart->id_address_invoice === 0 ||
@@ -204,7 +212,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
             Db::getInstance()->update(
                 'blue_transactions',
                 ['created_at' => date('Y-m-d H:i:s')],
-                'order_id = \'' . pSQL($orderId) . '\''
+                'order_id = \'' . (int) $orderId . '\''
             );
         }
 
@@ -228,7 +236,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
 
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \'' . pSQL($orderId) . '\'')
+            ->where('order_id = \'' . (int) $orderId . '\'')
             ->select('*');
 
         $transaction = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
@@ -247,7 +255,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
                     Db::getInstance()->insert('blue_transactions', $data);
                 } else {
                     unset($data['order_id']);
-                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
                 }
 
                 if ($response->redirecturl && isset($response->redirecturl[0])) {
@@ -267,7 +275,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
                     Db::getInstance()->insert('blue_transactions', $data);
                 } else {
                     unset($data['order_id']);
-                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
                 }
             } else {
                 $array = [
@@ -289,7 +297,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
                 Db::getInstance()->insert('blue_transactions', $data);
             } else {
                 unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
             }
         } elseif (isset($response->confirmation) &&
             $response->confirmation == 'NOTCONFIRMED' &&
@@ -305,7 +313,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
                 Db::getInstance()->insert('blue_transactions', $data);
             } else {
                 unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
             }
         } elseif (isset($response->confirmation) &&
             $response->confirmation == 'NOTCONFIRMED' &&
@@ -321,7 +329,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
                 Db::getInstance()->insert('blue_transactions', $data);
             } else {
                 unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
             }
         }
 
@@ -345,7 +353,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
     {
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \'' . pSQL($orderId) . '\'')
+            ->where('order_id = \'' . (int) $orderId . '\'')
             ->where('gateway_id = \'' . pSQL($gateway_id) . '\'')
             ->select('*');
 

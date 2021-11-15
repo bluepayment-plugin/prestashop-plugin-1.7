@@ -15,32 +15,32 @@
  */
 
 $(document).ready(function () {
-    var bmSubmitBlikData = {}
-    $('#wrongBlikCode').hide()
-    $('#bm-termofuse').hide()
-    $('#responseMessages').hide()
+    var bmSubmitBlikData = {};
+    $('#wrongBlikCode').hide();
+    $('#bm-termofuse').hide();
+    $('#responseMessages').hide();
 
     $('#bluepaymentForm').on('submit', function () {
-        hideBlikErrors()
-        var blikAction = $(this).attr('action')
+        hideBlikErrors();
+        var blikAction = $(this).attr('action');
 
-        var submitFlag = validateBlikCode()
-        var blikCode = $('[name="bluepayment_input_blikCode"]').val()
+        var submitFlag = validateBlikCode();
+        var blikCode = $('[name="bluepayment_input_blikCode"]').val();
         if (!submitFlag) {
             return false
         }
 
-        bmShowLoader()
-        submitter.attr('disabled', 'disabled')
-        bmSubmitBlikData.blikCode = blikCode
+        bmShowLoader();
+        submitter.attr('disabled', 'disabled');
+        bmSubmitBlikData.blikCode = blikCode;
 
-        sendBlikCode(blikAction)
-        return false
-    })
+        sendBlikCode(blikAction);
+        return false;
+    });
 
     function sendBlikCode(blikAction) {
-        var blik_verify_check = null
-        var responseMessages = $('#responseMessages')
+        var blik_verify_check = null;
+        var responseMessages = $('#responseMessages');
         $.ajax(blikAction, {
             method: 'POST',
             type: 'POST',
@@ -48,6 +48,7 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response) {
+                    console.log(JSON.stringify(response));
                     if (response.status === 'PENDING') {
                         if (typeof response.redirectUrl !== "undefined" && response.redirectUrl.length > 10) {
                             window.location.href = response.redirectUrl;
@@ -86,49 +87,49 @@ $(document).ready(function () {
     }
 
     function validateBlikCode() {
-        var show = true
-        var blikCodeInput = $('[name="bluepayment_input_blikCode"]')
+        var show = true;
+        var blikCodeInput = $('[name="bluepayment_input_blikCode"]');
 
-        var blikCodeValidation = blikCodeInput.val()
+        var blikCodeValidation = blikCodeInput.val();
         if (/^[0-9]{6}$/.test(blikCodeValidation)) {
-            blikCodeInput.parent('div').removeClass('has-error')
-            $('#wrongBlikCode').hide()
-            show = true
+            blikCodeInput.parent('div').removeClass('has-error');
+            $('#wrongBlikCode').hide();
+            show = true;
         } else {
-            blikCodeInput.parent('div').addClass('has-error')
-            $('#wrongBlikCode').show()
-            show = false
+            blikCodeInput.parent('div').addClass('has-error');
+            $('#wrongBlikCode').show();
+            show = false;
         }
-        $('#bm-termofuse').hide()
+        $('#bm-termofuse').hide();
         $(conditionsSelector + ' input[type="checkbox"]').each(function (_, checkbox) {
             if (!checkbox.checked) {
-                blikCodeInput.parent('div').addClass('has-error')
-                $('#bm-termofuse').show()
-                show = false
+                blikCodeInput.parent('div').addClass('has-error');
+                $('#bm-termofuse').show();
+                show = false;
             }
-        })
+        });
 
         return show
     }
 
-})
+});
 
-var submitter = $('#bluepaymentForm').find('[type="submit"]')
-var conditionsSelector = '#conditions-to-approve'
+var submitter = $('#bluepaymentForm').find('[type="submit"]');
+var conditionsSelector = '#conditions-to-approve';
 
 function hideBlikErrors() {
-    $('[name="bluepayment_input_blikCode"]').parent('div').removeClass('has-error')
-    $('#blikAliasError').hide()
-    $('#blikCodeError').hide()
-    $('#responseMessages').hide()
+    $('[name="bluepayment_input_blikCode"]').parent('div').removeClass('has-error');
+    $('#blikAliasError').hide();
+    $('#blikCodeError').hide();
+    $('#responseMessages').hide();
 }
 
 function bmShowLoader() {
-    $('.bluepayment-loader').fadeIn(400)
-    $('.bluepayment-loader-bg').fadeIn(300)
+    $('.bluepayment-loader').fadeIn(400);
+    $('.bluepayment-loader-bg').fadeIn(300);
 }
 
 function bmHideLoader() {
-    $('.bluepayment-loader').fadeOut(300)
-    $('.bluepayment-loader-bg').fadeOut(300)
+    $('.bluepayment-loader').fadeOut(300);
+    $('.bluepayment-loader-bg').fadeOut(300);
 }

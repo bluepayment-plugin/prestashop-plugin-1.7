@@ -11,6 +11,10 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * @property BluePayment $module
  */
@@ -46,6 +50,10 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
                 $orderIdItem = explode('-', $postOrderId);
                 $orderIdItem = empty($orderIdItem[0]) ? 0 : $orderIdItem[0];
                 $cart = Cart::getCartByOrderId($orderIdItem);
+
+                if (!Validate::isLoadedObject($cart) || (int) $this->context->cart->id != $cart->id) {
+                    throw new OrderException('Invalid cart provided.');
+                }
             }
         }
 
@@ -136,11 +144,11 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
 
         $data = [
             'ServiceID'     => $serviceId,
-            'OrderID'       => $orderId,
+            'OrderID'       => (int)$orderId,
             'Amount'        => $amount,
             'Description'   => 'Google Pay Payment',
             'GatewayID'     => (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_GOOGLE_PAY,
-            'Currency'      => $currency,
+            'Currency'      => pSQL($currency),
             'CustomerEmail' => $customerEmail,
             'CustomerIP'    => $_SERVER['REMOTE_ADDR'],
             'Title'         => 'Google Pay Payment',
@@ -204,7 +212,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             Db::getInstance()->update(
                 'blue_transactions',
                 ['created_at' => date('Y-m-d H:i:s')],
-                'order_id = \'' . pSQL($orderId) . '\''
+                'order_id = \'' . (int) $orderId . '\''
             );
         }
 
@@ -222,13 +230,13 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
     {
         $array = [];
         $data = [
-            'order_id'   => $orderId,
+            'order_id'   => (int) $orderId,
             'created_at' => date('Y-m-d H:i:s'),
         ];
 
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \'' . pSQL($orderId) . '\'')
+            ->where('order_id = \'' . (int) $orderId . '\'')
             ->select('*');
 
         $transaction = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
@@ -247,7 +255,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
                     Db::getInstance()->insert('blue_transactions', $data);
                 } else {
                     unset($data['order_id']);
-                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
                 }
 
                 if ($response->redirecturl && isset($response->redirecturl[0])) {
@@ -267,7 +275,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
                     Db::getInstance()->insert('blue_transactions', $data);
                 } else {
                     unset($data['order_id']);
-                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
                 }
             } else {
                 $array = [
@@ -289,7 +297,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
                 Db::getInstance()->insert('blue_transactions', $data);
             } else {
                 unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
             }
         } elseif (isset($response->confirmation) &&
             $response->confirmation == 'NOTCONFIRMED' &&
@@ -305,7 +313,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
                 Db::getInstance()->insert('blue_transactions', $data);
             } else {
                 unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
             }
         } elseif (isset($response->confirmation) &&
             $response->confirmation == 'NOTCONFIRMED' &&
@@ -321,7 +329,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
                 Db::getInstance()->insert('blue_transactions', $data);
             } else {
                 unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL($orderId) . '\'');
+                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
             }
         }
 
@@ -345,7 +353,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
     {
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \'' . pSQL($orderId) . '\'')
+            ->where('order_id = \'' . (int) $orderId . '\'')
             ->where('gateway_id = \'' . pSQL($gateway_id) . '\'')
             ->select('*');
 

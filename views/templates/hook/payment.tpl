@@ -56,8 +56,8 @@
     {/if}
 
     <script>
-        var regulations_get_url = '{$regulations_get}';
-        var start_payment_translation = '{$start_payment_translation}';
-        var order_subject_to_payment_obligation_translation = '{$order_subject_to_payment_obligation_translation}';
+        var regulations_get_url = '{$regulations_get|escape:'javascript':'UTF-8'}';
+        var start_payment_translation = '{$start_payment_translation|escape:'javascript':'UTF-8'}';
+        var order_subject_to_payment_obligation_translation = '{$order_subject_to_payment_obligation_translation|escape:'javascript':'UTF-8'}';
     </script>
 </section>

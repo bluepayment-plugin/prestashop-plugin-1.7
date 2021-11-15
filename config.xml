@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
     <name>bluepayment</name>
-    <displayName><![CDATA[Online payment BM]]></displayName>
-    <version><![CDATA[2.6.5]]></version>
+    <displayName><![CDATA[Blue Media payments]]></displayName>
+    <version><![CDATA[2.6.7]]></version>
     <description><![CDATA[Plugin supports online payments implemented by payment gateway Blue Media company.]]></description>
     <author><![CDATA[Blue Media S.A.]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
