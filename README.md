@@ -18,7 +18,7 @@ Do najważniejszych funkcji modułu zalicza się:
 
 ## Aktywacja płatności w panelu administracyjnym PrestaShop
 
-Dzięki integracji Płatności Online Blue Media i platformy PrestaShop – możesz aktywować naszą usługę bezpośrednio w swoim panelu administracyjnym lub pobrać i zainstalować ją samodzielnie (przejdź do punktu "Instalacja wtyczki"). 
+Dzięki integracji Płatności Online Blue Media i platformy PrestaShop – możesz aktywować naszą usługę bezpośrednio w swoim panelu administracyjnym lub [pobrać i zainstalować ją samodzielnie](https://github.com/bluepayment-plugin/prestashop-plugin-1.7#instalacja-wtyczki). 
 
 Postępuj zgodnie z poniższą instrukcją:
 
