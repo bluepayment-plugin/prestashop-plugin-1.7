@@ -16,9 +16,23 @@ Do najważniejszych funkcji modułu zalicza się:
 - Wersja PrestaShop: 1.7.0.0 - 1.7.7.6
 - Wersja PHP zgodna z wymaganiami względem danej wersji sklepu minimum php 7.0
 
+## Aktywacja płatności w panelu administracyjnym PrestaShop
+
+Dzięki integracji Płatności Online Blue Media i platformy PrestaShop – możesz aktywować naszą usługę bezpośrednio w swoim panelu administracyjnym lub pobrać i zainstalować ją samodzielnie (przejdź do punktu "Instalacja wtyczki"). 
+
+Postępuj zgodnie z poniższą instrukcją:
+
+1. Zaloguj się do swojego panelu administracyjnego w PrestaShop.
+2. Kliknij Moduły > Płatności i wpisz w wyszukiwarkę "Blue Media"
+3. Po wyszukaniu modułu płatności, kliknij Włącz
+4. Żeby zakończyć aktywację usługi i móc przejść do Konfiguracji – zarejestruj się w systemie Blue Media (PayBM) i przejdź proces [weryfikacyjny](https://developers.bluemedia.pl/online/wdrozenie-krok-po-kroku#system-paybm).
+
+Po pozytywnej weryfikacji przez Blue Media, płatności online zostaną aktywowane w panelu PrestaShop i będziesz mógł je skonfigurować zgodnie ze swoimi potrzebami. 
+
+
 ## Instalacja wtyczki
 
-1) Pobierz najnowszą wersję wtyczki klikając [tutaj](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/archive/refs/heads/master.zip).
+1) Pobierz najnowszą wersję wtyczki klikając [tutaj](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/releases).
 
 2) Wejdź na http(s)://domena_sklepu.pl/nazwa_katalogu_administratora i zaloguj się do swojego konta administratora używając loginu i hasła.
 
