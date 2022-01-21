@@ -41,6 +41,24 @@ class Gateway extends AbstractModel
     const GATEWAY_ID_BLIK = 509;
     const GATEWAY_ID_VISA_CHECKOUT = 1511;
     const GATEWAY_ID_GOOGLE_PAY = 1512;
+    const GATEWAY_ID_APPLE_PAY = 1513;
+
+
+
+    const GATEWAY_ID_SLOVENSKA = 1961;
+    const GATEWAY_ID_TARTA_BANKA = 1962;
+    const GATEWAY_ID_VUB_BANKA = 1963;
+    const GATEWAY_ID_POSTOVA_BANKA = 1964;
+    const GATEWAY_ID_VIAMO = 1965;
+
+
+
+
+
+
+
+
+
     const GATEWAY_ID_IFRAME = 1506;
     const GATEWAY_ID_SMARTNEY = 700;
 
@@ -92,6 +110,18 @@ class Gateway extends AbstractModel
             self::GATEWAY_ID_IKO            => 1,
             self::GATEWAY_ID_VISA_CHECKOUT  => 1,
             self::GATEWAY_ID_GOOGLE_PAY     => 1,
+
+
+            self::GATEWAY_ID_SLOVENSKA => 1,
+            self::GATEWAY_ID_TARTA_BANKA => 1,
+            self::GATEWAY_ID_VUB_BANKA => 1,
+            self::GATEWAY_ID_POSTOVA_BANKA => 1,
+            self::GATEWAY_ID_VIAMO => 1,
+
+
+
+
+
         ];
 
     /**

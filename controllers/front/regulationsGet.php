@@ -55,6 +55,8 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
         $serviceId = $this->module->parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
         $sharedKey = $this->module->parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
 
+
+
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ?
             \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX :

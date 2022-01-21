@@ -236,7 +236,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
 
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \'' . (int) $orderId . '\'')
+            ->where('order_id = \'' . pSQL($orderId) . '\'')
             ->select('*');
 
         $transaction = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);

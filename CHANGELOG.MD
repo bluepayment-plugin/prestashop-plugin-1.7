@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.6.9] 21.01.2022
+- A major redesign of the module management panel
+- Grouping of payments
+- Notification of availability of a new version
+
 ## [2.6.7] 15.11.2021
 - Payment return communication added
 - Changing the name of the module

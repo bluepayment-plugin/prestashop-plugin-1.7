@@ -110,7 +110,10 @@
 	{hook h=$hookName}
 {/if}
 
-<div class="alert alert-warning" id="{$list_id}-empty-filters-alert" style="display:none;">{l s='Please fill at least one field to perform a search in this list.' d='Admin.Global'}</div>
+
+<div class="row">
+
+	<div class="alert alert-warning" id="{$list_id}-empty-filters-alert" style="display:none;">{l s='Please fill at least one field to perform a search in this list.' mod='bluepayment'}</div>
 {if isset($sql) && $sql}
 	<form id="sql_form_{$list_id|escape:'html':'UTF-8'}" action="{$link->getAdminLink('AdminRequestSql', true, [], ['addrequest_sql' => 1])|escape}" method="post" class="hide">
 		<input type="hidden" id="sql_query_{$list_id|escape:'html':'UTF-8'}" name="sql" value="{$sql|escape}"/>
@@ -129,11 +132,8 @@
 
 	{block name="override_form_extra"}{/block}
 
-	<div class="panel col-lg-12">
+	<div class="col-lg-12">
 		<div class="panel-heading">
-			{if isset($icon)}
-				<i class="{$icon}"></i>
-			{/if}
 
 			{if is_array($title)}
 				{$title|end|escape:'html':'UTF-8'}
@@ -141,38 +141,7 @@
 				{$title|escape:'html':'UTF-8'}
 			{/if}
 
-			{if isset($toolbar_btn) && count($toolbar_btn) >0}
-				<span class="badge">{$list_total}</span>
-				<span class="panel-heading-action" style="right: 25px;">
 
-				{foreach from=$toolbar_btn item=btn key=k}
-					{if $k != 'modules-list' && $k != 'back'}
-						<a id="desc-{$table}-{if isset($btn.imgclass)}{$btn.imgclass}{else}{$k}{/if}" class="list-toolbar-btn{if isset($btn.target) && $btn.target} _blank{/if}"{if isset($btn.href)} href="{$btn.href|escape:'html':'UTF-8'}"{/if}{if isset($btn.js) && $btn.js} onclick="{$btn.js}"{/if}>
-							<span title="" data-toggle="tooltip" class="label-tooltip" data-original-title="{l s=$btn.desc d='Admin.Global'}" data-html="true" data-placement="top">
-								<i class="process-icon-{if isset($btn.imgclass)}{$btn.imgclass}{else}{$k}{/if}{if isset($btn.class)} {$btn.class}{/if}"></i>
-							</span>
-						</a>
-					{/if}
-				{/foreach}
-
-				{if isset($sql) && $sql}
-					{assign var=sql_manager value=Profile::getProfileAccess(Context::getContext()->employee->id_profile, Tab::getIdFromClassName('AdminRequestSql'))}
-
-					{if $sql_manager.view == 1}
-						<a class="list-toolbar-btn" href="javascript:void(0);" onclick="$('.leadin').first().append('<div class=\'alert alert-info\'>' + $('#sql_query_{$list_id|escape:'html':'UTF-8'}').val() + '</div>'); $(this).attr('onclick', '');">
-							<span class="label-tooltip" data-toggle="tooltip" data-original-title="{l s='Show SQL query' d='Admin.Global'}" data-html="true" data-placement="top" >
-								<i class="process-icon-terminal"></i>
-							</span>
-						</a>
-						<a class="list-toolbar-btn" href="javascript:void(0);" onclick="$('#sql_name_{$list_id|escape:'html':'UTF-8'}').val(createSqlQueryName()); $('#sql_query_{$list_id|escape:'html':'UTF-8'}').val($('#sql_query_{$list_id|escape:'html':'UTF-8'}').val().replace(/\s+limit\s+[0-9,\s]+$/ig, '').trim()); $('#sql_form_{$list_id|escape:'html':'UTF-8'}').submit();">
-							<span class="label-tooltip" data-toggle="tooltip" data-original-title="{l s='Export to SQL Manager' d='Admin.Global'}" data-html="true" data-placement="top" >
-								<i class="process-icon-database"></i>
-							</span>
-						</a>
-					{/if}
-				{/if}
-				</span>
-			{/if}
 		</div>
 		{if $show_toolbar}
 			<script type="text/javascript">
@@ -197,7 +166,7 @@
 							lbl_save_and_stay = $('#desc-{$table}-save-and-stay div');
 							//override save and stay link label with submit button value
 							if (btn_submit.val().length > 0 && lbl_save_and_stay && !lbl_save_and_stay.hasClass('locked')) {
-								lbl_save_and_stay.html(btn_submit.val() + " {l s='and stay' d='Admin.Global'} ");
+								lbl_save_and_stay.html(btn_submit.val() + " {l s='and stay' mod='bluepayment'} ");
 							}
 						}
 						//hide standard submit button
@@ -236,8 +205,16 @@
 			</script>
 		{/if}
 {elseif $simple_header}
-	<div class="panel col-lg-12">
-		{if isset($title)}<h3>{if isset($icon)}<i class="{$icon}"></i> {/if}{if is_array($title)}{$title|end|escape:'html':'UTF-8'}{else}{$title|escape:'html':'UTF-8'}{/if}</h3>{/if}
+{*	<div class="panel col-lg-12">*}
+		{if isset($title)}
+			<div class="section-heading">
+				{if is_array($title)}
+					{$title|end|escape:'html':'UTF-8'}
+				{else}
+					{$title|escape:'html':'UTF-8'}
+				{/if}
+			</div>
+		{/if}
 {/if}
 
 
@@ -302,9 +279,9 @@
 						<th>
 							<span class="title_box">
 							{if $shop_link_type == 'shop'}
-								{l s='Shop' d='Admin.Global'}
+								{l s='Shop' mod='bluepayment'}
 							{else}
-								{l s='Shop group' d='Admin.Global'}
+								{l s='Shop group' mod='bluepayment'}
 							{/if}
 							</span>
 						</th>
@@ -337,14 +314,14 @@
 								{elseif $params.type == 'date' || $params.type == 'datetime'}
 									<div class="date_range row">
  										<div class="input-group fixed-width-md center">
-											<input type="text" class="filter datepicker date-input form-control" id="local_{$params.id_date}_0" name="local_{$params.name_date}[0]"  placeholder="{l s='From' d='Admin.Global'}" />
+											<input type="text" class="filter datepicker date-input form-control" id="local_{$params.id_date}_0" name="local_{$params.name_date}[0]"  placeholder="{l s='From' mod='bluepayment'}" />
 											<input type="hidden" id="{$params.id_date}_0" name="{$params.name_date}[0]" value="{if isset($params.value.0)}{$params.value.0}{/if}">
 											<span class="input-group-addon">
 												<i class="icon-calendar"></i>
 											</span>
 										</div>
  										<div class="input-group fixed-width-md center">
-											<input type="text" class="filter datepicker date-input form-control" id="local_{$params.id_date}_1" name="local_{$params.name_date}[1]"  placeholder="{l s='To' d='Admin.Global'}" />
+											<input type="text" class="filter datepicker date-input form-control" id="local_{$params.id_date}_1" name="local_{$params.name_date}[1]"  placeholder="{l s='To' mod='bluepayment'}" />
 											<input type="hidden" id="{$params.id_date}_1" name="{$params.name_date}[1]" value="{if isset($params.value.1)}{$params.value.1}{/if}">
 											<span class="input-group-addon">
 												<i class="icon-calendar"></i>
@@ -396,7 +373,7 @@
 								</button>
 								{if $filters_has_value}
 									<button type="submit" name="submitReset{$list_id}" class="btn btn-warning">
-										<i class="icon-eraser"></i> {l s='Reset' d='Admin.Global'}
+										<i class="icon-eraser"></i> {l s='Reset' mod='bluepayment'}
 									</button>
 								{/if}
 							</span>

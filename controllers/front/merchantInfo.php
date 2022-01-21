@@ -118,9 +118,14 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
         require_once dirname(__FILE__) . '/../../sdk/index.php';
 
         $currency = $this->context->currency->iso_code;
-        $serviceId = $this->module
-            ->parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
-        $sharedKey = $this->module->parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
+        $serviceId = $this->module->parseConfigByCurrency(
+            $this->module->name_upper . '_SERVICE_PARTNER_ID',
+            $currency
+        );
+        $sharedKey = $this->module->parseConfigByCurrency(
+            $this->module->name_upper . '_SHARED_KEY',
+            $currency
+        );
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ?

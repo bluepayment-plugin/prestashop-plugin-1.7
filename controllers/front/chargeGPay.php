@@ -353,7 +353,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
     {
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \'' . (int) $orderId . '\'')
+            ->where('order_id = \'' . pSQL($orderId) . '\'')
             ->where('gateway_id = \'' . pSQL($gateway_id) . '\'')
             ->select('*');
 

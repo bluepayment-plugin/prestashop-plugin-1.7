@@ -36,7 +36,9 @@ class BluePayment extends PaymentModule
             'paymentReturn',
             'orderConfirmation',
             'displayBackOfficeHeader',
+            'displayAdminAfterHeader',
             'adminOrder',
+            'adminPayments'
         ];
     public $id_order = null;
     public $bm_order_id = '';
@@ -64,7 +66,7 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__) . '/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.6.7';
+        $this->version = '2.6.9';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -72,6 +74,7 @@ class BluePayment extends PaymentModule
         $this->currencies_mode = 'checkbox';
         $this->bootstrap = true;
         $this->module_key = '7dac119ed21c46a88632206f73fa4104';
+        $this->images_dir = _MODULE_DIR_ . 'bluepayment/views/img/';
 
         parent::__construct();
 
@@ -105,17 +108,41 @@ class BluePayment extends PaymentModule
 
             // Domyślne ustawienie aktywnego trybu testowego
             Configuration::updateValue($this->name_upper . '_TEST_ENV', 1);
-            Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY', 0);
+            Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY', 1);
             Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY_LOGO', 1);
             Configuration::updateValue($this->name_upper . '_SHOW_BANER', 0);
-            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Pay via BlueMedia');
-            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', 'After order redirect to BlueMedia 
-            payment system');
+            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Pay via Blue Media');
+            Configuration::updateValue($this->name_upper . '_PAYMENT_GROUP_NAME', 'Przelew internetowy');
 
             return true;
         }
 
         return false;
+    }
+
+
+    public function hookDisplayAdminAfterHeader()
+    {
+
+        try {
+            $gh = new \Github\Client();
+            $ver = $gh->api('repo')->releases()->latest('bluepayment-plugin', 'prestashop-plugin-1.7');
+
+            if ($ver && version_compare($this->version, $ver['name'], '<')) {
+                $this->context->smarty->assign([
+                    'version' => $ver['name'],
+                    'changelog' => $ver['html_url']
+                ]);
+
+                return $this->context->smarty->fetch(
+                    _PS_MODULE_DIR_ . $this->name . '/views/templates/admin/_partials/upgrade.tpl'
+                );
+            }
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog('Brak aktualizacji', 1);
+        }
+
+        return null;
     }
 
 
@@ -163,7 +190,6 @@ class BluePayment extends PaymentModule
         return false;
     }
 
-
     /**
      * Install tab controller AdminBluepaymentController
      *
@@ -175,14 +201,19 @@ class BluePayment extends PaymentModule
         try {
             $tab = new Tab();
             $tab->active = 1;
-            $tab->class_name = 'AdminBluepayment';
+            $tab->class_name = 'AdminBluepaymentPayments';
             $tab->name = [];
             $tab->visible = true;
             $tab->id_parent = -1;
 
             foreach (Language::getLanguages(true) as $lang) {
-                $tab->name[$lang['id_lang']] =
-                    $this->trans('Blue Media settings', [], 'Modules.Bluepayment', $lang['locale']);
+                if ($lang['locale'] === "pl-PL") {
+                    $tab->name[$lang['id_lang']] =
+                        $this->trans('Blue Media - Konfiguracja', [], 'Modules.Bluepayment', $lang['locale']);
+                } else {
+                    $tab->name[$lang['id_lang']] =
+                        $this->trans('Blue Media - Configuration', [], 'Modules.Bluepayment', $lang['locale']);
+                }
             }
 
             $tab->module = $this->name;
@@ -195,7 +226,6 @@ class BluePayment extends PaymentModule
         }
     }
 
-
     /**
      * Remove tab controller AdminBluepaymentController
      *
@@ -203,7 +233,7 @@ class BluePayment extends PaymentModule
      */
     public function uninstallTab()
     {
-        $id_tab = (int)Tab::getIdFromClassName('AdminBluepayment');
+        $id_tab = (int)Tab::getIdFromClassName('AdminBluepaymentPayments');
 
         if ($id_tab) {
             $tab = new Tab($id_tab);
@@ -216,7 +246,6 @@ class BluePayment extends PaymentModule
 
     /**
      * The method adds Blue media payment to the list in the payment settings
-     *
      * @return bool
      */
 
@@ -270,59 +299,14 @@ class BluePayment extends PaymentModule
 
     public function getContent()
     {
-        $output = null;
-
-        if (Tools::isSubmit('submit' . $this->name)) {
-            foreach ($this->configFields() as $configField) {
-                $value = Tools::getValue($configField, Configuration::get($configField));
-
-                Configuration::updateValue($configField, $value);
-            }
-            $paymentName = [];
-            $paymentNameExtra = [];
-
-            foreach (Language::getLanguages(true) as $lang) {
-                $paymentName[$lang['id_lang']] =
-                    Tools::getValue($this->name_upper . '_PAYMENT_NAME_' . $lang['id_lang']);
-                $paymentNameExtra[$lang['id_lang']] =
-                    Tools::getValue($this->name_upper . '_PAYMENT_NAME_EXTRA_' . $lang['id_lang']);
-            }
-
-            $serviceId = [];
-            $sharedKey = [];
-
-            foreach (Currency::getCurrencies() as $currency) {
-                $serviceId[$currency['iso_code']] =
-                    Tools::getValue($this->name_upper . '_SERVICE_PARTNER_ID_' . $currency['iso_code']);
-                $sharedKey[$currency['iso_code']] =
-                    Tools::getValue($this->name_upper . '_SHARED_KEY_' . $currency['iso_code']);
-            }
-
-            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', $paymentName);
-            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', $paymentNameExtra);
-            Configuration::updateValue($this->name_upper . '_SERVICE_PARTNER_ID', serialize($serviceId));
-            Configuration::updateValue($this->name_upper . '_SHARED_KEY', serialize($sharedKey));
-
-            $gateway = new BlueGateway();
-            $gateway->syncGateways();
-
-            $output .= $this->displayConfirmation($this->l('Settings updated'));
-        }
-
-        if (Tools::isSubmit('refreshGateways')) {
-            $gateway = new BlueGateway();
-            $gateway->syncGateways();
-
-            $output .= $this->displayConfirmation($this->l('Settings updated'));
-        }
-
-        return $output . $this->renderForm();
+        Tools::redirectAdmin(
+            $this->context->link->getAdminLink('AdminBluepaymentPayments')
+        );
     }
-
 
     public function installDb()
     {
-        require_once dirname(__FILE__) . '/sql/install.php';
+        require_once _PS_MODULE_DIR_ . $this->name . '/sql/install.php';
     }
 
     public function removeOrderStatuses()
@@ -337,7 +321,7 @@ class BluePayment extends PaymentModule
     public function uninstallDb()
     {
         try {
-            require_once dirname(__FILE__) . '/sql/uninstall.php';
+            require_once _PS_MODULE_DIR_ . $this->name . '/sql/uninstall.php';
             $this->removeOrderStatuses();
         } catch (Exception $exception) {
             PrestaShopLogger::addLog('BM - The table cannot be deleted from the database', 4);
@@ -345,289 +329,126 @@ class BluePayment extends PaymentModule
     }
 
 
-    /**
-     * Generate form
-     *
-     * @return string
-     */
-
-    public function renderForm()
+    public function getGatewaysListFields()
     {
-        $render = '';
-        $fields_form = [];
-
-        $id_default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
-
-        $statuses = OrderState::getOrderStates($id_default_lang);
-
-        $fields_form[0]['form'] = [
-            'legend' => [
-                'title' => $this->l('Settings', 'bluepayment'),
-                'icon' => 'icon-cogs',
+        return [
+            'position' => [
+                'title' => $this->l('Position'),
+                'position' => 'position',
+                'ajax' => true,
+                'align' => 'center',
+                'orderby' => false,
             ],
-            'input' => [
-                [
-                    'type' => 'switch',
-                    'label' => $this->l('Use test gateway'),
-                    'name' => $this->name_upper . '_TEST_ENV',
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => 1,
-                            'label' => $this->l('Yes'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => 0,
-                            'label' => $this->l('No'),
-                        ],
-                    ],
-                ],
-                [
-                    'type' => 'switch',
-                    'label' => $this->l('Show payway in shop'),
-                    'name' => $this->name_upper . '_SHOW_PAYWAY',
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => 1,
-                            'label' => $this->l('Yes'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => 0,
-                            'label' => $this->l('No'),
-                        ],
-                    ],
-                ],
-                [
-                    'type' => 'switch',
-                    'label' => $this->l('Show logo payways'),
-                    'name' => $this->name_upper . '_SHOW_PAYWAY_LOGO',
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => 1,
-                            'label' => $this->l('Yes'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => 0,
-                            'label' => $this->l('No'),
-                        ],
-                    ],
-                ],
-                [
-                    'type' => 'switch',
-                    'label' => $this->l('Show baner'),
-                    'name' => $this->name_upper . '_SHOW_BANER',
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => 1,
-                            'label' => $this->l('Yes'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => 0,
-                            'label' => $this->l('No'),
-                        ],
-                    ],
-                ],
-                [
-                    'type' => 'select',
-                    'name' => $this->name_upper . '_STATUS_WAIT_PAY_ID',
-                    'label' => $this->l('Status waiting payment'),
-                    'options' => [
-                        'query' => $statuses,
-                        'id' => 'id_order_state',
-                        'name' => 'name',
-                    ],
-                ],
-                [
-                    'type' => 'select',
-                    'name' => $this->name_upper . '_STATUS_ACCEPT_PAY_ID',
-                    'label' => $this->l('Status accept payment'),
-                    'options' => [
-                        'query' => $statuses,
-                        'id' => 'id_order_state',
-                        'name' => 'name',
-                    ],
-                ],
-                //                [
-                //                    'type' => 'select',
-                //                    'name' => $this->name_upper . '_STATUS_REFUND_PAY_ID',
-                //                    'label' => $this->l('Status refund payment'),
-                //                    'options' => [
-                //                        'query' => $statuses,
-                //                        'id' => 'id_order_state',
-                //                        'name' => 'name',
-                //                    ],
-                //                ],
-                [
-                    'type' => 'select',
-                    'name' => $this->name_upper . '_STATUS_ERROR_PAY_ID',
-                    'label' => $this->l('Status error payment'),
-                    'options' => [
-                        'query' => $statuses,
-                        'id' => 'id_order_state',
-                        'name' => 'name',
-                    ],
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->l('Payment name'),
-                    'name' => $this->name_upper . '_PAYMENT_NAME',
-                    'size' => 40,
-                    'lang' => true,
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->l('Payment name extra'),
-                    'name' => $this->name_upper . '_PAYMENT_NAME_EXTRA',
-                    'size' => 40,
-                    'lang' => true,
-                ],
+            'gateway_logo_url' => [
+                'title' => $this->l('Payment method'),
+                'callback' => 'displayGatewayLogo',
+                'callback_object' => Module::getInstanceByName($this->name),
+                'orderby' => false,
+                'search' => false,
             ],
-            'submit' => [
-                'title' => $this->l('Save'),
-                'class' => 'btn btn-default pull-right',
+            'gateway_name' => [
+                'title' => '',
+                'orderby' => false,
             ],
+            'gateway_payments' => [
+                'title' => '',
+                'callback' => 'displayGatewayPayments',
+                'callback_object' => Module::getInstanceByName($this->name),
+                'orderby' => false,
+            ],
+            //            'gateway_currency' => [
+            //                'title' => $this->l('Currency'),
+            //                'align' => 'center',
+            //                'search' => false,
+            //            ],
         ];
-
-
-        foreach (Currency::getCurrencies() as $currency) {
-            $fields_form['currency_' . $currency['iso_code']] = [
-                'form' => [
-                    'legend' => [
-                        'title' =>
-                            $this->l('Currency settings: ') . $currency['name'] . ' (' . $currency['iso_code'] . ')',
-                        'icon' => 'icon-cog',
-                    ],
-                    'input' => [
-                        [
-                            'type' => 'text',
-                            'label' => $this->l('Service partner ID'),
-                            'name' => $this->name_upper . '_SERVICE_PARTNER_ID_' . $currency['iso_code'],
-                        ],
-                        [
-                            'type' => 'text',
-                            'label' => $this->l('Shared key'),
-                            'name' => $this->name_upper . '_SHARED_KEY_' . $currency['iso_code'],
-                        ],
-                    ],
-                    'submit' => [
-                        'title' => $this->l('Save'),
-                    ],
-                ],
-            ];
-        }
-
-        $helper = new HelperForm();
-
-        // Moduł, token i currentIndex
-        $helper->module = $this;
-        $helper->name_controller = $this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
-
-        // Domyślny język
-        $helper->default_form_language = $id_default_lang;
-        $helper->allow_employee_form_lang = $id_default_lang;
-
-
-        // Tytuł i belka narzędzi
-        $helper->title = $this->displayName;
-        $helper->show_toolbar = true;
-        $helper->toolbar_scroll = true;
-        $helper->submit_action = 'submit' . $this->name;
-        $helper->toolbar_btn = [
-            'save' =>
-                [
-                    'desc' => $this->l('Save'),
-                    'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&save' . $this->name .
-                        '&token=' . Tools::getAdminTokenLite('AdminModules'),
-                ],
-            'back' =>
-                [
-                    'href' => AdminController::$currentIndex . '&token=' . Tools::getAdminTokenLite('AdminModules'),
-                    'desc' => $this->l('Back to list'),
-                ],
-        ];
-
-        $helper->tpl_vars = [
-            'fields_value' => $this->getConfigFieldsValues(),
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id,
-        ];
-
-        $render .= $helper->generateForm($fields_form);
-        $render .= $this->renderAdditionalOptionsList();
-
-        return $render;
     }
 
-    public function getListContent()
+
+    public function getListChannels($currency = 'PLN')
     {
-        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, gateway_name, 
-        gateway_logo_url, gateway_type, position, bank_name, gateway_currency, gateway_status, position 
-        FROM `' . _DB_PREFIX_ . 'blue_gateways`');
+        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id_blue_gateway_channels, 
+            gateway_payments, gateway_id, gateway_name, gateway_logo_url, gateway_type, position, bank_name, 
+            gateway_currency, gateway_status, 
+            position FROM `' . _DB_PREFIX_ . 'blue_gateway_channels` 
+            WHERE gateway_currency = "' . pSql($currency) . '" ORDER BY position');
+
         return $gateway;
     }
 
 
-    public function getGatewaysListFields()
+    public function getListAllCards($currency = 'PLN')
     {
-        return [
-            'gateway_id' => [
-                'title' => $this->l('Gateway ID'),
-                'align' => 'center',
-                'class' => 'fixed-width-xs',
-                'search' => false,
-            ],
-            'bank_name' => [
-                'title' => $this->l('Bank Name'),
-                'class' => 'fixed-width-xs',
-            ],
-            'gateway_name' => [
-                'title' => $this->l('Name'),
-                'orderby' => false,
-            ],
-            'gateway_logo_url' => [
-                'title' => $this->l('Logo'),
-                'callback' => 'displayGatewayLogo',
-                'callback_object' => Module::getInstanceByName($this->name),
-                'orderby' => false,
-                'class' => 'fixed-width-xs',
-                'search' => false,
-            ],
-            'gateway_currency' => [
-                'title' => $this->l('Currency'),
-                'align' => 'center',
-                'search' => false,
-            ],
-            'position' => [
-                'title' => $this->l('Position'),
-                'filter_key' => 'position',
-                'position' => 'position',
-                'class' => 'fixed-width-xs',
-                'ajax' => true,
-                'align' => 'center',
-                'search' => false,
-            ],
-            'gateway_status' => [
-                'title' => $this->l('Status'),
-                'active' => 'gateway_status',
-                'type' => 'bool',
-                'class' => 'fixed-width-xs',
-                'align' => 'center',
-                'ajax' => true,
-                'orderby' => false,
-                'search' => false,
-            ],
+        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, 
+        gateway_name, gateway_logo_url, gateway_type, position, bank_name, gateway_currency, gateway_status, 
+        position FROM `' . _DB_PREFIX_ . 'blue_gateways` 
+        WHERE gateway_name IN ("Apple Pay","Google Pay") AND gateway_currency = "' . pSql($currency) . '" 
+        ORDER BY position');
+
+        return $gateway;
+    }
+
+    public function getListAllPayments($currency = 'PLN')
+    {
+        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, 
+        gateway_name, gateway_logo_url, gateway_type, position, bank_name, gateway_currency, gateway_status, 
+        position FROM `' . _DB_PREFIX_ . 'blue_gateways` 
+        WHERE gateway_name 
+        NOT IN ("BLIK","Apple Pay","Google Pay","PBC płatność testowa","Kup teraz, zapłać później","Alior Raty") 
+        AND gateway_currency = "' . pSql($currency) . '" 
+        ORDER BY position');
+
+        return $gateway;
+    }
 
 
-        ];
+    /**
+     * Pobieranie metod płatności w administracji
+     */
+
+    public function hookAdminPayments()
+    {
+
+        $list = [];
+        foreach ($this->getSortCurrencies() as $currency) {
+            $paymentList = $this->getListChannels($currency['iso_code']);
+            $title = $currency['name'] . ' (' . $currency['iso_code'] . ')';
+
+            if (!empty($paymentList)) {
+                $list[] = $this->renderAdditionalOptionsList($paymentList, $title);
+            }
+        }
+
+        //full payments
+        //full cards
+
+        $full_payments = $this->getListAllPayments();
+        $full_cards = $this->getListAllCards('Karty');
+
+        $this->context->smarty->assign(
+            [
+                'list' => $list,
+                'full_payments' => $full_payments,
+                'full_cards' => $full_cards
+            ]
+        );
+
+        return $this->display(__FILE__, 'views/templates/admin/_configure/helpers/container_list.tpl');
+    }
+
+
+    public function getSortCurrencies()
+    :array
+    {
+        $sortCurrencies = Currency::getCurrencies();
+
+        usort($sortCurrencies, function ($a, $b) {
+            if ($a['id'] == $b['id']) {
+                return 0;
+            }
+            return $a['id'] > $b['id'] ? 1 : -1;
+        });
+        return (array)$sortCurrencies;
     }
 
 
@@ -637,37 +458,40 @@ class BluePayment extends PaymentModule
     }
 
 
-    protected function renderAdditionalOptionsList()
+    public function displayGatewayPayments($gatewayLogo, $object)
     {
+        if ($gatewayLogo == 1) {
+            return '<div class="btn-info" data-toggle="modal" data-target="#' . str_replace(
+                ' ',
+                '_',
+                $object['gateway_name']
+            ) . '_' . $object['gateway_currency'] . '">
+            <img class="img-fluid" width="24" src="' . $this->images_dir . 'question.png"></div>';
+        } else {
+            return '';
+        }
+    }
 
+    protected function renderAdditionalOptionsList($payments, $title)
+    {
         $helper = new HelperList();
-        $helper->table = 'blue_gateways';
+        $helper->table = 'blue_gateway_channels';
+        $helper->name_controller = $this->name;
         $helper->module = $this;
         $helper->shopLinkType = '';
-        $helper->simple_header = false;
-        $helper->identifier = 'id';
-        $helper->actions = ['edit'];
-        $helper->title = $this->l('Blue Media Payment channels management');
-        $helper->currentIndex = Context::getContext()->link->getAdminLink('AdminBluepayment');
-
-        $content = $this->getListContent();
-
-        $helper->token = Tools::getAdminTokenLite('AdminBluepayment');
-        $helper->listTotal = count($content);
+        $helper->simple_header = true;
+        $helper->identifier = 'id_blue_gateway_channels';
+        $helper->no_link = true;
+        //        $helper->actions = '['edit']';
+        $helper->title = $title;
+        //        $helper->currentIndex = AdminController::$currentIndex;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name;
+        $content = $payments;
+        $helper->token = Tools::getAdminTokenLite('AdminBluepaymentPayments');
         $helper->position_identifier = 'position';
         $helper->orderBy = 'position';
-        $helper->orderWay = 'asc';
-
-        $helper->show_toolbar = true;
-
-        $helper->toolbar_btn = [
-            'refresh' =>
-                [
-                    'desc' => $this->l('Refresh'),
-                    'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&refreshGateways&token=' .
-                        Tools::getAdminTokenLite('AdminModules'),
-                ],
-        ];
+        $helper->orderWay = 'ASC';
+        $helper->show_toolbar = false;
 
         return $helper->generateList($content, $this->getGatewaysListFields());
     }
@@ -690,16 +514,19 @@ class BluePayment extends PaymentModule
         foreach (Language::getLanguages(true) as $lang) {
             $data[$this->name_upper . '_PAYMENT_NAME'][$lang['id_lang']] =
                 Configuration::get($this->name_upper . '_PAYMENT_NAME', $lang['id_lang']);
-            $data[$this->name_upper . '_PAYMENT_NAME_EXTRA'][$lang['id_lang']] =
-                Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA', $lang['id_lang']);
+            $data[$this->name_upper . '_PAYMENT_GROUP_NAME'][$lang['id_lang']] =
+                Configuration::get($this->name_upper . '_PAYMENT_GROUP_NAME', $lang['id_lang']);
         }
 
-        foreach (Currency::getCurrencies() as $currency) {
+        foreach ($this->getSortCurrencies() as $currency) {
             $data[$this->name_upper . '_SERVICE_PARTNER_ID_' . $currency['iso_code']] =
                 $this->parseConfigByCurrency($this->name_upper . '_SERVICE_PARTNER_ID', $currency['iso_code']);
             $data[$this->name_upper . '_SHARED_KEY_' . $currency['iso_code']] =
                 $this->parseConfigByCurrency($this->name_upper . '_SHARED_KEY', $currency['iso_code']);
         }
+
+        //        dump($data);
+        //        die();
 
         return $data;
     }
@@ -717,9 +544,8 @@ class BluePayment extends PaymentModule
             $this->name_upper . '_STATUS_WAIT_PAY_ID',
             $this->name_upper . '_STATUS_ACCEPT_PAY_ID',
             $this->name_upper . '_STATUS_ERROR_PAY_ID',
-            //            $this->name_upper . '_STATUS_REFUND_PAY_ID',
             $this->name_upper . '_PAYMENT_NAME',
-            $this->name_upper . '_PAYMENT_NAME_EXTRA',
+            $this->name_upper . '_PAYMENT_GROUP_NAME',
             $this->name_upper . '_SHOW_PAYWAY',
             $this->name_upper . '_SHOW_PAYWAY_LOGO',
             $this->name_upper . '_SHOW_BANER',
@@ -900,11 +726,9 @@ class BluePayment extends PaymentModule
 
 
     /**
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws Exception
-     * @return array|null
+     * Tworzenie metod płatności
      */
+
     public function hookPaymentOptions()
     {
         if (!$this->active) {
@@ -930,54 +754,320 @@ class BluePayment extends PaymentModule
 
         require_once dirname(__FILE__) . '/sdk/index.php';
 
-        if (Configuration::get($this->name_upper . '_SHOW_PAYWAY')) {
-            $gateways = new PrestaShopCollection('BlueGateway', $this->context->language->id);
-            $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_BLIK);
-            $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_IFRAME);
-            $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_CARD);
-            $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_GOOGLE_PAY);
-            $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_SMARTNEY);
-            $gateways->where('gateway_status', '=', 1);
-            $gateways->where('gateway_currency', '=', $currency->iso_code);
-            $blik = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_BLIK, $currency->iso_code);
-            $iframe = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_IFRAME, $currency->iso_code);
-            $cardGateway = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_CARD, $currency->iso_code);
-            $gpay = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_GOOGLE_PAY, $currency->iso_code);
-            $smartney = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_SMARTNEY, $currency->iso_code);
-            $gateways->orderBy('position');
-            $gateways = $gateways->getResults();
-        } else {
-            $gateways = [
-                'gateways_payments' => false
-            ];
-        }
+        /**
+         * Pobiera wszystkie kanały płatności dla przelewów internetowych
+         */
+
+        $gateways = new PrestaShopCollection('BlueGateway', $this->context->language->id);
+        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_BLIK);
+        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_IFRAME);
+        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_CARD);
+        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_GOOGLE_PAY);
+        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_APPLE_PAY);
+        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_SMARTNEY);
+        $gateways->where('gateway_status', '=', 1);
+        $gateways->where('gateway_currency', '=', $currency->iso_code);
+        $gateways->orderBy('position');
+        $gateways = $gateways->getResults();
+
+        $cart_id_time = $this->context->cart->id . '-' . time();
 
         $this->smarty->assign([
             'module_link' => $moduleLink,
             'ps_version' => _PS_VERSION_,
             'module_dir' => $this->_path,
             'payment_name' => Configuration::get($this->name_upper . '_PAYMENT_NAME', $this->context->language->id),
-            'payment_name_extra' =>
-                Configuration::get($this->name_upper . '_PAYMENT_NAME_EXTRA', $this->context->language->id),
+            'payment_group_name' =>
+                Configuration::get($this->name_upper . '_PAYMENT_GROUP_NAME', $this->context->language->id),
             'selectPayWay' => Configuration::get($this->name_upper . '_SHOW_PAYWAY'),
             'showPayWayLogo' => Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO'),
             'showBaner' => Configuration::get($this->name_upper . '_SHOW_BANER'),
             'gateways' => $gateways,
             'regulations_get' => $this->context->link->getModuleLink('bluepayment', 'regulationsGet', [], true),
-            'start_payment_translation' =>
-                $this->l('Start payment'),
-            'order_subject_to_payment_obligation_translation' =>
-                $this->l('Order with the obligation to pay'),
+            'start_payment_translation' => $this->l('Start payment'),
+            'start_payment_intro' => $this->l('Internet transfer, BLIK, payment card, Google Pay, Apple Pay'),
+            'order_subject_to_payment_obligation_translation' => $this->l('Order with the obligation to pay'),
         ]);
 
         $newOptions = [];
 
-        $cart_id_time = $this->context->cart->id . '-' . time();
+        if (Configuration::get($this->name_upper . '_SHOW_PAYWAY')) {
 
-        if (!empty($gateways)) {
+            /**
+             * Tworzenie grupy płatności
+             */
+
+            $blik = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_BLIK, $currency->iso_code);
+            $cardGateway = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_CARD, $currency->iso_code);
+            $gpay = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_GOOGLE_PAY, $currency->iso_code);
+            $smartney = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_SMARTNEY, $currency->iso_code);
+            $applePay = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_APPLE_PAY, $currency->iso_code);
+            $iframe = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_IFRAME, $currency->iso_code);
+
+
+            /**
+             * Inne bramki
+             */
+
+            $slovenska = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_SLOVENSKA, $currency->iso_code);
+            $tarta_banka = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_TARTA_BANKA, $currency->iso_code);
+            $vub_banka = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_VUB_BANKA, $currency->iso_code);
+            $postova_banka = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_POSTOVA_BANKA, $currency->iso_code);
+            $viamo = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_VIAMO, $currency->iso_code);
+
+            $payment_group = new PrestaShopCollection('BlueGatewayChannels', $this->context->language->id);
+            $payment_group->where('gateway_status', '=', 1);
+            $payment_group->where('gateway_currency', '=', $currency->iso_code);
+            $payment_group->orderBy('position');
+            $payment_group = $payment_group->getResults();
+
+            if (!empty($payment_group)) {
+                foreach ($payment_group as $p_group) {
+//                    dump($p_group->gateway_name);
+                    if ($p_group->gateway_name === 'Przelew internetowy') {
+                        $paymentName = Configuration::get(
+                            $this->name_upper . '_PAYMENT_GROUP_NAME',
+                            $this->context->language->id
+                        );
+
+                        if (!empty($gateways)) {
+                            $newOption = new PaymentOption();
+                            $newOption->setCallToActionText(
+                                $paymentName
+                            )
+                                ->setAction($moduleLink)
+                                ->setInputs([
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_gateway',
+                                        'value' => '0',
+                                    ],
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_cart_id',
+                                        'value' => $cart_id_time,
+                                    ],
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment-hidden-psd2-regulation-id',
+                                        'value' => '0',
+                                    ],
+                                ])
+                                ->setLogo(
+                                    $this->context->shop->getBaseURL(true).'modules/bluepayment/views/img/blue-media.svg'
+                                )->setAdditionalInformation(
+                                    $this->fetch('module:bluepayment/views/templates/hook/payment.tpl')
+                                );
+
+                            $newOptions[] = $newOption;
+                        }
+                    }
+
+
+                    if ($p_group->gateway_name === 'PBC płatność testowa') {
+                        if ($cardGateway) {
+                            $card = new BlueGateway($cardGateway);
+                            $cardOption = new PaymentOption();
+                            $cardOption->setCallToActionText($card->gateway_name)
+                                ->setAction($moduleLink)
+                                ->setInputs([
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_gateway',
+                                        'value' => GatewayModel::GATEWAY_ID_CARD,
+                                    ],
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_gateway_id',
+                                        'value' => GatewayModel::GATEWAY_ID_CARD,
+                                    ],
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_cart_id',
+                                        'value' => $cart_id_time,
+                                    ],
+                                ])
+                                ->setLogo($card->gateway_logo_url);
+                            $newOptions[] = $cardOption;
+                        }
+                    }
+
+                    if ($p_group->gateway_name === 'BLIK') {
+                        if ($blik) {
+                            $blikGateway = new BlueGateway($blik);
+                            $blikModuleLink = $this->context->link->getModuleLink(
+                                'bluepayment',
+                                'chargeBlik',
+                                [],
+                                true
+                            );
+                            $this->smarty->assign([
+                                'blik_gateway' => $blikGateway,
+                                'blik_moduleLink' => $blikModuleLink,
+                            ]);
+                            $blikOption = new PaymentOption();
+                            $blikOption->setCallToActionText($blikGateway->gateway_name)
+                                ->setAction($blikModuleLink)
+                                ->setBinary(true)
+                                ->setLogo($blikGateway->gateway_logo_url)
+                                ->setForm($this->fetch('module:bluepayment/views/templates/hook/paymentBlik.tpl'));
+                            $newOptions[] = $blikOption;
+                        }
+                    }
+
+
+                    if ($p_group->gateway_name === 'Wirtualny portfel') {
+                        /**
+                         * G-pay button will show only in secure enviroments, it mean:
+                         * 127.0.0.1, localhost, secure SSL host
+                         */
+
+                        if ($gpay) {
+                            $gpayGateway = new BlueGateway($gpay);
+                            $gpayMerchantInfo = $this->context->link->getModuleLink('bluepayment', 'merchantInfo', [], true);
+                            $gpay_moduleLinkCharge = $this->context->link->getModuleLink('bluepayment', 'chargeGPay', [], true);
+
+                            $this->smarty->assign([
+                                'gpay_merchantInfo' => $gpayMerchantInfo,
+                                'gpay_moduleLinkCharge' => $gpay_moduleLinkCharge,
+                            ]);
+                            $gpayOption = new PaymentOption();
+                            $gpayOption->setCallToActionText($gpayGateway->gateway_name)
+                                ->setAction($gpayMerchantInfo)
+                                ->setBinary(true)
+                                ->setLogo($gpayGateway->gateway_logo_url)
+                                ->setInputs([
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_gateway',
+                                        'value' => 0,
+                                    ],
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'gpay_get_merchant_info',
+                                        'value' => $gpayMerchantInfo,
+                                    ]
+                                ])
+                                ->setAdditionalInformation($this->fetch('module:bluepayment/views/templates/hook/paymentGpay.tpl'));
+                            $newOptions[] = $gpayOption;
+                        }
+
+                        /// ApplePay
+
+                        if ($applePay) {
+                            $applePayGateway = new BlueGateway($applePay);
+                            $applePayOption = new PaymentOption();
+                            $applePayOption->setCallToActionText($applePayGateway->gateway_name)
+                                ->setAction($moduleLink)
+                                ->setLogo($applePayGateway->gateway_logo_url)
+                                ->setInputs([
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_gateway',
+                                        'value' => GatewayModel::GATEWAY_ID_APPLE_PAY,
+                                    ],
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_gateway_id',
+                                        'value' => GatewayModel::GATEWAY_ID_APPLE_PAY,
+                                    ],
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_cart_id',
+                                        'value' => $cart_id_time,
+                                    ],
+
+
+                                ]);
+                            $newOptions[] = $applePayOption;
+                        }
+
+
+
+
+
+                    }
+
+
+                    if ($p_group->gateway_name === 'Kup teraz, zapłać później') {
+                        if ($smartney
+                            && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH)
+                            >= (float)SMARTNEY_MIN_AMOUNT
+                            && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH)
+                            <= (float)SMARTNEY_MAX_AMOUNT
+                        ) {
+                            $smartneyGateway = new BlueGateway($smartney);
+                            $smartneyMerchantInfo = $this->context->link->getModuleLink(
+                                'bluepayment',
+                                'merchantInfo',
+                                [],
+                                true
+                            );
+                            $smartney_moduleLinkCharge = $this->context->link->getModuleLink(
+                                'bluepayment',
+                                'chargeSmartney',
+                                [],
+                                true
+                            );
+
+                            $this->smarty->assign([
+                                'smartney_merchantInfo' => $smartneyMerchantInfo,
+                                'smartney_moduleLinkCharge' => $smartney_moduleLinkCharge,
+                            ]);
+                            $smartneyOption = new PaymentOption();
+                            $smartneyOption->setCallToActionText($smartneyGateway->gateway_name)
+                                ->setAction($moduleLink)
+                                ->setLogo($smartneyGateway->gateway_logo_url)
+                                ->setInputs([
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_gateway',
+                                        'value' => GatewayModel::GATEWAY_ID_SMARTNEY,
+                                    ],
+                                    [
+                                        'type' => 'hidden',
+                                        'name' => 'bluepayment_gateway_id',
+                                        'value' => GatewayModel::GATEWAY_ID_SMARTNEY,
+                                    ],
+                                ]);
+                            $newOptions[] = $smartneyOption;
+                        }
+                    }
+
+                    if ($iframe
+                        && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) >= (float)IFRAME_MIN_AMOUNT
+                    ) {
+                        $iframeGateway = new BlueGateway($iframe);
+                        $iframeOption = new PaymentOption();
+                        $iframeOption->setCallToActionText($iframeGateway->gateway_name)
+                            ->setAction($moduleLink)
+                            ->setInputs([
+                                [
+                                    'type' => 'hidden',
+                                    'name' => 'bluepayment_gateway',
+                                    'value' => GatewayModel::GATEWAY_ID_IFRAME,
+                                ],
+                                [
+                                    'type' => 'hidden',
+                                    'name' => 'bluepayment_gateway_id',
+                                    'value' => GatewayModel::GATEWAY_ID_IFRAME,
+                                ],
+                            ])
+                            ->setLogo($iframeGateway->gateway_logo_url);
+                        $newOptions[] = $iframeOption;
+                    }
+                }
+            }
+        } else {
+            /**
+             * Tworzenie przekierowania dla wszystkich płatności
+             */
+
+            $paymentName = Configuration::get($this->name_upper . '_PAYMENT_NAME', $this->context->language->id);
+
             $newOption = new PaymentOption();
             $newOption->setCallToActionText(
-                Configuration::get($this->name_upper . '_PAYMENT_NAME', $this->context->language->id)
+                $paymentName
             )
                 ->setAction($moduleLink)
                 ->setInputs([
@@ -997,140 +1087,10 @@ class BluePayment extends PaymentModule
                         'value' => '0',
                     ],
                 ])
-                ->setLogo($this->context->shop->getBaseURL(true) . 'modules/bluepayment/views/img/logo.png')
+                ->setLogo($this->context->shop->getBaseURL(true) . 'modules/bluepayment/views/img/blue-media.svg')
                 ->setAdditionalInformation($this->fetch('module:bluepayment/views/templates/hook/payment.tpl'));
 
             $newOptions[] = $newOption;
-        }
-
-        if ($blik) {
-            $blikGateway = new BlueGateway($blik);
-            $blikModuleLink = $this->context->link->getModuleLink('bluepayment', 'chargeBlik', [], true);
-            $this->smarty->assign([
-                'blik_gateway' => $blikGateway,
-                'blik_moduleLink' => $blikModuleLink,
-            ]);
-            $blikOption = new PaymentOption();
-            $blikOption->setCallToActionText($blikGateway->gateway_name)
-                ->setAction($blikModuleLink)
-                ->setBinary(true)
-                ->setLogo($blikGateway->gateway_logo_url)
-                ->setForm($this->fetch('module:bluepayment/views/templates/hook/paymentBlik.tpl'));
-            $newOptions[] = $blikOption;
-        }
-
-        /**
-         * G-pay button will show only in secure enviroments, it mean:
-         * 127.0.0.1, localhost, secure SSL host
-         */
-        if ($gpay) {
-            $gpayGateway = new BlueGateway($gpay);
-            $gpayMerchantInfo = $this->context->link->getModuleLink('bluepayment', 'merchantInfo', [], true);
-            $gpay_moduleLinkCharge = $this->context->link->getModuleLink('bluepayment', 'chargeGPay', [], true);
-
-            $this->smarty->assign([
-                'gpay_merchantInfo' => $gpayMerchantInfo,
-                'gpay_moduleLinkCharge' => $gpay_moduleLinkCharge,
-            ]);
-            $gpayOption = new PaymentOption();
-            $gpayOption->setCallToActionText($gpayGateway->gateway_name)
-                ->setAction($gpayMerchantInfo)
-                ->setBinary(true)
-                ->setLogo($gpayGateway->gateway_logo_url)
-                ->setInputs([
-                    [
-                        'type' => 'hidden',
-                        'name' => 'bluepayment_gateway',
-                        'value' => 0,
-                    ],
-                    [
-                        'type' => 'hidden',
-                        'name' => 'gpay_get_merchant_info',
-                        'value' => $gpayMerchantInfo,
-                    ]
-                ])
-                ->setAdditionalInformation($this->fetch('module:bluepayment/views/templates/hook/paymentGpay.tpl'));
-            $newOptions[] = $gpayOption;
-        }
-
-        if ($smartney
-            && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) >= (float)SMARTNEY_MIN_AMOUNT
-            && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) <= (float)SMARTNEY_MAX_AMOUNT
-        ) {
-            $smartneyGateway = new BlueGateway($smartney);
-            $smartneyMerchantInfo = $this->context->link->getModuleLink('bluepayment', 'merchantInfo', [], true);
-            $smartney_moduleLinkCharge = $this->context->link->getModuleLink('bluepayment', 'chargeSmartney', [], true);
-
-            $this->smarty->assign([
-                'smartney_merchantInfo' => $smartneyMerchantInfo,
-                'smartney_moduleLinkCharge' => $smartney_moduleLinkCharge,
-            ]);
-            $smartneyOption = new PaymentOption();
-            $smartneyOption->setCallToActionText($smartneyGateway->gateway_name)
-                ->setAction($moduleLink)
-                ->setLogo($smartneyGateway->gateway_logo_url)
-                ->setInputs([
-                    [
-                        'type' => 'hidden',
-                        'name' => 'bluepayment_gateway',
-                        'value' => GatewayModel::GATEWAY_ID_SMARTNEY,
-                    ],
-                    [
-                        'type' => 'hidden',
-                        'name' => 'bluepayment_gateway_id',
-                        'value' => GatewayModel::GATEWAY_ID_SMARTNEY,
-                    ],
-                ]);
-            $newOptions[] = $smartneyOption;
-        }
-
-        if ($iframe
-            && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) >= (float)IFRAME_MIN_AMOUNT
-        ) {
-            $iframeGateway = new BlueGateway($iframe);
-            $iframeOption = new PaymentOption();
-            $iframeOption->setCallToActionText($iframeGateway->gateway_name)
-                ->setAction($moduleLink)
-                ->setInputs([
-                    [
-                        'type' => 'hidden',
-                        'name' => 'bluepayment_gateway',
-                        'value' => GatewayModel::GATEWAY_ID_IFRAME,
-                    ],
-                    [
-                        'type' => 'hidden',
-                        'name' => 'bluepayment_gateway_id',
-                        'value' => GatewayModel::GATEWAY_ID_IFRAME,
-                    ],
-                ])
-                ->setLogo($iframeGateway->gateway_logo_url);
-            $newOptions[] = $iframeOption;
-        }
-
-        if ($cardGateway) {
-            $card = new BlueGateway($cardGateway);
-            $cardOption = new PaymentOption();
-            $cardOption->setCallToActionText($card->gateway_name)
-                ->setAction($moduleLink)
-                ->setInputs([
-                    [
-                        'type' => 'hidden',
-                        'name' => 'bluepayment_gateway',
-                        'value' => GatewayModel::GATEWAY_ID_CARD,
-                    ],
-                    [
-                        'type' => 'hidden',
-                        'name' => 'bluepayment_gateway_id',
-                        'value' => GatewayModel::GATEWAY_ID_CARD,
-                    ],
-                    [
-                        'type' => 'hidden',
-                        'name' => 'bluepayment_cart_id',
-                        'value' => $cart_id_time,
-                    ],
-                ])
-                ->setLogo($card->gateway_logo_url);
-            $newOptions[] = $cardOption;
         }
 
         return $newOptions;
@@ -1153,12 +1113,10 @@ class BluePayment extends PaymentModule
         $comma_separated = implode(',', $values_array_filter);
 
         $replaced = str_replace(',', HASH_SEPARATOR, $comma_separated);
-        //        if($test) {
         Configuration::updateValue(
             $this->name_upper . '_' . time(),
             $replaced . '|||' . hash(Gateway::HASH_SHA256, $replaced)
         );
-        //        }
         return hash(Gateway::HASH_SHA256, $replaced);
     }
 
@@ -1236,8 +1194,10 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__) . '/sdk/index.php';
 
         $order = explode('-', $response->transactions->transaction->orderID)[0];
+
         $order = new OrderCore($order);
         $currency = new Currency($order->id_currency);
+
         $service_id = $this->parseConfigByCurrency($this->name_upper . '_SERVICE_PARTNER_ID', $currency->iso_code);
         $shared_key = $this->parseConfigByCurrency($this->name_upper . '_SHARED_KEY', $currency->iso_code);
 
@@ -1300,7 +1260,10 @@ class BluePayment extends PaymentModule
         if (null === $order_id) {
             $order_id = explode('-', $realOrderId)[0];
         }
+//
+//        var_dump('order_od '. $order_id);
 
+//        $order = new Order(81);/**/
         $order = new Order($order_id);
         $currency = new Currency($order->id_currency);
         // Id serwisu partnera
@@ -1357,6 +1320,8 @@ class BluePayment extends PaymentModule
     {
 
         $transaction_xml = $response->transactions->transaction;
+//        $this->debug($response);
+
 
         if ($this->validAllTransaction($response)) {
             // Aktualizacja statusu zamówienia i transakcji
@@ -1365,7 +1330,11 @@ class BluePayment extends PaymentModule
             $message = $this->name_upper . ' - Invalid hash: ' . $response->hash;
             // Potwierdzenie zwrotne o transakcji nie autentycznej
             PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'Order', $transaction_xml->orderID);
-            $this->returnConfirmation($transaction_xml->orderID, null, self::TRANSACTION_NOTCONFIRMED);
+            $this->returnConfirmation(
+                $transaction_xml->orderID,
+                null,
+                self::TRANSACTION_NOTCONFIRMED
+            );
         }
     }
 
@@ -1415,7 +1384,7 @@ class BluePayment extends PaymentModule
 
         // Objekt zamówienia
         $order = new OrderCore($order_id);
-
+//        $order = new OrderCore(81);
         // Obiekt płatności zamówienia
         $order_payments = $order->getOrderPaymentCollection();
 
@@ -1519,20 +1488,21 @@ class BluePayment extends PaymentModule
     public function installConfigurationTranslations()
     {
         $name_langs = [];
-        $name_langs_extra = [];
+        $name_langs_group = [];
+
         //@TODO: po zmianie tekstu na klucze do tłumaczeń pobierać nazwę i opis poprzez klucze
         foreach (Language::getLanguages() as $lang) {
             if ($lang['locale'] === "pl-PL") {
                 $name_langs[$lang['id_lang']] =
                     $this->trans(
-                        'Zapłać przez Blue Media',
+                        'Szybka płatność',
                         [],
                         'Modules.Bluepayment',
                         $lang['locale']
                     );
-                $name_langs_extra[$lang['id_lang']] =
+                $name_langs_group[$lang['id_lang']] =
                     $this->trans(
-                        'Po zamówieniu przekieruje cię do systemu płatności Blue Media',
+                        'Przelew internetowy',
                         [],
                         'Modules.Bluepayment',
                         $lang['locale']
@@ -1540,14 +1510,14 @@ class BluePayment extends PaymentModule
             } else {
                 $name_langs[$lang['id_lang']] =
                     $this->trans(
-                        'Pay via Blue Media',
+                        'Fast payment',
                         [],
                         'Modules.Bluepayment',
                         $lang['locale']
                     );
-                $name_langs_extra[$lang['id_lang']] =
+                $name_langs_group[$lang['id_lang']] =
                     $this->trans(
-                        'After order redirect to Blue Media payment system',
+                        'Internet transfer',
                         [],
                         'Modules.Bluepayment',
                         $lang['locale']
@@ -1556,7 +1526,7 @@ class BluePayment extends PaymentModule
         }
 
         Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', $name_langs);
-        Configuration::updateValue($this->name_upper . '_PAYMENT_NAME_EXTRA', $name_langs_extra);
+        Configuration::updateValue($this->name_upper . '_PAYMENT_GROUP_NAME', $name_langs_group);
 
         return true;
     }

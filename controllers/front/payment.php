@@ -85,6 +85,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 $customer->secure_key
             );
 
+            $order = Order::getByCartId($cartId);
             $orderId = $this->module->currentOrder . '-' . time();
         } else {
             $bluepaymentCartId = Tools::getValue('bluepayment_cart_id', null);
@@ -96,7 +97,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 $bluepaymentCartId = empty($bluepaymentCartId[0]) ? 0 : $bluepaymentCartId[0];
 
                 $order = Order::getByCartId($bluepaymentCartId);
-                $cart = Cart::getCartByOrderId($order->id);
+                $cart = Cart::getCartByOrderId($order->id); /// refractor
 
                 $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
                 $amount = number_format(round($totalPaid, 2), 2, '.', '');
@@ -125,7 +126,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         $gateway = new Gateway($service_id, $shared_key, $gateway_mode);
 
         $transactionStandard = new TransactionStandard();
-        $transactionStandard->setOrderId($orderId)
+        $transactionStandard->setOrderId((string)$orderId)
             ->setAmount($amount)
             ->setCustomerEmail($customer->email)
             ->setCurrency($isoCode)

@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2021
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 {extends file=$layout}
@@ -18,7 +18,7 @@
 {block name='content'}
     <section id="main" style="padding: 20px">
         <div class="box">
-            <a href="http://bluepayment.pl" target="_blank">
+            <a href="https://bluepayment.pl" target="_blank">
                 <img src="{$module_dir}views/img/bluepayment.svg" class="payment-brand" alt="Bluemedia" />
             </a>
             <h1>

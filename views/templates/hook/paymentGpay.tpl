@@ -10,10 +10,10 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2021
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-<div style="padding-left:45px;padding-bottom: 50px">
+<div style="padding-bottom: 25px">
     <div class="bluepayment-loader"></div>
     <div class="bluepayment-loader-bg"></div>
     <div id="gpay-button"></div>

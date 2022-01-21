@@ -18,6 +18,7 @@ if (!defined('_PS_VERSION_')) {
 $sql = [];
 
 $sql[] = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'blue_gateways`';
+$sql[] = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'blue_gateway_channels`';
 $sql[] = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'blue_transactions`';
 
 foreach ($sql as $query) {

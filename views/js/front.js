@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2021
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -49,7 +49,10 @@ $(document).ready(function () {
         } else {
             button.text(order_subject_to_payment_obligation_translation);
         }
+
     });
+
+
 
     $('input:radio[name=payment-option]').change(function () {
         var base_element = $(this).parent().parent().parent().next();
@@ -69,6 +72,7 @@ $(document).ready(function () {
     );
 
     bindPsdCheckboxValidator();
+    hideApplePayOtherBrowser();
 });
 
 /**
@@ -105,6 +109,34 @@ function showPSD2Clause(gatewayId, regulation) {
     //     // $('#bluepayment-gateway .bluepayment-agent-info').hide();
     // }
 }
+
+
+
+
+if(hideApplePayOtherBrowser) {
+    const paymentOptions = $('.payment-option');
+    paymentOptions.each(function() {
+        if( $(this).find('label > span').html() === 'Apple Pay' ) {
+            $(this).css('display', 'none');
+        }
+    });
+}
+
+
+
+
+function hideApplePayOtherBrowser() {
+    var hideApplePayOtherBrowser = (navigator.userAgent.indexOf('Safari') != -1
+            && navigator.userAgent.indexOf('Chrome') == -1)
+    return hideApplePayOtherBrowser;
+}
+
+
+
+
+
+
+
 
 function regulationsGet() {
     if (typeof regulations_get_url === 'undefined') {

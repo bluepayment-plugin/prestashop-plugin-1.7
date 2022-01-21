@@ -10,13 +10,13 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2021
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <form id="bluepaymentForm" action="{$blik_moduleLink}" method="POST">
     <div class="bluepayment-loader"></div>
     <div class="bluepayment-loader-bg"></div>
-    <div style="padding-left:45px;padding-bottom: 50px">
+    <div style="padding-bottom: 25px; margin-left: 2.875rem; margin-top: 1.25rem;">
         <div class="form-group">
             <label class="col-form-label">
                 {l s='Insert BlikCode number' mod='bluepayment'}

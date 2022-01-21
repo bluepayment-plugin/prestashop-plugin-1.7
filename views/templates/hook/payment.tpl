@@ -10,23 +10,15 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2021
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <section>
-    <span>
-    {if isset($payment_name_extra)}
-        {$payment_name_extra}<br /><br />
-    {/if}
-    </span>
-    {if $showBaner}
-        <img src="{$module_dir}views/img/baner.png" style="width: 100%; margin-bottom: 16px;" />
-    {/if}
 
     {if $selectPayWay}
         <form id="bluepayment-gateway" method="GET">
             <div class="bluepayment-agent-info">
-                {l s='The payment order is submitted to your bank via Blue Media S.A. based in Sopot and will be processed in accordance with the terms and conditions specified by your bank.' mod='bluepayment'}
+                {l s='We will redirect you to the website of our partner Blue Media, where you will make the payment.' mod='bluepayment'}
             </div>
 
             <div id="blue_payway" class="bluepayment-gateways">
@@ -45,14 +37,22 @@
                 </div>
             </div>
 
-            <div class="bluepayment-agent-info-bottom ajax-psd2-clause" style="display:none; width:100%; min-height:145px;">
+            <div class="bluepayment-agent-info-bottom ajax-psd2-clause" style="display:none; width:100%;">
+                <div class="bm-small-info">
                 <div class="text"></div>
+                </div>
             </div>
 
             <div class="bluepayment-agent-info-bottom ajax-psd2-clause-merchant" style="display:none; width:100%; min-height:145px;">
-                <div class="text"></div>
+                <div class="text bm-small-info"></div>
             </div>
         </form>
+
+        <div class="bm-small-info">
+                {l s='The payment order is submitted to your bank via Blue Media S.A. based in Sopot and will be processed in accordance with the terms and conditions specified by your bank.' mod='bluepayment'}
+        </div>
+    {else}
+        <p>{l s='You will be redirected to the website of our partner Blue Media, where you can choose your fast and secure payment method.' mod='bluepayment'}</p>
     {/if}
 
     <script>
@@ -60,4 +60,16 @@
         var start_payment_translation = '{$start_payment_translation|escape:'javascript':'UTF-8'}';
         var order_subject_to_payment_obligation_translation = '{$order_subject_to_payment_obligation_translation|escape:'javascript':'UTF-8'}';
     </script>
+
+    {if !$selectPayWay}
+        <script>
+            var start_payment_intro = '{$start_payment_intro|escape:'javascript':'UTF-8'}';
+            document.addEventListener("DOMContentLoaded", function (event) {
+                var base_element = $('input[name=bluepayment-hidden-psd2-regulation-id]').parent().parent().prev().prev();
+                var payment_subtitle = $("<p></p>").text(start_payment_intro);
+                base_element.find('label span').append(payment_subtitle);
+            });
+        </script>
+    {/if}
+
 </section>

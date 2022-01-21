@@ -50,14 +50,32 @@ div.payment-option > label > img {
 }
 
 #blue_payway {
-  margin-top: 30px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#bluepayment-gateway {
+  margin-bottom: 20px;
+}
+
+.payment-option > label {
+
+  span {
+    text-align: left;
+  }
+
+  p {
+    text-align: left;
+    font-size: 12px;
+    margin:0;
+  }
+
 }
 
 .blue-gateway label {
   text-align: left;
   width: 100%;
   display: inline-block;
-
   img {
     width: 60px;
   }
@@ -111,4 +129,184 @@ div.payment-option > label > img {
       display: none;
     }
   }
+}
+
+
+
+.bluepayment-gateways__wrap {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -0.3rem;
+  margin-right: -0.3rem;
+  margin-bottom: 1rem;
+}
+
+
+
+.bluepayment-gateways__item {
+  padding: 0.3rem;
+  width: 25%;
+}
+
+@media only screen and (max-width: 768px) {
+  .bluepayment-gateways__item {
+    width: 50%;
+  }
+}
+
+@media only screen and (max-width: 1400px) {
+  .bluepayment-gateways__item {
+    width: 33.333%;
+  }
+}
+
+
+.bluepayment-gateways__img {
+  width: 65px;
+  display: table;
+  margin: 0 auto;
+}
+
+
+.bluepayment-gateways__item {
+
+    label {
+    border: 2px solid #F1F1F1;
+    padding: 0.5rem;
+    border-radius: 8px;
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-content: flex-start;
+    align-items: initial;
+    flex-direction: column;
+    justify-content: space-between;
+    font-weight: 400;
+  }
+
+  input:checked ~ label {
+    border-color: #005abb;
+    transition: all 0.3s ease;
+  }
+
+  input{
+    display: none;
+  }
+
+}
+
+
+.bluepayment-gateways__name {
+  text-align: center;
+  width: 100%;
+  color: black;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+  line-height: 1.2;
+}
+
+
+.payment-option {
+  display: flex;
+  align-items: center;
+}
+
+.payment-option label {
+  margin-bottom:0;
+}
+
+.payment-brand {
+  display: block;
+  margin-bottom: 24px;
+  max-width: 85px;
+}
+
+.payment-navigation {
+  margin-top: 46px;
+  margin-bottom: 16px;
+}
+
+
+
+
+
+
+
+body#checkout section.checkout-step .payment-options {
+
+  > div .payment-option {
+    border-top: 1px solid #F1F1F1;
+    display: flex;
+    align-items: center;
+    min-height: 70px;
+    margin-bottom: 0;
+
+    > label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0;
+
+      img {
+        max-width: 90px;
+        padding-right: 20px;
+      }
+
+      span {
+        order: 3;
+        font-weight: 600;
+      }
+
+    }
+
+  }
+
+  //> div:first-child .payment-option {
+  //  border-top: 1px solid #F1F1F1;
+  //}
+  //
+  //> div > label {
+  //  display: flex;
+  //  align-items: center;
+  //  margin-bottom: 0;
+  //
+  //  img {
+  //    max-width: 90px;
+  //    padding-right: 20px;
+  //  }
+  //
+  //  span {
+  //    order: 3;
+  //    font-weight: 600;
+  //  }
+  //
+  //}
+}
+
+#payment-option-1-container {
+  border:0 !important;
+}
+
+.bm-small-info {
+  color: #767676;
+  font-size: 12px;
+}
+
+body#checkout .additional-information {
+  font-size: .875rem;
+  margin-left: 2.875rem;
+  margin-top:0;
+  margin-bottom: 1.25rem;
+}
+
+body#checkout section.checkout-step .payment-options .custom-radio {
+  margin-right: 1.645rem;
+}
+
+.additional-information p {
+  color: #222222;
+  font-size: 13px;
 }
