@@ -15,7 +15,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-
 class AdminBluepaymentPaymentsController extends ModuleAdminController
 {
 
@@ -36,50 +35,32 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         }
     }
 
-
     public function renderView()
     {
         return $this->renderForm();
     }
 
-
     public function initContent()
     {
+
         if (!$this->loadObject(true)) {
             return;
         }
 
         parent::initContent();
 
-        if (Tools::isSubmit('submit'.$this->module->name)) {
-            $gateway_payments = new BlueGateway();
-            $gateway_payments->syncGateways();
-
-            $gateway_group = new BlueGatewayChannels();
-            $gateway_group->syncGateways();
-
-            $this->context->smarty->assign('confirmation', 'ok');
-        }
-
-        if (isset($this->context->cookie->redirect_success_message)) {
-            $this->context->smarty->assign([
-                'redirect_success_message' => $this->context->cookie->redirect_success_message,
-            ]);
-            $this->context->cookie->__unset('redirect_success_message');
-        }
-
-
         if (Tools::getValue('ajax')) {
             if (Tools::getValue('action') == 'updatePositions') {
-                //
-                $ttt = new BlueGatewayChannels();
-                $ttt->updatePosition(
+                $position = new BlueGatewayChannels();
+                $position->updatePosition(
                     Tools::getValue('id'),
                     Tools::getValue('way'),
                     Tools::getValue('id_blue_gateway_channels')
                 );
             }
         }
+
+        $this->context->controller->addCSS($this->module->getPathUri().'views/css/admin/admin.css');
 
         $this->content .= $this->renderForm();
         $this->context->smarty->assign([
@@ -122,7 +103,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                          for the order (in the test mode, no fees are charged for the order).'
                     ),
 
-
                 ],
             ],
             'submit' => [
@@ -130,7 +110,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 'class' => 'btn btn-primary pull-right',
             ],
         ];
-
 
         $fields_form[1]['form'] = [
             'section' => [
@@ -182,7 +161,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                             'help' => $this->l('Contains numbers and lowercase letters. It is used to verify 
                             communication with the payment gateway. It should not be made available to the public'),
 
-
                         ],
                     ],
                     'submit' => [
@@ -191,7 +169,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ];
         }
-
 
         $fields_form[2]['form'] = [
             'section' => [
@@ -245,7 +222,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-
         $fields_form[4]['form'] = [
             'section' => [
                 'title' => $this->l('Payment settings')
@@ -289,7 +265,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
-            //            'currencies' => Currency::getCurrencies()
         ];
 
         $helper = new HelperForm();
@@ -304,59 +279,24 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $helper->default_form_language = $id_default_lang;
         $helper->allow_employee_form_lang = $id_default_lang;
 
-
         // Tytuł i belka narzędzi
         $helper->title = $this->module->displayName;
         $helper->show_toolbar = true;
         $helper->toolbar_scroll = true;
         $helper->submit_action = 'submit'.$this->module->name;
 
+        $link = new Link();
+        $ajax_controller = $link->getAdminLink('AdminBluepaymentAjax');
+
         $helper->tpl_vars = [
             'fields_value' => $this->module->getConfigFieldsValues(),
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
+            'ajax_controller' => $ajax_controller,
+            'ajax_token' => Tools::getAdminTokenLite('AdminBluepaymentAjax'),
+            'ajax_payments_token' => Tools::getAdminTokenLite('AdminBluepaymentPayments'),
         ];
 
         return $helper->generateForm($fields_form);
-    }
-
-    /**
-     * Save form data.
-     */
-    public function postProcess()
-    {
-        if (Tools::isSubmit('submit'.$this->module->name)) {
-            foreach ($this->module->configFields() as $configField) {
-                $value = Tools::getValue($configField, Configuration::get($configField));
-                Configuration::updateValue($configField, $value);
-            }
-
-            $paymentName = [];
-            $paymentGroupName = [];
-
-            foreach (Language::getLanguages(true) as $lang) {
-                $paymentName[$lang['id_lang']] =
-                    Tools::getValue($this->module->name_upper.'_PAYMENT_NAME_'.$lang['id_lang']);
-                $paymentGroupName[$lang['id_lang']] =
-                    Tools::getValue($this->module->name_upper.'_PAYMENT_GROUP_NAME_'.$lang['id_lang']);
-            }
-
-            $serviceId = [];
-            $sharedKey = [];
-
-            foreach ($this->module->getSortCurrencies() as $currency) {
-                $serviceId[$currency['iso_code']] =
-                    Tools::getValue($this->module->name_upper.'_SERVICE_PARTNER_ID_'.$currency['iso_code']);
-                $sharedKey[$currency['iso_code']] =
-                    Tools::getValue($this->module->name_upper.'_SHARED_KEY_'.$currency['iso_code']);
-            }
-
-            Configuration::updateValue($this->module->name_upper.'_PAYMENT_NAME', $paymentName);
-            Configuration::updateValue($this->module->name_upper.'_PAYMENT_GROUP_NAME', $paymentGroupName);
-            Configuration::updateValue($this->module->name_upper.'_SERVICE_PARTNER_ID', serialize($serviceId));
-            Configuration::updateValue($this->module->name_upper.'_SHARED_KEY', serialize($sharedKey));
-        }
-
-        return $this->renderForm();
     }
 }

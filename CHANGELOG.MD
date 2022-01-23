@@ -1,5 +1,14 @@
 # Changelog
 
+
+## [2.7.0] 23.01.2022
+- Fixed a group creation error during module installation
+- Fixed popup payments in backend
+- Added ajax saved configuration
+- Changed the way to check for new version availability via API
+- Added ajax controller 
+- Changes in css file location
+
 ## [2.6.9] 21.01.2022
 - A major redesign of the module management panel
 - Grouping of payments

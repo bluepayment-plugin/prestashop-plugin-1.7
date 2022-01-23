@@ -19,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require dirname(__FILE__) . '/vendor/autoload.php';
+require dirname(__FILE__).'/vendor/autoload.php';
 
 class BluePayment extends PaymentModule
 {
@@ -63,10 +63,10 @@ class BluePayment extends PaymentModule
         $this->name = 'bluepayment';
         $this->name_upper = Tools::strtoupper($this->name);
 
-        require_once dirname(__FILE__) . '/config/config.inc.php';
+        require_once dirname(__FILE__).'/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.6.9';
+        $this->version = '2.7.0';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -74,7 +74,7 @@ class BluePayment extends PaymentModule
         $this->currencies_mode = 'checkbox';
         $this->bootstrap = true;
         $this->module_key = '7dac119ed21c46a88632206f73fa4104';
-        $this->images_dir = _MODULE_DIR_ . 'bluepayment/views/img/';
+        $this->images_dir = _MODULE_DIR_.'bluepayment/views/img/';
 
         parent::__construct();
 
@@ -107,12 +107,12 @@ class BluePayment extends PaymentModule
             $this->addOrderStatuses();
 
             // Domyślne ustawienie aktywnego trybu testowego
-            Configuration::updateValue($this->name_upper . '_TEST_ENV', 1);
-            Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY', 1);
-            Configuration::updateValue($this->name_upper . '_SHOW_PAYWAY_LOGO', 1);
-            Configuration::updateValue($this->name_upper . '_SHOW_BANER', 0);
-            Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', 'Pay via Blue Media');
-            Configuration::updateValue($this->name_upper . '_PAYMENT_GROUP_NAME', 'Przelew internetowy');
+            Configuration::updateValue($this->name_upper.'_TEST_ENV', 1);
+            Configuration::updateValue($this->name_upper.'_SHOW_PAYWAY', 1);
+            Configuration::updateValue($this->name_upper.'_SHOW_PAYWAY_LOGO', 1);
+            Configuration::updateValue($this->name_upper.'_SHOW_BANER', 0);
+            Configuration::updateValue($this->name_upper.'_PAYMENT_NAME', 'Pay via Blue Media');
+            Configuration::updateValue($this->name_upper.'_PAYMENT_GROUP_NAME', 'Przelew internetowy');
 
             return true;
         }
@@ -120,22 +120,29 @@ class BluePayment extends PaymentModule
         return false;
     }
 
-
     public function hookDisplayAdminAfterHeader()
     {
 
         try {
-            $gh = new \Github\Client();
-            $ver = $gh->api('repo')->releases()->latest('bluepayment-plugin', 'prestashop-plugin-1.7');
+            // Łączenie z API Prestashop addons
+            $api_url = 'https://api-addons.prestashop.com/';
+            $params = '?format=json&iso_lang=pl&iso_code=pl&method=module&id_module=49791&method=listing&action=module';
 
-            if ($ver && version_compare($this->version, $ver['name'], '<')) {
-                $this->context->smarty->assign([
-                    'version' => $ver['name'],
-                    'changelog' => $ver['html_url']
-                ]);
+            $api_request = $api_url.$params;
 
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $api_request);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            $output = curl_exec($curl);
+            curl_close($curl);
+
+            $api_response = json_decode($output);
+            $ver = $api_response->modules[0]->version;
+
+            if ($ver && version_compare($ver, $this->version, '>')) {
                 return $this->context->smarty->fetch(
-                    _PS_MODULE_DIR_ . $this->name . '/views/templates/admin/_partials/upgrade.tpl'
+                    _PS_MODULE_DIR_.$this->name.'/views/templates/admin/_partials/upgrade.tpl'
                 );
             }
         } catch (Exception $e) {
@@ -144,7 +151,6 @@ class BluePayment extends PaymentModule
 
         return null;
     }
-
 
     public function addOrderStatuses()
     {
@@ -155,7 +161,6 @@ class BluePayment extends PaymentModule
             PrestaShopLogger::addLog('BM - Add statuses - error', 4);
         }
     }
-
 
     /**
      * Remove module
@@ -181,8 +186,8 @@ class BluePayment extends PaymentModule
                 Configuration::deleteByName($configField);
             }
 
-            Configuration::deleteByName($this->name_upper . '_SHARED_KEY');
-            Configuration::deleteByName($this->name_upper . '_SERVICE_PARTNER_ID');
+            Configuration::deleteByName($this->name_upper.'_SHARED_KEY');
+            Configuration::deleteByName($this->name_upper.'_SERVICE_PARTNER_ID');
 
             return true;
         }
@@ -199,26 +204,64 @@ class BluePayment extends PaymentModule
     public function installTab()
     {
         try {
-            $tab = new Tab();
-            $tab->active = 1;
-            $tab->class_name = 'AdminBluepaymentPayments';
-            $tab->name = [];
-            $tab->visible = true;
-            $tab->id_parent = -1;
+            $state = true;
+            $tabparent = "AdminBluepaymentPayments";
+            $id_parent = (int)Tab::getIdFromClassName($tabparent);
 
-            foreach (Language::getLanguages(true) as $lang) {
-                if ($lang['locale'] === "pl-PL") {
-                    $tab->name[$lang['id_lang']] =
-                        $this->trans('Blue Media - Konfiguracja', [], 'Modules.Bluepayment', $lang['locale']);
-                } else {
-                    $tab->name[$lang['id_lang']] =
-                        $this->trans('Blue Media - Configuration', [], 'Modules.Bluepayment', $lang['locale']);
+            if ($id_parent == 0) {
+                $tab = new Tab();
+                $tab->active = 1;
+                $tab->class_name = "AdminBluepaymentPayments";
+                $tab->visible = true;
+                $tab->name = [];
+                $tab->id_parent = -1;
+
+                foreach (Language::getLanguages(true) as $lang) {
+                    if ($lang['locale'] === "pl-PL") {
+                        $tab->name[$lang['id_lang']] =
+                            $this->trans('Blue Media - Konfiguracja', [], 'Modules.Bluepayment', $lang['locale']);
+                    } else {
+                        $tab->name[$lang['id_lang']] =
+                            $this->trans('Blue Media - Configuration', [], 'Modules.Bluepayment', $lang['locale']);
+                    }
+                }
+
+                $tab->id_parent = -1;
+                $tab->module = $this->name;
+                $state &= $tab->add();
+                $id_parent = $tab->id;
+            }
+
+            $sub_tabs = [
+                [
+                    'class' => 'AdminBluepaymentAjax',
+                    'name' => 'Bluepayment Ajax',
+                    'parrent' => -1
+                ],
+            ];
+
+            foreach ($sub_tabs as $sub_tab) {
+                $idtab = (int)Tab::getIdFromClassName($sub_tab['class']);
+                if ($idtab == 0) {
+                    $tab = new Tab();
+                    $tab->active = 1;
+                    $tab->class_name = $sub_tab['class'];
+                    $tab->name = [];
+                    foreach (Language::getLanguages() as $lang) {
+                        $tab->name[$lang["id_lang"]] = $sub_tab['name'];
+                    }
+                    if (isset($sub_tab['parrent'])) {
+                        $tab->id_parent = (int)$sub_tab['parrent'];
+                    } else {
+                        $tab->id_parent = $id_parent;
+                    }
+
+                    $tab->module = $this->name;
+                    $state &= $tab->add();
                 }
             }
 
-            $tab->module = $this->name;
-
-            return $tab->add();
+            return (bool)$state;
         } catch (Exception $exception) {
             PrestaShopLogger::addLog('BM - Error adding adminBluepaymentController', 4);
 
@@ -233,19 +276,32 @@ class BluePayment extends PaymentModule
      */
     public function uninstallTab()
     {
-        $id_tab = (int)Tab::getIdFromClassName('AdminBluepaymentPayments');
 
-        if ($id_tab) {
-            $tab = new Tab($id_tab);
-            return $tab->delete();
+        $id_tabs = [
+            'AdminBluepayment',
+            'AdminBluepaymentPayments',
+            'AdminBluepaymentAjax',
+        ];
+
+        foreach ($id_tabs as $id_tab) {
+            $idtab = (int)Tab::getIdFromClassName($id_tab);
+            $tab = new Tab((int)$idtab);
+            if (Validate::isLoadedObject($tab)) {
+                $parentTabID = $tab->id_parent;
+                $tab->delete();
+                $tabCount = Tab::getNbTabs((int)$parentTabID);
+                if ($tabCount == 0) {
+                    $parentTab = new Tab((int)$parentTabID);
+                    $parentTab->delete();
+                }
+            }
         }
-
-        return false;
+        return true;
     }
-
 
     /**
      * The method adds Blue media payment to the list in the payment settings
+     *
      * @return bool
      */
 
@@ -290,7 +346,6 @@ class BluePayment extends PaymentModule
         $this->addTabInPayments();
     }
 
-
     /**
      * Post form method
      *
@@ -304,9 +359,14 @@ class BluePayment extends PaymentModule
         );
     }
 
+    public function getPathUri()
+    {
+        return $this->_path;
+    }
+
     public function installDb()
     {
-        require_once _PS_MODULE_DIR_ . $this->name . '/sql/install.php';
+        require_once _PS_MODULE_DIR_.$this->name.'/sql/install.php';
     }
 
     public function removeOrderStatuses()
@@ -321,13 +381,12 @@ class BluePayment extends PaymentModule
     public function uninstallDb()
     {
         try {
-            require_once _PS_MODULE_DIR_ . $this->name . '/sql/uninstall.php';
+            require_once _PS_MODULE_DIR_.$this->name.'/sql/uninstall.php';
             $this->removeOrderStatuses();
         } catch (Exception $exception) {
             PrestaShopLogger::addLog('BM - The table cannot be deleted from the database', 4);
         }
     }
-
 
     public function getGatewaysListFields()
     {
@@ -356,51 +415,39 @@ class BluePayment extends PaymentModule
                 'callback_object' => Module::getInstanceByName($this->name),
                 'orderby' => false,
             ],
-            //            'gateway_currency' => [
-            //                'title' => $this->l('Currency'),
-            //                'align' => 'center',
-            //                'search' => false,
-            //            ],
         ];
     }
 
-
-    public function getListChannels($currency = 'PLN')
+    public function getListChannels($currency)
     {
         $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id_blue_gateway_channels, 
             gateway_payments, gateway_id, gateway_name, gateway_logo_url, gateway_type, position, bank_name, 
             gateway_currency, gateway_status, 
-            position FROM `' . _DB_PREFIX_ . 'blue_gateway_channels` 
-            WHERE gateway_currency = "' . pSql($currency) . '" ORDER BY position');
+            position FROM `'._DB_PREFIX_.'blue_gateway_channels` 
+            WHERE gateway_currency = "'.pSql($currency).'" ORDER BY position');
 
         return $gateway;
     }
 
-
-    public function getListAllCards($currency = 'PLN')
+    public function getListAllPayments($currency = 'PLN', $type = null)
     {
+
+        $q = '';
+        if ($type === 'wallet') {
+            $q = 'IN ("Apple Pay","Google Pay")';
+        } elseif ($type === 'transfer') {
+            $q = 'NOT IN ("BLIK","Apple Pay","Google Pay","PBC płatność testowa","Kup teraz, zapłać później","Alior Raty")';
+        }
+
         $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, 
         gateway_name, gateway_logo_url, gateway_type, position, bank_name, gateway_currency, gateway_status, 
-        position FROM `' . _DB_PREFIX_ . 'blue_gateways` 
-        WHERE gateway_name IN ("Apple Pay","Google Pay") AND gateway_currency = "' . pSql($currency) . '" 
+        position FROM `'._DB_PREFIX_.'blue_gateways` 
+        WHERE gateway_name '.$q.' 
+        AND gateway_currency = "'.pSql($currency).'" 
         ORDER BY position');
 
         return $gateway;
     }
-
-    public function getListAllPayments($currency = 'PLN')
-    {
-        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, 
-        gateway_name, gateway_logo_url, gateway_type, position, bank_name, gateway_currency, gateway_status, 
-        position FROM `' . _DB_PREFIX_ . 'blue_gateways` 
-        WHERE gateway_name 
-        NOT IN ("BLIK","Apple Pay","Google Pay","PBC płatność testowa","Kup teraz, zapłać później","Alior Raty") 
-        AND gateway_currency = "' . pSql($currency) . '" 
-        ORDER BY position');
-
-        return $gateway;
-    }
-
 
     /**
      * Pobieranie metod płatności w administracji
@@ -408,34 +455,51 @@ class BluePayment extends PaymentModule
 
     public function hookAdminPayments()
     {
-
         $list = [];
+        $transfer_payments = [];
+        $wallets = [];
+
         foreach ($this->getSortCurrencies() as $currency) {
+            /// Tworzy grupę w backoffice
             $paymentList = $this->getListChannels($currency['iso_code']);
-            $title = $currency['name'] . ' (' . $currency['iso_code'] . ')';
+            $title = $currency['name'].' ('.$currency['iso_code'].')';
 
             if (!empty($paymentList)) {
                 $list[] = $this->renderAdditionalOptionsList($paymentList, $title);
             }
+
+            /// Pobiera kanały do grup
+            if ($this->getListAllPayments($currency['iso_code'], 'transfer')) {
+                $transfer_payments[$currency['iso_code']] = $this->getListAllPayments(
+                    $currency['iso_code'],
+                    'transfer'
+                );
+            }
+
+            if ($this->getListAllPayments($currency['iso_code'], 'transfer')) {
+                $wallets[$currency['iso_code']] = $this->getListAllPayments(
+                    $currency['iso_code'],
+                    'wallet'
+                );
+            }
         }
-
-        //full payments
-        //full cards
-
-        $full_payments = $this->getListAllPayments();
-        $full_cards = $this->getListAllCards('Karty');
 
         $this->context->smarty->assign(
             [
                 'list' => $list,
-                'full_payments' => $full_payments,
-                'full_cards' => $full_cards
+                'transfer_payments' => $transfer_payments,
+                'wallets' => $wallets
             ]
         );
 
         return $this->display(__FILE__, 'views/templates/admin/_configure/helpers/container_list.tpl');
     }
 
+    /**
+     * Sortowanie walut po id
+     *
+     * @return array
+     */
 
     public function getSortCurrencies()
     :array
@@ -451,22 +515,35 @@ class BluePayment extends PaymentModule
         return (array)$sortCurrencies;
     }
 
+    /**
+     * Pobranie kodów iso dostępnych walut
+     *
+     * @return array
+     */
+
+    public function getIsoCodeCurrencies()
+    :array
+    {
+
+        $sortCurrencies = Currency::getCurrencies();
+
+        return (array)$sortCurrencies;
+    }
 
     public function displayGatewayLogo($gatewayLogo)
     {
-        return '<img width="65" class="img-fluid" src="' . $gatewayLogo . '" />';
+        return '<img width="65" class="img-fluid" src="'.$gatewayLogo.'" />';
     }
-
 
     public function displayGatewayPayments($gatewayLogo, $object)
     {
         if ($gatewayLogo == 1) {
-            return '<div class="btn-info" data-toggle="modal" data-target="#' . str_replace(
+            return '<div class="btn-info" data-toggle="modal" data-target="#'.str_replace(
                 ' ',
                 '_',
                 $object['gateway_name']
-            ) . '_' . $object['gateway_currency'] . '">
-            <img class="img-fluid" width="24" src="' . $this->images_dir . 'question.png"></div>';
+            ).'_'.$object['gateway_currency'].'">
+            <img class="img-fluid" width="24" src="'.$this->images_dir.'question.png"></div>';
         } else {
             return '';
         }
@@ -482,10 +559,8 @@ class BluePayment extends PaymentModule
         $helper->simple_header = true;
         $helper->identifier = 'id_blue_gateway_channels';
         $helper->no_link = true;
-        //        $helper->actions = '['edit']';
         $helper->title = $title;
-        //        $helper->currentIndex = AdminController::$currentIndex;
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name;
+        $helper->currentIndex = AdminController::$currentIndex;
         $content = $payments;
         $helper->token = Tools::getAdminTokenLite('AdminBluepaymentPayments');
         $helper->position_identifier = 'position';
@@ -495,7 +570,6 @@ class BluePayment extends PaymentModule
 
         return $helper->generateList($content, $this->getGatewaysListFields());
     }
-
 
     /**
      * Get form values
@@ -512,21 +586,18 @@ class BluePayment extends PaymentModule
         }
 
         foreach (Language::getLanguages(true) as $lang) {
-            $data[$this->name_upper . '_PAYMENT_NAME'][$lang['id_lang']] =
-                Configuration::get($this->name_upper . '_PAYMENT_NAME', $lang['id_lang']);
-            $data[$this->name_upper . '_PAYMENT_GROUP_NAME'][$lang['id_lang']] =
-                Configuration::get($this->name_upper . '_PAYMENT_GROUP_NAME', $lang['id_lang']);
+            $data[$this->name_upper.'_PAYMENT_NAME'][$lang['id_lang']] =
+                Configuration::get($this->name_upper.'_PAYMENT_NAME', $lang['id_lang']);
+            $data[$this->name_upper.'_PAYMENT_GROUP_NAME'][$lang['id_lang']] =
+                Configuration::get($this->name_upper.'_PAYMENT_GROUP_NAME', $lang['id_lang']);
         }
 
         foreach ($this->getSortCurrencies() as $currency) {
-            $data[$this->name_upper . '_SERVICE_PARTNER_ID_' . $currency['iso_code']] =
-                $this->parseConfigByCurrency($this->name_upper . '_SERVICE_PARTNER_ID', $currency['iso_code']);
-            $data[$this->name_upper . '_SHARED_KEY_' . $currency['iso_code']] =
-                $this->parseConfigByCurrency($this->name_upper . '_SHARED_KEY', $currency['iso_code']);
+            $data[$this->name_upper.'_SERVICE_PARTNER_ID_'.$currency['iso_code']] =
+                $this->parseConfigByCurrency($this->name_upper.'_SERVICE_PARTNER_ID', $currency['iso_code']);
+            $data[$this->name_upper.'_SHARED_KEY_'.$currency['iso_code']] =
+                $this->parseConfigByCurrency($this->name_upper.'_SHARED_KEY', $currency['iso_code']);
         }
-
-        //        dump($data);
-        //        die();
 
         return $data;
     }
@@ -541,15 +612,15 @@ class BluePayment extends PaymentModule
     public function configFields()
     {
         return [
-            $this->name_upper . '_STATUS_WAIT_PAY_ID',
-            $this->name_upper . '_STATUS_ACCEPT_PAY_ID',
-            $this->name_upper . '_STATUS_ERROR_PAY_ID',
-            $this->name_upper . '_PAYMENT_NAME',
-            $this->name_upper . '_PAYMENT_GROUP_NAME',
-            $this->name_upper . '_SHOW_PAYWAY',
-            $this->name_upper . '_SHOW_PAYWAY_LOGO',
-            $this->name_upper . '_SHOW_BANER',
-            $this->name_upper . '_TEST_ENV',
+            $this->name_upper.'_STATUS_WAIT_PAY_ID',
+            $this->name_upper.'_STATUS_ACCEPT_PAY_ID',
+            $this->name_upper.'_STATUS_ERROR_PAY_ID',
+            $this->name_upper.'_PAYMENT_NAME',
+            $this->name_upper.'_PAYMENT_GROUP_NAME',
+            $this->name_upper.'_SHOW_PAYWAY',
+            $this->name_upper.'_SHOW_PAYWAY_LOGO',
+            $this->name_upper.'_SHOW_BANER',
+            $this->name_upper.'_TEST_ENV',
         ];
     }
 
@@ -592,10 +663,9 @@ class BluePayment extends PaymentModule
 
                 if (!empty($refund[1])) {
                     if ($refund[0] !== true) {
-                        $refund_errors[] = $this->l('Refund error: ') . $refund[1];
+                        $refund_errors[] = $this->l('Refund error: ').$refund[1];
                     }
                 }
-
 
                 if (empty($refund_errors) && $refund[0] === true) {
                     $history = new OrderHistory();
@@ -627,17 +697,16 @@ class BluePayment extends PaymentModule
         //        return $this->setTemplate('/views/templates/admin/status.tpl');
     }
 
-
     private function bmOrderRefund($amount, $remote_id, $id_order)
     {
         $amount = number_format($amount, 2, '.', '');
         $order = new OrderCore($id_order);
         $currency = new Currency($order->id_currency);
         $service_id = $this->parseConfigByCurrency(
-            $this->name_upper . '_SERVICE_PARTNER_ID',
+            $this->name_upper.'_SERVICE_PARTNER_ID',
             $currency->iso_code
         );
-        $shared_key = $this->parseConfigByCurrency($this->name_upper . '_SHARED_KEY', $currency->iso_code);
+        $shared_key = $this->parseConfigByCurrency($this->name_upper.'_SHARED_KEY', $currency->iso_code);
         $message_id = $this->randomString(32);
         // Tablica danych z których wygenerować hash
 
@@ -646,12 +715,12 @@ class BluePayment extends PaymentModule
         $hash_confirmation = $this->generateAndReturnHash($hash_data);
 
         $curl = curl_init();
-        $postfields = 'ServiceID=' . $service_id .
-            '&MessageID=' . $message_id .
-            '&RemoteID=' . $remote_id .
-            '&Amount=' . $amount .
-            '&Currency=' . $currency->iso_code .
-            '&Hash=' . $hash_confirmation;
+        $postfields = 'ServiceID='.$service_id.
+            '&MessageID='.$message_id.
+            '&RemoteID='.$remote_id.
+            '&Amount='.$amount.
+            '&Currency='.$currency->iso_code.
+            '&Hash='.$hash_confirmation;
 
         curl_setopt_array($curl, [
             CURLOPT_URL => 'https://pay-accept.bm.pl/transactionRefund',
@@ -698,8 +767,8 @@ class BluePayment extends PaymentModule
      */
     private function getLastOrderPaymentByOrderId($id_order)
     {
-        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'blue_transactions
-			WHERE order_id like "' . pSQL($id_order) . '-%"
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'blue_transactions
+			WHERE order_id like "'.pSQL($id_order).'-%"
 			ORDER BY created_at DESC';
 
         $result = Db::getInstance()->getRow($sql, false);
@@ -715,15 +784,14 @@ class BluePayment extends PaymentModule
      */
     private function getOrdersByOrderId($id_order)
     {
-        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'blue_transactions
-			WHERE order_id like "' . pSQL($id_order) . '-%"
+        $sql = 'SELECT * FROM '._DB_PREFIX_.'blue_transactions
+			WHERE order_id like "'.pSQL($id_order).'-%"
 			ORDER BY created_at DESC';
 
         $result = Db::getInstance()->executeS($sql, true, false);
 
         return $result ? $result : false;
     }
-
 
     /**
      * Tworzenie metod płatności
@@ -737,8 +805,8 @@ class BluePayment extends PaymentModule
 
         $currency = $this->context->currency;
 
-        $serviceId = $this->parseConfigByCurrency($this->name_upper . '_SERVICE_PARTNER_ID', $currency->iso_code);
-        $sharedKey = $this->parseConfigByCurrency($this->name_upper . '_SHARED_KEY', $currency->iso_code);
+        $serviceId = $this->parseConfigByCurrency($this->name_upper.'_SERVICE_PARTNER_ID', $currency->iso_code);
+        $sharedKey = $this->parseConfigByCurrency($this->name_upper.'_SHARED_KEY', $currency->iso_code);
         $paymentDataCompleted = !empty($serviceId) && !empty($sharedKey);
 
         if ($paymentDataCompleted === false) {
@@ -752,7 +820,7 @@ class BluePayment extends PaymentModule
         $iframe = false;
         $cardGateway = false;
 
-        require_once dirname(__FILE__) . '/sdk/index.php';
+        require_once dirname(__FILE__).'/sdk/index.php';
 
         /**
          * Pobiera wszystkie kanały płatności dla przelewów internetowych
@@ -770,18 +838,18 @@ class BluePayment extends PaymentModule
         $gateways->orderBy('position');
         $gateways = $gateways->getResults();
 
-        $cart_id_time = $this->context->cart->id . '-' . time();
+        $cart_id_time = $this->context->cart->id.'-'.time();
 
         $this->smarty->assign([
             'module_link' => $moduleLink,
             'ps_version' => _PS_VERSION_,
             'module_dir' => $this->_path,
-            'payment_name' => Configuration::get($this->name_upper . '_PAYMENT_NAME', $this->context->language->id),
+            'payment_name' => Configuration::get($this->name_upper.'_PAYMENT_NAME', $this->context->language->id),
             'payment_group_name' =>
-                Configuration::get($this->name_upper . '_PAYMENT_GROUP_NAME', $this->context->language->id),
-            'selectPayWay' => Configuration::get($this->name_upper . '_SHOW_PAYWAY'),
-            'showPayWayLogo' => Configuration::get($this->name_upper . '_SHOW_PAYWAY_LOGO'),
-            'showBaner' => Configuration::get($this->name_upper . '_SHOW_BANER'),
+                Configuration::get($this->name_upper.'_PAYMENT_GROUP_NAME', $this->context->language->id),
+            'selectPayWay' => Configuration::get($this->name_upper.'_SHOW_PAYWAY'),
+            'showPayWayLogo' => Configuration::get($this->name_upper.'_SHOW_PAYWAY_LOGO'),
+            'showBaner' => Configuration::get($this->name_upper.'_SHOW_BANER'),
             'gateways' => $gateways,
             'regulations_get' => $this->context->link->getModuleLink('bluepayment', 'regulationsGet', [], true),
             'start_payment_translation' => $this->l('Start payment'),
@@ -791,7 +859,7 @@ class BluePayment extends PaymentModule
 
         $newOptions = [];
 
-        if (Configuration::get($this->name_upper . '_SHOW_PAYWAY')) {
+        if (Configuration::get($this->name_upper.'_SHOW_PAYWAY')) {
 
             /**
              * Tworzenie grupy płatności
@@ -804,16 +872,9 @@ class BluePayment extends PaymentModule
             $applePay = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_APPLE_PAY, $currency->iso_code);
             $iframe = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_IFRAME, $currency->iso_code);
 
-
             /**
              * Inne bramki
              */
-
-            $slovenska = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_SLOVENSKA, $currency->iso_code);
-            $tarta_banka = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_TARTA_BANKA, $currency->iso_code);
-            $vub_banka = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_VUB_BANKA, $currency->iso_code);
-            $postova_banka = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_POSTOVA_BANKA, $currency->iso_code);
-            $viamo = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_VIAMO, $currency->iso_code);
 
             $payment_group = new PrestaShopCollection('BlueGatewayChannels', $this->context->language->id);
             $payment_group->where('gateway_status', '=', 1);
@@ -823,10 +884,9 @@ class BluePayment extends PaymentModule
 
             if (!empty($payment_group)) {
                 foreach ($payment_group as $p_group) {
-//                    dump($p_group->gateway_name);
                     if ($p_group->gateway_name === 'Przelew internetowy') {
                         $paymentName = Configuration::get(
-                            $this->name_upper . '_PAYMENT_GROUP_NAME',
+                            $this->name_upper.'_PAYMENT_GROUP_NAME',
                             $this->context->language->id
                         );
 
@@ -854,7 +914,8 @@ class BluePayment extends PaymentModule
                                     ],
                                 ])
                                 ->setLogo(
-                                    $this->context->shop->getBaseURL(true).'modules/bluepayment/views/img/blue-media.svg'
+                                    $this->context->shop
+                                        ->getBaseURL(true).'modules/bluepayment/views/img/blue-media.svg'
                                 )->setAdditionalInformation(
                                     $this->fetch('module:bluepayment/views/templates/hook/payment.tpl')
                                 );
@@ -862,7 +923,6 @@ class BluePayment extends PaymentModule
                             $newOptions[] = $newOption;
                         }
                     }
-
 
                     if ($p_group->gateway_name === 'PBC płatność testowa') {
                         if ($cardGateway) {
@@ -915,7 +975,6 @@ class BluePayment extends PaymentModule
                         }
                     }
 
-
                     if ($p_group->gateway_name === 'Wirtualny portfel') {
                         /**
                          * G-pay button will show only in secure enviroments, it mean:
@@ -924,8 +983,18 @@ class BluePayment extends PaymentModule
 
                         if ($gpay) {
                             $gpayGateway = new BlueGateway($gpay);
-                            $gpayMerchantInfo = $this->context->link->getModuleLink('bluepayment', 'merchantInfo', [], true);
-                            $gpay_moduleLinkCharge = $this->context->link->getModuleLink('bluepayment', 'chargeGPay', [], true);
+                            $gpayMerchantInfo = $this->context->link->getModuleLink(
+                                'bluepayment',
+                                'merchantInfo',
+                                [],
+                                true
+                            );
+                            $gpay_moduleLinkCharge = $this->context->link->getModuleLink(
+                                'bluepayment',
+                                'chargeGPay',
+                                [],
+                                true
+                            );
 
                             $this->smarty->assign([
                                 'gpay_merchantInfo' => $gpayMerchantInfo,
@@ -948,7 +1017,9 @@ class BluePayment extends PaymentModule
                                         'value' => $gpayMerchantInfo,
                                     ]
                                 ])
-                                ->setAdditionalInformation($this->fetch('module:bluepayment/views/templates/hook/paymentGpay.tpl'));
+                                ->setAdditionalInformation(
+                                    $this->fetch('module:bluepayment/views/templates/hook/paymentGpay.tpl')
+                                );
                             $newOptions[] = $gpayOption;
                         }
 
@@ -977,17 +1048,10 @@ class BluePayment extends PaymentModule
                                         'value' => $cart_id_time,
                                     ],
 
-
                                 ]);
                             $newOptions[] = $applePayOption;
                         }
-
-
-
-
-
                     }
-
 
                     if ($p_group->gateway_name === 'Kup teraz, zapłać później') {
                         if ($smartney
@@ -1063,7 +1127,7 @@ class BluePayment extends PaymentModule
              * Tworzenie przekierowania dla wszystkich płatności
              */
 
-            $paymentName = Configuration::get($this->name_upper . '_PAYMENT_NAME', $this->context->language->id);
+            $paymentName = Configuration::get($this->name_upper.'_PAYMENT_NAME', $this->context->language->id);
 
             $newOption = new PaymentOption();
             $newOption->setCallToActionText(
@@ -1087,7 +1151,7 @@ class BluePayment extends PaymentModule
                         'value' => '0',
                     ],
                 ])
-                ->setLogo($this->context->shop->getBaseURL(true) . 'modules/bluepayment/views/img/blue-media.svg')
+                ->setLogo($this->context->shop->getBaseURL(true).'modules/bluepayment/views/img/blue-media.svg')
                 ->setAdditionalInformation($this->fetch('module:bluepayment/views/templates/hook/payment.tpl'));
 
             $newOptions[] = $newOption;
@@ -1105,7 +1169,7 @@ class BluePayment extends PaymentModule
      */
     public function generateAndReturnHash($data)
     {
-        require_once dirname(__FILE__) . '/sdk/index.php';
+        require_once dirname(__FILE__).'/sdk/index.php';
 
         $values_array = array_values($data);
         $values_array_filter = array_filter($values_array);
@@ -1114,8 +1178,8 @@ class BluePayment extends PaymentModule
 
         $replaced = str_replace(',', HASH_SEPARATOR, $comma_separated);
         Configuration::updateValue(
-            $this->name_upper . '_' . time(),
-            $replaced . '|||' . hash(Gateway::HASH_SHA256, $replaced)
+            $this->name_upper.'_'.time(),
+            $replaced.'|||'.hash(Gateway::HASH_SHA256, $replaced)
         );
         return hash(Gateway::HASH_SHA256, $replaced);
     }
@@ -1191,15 +1255,15 @@ class BluePayment extends PaymentModule
      */
     public function validAllTransaction($response)
     {
-        require_once dirname(__FILE__) . '/sdk/index.php';
+        require_once dirname(__FILE__).'/sdk/index.php';
 
         $order = explode('-', $response->transactions->transaction->orderID)[0];
 
         $order = new OrderCore($order);
         $currency = new Currency($order->id_currency);
 
-        $service_id = $this->parseConfigByCurrency($this->name_upper . '_SERVICE_PARTNER_ID', $currency->iso_code);
-        $shared_key = $this->parseConfigByCurrency($this->name_upper . '_SHARED_KEY', $currency->iso_code);
+        $service_id = $this->parseConfigByCurrency($this->name_upper.'_SERVICE_PARTNER_ID', $currency->iso_code);
+        $shared_key = $this->parseConfigByCurrency($this->name_upper.'_SHARED_KEY', $currency->iso_code);
 
         if ($service_id != $response->serviceID) {
             return false;
@@ -1236,15 +1300,15 @@ class BluePayment extends PaymentModule
     {
         Media::addJsDef(
             [
-                'bluepayment_env' => (int)Configuration::get($this->name_upper . '_TEST_ENV') === 1 ?
+                'bluepayment_env' => (int)Configuration::get($this->name_upper.'_TEST_ENV') === 1 ?
                     'TEST' : 'PRODUCTION'
             ]
         );
 
-        $this->context->controller->addCSS($this->_path . 'views/css/front.css');
-        $this->context->controller->addJS($this->_path . 'views/js/front.js');
-        $this->context->controller->addJS($this->_path . 'views/js/blik_v3.js');
-        $this->context->controller->addJS($this->_path . 'views/js/gpay.js');
+        $this->context->controller->addCSS($this->_path.'views/css/front/front.css');
+        $this->context->controller->addJS($this->_path.'views/js/front.js');
+        $this->context->controller->addJS($this->_path.'views/js/blik_v3.js');
+        $this->context->controller->addJS($this->_path.'views/js/gpay.js');
     }
 
     /**
@@ -1260,20 +1324,17 @@ class BluePayment extends PaymentModule
         if (null === $order_id) {
             $order_id = explode('-', $realOrderId)[0];
         }
-//
-//        var_dump('order_od '. $order_id);
 
-//        $order = new Order(81);/**/
         $order = new Order($order_id);
         $currency = new Currency($order->id_currency);
         // Id serwisu partnera
         $service_id = $this->parseConfigByCurrency(
-            $this->name_upper . '_SERVICE_PARTNER_ID',
+            $this->name_upper.'_SERVICE_PARTNER_ID',
             $currency->iso_code
         );
 
         // Klucz współdzielony
-        $shared_key = $this->parseConfigByCurrency($this->name_upper . '_SHARED_KEY', $currency->iso_code);
+        $shared_key = $this->parseConfigByCurrency($this->name_upper.'_SHARED_KEY', $currency->iso_code);
 
         // Tablica danych z których wygenerować hash
         $hash_data = [$service_id, $realOrderId, $confirmation, $shared_key];
@@ -1307,7 +1368,6 @@ class BluePayment extends PaymentModule
         echo $dom->saveXML();
     }
 
-
     /**
      * Odczytuje dane oraz sprawdza zgodność danych o transakcji/płatności
      * zgodnie z uzyskaną informacją z kontrolera 'StatusModuleFront'
@@ -1320,16 +1380,15 @@ class BluePayment extends PaymentModule
     {
 
         $transaction_xml = $response->transactions->transaction;
-//        $this->debug($response);
-
+        //        $this->debug($response);
 
         if ($this->validAllTransaction($response)) {
             // Aktualizacja statusu zamówienia i transakcji
             $this->updateStatusTransactionAndOrder($transaction_xml);
         } else {
-            $message = $this->name_upper . ' - Invalid hash: ' . $response->hash;
+            $message = $this->name_upper.' - Invalid hash: '.$response->hash;
             // Potwierdzenie zwrotne o transakcji nie autentycznej
-            PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'Order', $transaction_xml->orderID);
+            PrestaShopLogger::addLog('BM - '.$message, 3, null, 'Order', $transaction_xml->orderID);
             $this->returnConfirmation(
                 $transaction_xml->orderID,
                 null,
@@ -1363,13 +1422,13 @@ class BluePayment extends PaymentModule
     protected function updateStatusTransactionAndOrder($transaction)
     {
 
-        require_once dirname(__FILE__) . '/sdk/index.php';
+        require_once dirname(__FILE__).'/sdk/index.php';
 
         // Identyfikatory statusów płatności
 
-        $status_accept_pay_id = Configuration::get($this->name_upper . '_STATUS_ACCEPT_PAY_ID');
-        $status_waiting_pay_id = Configuration::get($this->name_upper . '_STATUS_WAIT_PAY_ID');
-        $status_error_pay_id = Configuration::get($this->name_upper . '_STATUS_ERROR_PAY_ID');
+        $status_accept_pay_id = Configuration::get($this->name_upper.'_STATUS_ACCEPT_PAY_ID');
+        $status_waiting_pay_id = Configuration::get($this->name_upper.'_STATUS_WAIT_PAY_ID');
+        $status_error_pay_id = Configuration::get($this->name_upper.'_STATUS_ERROR_PAY_ID');
         //        $status_refund_pay_id = Configuration::get($this->name_upper . '_STATUS_REFUND_PAY_ID');
 
         // Status płatności
@@ -1384,7 +1443,7 @@ class BluePayment extends PaymentModule
 
         // Objekt zamówienia
         $order = new OrderCore($order_id);
-//        $order = new OrderCore(81);
+        //        $order = new OrderCore(81);
         // Obiekt płatności zamówienia
         $order_payments = $order->getOrderPaymentCollection();
 
@@ -1395,16 +1454,16 @@ class BluePayment extends PaymentModule
         }
 
         if (!Validate::isLoadedObject($order)) {
-            $message = $this->name_upper . ' - Order not found';
-            PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'Order', $order_id);
+            $message = $this->name_upper.' - Order not found';
+            PrestaShopLogger::addLog('BM - '.$message, 3, null, 'Order', $order_id);
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_NOTCONFIRMED);
 
             return;
         }
 
         if (!is_object($order_payment)) {
-            $message = $this->name_upper . ' - Order payment not found';
-            PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'OrderPayment', $order_id);
+            $message = $this->name_upper.' - Order payment not found';
+            PrestaShopLogger::addLog('BM - '.$message, 3, null, 'OrderPayment', $order_id);
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_NOTCONFIRMED);
 
             return;
@@ -1420,7 +1479,7 @@ class BluePayment extends PaymentModule
             'payment_status_details' => pSql((string)$transaction->paymentStatusDetails),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
-        Db::getInstance()->update('blue_transactions', $transactionData, 'order_id = \'' . pSQL($realOrderId) . '\'');
+        Db::getInstance()->update('blue_transactions', $transactionData, 'order_id = \''.pSQL($realOrderId).'\'');
 
         // Suma zamówienia
         $total_paid = $order->total_paid;
@@ -1452,7 +1511,7 @@ class BluePayment extends PaymentModule
                             Db::getInstance()->update(
                                 'blue_transactions',
                                 $transactionData,
-                                'order_id = \'' . pSQL($realOrderId) . '\''
+                                'order_id = \''.pSQL($realOrderId).'\''
                             );
                         }
 
@@ -1479,8 +1538,8 @@ class BluePayment extends PaymentModule
             }
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_CONFIRMED);
         } else {
-            $message = $this->name_upper . ' - Order status is cancel or payment status unknown';
-            PrestaShopLogger::addLog('BM - ' . $message, 3, null, 'OrderState', $order_id);
+            $message = $this->name_upper.' - Order status is cancel or payment status unknown';
+            PrestaShopLogger::addLog('BM - '.$message, 3, null, 'OrderState', $order_id);
             $this->returnConfirmation($realOrderId, $order_id, $message);
         }
     }
@@ -1525,8 +1584,8 @@ class BluePayment extends PaymentModule
             }
         }
 
-        Configuration::updateValue($this->name_upper . '_PAYMENT_NAME', $name_langs);
-        Configuration::updateValue($this->name_upper . '_PAYMENT_GROUP_NAME', $name_langs_group);
+        Configuration::updateValue($this->name_upper.'_PAYMENT_NAME', $name_langs);
+        Configuration::updateValue($this->name_upper.'_PAYMENT_GROUP_NAME', $name_langs_group);
 
         return true;
     }

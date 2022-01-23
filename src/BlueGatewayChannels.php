@@ -117,19 +117,16 @@ class BlueGatewayChannels extends ObjectModel
                 /// Reset position by currency
                 $position = 0;
 
+//                dump($loadResult->getGateways());
+
                 foreach ($loadResult->getGateways() as $paymentGateway) {
                     $payway = self::getByGatewayIdAndCurrency($paymentGateway->getGatewayId(), $currency['iso_code']);
 
-                    //                    dump($paymentGateway->getGatewayType());
+//                                        dump($paymentGateway->getGatewayType());
 
                     if ($paymentGateway->getGatewayName() == 'BLIK' ||
                         $paymentGateway->getGatewayType() == 'Raty online' ||
-                        $paymentGateway->getGatewayName() == 'PBC płatność testowa' ||
-                        $paymentGateway->getGatewayName() == 'Slovenská sporiteľňa' ||
-                        $paymentGateway->getGatewayName() == 'Tatra Banka' ||
-                        $paymentGateway->getGatewayName() == 'VÚB banka' ||
-                        $paymentGateway->getGatewayName() == 'Poštová banka' ||
-                        $paymentGateway->getGatewayName() == 'Viamo'
+                        $paymentGateway->getGatewayName() == 'PBC płatność testowa'
                     ) {
                         $payway->gateway_logo_url = $paymentGateway->getIconUrl();
                         $payway->bank_name = $paymentGateway->getBankName();

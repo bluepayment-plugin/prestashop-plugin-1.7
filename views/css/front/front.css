@@ -1,6 +1,7 @@
 .logo_background {
   background: url(../logo.png) 10px 15px no-repeat #fbfbfb;
-  padding: 15px 0 15px 120px; }
+  padding: 15px 0 15px 120px;
+}
 
 .bluepayment-loader-bg {
   display: none;
@@ -16,10 +17,12 @@
   background: #222;
   opacity: 0.3;
   filter: alpha(opacity=30);
-  /* For IE8 and earlier */ }
+  /* For IE8 and earlier */
+}
 
 div.payment-option > label > img {
-  width: 70px; }
+  width: 70px;
+}
 
 .bluepayment-loader {
   display: none;
@@ -35,89 +38,115 @@ div.payment-option > label > img {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 99; }
+  z-index: 99;
+}
 
 @keyframes bluepayment_spin {
   0% {
-    transform: rotate(0deg); }
+    transform: rotate(0deg);
+  }
   100% {
-    transform: rotate(360deg); } }
+    transform: rotate(360deg);
+  }
+}
 #blue_payway {
   margin-top: 20px;
-  margin-bottom: 20px; }
+  margin-bottom: 20px;
+}
 
 #bluepayment-gateway {
-  margin-bottom: 20px; }
+  margin-bottom: 20px;
+}
 
 .payment-option > label span {
-  text-align: left; }
+  text-align: left;
+}
 .payment-option > label p {
   text-align: left;
   font-size: 12px;
-  margin: 0; }
+  margin: 0;
+}
 
 .blue-gateway label {
   text-align: left;
   width: 100%;
-  display: inline-block; }
-  .blue-gateway label img {
-    width: 60px; }
+  display: inline-block;
+}
+.blue-gateway label img {
+  width: 60px;
+}
 
 .payway-text {
   padding-left: 5px;
   max-width: 198px;
   text-align: left;
   width: 100%;
-  color: black; }
+  color: black;
+}
 
 @media only screen and (max-width: 1199px) {
   .payway-text {
-    padding-top: 0; } }
+    padding-top: 0;
+  }
+}
 .blue-media-body {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center; }
-  .blue-media-body .bm-redirect-page-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center; }
-    .blue-media-body .bm-redirect-page-content .logo {
-      max-width: 220px;
-      height: auto; }
-    .blue-media-body .bm-redirect-page-content .loader {
-      margin-top: 15px; }
-    .blue-media-body .bm-redirect-page-content p {
-      margin-bottom: 10px;
-      font-size: 18px;
-      margin-top: 0; }
-  .blue-media-body .bm-redirect-page input[type="submit"] {
-    display: none; }
+  justify-content: center;
+}
+.blue-media-body .bm-redirect-page-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.blue-media-body .bm-redirect-page-content .logo {
+  max-width: 220px;
+  height: auto;
+}
+.blue-media-body .bm-redirect-page-content .loader {
+  margin-top: 15px;
+}
+.blue-media-body .bm-redirect-page-content p {
+  margin-bottom: 10px;
+  font-size: 18px;
+  margin-top: 0;
+}
+.blue-media-body .bm-redirect-page input[type=submit] {
+  display: none;
+}
 
 .bluepayment-gateways__wrap {
   display: flex;
   flex-wrap: wrap;
   margin-left: -0.3rem;
   margin-right: -0.3rem;
-  margin-bottom: 1rem; }
+  margin-bottom: 1rem;
+}
 
 .bluepayment-gateways__item {
   padding: 0.3rem;
-  width: 25%; }
+  width: 25%;
+}
 
 @media only screen and (max-width: 768px) {
   .bluepayment-gateways__item {
-    width: 50%; } }
+    width: 50%;
+  }
+}
 @media only screen and (max-width: 1400px) {
   .bluepayment-gateways__item {
-    width: 33.333%; } }
+    width: 33.333%;
+  }
+}
 .bluepayment-gateways__img {
   width: 65px;
   display: table;
-  margin: 0 auto; }
+  margin: 0 auto;
+}
 
 .bluepayment-gateways__item label {
   border: 2px solid #F1F1F1;
@@ -133,12 +162,15 @@ div.payment-option > label > img {
   align-items: initial;
   flex-direction: column;
   justify-content: space-between;
-  font-weight: 400; }
+  font-weight: 400;
+}
 .bluepayment-gateways__item input:checked ~ label {
   border-color: #005abb;
-  transition: all 0.3s ease; }
+  transition: all 0.3s ease;
+}
 .bluepayment-gateways__item input {
-  display: none; }
+  display: none;
+}
 
 .bluepayment-gateways__name {
   text-align: center;
@@ -147,61 +179,73 @@ div.payment-option > label > img {
   font-size: 12px;
   margin-top: 4px;
   display: block;
-  line-height: 1.2; }
+  line-height: 1.2;
+}
 
 .payment-option {
   display: flex;
-  align-items: center; }
+  align-items: center;
+}
 
 .payment-option label {
-  margin-bottom: 0; }
+  margin-bottom: 0;
+}
 
 .payment-brand {
   display: block;
   margin-bottom: 24px;
-  max-width: 85px; }
-
-
+  max-width: 85px;
+}
 
 .payment-navigation {
   margin-top: 46px;
-  margin-bottom: 16px; }
+  margin-bottom: 16px;
+}
 
 body#checkout section.checkout-step .payment-options > div .payment-option {
   border-top: 1px solid #F1F1F1;
   display: flex;
   align-items: center;
   min-height: 70px;
-  margin-bottom: 0; }
-  body#checkout section.checkout-step .payment-options > div .payment-option > label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0; }
-    body#checkout section.checkout-step .payment-options > div .payment-option > label img {
-      max-width: 90px;
-      padding-right: 20px; }
-    body#checkout section.checkout-step .payment-options > div .payment-option > label span {
-      order: 3;
-      font-weight: 600; }
+  margin-bottom: 0;
+}
+body#checkout section.checkout-step .payment-options > div .payment-option > label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+body#checkout section.checkout-step .payment-options > div .payment-option > label img {
+  max-width: 90px;
+  padding-right: 20px;
+}
+body#checkout section.checkout-step .payment-options > div .payment-option > label span {
+  order: 3;
+  font-weight: 600;
+}
 
 #payment-option-1-container {
-  border: 0 !important; }
+  border: 0 !important;
+}
 
 .bm-small-info {
   color: #767676;
-  font-size: 12px; }
+  font-size: 12px;
+}
 
 body#checkout .additional-information {
-  font-size: .875rem;
+  font-size: 0.875rem;
   margin-left: 2.875rem;
   margin-top: 0;
-  margin-bottom: 1.25rem; }
+  margin-bottom: 1.25rem;
+}
 
 body#checkout section.checkout-step .payment-options .custom-radio {
-  margin-right: 1.645rem; }
+  margin-right: 1.645rem;
+}
 
 .additional-information p {
   color: #222222;
-  font-size: 13px; }
+  font-size: 13px;
+}
 
 /*# sourceMappingURL=front.css.map */

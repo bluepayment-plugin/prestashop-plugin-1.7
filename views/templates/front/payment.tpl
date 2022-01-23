@@ -15,7 +15,7 @@
 *}
 <html>
 <head>
-    <link rel="stylesheet" href="{$module_dir}/views/css/front.css" />
+    <link rel="stylesheet" href="{$module_dir}/views/css/front/front.css" />
     <title>{l s='Blue Media redirect...' mod='bluepayment'}</title>
 </head>
 <body class="blue-media-body">

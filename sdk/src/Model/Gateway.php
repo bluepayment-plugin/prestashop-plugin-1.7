@@ -45,11 +45,11 @@ class Gateway extends AbstractModel
 
 
 
-    const GATEWAY_ID_SLOVENSKA = 1961;
-    const GATEWAY_ID_TARTA_BANKA = 1962;
-    const GATEWAY_ID_VUB_BANKA = 1963;
-    const GATEWAY_ID_POSTOVA_BANKA = 1964;
-    const GATEWAY_ID_VIAMO = 1965;
+//    const GATEWAY_ID_SLOVENSKA = 1961;
+//    const GATEWAY_ID_TARTA_BANKA = 1962;
+//    const GATEWAY_ID_VUB_BANKA = 1963;
+//    const GATEWAY_ID_POSTOVA_BANKA = 1964;
+//    const GATEWAY_ID_VIAMO = 1965;
 
 
 
@@ -112,11 +112,11 @@ class Gateway extends AbstractModel
             self::GATEWAY_ID_GOOGLE_PAY     => 1,
 
 
-            self::GATEWAY_ID_SLOVENSKA => 1,
-            self::GATEWAY_ID_TARTA_BANKA => 1,
-            self::GATEWAY_ID_VUB_BANKA => 1,
-            self::GATEWAY_ID_POSTOVA_BANKA => 1,
-            self::GATEWAY_ID_VIAMO => 1,
+//            self::GATEWAY_ID_SLOVENSKA => 1,
+//            self::GATEWAY_ID_TARTA_BANKA => 1,
+//            self::GATEWAY_ID_VUB_BANKA => 1,
+//            self::GATEWAY_ID_POSTOVA_BANKA => 1,
+//            self::GATEWAY_ID_VIAMO => 1,
 
 
 
