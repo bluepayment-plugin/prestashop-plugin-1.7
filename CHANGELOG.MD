@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.7.1] 09.02.2022
+- Fixed duplicate payments
+- Fixed issues with displaying some payment channels
+- Added deletion of inactive payments assigned to the account
 
 ## [2.7.0] 23.01.2022
 - Fixed a group creation error during module installation

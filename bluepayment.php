@@ -66,7 +66,7 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__).'/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.7.0';
+        $this->version = '2.7.1';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -436,7 +436,7 @@ class BluePayment extends PaymentModule
         if ($type === 'wallet') {
             $q = 'IN ("Apple Pay","Google Pay")';
         } elseif ($type === 'transfer') {
-            $q = 'NOT IN ("BLIK","Apple Pay","Google Pay","PBC płatność testowa","Kup teraz, zapłać później","Alior Raty")';
+            $q = 'NOT IN ("BLIK","Apple Pay","Google Pay","PBC płatność testowa","Płatność kartą","Kup teraz, zapłać później","Alior Raty")';
         }
 
         $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, 
@@ -924,7 +924,8 @@ class BluePayment extends PaymentModule
                         }
                     }
 
-                    if ($p_group->gateway_name === 'PBC płatność testowa') {
+                    if ($p_group->gateway_name === 'PBC płatność testowa' ||
+                        $p_group->gateway_name === 'Płatność kartą') {
                         if ($cardGateway) {
                             $card = new BlueGateway($cardGateway);
                             $cardOption = new PaymentOption();
@@ -1099,6 +1100,7 @@ class BluePayment extends PaymentModule
                     }
 
                     if ($iframe
+                        && $p_group->gateway_name === 'Alior Raty'
                         && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) >= (float)IFRAME_MIN_AMOUNT
                     ) {
                         $iframeGateway = new BlueGateway($iframe);

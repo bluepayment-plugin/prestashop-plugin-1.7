@@ -69,7 +69,6 @@ class BlueTabPayment
             foreach ($this->getXmlModules() as $key => $module) {
                 foreach ($module->attributes() as $attribute) {
                     if ($attribute == 'bluepayment') {
-                        var_dump($this->getXmlModules()[$key]);
                         unset($this->getXmlModules()[$key]);
                     }
                 }

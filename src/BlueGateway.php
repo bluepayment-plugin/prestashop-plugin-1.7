@@ -90,6 +90,17 @@ class BlueGateway extends ObjectModel
         }
     }
 
+
+    private function clearGateway() {
+        try {
+            Db::getInstance()->execute('TRUNCATE TABLE `' . _DB_PREFIX_ . 'blue_gateways`');
+            PrestaShopLogger::addLog('BM - Clear gateways', 1);
+        } catch (Exception $exception) {
+            PrestaShopLogger::addLog('BM - Error clear gateways', 1);
+        }
+    }
+
+
     /**
      * @param $currency
      * @param int $position
@@ -100,6 +111,7 @@ class BlueGateway extends ObjectModel
      */
     private function syncGateway($currency, $position = 0)
     {
+
         $serviceId = (int)$this->module
             ->parseConfigByCurrency($this->module->name_upper.'_SERVICE_PARTNER_ID', $currency['iso_code']);
 
@@ -107,17 +119,23 @@ class BlueGateway extends ObjectModel
             ->parseConfigByCurrency($this->module->name_upper.'_SHARED_KEY', $currency['iso_code']);
 
         if ($serviceId > 0 && !empty($hashKey)) {
-            PrestaShopLogger::addLog('BM - Install gateways', 1);
+
+            $this->clearGateway();
 
             $loadResult = $this->loadGatewaysFromAPI($serviceId, $hashKey);
 
             if ($loadResult) {
-                /**
-                 * @var \BlueMedia\OnlinePayments\Model\Gateway $paymentGateway
-                 */
+
+                PrestaShopLogger::addLog('BM - Install gateways', 1);
+
+
 
                 foreach ($loadResult->getGateways() as $paymentGateway) {
-                    if ($paymentGateway->getGatewayName() !== 'Apple Pay') {
+                    if (
+                        $paymentGateway->getGatewayName() !== 'Apple Pay' &&
+                        $paymentGateway->getGatewayName() !== 'Kartowa płatność automatyczna'
+
+                    ) {
                         $payway = self::getByGatewayIdAndCurrency(
                             $paymentGateway->getGatewayId(),
                             $currency['iso_code']

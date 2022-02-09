@@ -84,13 +84,35 @@ class BlueGatewayChannels extends ObjectModel
     public function syncGateways()
     {
         $position = 0;
-
         $sortCurrencies = $this->module->getSortCurrencies();
 
         foreach ($sortCurrencies as $currency) {
             $position = (int)$this->syncGateway($currency, $position);
         }
     }
+
+
+    private function clearGateway() {
+        try {
+            Db::getInstance()->execute('TRUNCATE TABLE `' . _DB_PREFIX_ . 'blue_gateway_channels`');
+            PrestaShopLogger::addLog('BM - Clear gateways channels', 1);
+
+
+            Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ . 'blue_gateway_channels` (
+            `id_blue_gateway_channels`, `gateway_id`, `gateway_status`, `bank_name`, `gateway_name`, 
+            `gateway_description`, `position`, `gateway_currency`, `gateway_type`, `gateway_payments`, 
+            `gateway_logo_url`) VALUES (5, 9999, 1, "Przelew internetowy", "Przelew internetowy", "", 2, "PLN", "1", 
+            1, "/modules/bluepayment/views/img/payments.png"), (6, 999, 1, "Wirtualny portfel", "Wirtualny portfel", 
+            "", 3, "PLN", "1", 1, "/modules/bluepayment/views/img/cards.png")');
+
+
+
+        } catch (Exception $exception) {
+            PrestaShopLogger::addLog('BM - Error clear gateways channels', 1);
+        }
+    }
+
+
 
     /**
      * @param $currency
@@ -100,7 +122,6 @@ class BlueGatewayChannels extends ObjectModel
      * @throws PrestaShopException
      * @return bool
      */
-
     private function syncGateway($currency, int $position)
     {
         $serviceId = (int)$this->module
@@ -114,19 +135,20 @@ class BlueGatewayChannels extends ObjectModel
             $loadResult = $this->loadGatewaysFromAPI($serviceId, $hashKey);
 
             if ($loadResult) {
+
+                $this->clearGateway();
+
                 /// Reset position by currency
                 $position = 0;
-
-//                dump($loadResult->getGateways());
 
                 foreach ($loadResult->getGateways() as $paymentGateway) {
                     $payway = self::getByGatewayIdAndCurrency($paymentGateway->getGatewayId(), $currency['iso_code']);
 
-//                                        dump($paymentGateway->getGatewayType());
-
                     if ($paymentGateway->getGatewayName() == 'BLIK' ||
                         $paymentGateway->getGatewayType() == 'Raty online' ||
-                        $paymentGateway->getGatewayName() == 'PBC płatność testowa'
+                        $paymentGateway->getGatewayName() == 'Alior Raty' ||
+                        ( $paymentGateway->getGatewayName() == 'PBC płatność testowa'
+                            || $paymentGateway->getGatewayName() == 'Płatność kartą')
                     ) {
                         $payway->gateway_logo_url = $paymentGateway->getIconUrl();
                         $payway->bank_name = $paymentGateway->getBankName();

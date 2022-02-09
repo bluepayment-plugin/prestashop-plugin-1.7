@@ -170,7 +170,6 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
                 );
                 return false;
             }
-
             return $curlResponse;
         } catch (Exception $e) {
             Tools::error_log($e);
