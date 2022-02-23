@@ -13,13 +13,6 @@
  * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-<div class="alert alert-warning">
-	<button type="button" class="close" data-dismiss="alert">×</button>
-	<p>
-        {l s='New version of Blue Media Payments is available. Go to modules and click Upgrade to update the module.' mod='bluepayment'}
-		<span class="badge badge-warning">
-			{l s='new version' mod='bluepayment'} - {$version}
-		</span>
-	</p>
-</div>
-
+<section>
+	<p>{l s='You will be redirected to our partner\'s website where you can make a fast and secure payment.' mod='bluepayment'}</p>
+</section>

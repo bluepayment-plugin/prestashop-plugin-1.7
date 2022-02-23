@@ -16,6 +16,7 @@
 
 $(document).ready(function () {
     var bmSubmitBlikData = {};
+
     $('#wrongBlikCode').hide();
     $('#bm-termofuse').hide();
     $('#responseMessages').hide();
@@ -89,7 +90,6 @@ $(document).ready(function () {
     function validateBlikCode() {
         var show = true;
         var blikCodeInput = $('[name="bluepayment_input_blikCode"]');
-
         var blikCodeValidation = blikCodeInput.val();
         if (/^[0-9]{6}$/.test(blikCodeValidation)) {
             blikCodeInput.parent('div').removeClass('has-error');
@@ -112,12 +112,32 @@ $(document).ready(function () {
         return show
     }
 
+    function clearValidateBlik() {
+        var blikCodeInput = $('[name="bluepayment_input_blikCode"]');
+
+        $('#blikSubmit').removeAttr('disabled').removeClass('disabled');
+        $('#wrongBlikCode').hide();
+        $('#bm-termofuse').hide();
+        blikCodeInput.parent('div').removeClass('has-error');
+
+    }
+
+    $(conditionsSelector + ' input[type="checkbox"]').click(function () {
+        clearValidateBlik();
+    });
+
+    $('#bluepayment-blikCode').on('keyup', function() {
+        clearValidateBlik();
+    });
+
 });
+
 
 var submitter = $('#bluepaymentForm').find('[type="submit"]');
 var conditionsSelector = '#conditions-to-approve';
 
 function hideBlikErrors() {
+
     $('[name="bluepayment_input_blikCode"]').parent('div').removeClass('has-error');
     $('#blikAliasError').hide();
     $('#blikCodeError').hide();

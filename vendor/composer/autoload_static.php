@@ -4,25 +4,33 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
+class ComposerStaticInitafb5593694ba213024cdf0ac1cf6f078
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '9c67151ae59aff4788964ce8eb2a0f43' => __DIR__ . '/..' . '/clue/stream-filter/src/functions_include.php',
         '8cff32064859f4559445b89279f3199c' => __DIR__ . '/..' . '/php-http/message/src/filters.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\OptionsResolver\\' => 34,
+            'Symfony\\Component\\Finder\\' => 25,
+            'Symfony\\Component\\Debug\\' => 24,
+            'Symfony\\Component\\Console\\' => 26,
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'Psr\\Cache\\' => 10,
+            'PrestaShop\\AutoIndex\\' => 21,
+            'PhpParser\\' => 10,
         ),
         'N' => 
         array (
@@ -53,9 +61,29 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
         'Symfony\\Component\\OptionsResolver\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/options-resolver',
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
+        'Symfony\\Component\\Debug\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/debug',
+        ),
+        'Symfony\\Component\\Console\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -69,6 +97,14 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
+        ),
+        'PrestaShop\\AutoIndex\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/prestashop/autoindex/src',
+        ),
+        'PhpParser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
         'Nyholm\\Psr7\\' => 
         array (
@@ -134,6 +170,7 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'AbstractCorrectName' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/NamingConventions/AbstractClassNamePrefixUnitTest.inc',
         'AbstractEditingScreenModeWidgetActions' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/MySource/Tests/Channels/DisallowSelfActionsUnitTest.inc',
         'AllGood' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/Commenting/ClassCommentUnitTest.inc',
+        'AnalyticsTracking' => __DIR__ . '/../..' . '/src/AnalyticsTracking.php',
         'AnonymousFn' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/WhiteSpace/ScopeIndentUnitTest.1.inc',
         'Another_Class' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/Commenting/FunctionCommentUnitTest.inc',
         'App\\Controller\\MyController' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR12/Tests/Files/FileHeaderUnitTest.6.inc',
@@ -145,7 +182,6 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'BadTraitName' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/NamingConventions/TraitNameSuffixUnitTest.inc',
         'BadTraitNametrait' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/NamingConventions/TraitNameSuffixUnitTest.inc',
         'Bar' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/tests/Core/Tokenizer/ArrayKeywordTest.inc',
-        'BarBucCommand' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/BarBucCommand.php',
         'BarFoo' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/CodeAnalysis/UselessOverridingMethodUnitTest.inc',
         'Bar\\Bar' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR1/Tests/Files/SideEffectsUnitTest.6.inc',
         'Bar_Foo' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/CodeAnalysis/UnnecessaryFinalModifierUnitTest.inc',
@@ -188,9 +224,9 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'CommentedOutCodeAtStartOfClass' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/WhiteSpace/MemberVarSpacingUnitTest.inc',
         'CommentedOutCodeAtStartOfClassNoBlankLine' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/WhiteSpace/MemberVarSpacingUnitTest.inc',
         'CompletelyWrongClassName' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/Classes/ClassFileNameUnitTest.inc',
-        'ComposerAutoloaderInit2dbc35cd8dde39c60827a20d4869016a' => __DIR__ . '/..' . '/composer/autoload_real.php',
+        'ComposerAutoloaderInitafb5593694ba213024cdf0ac1cf6f078' => __DIR__ . '/..' . '/composer/autoload_real.php',
         'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
-        'Composer\\Autoload\\ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a' => __DIR__ . '/..' . '/composer/autoload_static.php',
+        'Composer\\Autoload\\ComposerStaticInitafb5593694ba213024cdf0ac1cf6f078' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'ConstructorPropertyPromotionAbstractMethod' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/tests/Core/File/GetMethodParametersTest.inc',
         'ConstructorPropertyPromotionAndNormalParams' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/tests/Core/File/GetMethodParametersTest.inc',
@@ -229,26 +265,12 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'FinallyAsMethod' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/tests/Core/Tokenizer/FinallyTest.inc',
         'Foo' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/tests/Core/Tokenizer/ScopeSettingWithNamespaceOperatorTest.inc',
         'Foo1' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR12/Tests/Classes/ClosingBraceUnitTest.inc',
-        'Foo1Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/Foo1Command.php',
         'Foo2' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR12/Tests/Classes/ClosingBraceUnitTest.inc',
-        'Foo2Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/Foo2Command.php',
         'Foo3' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR12/Tests/Classes/ClosingBraceUnitTest.inc',
-        'Foo3Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/Foo3Command.php',
         'Foo4' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR12/Tests/Classes/OpeningBraceSpaceUnitTest.inc',
-        'Foo4Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/Foo4Command.php',
         'Foo5' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR12/Tests/Classes/OpeningBraceSpaceUnitTest.inc',
-        'Foo5Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/Foo5Command.php',
         'Foo6' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR12/Tests/Classes/OpeningBraceSpaceUnitTest.inc',
-        'Foo6Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/Foo6Command.php',
         'FooBar' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/tests/Core/File/GetMethodPropertiesTest.inc',
-        'FooCommand' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FooCommand.php',
-        'FooLock2Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FooLock2Command.php',
-        'FooLockCommand' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FooLockCommand.php',
-        'FooOptCommand' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FooOptCommand.php',
-        'FooSameCaseLowercaseCommand' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FooSameCaseLowercaseCommand.php',
-        'FooSameCaseUppercaseCommand' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FooSameCaseUppercaseCommand.php',
-        'FooSubnamespaced1Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FooSubnamespaced1Command.php',
-        'FooSubnamespaced2Command' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FooSubnamespaced2Command.php',
         'Foo\\Bah\\BarFoo' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/Classes/SelfMemberReferenceUnitTest.inc',
         'Foo\\Bar' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/Classes/SelfMemberReferenceUnitTest.inc',
         'Foo\\Bar\\Baz' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/Classes/SelfMemberReferenceUnitTest.inc',
@@ -260,7 +282,6 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'Foo\\Test123' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/WhiteSpace/ScopeIndentUnitTest.1.inc',
         'Foo\\foo' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/WhiteSpace/ScopeIndentUnitTest.1.inc',
         'Foo_Bar' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Generic/Tests/CodeAnalysis/UnnecessaryFinalModifierUnitTest.inc',
-        'FoobarCommand' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/FoobarCommand.php',
         'FunctionCommentThrowTagUnitTest' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/Commenting/FunctionCommentThrowTagUnitTest.inc',
         'Github\\Api\\AbstractApi' => __DIR__ . '/..' . '/knplabs/github-api/lib/Github/Api/AbstractApi.php',
         'Github\\Api\\AcceptHeaderTrait' => __DIR__ . '/..' . '/knplabs/github-api/lib/Github/Api/AcceptHeaderTrait.php',
@@ -1597,71 +1618,6 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'Symfony\\Component\\Console\\Terminal' => __DIR__ . '/..' . '/symfony/console/Terminal.php',
         'Symfony\\Component\\Console\\Tester\\ApplicationTester' => __DIR__ . '/..' . '/symfony/console/Tester/ApplicationTester.php',
         'Symfony\\Component\\Console\\Tester\\CommandTester' => __DIR__ . '/..' . '/symfony/console/Tester/CommandTester.php',
-        'Symfony\\Component\\Console\\Tests\\ApplicationTest' => __DIR__ . '/..' . '/symfony/console/Tests/ApplicationTest.php',
-        'Symfony\\Component\\Console\\Tests\\CommandLoader\\ContainerCommandLoaderTest' => __DIR__ . '/..' . '/symfony/console/Tests/CommandLoader/ContainerCommandLoaderTest.php',
-        'Symfony\\Component\\Console\\Tests\\CommandLoader\\FactoryCommandLoaderTest' => __DIR__ . '/..' . '/symfony/console/Tests/CommandLoader/FactoryCommandLoaderTest.php',
-        'Symfony\\Component\\Console\\Tests\\Command\\CommandTest' => __DIR__ . '/..' . '/symfony/console/Tests/Command/CommandTest.php',
-        'Symfony\\Component\\Console\\Tests\\Command\\HelpCommandTest' => __DIR__ . '/..' . '/symfony/console/Tests/Command/HelpCommandTest.php',
-        'Symfony\\Component\\Console\\Tests\\Command\\ListCommandTest' => __DIR__ . '/..' . '/symfony/console/Tests/Command/ListCommandTest.php',
-        'Symfony\\Component\\Console\\Tests\\Command\\LockableTraitTest' => __DIR__ . '/..' . '/symfony/console/Tests/Command/LockableTraitTest.php',
-        'Symfony\\Component\\Console\\Tests\\CustomApplication' => __DIR__ . '/..' . '/symfony/console/Tests/ApplicationTest.php',
-        'Symfony\\Component\\Console\\Tests\\CustomDefaultCommandApplication' => __DIR__ . '/..' . '/symfony/console/Tests/ApplicationTest.php',
-        'Symfony\\Component\\Console\\Tests\\DependencyInjection\\AddConsoleCommandPassTest' => __DIR__ . '/..' . '/symfony/console/Tests/DependencyInjection/AddConsoleCommandPassTest.php',
-        'Symfony\\Component\\Console\\Tests\\DependencyInjection\\MyCommand' => __DIR__ . '/..' . '/symfony/console/Tests/DependencyInjection/AddConsoleCommandPassTest.php',
-        'Symfony\\Component\\Console\\Tests\\DependencyInjection\\NamedCommand' => __DIR__ . '/..' . '/symfony/console/Tests/DependencyInjection/AddConsoleCommandPassTest.php',
-        'Symfony\\Component\\Console\\Tests\\Descriptor\\AbstractDescriptorTest' => __DIR__ . '/..' . '/symfony/console/Tests/Descriptor/AbstractDescriptorTest.php',
-        'Symfony\\Component\\Console\\Tests\\Descriptor\\JsonDescriptorTest' => __DIR__ . '/..' . '/symfony/console/Tests/Descriptor/JsonDescriptorTest.php',
-        'Symfony\\Component\\Console\\Tests\\Descriptor\\MarkdownDescriptorTest' => __DIR__ . '/..' . '/symfony/console/Tests/Descriptor/MarkdownDescriptorTest.php',
-        'Symfony\\Component\\Console\\Tests\\Descriptor\\ObjectsProvider' => __DIR__ . '/..' . '/symfony/console/Tests/Descriptor/ObjectsProvider.php',
-        'Symfony\\Component\\Console\\Tests\\Descriptor\\TextDescriptorTest' => __DIR__ . '/..' . '/symfony/console/Tests/Descriptor/TextDescriptorTest.php',
-        'Symfony\\Component\\Console\\Tests\\Descriptor\\XmlDescriptorTest' => __DIR__ . '/..' . '/symfony/console/Tests/Descriptor/XmlDescriptorTest.php',
-        'Symfony\\Component\\Console\\Tests\\DisabledCommand' => __DIR__ . '/..' . '/symfony/console/Tests/ApplicationTest.php',
-        'Symfony\\Component\\Console\\Tests\\EventListener\\ErrorListenerTest' => __DIR__ . '/..' . '/symfony/console/Tests/EventListener/ErrorListenerTest.php',
-        'Symfony\\Component\\Console\\Tests\\EventListener\\NonStringInput' => __DIR__ . '/..' . '/symfony/console/Tests/EventListener/ErrorListenerTest.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DescriptorApplication1' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DescriptorApplication1.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DescriptorApplication2' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DescriptorApplication2.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DescriptorApplicationMbString' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DescriptorApplicationMbString.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DescriptorCommand1' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DescriptorCommand1.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DescriptorCommand2' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DescriptorCommand2.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DescriptorCommand3' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DescriptorCommand3.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DescriptorCommand4' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DescriptorCommand4.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DescriptorCommandMbString' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DescriptorCommandMbString.php',
-        'Symfony\\Component\\Console\\Tests\\Fixtures\\DummyOutput' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/DummyOutput.php',
-        'Symfony\\Component\\Console\\Tests\\Formatter\\OutputFormatterStyleStackTest' => __DIR__ . '/..' . '/symfony/console/Tests/Formatter/OutputFormatterStyleStackTest.php',
-        'Symfony\\Component\\Console\\Tests\\Formatter\\OutputFormatterStyleTest' => __DIR__ . '/..' . '/symfony/console/Tests/Formatter/OutputFormatterStyleTest.php',
-        'Symfony\\Component\\Console\\Tests\\Formatter\\OutputFormatterTest' => __DIR__ . '/..' . '/symfony/console/Tests/Formatter/OutputFormatterTest.php',
-        'Symfony\\Component\\Console\\Tests\\Formatter\\TableCell' => __DIR__ . '/..' . '/symfony/console/Tests/Formatter/OutputFormatterTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\AbstractQuestionHelperTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/AbstractQuestionHelperTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\AutocompleteValues' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/QuestionHelperTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\FormatterHelperTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/FormatterHelperTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\HelperSetTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/HelperSetTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\HelperTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/HelperTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\ProcessHelperTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/ProcessHelperTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\ProgressBarTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/ProgressBarTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\ProgressIndicatorTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/ProgressIndicatorTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\QuestionHelperTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/QuestionHelperTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\SymfonyQuestionHelperTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/SymfonyQuestionHelperTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\TableStyleTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/TableStyleTest.php',
-        'Symfony\\Component\\Console\\Tests\\Helper\\TableTest' => __DIR__ . '/..' . '/symfony/console/Tests/Helper/TableTest.php',
-        'Symfony\\Component\\Console\\Tests\\Input\\ArgvInputTest' => __DIR__ . '/..' . '/symfony/console/Tests/Input/ArgvInputTest.php',
-        'Symfony\\Component\\Console\\Tests\\Input\\ArrayInputTest' => __DIR__ . '/..' . '/symfony/console/Tests/Input/ArrayInputTest.php',
-        'Symfony\\Component\\Console\\Tests\\Input\\InputArgumentTest' => __DIR__ . '/..' . '/symfony/console/Tests/Input/InputArgumentTest.php',
-        'Symfony\\Component\\Console\\Tests\\Input\\InputDefinitionTest' => __DIR__ . '/..' . '/symfony/console/Tests/Input/InputDefinitionTest.php',
-        'Symfony\\Component\\Console\\Tests\\Input\\InputOptionTest' => __DIR__ . '/..' . '/symfony/console/Tests/Input/InputOptionTest.php',
-        'Symfony\\Component\\Console\\Tests\\Input\\InputTest' => __DIR__ . '/..' . '/symfony/console/Tests/Input/InputTest.php',
-        'Symfony\\Component\\Console\\Tests\\Input\\StringInputTest' => __DIR__ . '/..' . '/symfony/console/Tests/Input/StringInputTest.php',
-        'Symfony\\Component\\Console\\Tests\\LazyCommand' => __DIR__ . '/..' . '/symfony/console/Tests/ApplicationTest.php',
-        'Symfony\\Component\\Console\\Tests\\Logger\\ConsoleLoggerTest' => __DIR__ . '/..' . '/symfony/console/Tests/Logger/ConsoleLoggerTest.php',
-        'Symfony\\Component\\Console\\Tests\\Logger\\DummyTest' => __DIR__ . '/..' . '/symfony/console/Tests/Logger/ConsoleLoggerTest.php',
-        'Symfony\\Component\\Console\\Tests\\Output\\ConsoleOutputTest' => __DIR__ . '/..' . '/symfony/console/Tests/Output/ConsoleOutputTest.php',
-        'Symfony\\Component\\Console\\Tests\\Output\\NullOutputTest' => __DIR__ . '/..' . '/symfony/console/Tests/Output/NullOutputTest.php',
-        'Symfony\\Component\\Console\\Tests\\Output\\OutputTest' => __DIR__ . '/..' . '/symfony/console/Tests/Output/OutputTest.php',
-        'Symfony\\Component\\Console\\Tests\\Output\\StreamOutputTest' => __DIR__ . '/..' . '/symfony/console/Tests/Output/StreamOutputTest.php',
-        'Symfony\\Component\\Console\\Tests\\Output\\TestOutput' => __DIR__ . '/..' . '/symfony/console/Tests/Output/OutputTest.php',
-        'Symfony\\Component\\Console\\Tests\\Style\\SymfonyStyleTest' => __DIR__ . '/..' . '/symfony/console/Tests/Style/SymfonyStyleTest.php',
-        'Symfony\\Component\\Console\\Tests\\TerminalTest' => __DIR__ . '/..' . '/symfony/console/Tests/TerminalTest.php',
-        'Symfony\\Component\\Console\\Tests\\Tester\\ApplicationTesterTest' => __DIR__ . '/..' . '/symfony/console/Tests/Tester/ApplicationTesterTest.php',
-        'Symfony\\Component\\Console\\Tests\\Tester\\CommandTesterTest' => __DIR__ . '/..' . '/symfony/console/Tests/Tester/CommandTesterTest.php',
         'Symfony\\Component\\Debug\\BufferingLogger' => __DIR__ . '/..' . '/symfony/debug/BufferingLogger.php',
         'Symfony\\Component\\Debug\\Debug' => __DIR__ . '/..' . '/symfony/debug/Debug.php',
         'Symfony\\Component\\Debug\\DebugClassLoader' => __DIR__ . '/..' . '/symfony/debug/DebugClassLoader.php',
@@ -1700,33 +1656,6 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'Symfony\\Component\\Finder\\Iterator\\SizeRangeFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/SizeRangeFilterIterator.php',
         'Symfony\\Component\\Finder\\Iterator\\SortableIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/SortableIterator.php',
         'Symfony\\Component\\Finder\\SplFileInfo' => __DIR__ . '/..' . '/symfony/finder/SplFileInfo.php',
-        'Symfony\\Component\\Finder\\Tests\\Comparator\\ComparatorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Comparator/ComparatorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Comparator\\DateComparatorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Comparator/DateComparatorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Comparator\\NumberComparatorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Comparator/NumberComparatorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\FinderTest' => __DIR__ . '/..' . '/symfony/finder/Tests/FinderTest.php',
-        'Symfony\\Component\\Finder\\Tests\\GlobTest' => __DIR__ . '/..' . '/symfony/finder/Tests/GlobTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\CustomFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/CustomFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\DateRangeFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/DateRangeFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\DepthRangeFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/DepthRangeFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\ExcludeDirectoryFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/ExcludeDirectoryFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\FileTypeFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/FileTypeFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\FilecontentFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/FilecontentFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\FilenameFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/FilenameFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\FilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/FilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\InnerNameIterator' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/FilenameFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\InnerSizeIterator' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/SizeRangeFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\InnerTypeIterator' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/FileTypeFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\Iterator' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/Iterator.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\IteratorTestCase' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/IteratorTestCase.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\MockFileListIterator' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/MockFileListIterator.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\MockSplFileInfo' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/MockSplFileInfo.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\MultiplePcreFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/MultiplePcreFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\PathFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/PathFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\RealIteratorTestCase' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/RealIteratorTestCase.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\RecursiveDirectoryIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/RecursiveDirectoryIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\SizeRangeFilterIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/SizeRangeFilterIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\SortableIteratorTest' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/SortableIteratorTest.php',
-        'Symfony\\Component\\Finder\\Tests\\Iterator\\TestMultiplePcreFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Tests/Iterator/MultiplePcreFilterIteratorTest.php',
         'Symfony\\Component\\OptionsResolver\\Debug\\OptionsResolverIntrospector' => __DIR__ . '/..' . '/symfony/options-resolver/Debug/OptionsResolverIntrospector.php',
         'Symfony\\Component\\OptionsResolver\\Exception\\AccessException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/AccessException.php',
         'Symfony\\Component\\OptionsResolver\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/ExceptionInterface.php',
@@ -1749,7 +1678,6 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
         'Test3' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PEAR/Tests/WhiteSpace/ScopeIndentUnitTest.inc',
         'TestAlternativeControlStructures' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/PHP/NonExecutableCodeUnitTest.1.inc',
         'TestClass' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PEAR/Tests/Functions/FunctionCallSignatureUnitTest.inc',
-        'TestCommand' => __DIR__ . '/..' . '/symfony/console/Tests/Fixtures/TestCommand.php',
         'TestMemberProperties' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/tests/Core/File/GetMemberPropertiesTest.inc',
         'TestReturnVoid' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/Squiz/Tests/Commenting/FunctionCommentUnitTest.inc',
         'TestTokenizingOfNullableVsInlineThen' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/src/Standards/PSR12/Tests/Functions/NullableTypeDeclarationUnitTest.inc',
@@ -1844,9 +1772,9 @@ class ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit2dbc35cd8dde39c60827a20d4869016a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitafb5593694ba213024cdf0ac1cf6f078::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitafb5593694ba213024cdf0ac1cf6f078::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitafb5593694ba213024cdf0ac1cf6f078::$classMap;
 
         }, null, ClassLoader::class);
     }

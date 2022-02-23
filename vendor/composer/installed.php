@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'aed52d81f2eac99f3c2212953c7f6d153b41579c',
+    'reference' => '3d3135b5b39ca9317657c17c07e6b0dd53b9959f',
     'name' => 'prestashop/bluepayment',
   ),
   'versions' => 
@@ -40,12 +40,12 @@
     ),
     'nyholm/psr7' => 
     array (
-      'pretty_version' => '1.4.1',
-      'version' => '1.4.1.0',
+      'pretty_version' => '1.5.0',
+      'version' => '1.5.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '2212385b47153ea71b1c1b1374f8cb5e4f7892ec',
+      'reference' => '1461e07a0f2a975a52082ca3b769ca912b816226',
     ),
     'php-http/async-client-implementation' => 
     array (
@@ -56,12 +56,12 @@
     ),
     'php-http/cache-plugin' => 
     array (
-      'pretty_version' => '1.7.4',
-      'version' => '1.7.4.0',
+      'pretty_version' => '1.7.5',
+      'version' => '1.7.5.0',
       'aliases' => 
       array (
       ),
-      'reference' => '2c00b4c6d41c0c9cad4d901adaf1a7db55f98744',
+      'reference' => '63bc3f7242825c9a817db8f78e4c9703b0c471e2',
     ),
     'php-http/client-common' => 
     array (
@@ -156,7 +156,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'aed52d81f2eac99f3c2212953c7f6d153b41579c',
+      'reference' => '3d3135b5b39ca9317657c17c07e6b0dd53b9959f',
     ),
     'psr/cache' => 
     array (
@@ -244,12 +244,12 @@
     ),
     'symfony/debug' => 
     array (
-      'pretty_version' => 'v4.4.36',
-      'version' => '4.4.36.0',
+      'pretty_version' => 'v4.4.37',
+      'version' => '4.4.37.0',
       'aliases' => 
       array (
       ),
-      'reference' => '346e1507eeb3f566dcc7a116fefaa407ee84691b',
+      'reference' => '5de6c6e7f52b364840e53851c126be4d71e60470',
     ),
     'symfony/finder' => 
     array (
@@ -262,12 +262,12 @@
     ),
     'symfony/options-resolver' => 
     array (
-      'pretty_version' => 'v4.4.30',
-      'version' => '4.4.30.0',
+      'pretty_version' => 'v4.4.37',
+      'version' => '4.4.37.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'fa0b12a3a47ed25749d47d6b4f61412fd5ca1554',
+      'reference' => '41d1e741a292574887629369400820c9645e8a87',
     ),
     'symfony/polyfill-mbstring' => 
     array (

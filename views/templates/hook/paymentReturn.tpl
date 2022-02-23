@@ -38,4 +38,5 @@
 
 
 	ga('ecommerce:send');
+
 </script>

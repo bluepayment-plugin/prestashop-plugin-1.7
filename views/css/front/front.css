@@ -120,8 +120,8 @@ div.payment-option > label > img {
 }
 
 .bluepayment-gateways__wrap {
-  display: flex;
-  flex-wrap: wrap;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  display: grid;
   margin-left: -0.3rem;
   margin-right: -0.3rem;
   margin-bottom: 1rem;
@@ -129,19 +129,8 @@ div.payment-option > label > img {
 
 .bluepayment-gateways__item {
   padding: 0.3rem;
-  width: 25%;
 }
 
-@media only screen and (max-width: 768px) {
-  .bluepayment-gateways__item {
-    width: 50%;
-  }
-}
-@media only screen and (max-width: 1400px) {
-  .bluepayment-gateways__item {
-    width: 33.333%;
-  }
-}
 .bluepayment-gateways__img {
   width: 65px;
   display: table;

@@ -13,13 +13,7 @@
  * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-<div class="alert alert-warning">
-	<button type="button" class="close" data-dismiss="alert">×</button>
-	<p>
-        {l s='New version of Blue Media Payments is available. Go to modules and click Upgrade to update the module.' mod='bluepayment'}
-		<span class="badge badge-warning">
-			{l s='new version' mod='bluepayment'} - {$version}
-		</span>
-	</p>
+<div class="bm-info--small">
+	<img width="22" class="bm-info--small__icon img-fluid" src="{$src_img|escape:'html':'UTF-8'}/info.svg" alt="Info" />
+	<p>{l s='We recommend leaving the option without redirection. If you use a one page checkout module, we recommend setting redirection to a dedicated payment page outside your store.' mod='bluepayment'}</p>
 </div>
-

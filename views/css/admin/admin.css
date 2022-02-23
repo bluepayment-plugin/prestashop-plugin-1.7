@@ -39,6 +39,7 @@
   position: fixed;
   font-size: 0.875rem;
   z-index: 10;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
 }
 
 .bm-menu .nav-pills {
@@ -270,18 +271,15 @@ a, a:active, a:focus {
 
 .bm-info--small {
   display: flex;
-  flex-wrap: wrap;
   border: 1px solid #DDDDDD;
   border-left: 4px solid #0068B4;
   padding: 20px;
 }
-
-.bm-info--small p {
-  margin: 0;
-}
-
 .bm-info--small__icon {
   margin-right: 15px;
+}
+.bm-info--small p {
+  margin: 0;
 }
 
 .bluepayment-gateways__wrap {
@@ -397,6 +395,35 @@ a, a:active, a:focus {
 
 .blue_gateway_channels tbody > tr:hover > td {
   background: transparent !important;
+}
+
+.about-analitics {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  font-size: 14px;
+}
+.about-analitics__content {
+  position: relative;
+  margin-left: 45px;
+  display: block;
+  padding-top: 4px;
+}
+.about-analitics__item {
+  position: relative;
+  margin-bottom: 14px;
+}
+.about-analitics__icon {
+  position: absolute;
+  margin-right: 10px;
+}
+
+.bm-configure .panel .panel-heading {
+  font-weight: 300 !important;
+  padding-top: 1px !important;
+  padding-left: 8px !important;
+  font-size: 13px !important;
+  font-family: Open Sans, Helvetica, Arial, sans-serif !important;
 }
 
 /*# sourceMappingURL=admin.css.map */

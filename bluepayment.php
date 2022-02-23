@@ -24,6 +24,8 @@ require dirname(__FILE__).'/vendor/autoload.php';
 class BluePayment extends PaymentModule
 {
     public $name_upper;
+    public $ga_tracker_id;
+
     /**
      * Haki używane przez moduł
      *
@@ -61,12 +63,13 @@ class BluePayment extends PaymentModule
     public function __construct()
     {
         $this->name = 'bluepayment';
+        $this->tracked_id = null;
         $this->name_upper = Tools::strtoupper($this->name);
 
         require_once dirname(__FILE__).'/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.7.1';
+        $this->version = '2.7.2';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -113,6 +116,9 @@ class BluePayment extends PaymentModule
             Configuration::updateValue($this->name_upper.'_SHOW_BANER', 0);
             Configuration::updateValue($this->name_upper.'_PAYMENT_NAME', 'Pay via Blue Media');
             Configuration::updateValue($this->name_upper.'_PAYMENT_GROUP_NAME', 'Przelew internetowy');
+            Configuration::updateValue($this->name_upper.'_GA_TRACKER_ID', 0);
+            Configuration::updateValue($this->name_upper.'_BLIK_REDIRECT', 0);
+            Configuration::updateValue($this->name_upper.'_GPAY_REDIRECT', 0);
 
             return true;
         }
@@ -139,6 +145,8 @@ class BluePayment extends PaymentModule
 
             $api_response = json_decode($output);
             $ver = $api_response->modules[0]->version;
+
+            $this->context->smarty->assign(['version' => $ver]);
 
             if ($ver && version_compare($ver, $this->version, '>')) {
                 return $this->context->smarty->fetch(
@@ -621,6 +629,9 @@ class BluePayment extends PaymentModule
             $this->name_upper.'_SHOW_PAYWAY_LOGO',
             $this->name_upper.'_SHOW_BANER',
             $this->name_upper.'_TEST_ENV',
+            $this->name_upper.'_GA_TRACKER_ID',
+            $this->name_upper.'_BLIK_REDIRECT',
+            $this->name_upper.'_GPAY_REDIRECT',
         ];
     }
 
@@ -955,24 +966,52 @@ class BluePayment extends PaymentModule
 
                     if ($p_group->gateway_name === 'BLIK') {
                         if ($blik) {
+
                             $blikGateway = new BlueGateway($blik);
-                            $blikModuleLink = $this->context->link->getModuleLink(
-                                'bluepayment',
-                                'chargeBlik',
-                                [],
-                                true
-                            );
-                            $this->smarty->assign([
-                                'blik_gateway' => $blikGateway,
-                                'blik_moduleLink' => $blikModuleLink,
-                            ]);
-                            $blikOption = new PaymentOption();
-                            $blikOption->setCallToActionText($blikGateway->gateway_name)
-                                ->setAction($blikModuleLink)
-                                ->setBinary(true)
-                                ->setLogo($blikGateway->gateway_logo_url)
-                                ->setForm($this->fetch('module:bluepayment/views/templates/hook/paymentBlik.tpl'));
-                            $newOptions[] = $blikOption;
+
+                            if (Configuration::get($this->name_upper.'_BLIK_REDIRECT')) {
+
+                                $blikOption = new PaymentOption();
+                                $blikOption->setCallToActionText($blikGateway->gateway_name)->setAction($moduleLink)
+                                    ->setInputs([
+                                        [
+                                            'type' => 'hidden',
+                                            'name' => 'bluepayment_gateway',
+                                            'value' => GatewayModel::GATEWAY_ID_BLIK,
+                                        ],
+                                        [
+                                            'type' => 'hidden',
+                                            'name' => 'bluepayment_gateway_id',
+                                            'value' => GatewayModel::GATEWAY_ID_BLIK,
+                                        ]
+                                    ])
+                                    ->setLogo($blikGateway->gateway_logo_url)
+                                    ->setAdditionalInformation(
+                                        $this->fetch('module:bluepayment/views/templates/hook/paymentRedirectBlik.tpl')
+                                    );
+                                $newOptions[] = $blikOption;
+
+                            } else {
+
+                                $blikModuleLink = $this->context->link->getModuleLink(
+                                    'bluepayment',
+                                    'chargeBlik',
+                                    [],
+                                    true
+                                );
+                                $this->smarty->assign([
+                                    'blik_gateway' => $blikGateway,
+                                    'blik_moduleLink' => $blikModuleLink,
+                                ]);
+
+                                $blikOption = new PaymentOption();
+                                $blikOption->setCallToActionText($blikGateway->gateway_name)
+                                    ->setAction($blikModuleLink)
+                                    ->setBinary(true)
+                                    ->setLogo($blikGateway->gateway_logo_url)
+                                    ->setForm($this->fetch('module:bluepayment/views/templates/hook/paymentBlik.tpl'));
+                                $newOptions[] = $blikOption;
+                            }
                         }
                     }
 
@@ -983,46 +1022,73 @@ class BluePayment extends PaymentModule
                          */
 
                         if ($gpay) {
-                            $gpayGateway = new BlueGateway($gpay);
-                            $gpayMerchantInfo = $this->context->link->getModuleLink(
-                                'bluepayment',
-                                'merchantInfo',
-                                [],
-                                true
-                            );
-                            $gpay_moduleLinkCharge = $this->context->link->getModuleLink(
-                                'bluepayment',
-                                'chargeGPay',
-                                [],
-                                true
-                            );
 
-                            $this->smarty->assign([
-                                'gpay_merchantInfo' => $gpayMerchantInfo,
-                                'gpay_moduleLinkCharge' => $gpay_moduleLinkCharge,
-                            ]);
-                            $gpayOption = new PaymentOption();
-                            $gpayOption->setCallToActionText($gpayGateway->gateway_name)
-                                ->setAction($gpayMerchantInfo)
-                                ->setBinary(true)
-                                ->setLogo($gpayGateway->gateway_logo_url)
-                                ->setInputs([
-                                    [
-                                        'type' => 'hidden',
-                                        'name' => 'bluepayment_gateway',
-                                        'value' => 0,
-                                    ],
-                                    [
-                                        'type' => 'hidden',
-                                        'name' => 'gpay_get_merchant_info',
-                                        'value' => $gpayMerchantInfo,
-                                    ]
-                                ])
-                                ->setAdditionalInformation(
-                                    $this->fetch('module:bluepayment/views/templates/hook/paymentGpay.tpl')
+                            $gpayGateway = new BlueGateway($gpay);
+                            if (Configuration::get($this->name_upper.'_GPAY_REDIRECT')) {
+
+                                $gpayOption = new PaymentOption();
+                                $gpayOption->setCallToActionText($gpayGateway->gateway_name)->setAction($moduleLink)
+                                    ->setInputs([
+                                        [
+                                            'type' => 'hidden',
+                                            'name' => 'bluepayment_gateway',
+                                            'value' => GatewayModel::GATEWAY_ID_GOOGLE_PAY,
+                                        ],
+                                        [
+                                            'type' => 'hidden',
+                                            'name' => 'bluepayment_gateway_id',
+                                            'value' => GatewayModel::GATEWAY_ID_GOOGLE_PAY,
+                                        ]
+                                    ])
+                                    ->setLogo($gpayGateway->gateway_logo_url)
+                                    ->setAdditionalInformation(
+                                        $this->fetch('module:bluepayment/views/templates/hook/paymentRedirect.tpl')
+                                    );
+                                $newOptions[] = $gpayOption;
+
+                            } else {
+
+                                $gpayMerchantInfo = $this->context->link->getModuleLink(
+                                    'bluepayment',
+                                    'merchantInfo',
+                                    [],
+                                    true
                                 );
-                            $newOptions[] = $gpayOption;
+                                $gpay_moduleLinkCharge = $this->context->link->getModuleLink(
+                                    'bluepayment',
+                                    'chargeGPay',
+                                    [],
+                                    true
+                                );
+
+                                $this->smarty->assign([
+                                    'gpay_merchantInfo' => $gpayMerchantInfo,
+                                    'gpay_moduleLinkCharge' => $gpay_moduleLinkCharge,
+                                ]);
+                                $gpayOption = new PaymentOption();
+                                $gpayOption->setCallToActionText($gpayGateway->gateway_name)
+                                    ->setAction($gpayMerchantInfo)
+                                    ->setBinary(true)
+                                    ->setLogo($gpayGateway->gateway_logo_url)
+                                    ->setInputs([
+                                        [
+                                            'type' => 'hidden',
+                                            'name' => 'bluepayment_gateway',
+                                            'value' => 0,
+                                        ],
+                                        [
+                                            'type' => 'hidden',
+                                            'name' => 'gpay_get_merchant_info',
+                                            'value' => $gpayMerchantInfo,
+                                        ]
+                                    ])
+                                    ->setAdditionalInformation(
+                                        $this->fetch('module:bluepayment/views/templates/hook/paymentGpay.tpl')
+                                    );
+                                $newOptions[] = $gpayOption;
+                            }
                         }
+
 
                         /// ApplePay
 
@@ -1030,8 +1096,10 @@ class BluePayment extends PaymentModule
                             $applePayGateway = new BlueGateway($applePay);
                             $applePayOption = new PaymentOption();
                             $applePayOption->setCallToActionText($applePayGateway->gateway_name)
-                                ->setAction($moduleLink)
                                 ->setLogo($applePayGateway->gateway_logo_url)
+                                ->setAdditionalInformation(
+                                    $this->fetch('module:bluepayment/views/templates/hook/paymentRedirect.tpl')
+                                )
                                 ->setInputs([
                                     [
                                         'type' => 'hidden',
@@ -1048,11 +1116,11 @@ class BluePayment extends PaymentModule
                                         'name' => 'bluepayment_cart_id',
                                         'value' => $cart_id_time,
                                     ],
-
                                 ]);
                             $newOptions[] = $applePayOption;
                         }
                     }
+
 
                     if ($p_group->gateway_name === 'Kup teraz, zapłać później') {
                         if ($smartney

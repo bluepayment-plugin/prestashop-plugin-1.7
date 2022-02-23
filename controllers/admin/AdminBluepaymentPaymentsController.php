@@ -123,13 +123,13 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'name' => '',
                     'type' => 'description',
-                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/auth_info.tpl',
+                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/auth-info.tpl',
                 ],
                 [
                     'name' => '',
                     'type' => 'description',
                     'content' =>
-                        'module:bluepayment/views/templates/admin/_configure/helpers/form/notification_info.tpl',
+                        'module:bluepayment/views/templates/admin/_configure/helpers/form/notification-info.tpl',
                 ]
             ],
 
@@ -204,7 +204,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     'help' => $this->l('We recommend that you keep the above name. Changing it may have a negative 
                     impact on the customers understanding of the payment methods.'),
                 ],
-
                 [
                     'type' => 'text',
                     'label' => $this->l('The name of the payment module in the store'),
@@ -214,13 +213,79 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     'help' => $this->l('We recommend that you keep the above name. Changing it may have a negative 
                     impact on the customers understanding of the payment methods.'),
                 ],
-
             ],
             'submit' => [
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
         ];
+
+
+        $fields_form[3]['form'] = [
+            'section' => [
+                'title' => $this->l('Payment settings')
+            ],
+            'legend' => [
+                'title' => $this->l('Payment redirection settings'),
+            ],
+            'input' => [
+                [
+                    'name' => '',
+                    'type' => 'description',
+                    'content' =>
+                        'module:bluepayment/views/templates/admin/_configure/helpers/form/redirect-info.tpl',
+                ],
+
+                [
+                    'type' => 'switch',
+                    'label' => $this->l('Entering BLIK in a store'),
+                    'name' => $this->module->name_upper.'_BLIK_REDIRECT',
+                    'size' => 'auto',
+                    'values' => [
+                        [
+                            'id' => 'active_on',
+                            'value' => 0,
+                            'label' => $this->l('No redirection'),
+                        ],
+                        [
+                            'id' => 'active_off',
+                            'value' => 1,
+                            'label' => $this->l('With redirection'),
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'switch',
+                    'label' => $this->l('Google Pay'),
+                    'name' => $this->module->name_upper.'_GPAY_REDIRECT',
+                    'size' => 'auto',
+                    'values' => [
+                        [
+                            'id' => 'active_on',
+                            'value' => 0,
+                            'label' => $this->l('No redirection'),
+                        ],
+                        [
+                            'id' => 'active_off',
+                            'value' => 1,
+                            'label' => $this->l('With redirection'),
+                        ],
+                    ],
+                ],
+            ],
+            'submit' => [
+                'title' => $this->l('Save'),
+                'class' => 'btn btn-primary pull-right',
+            ],
+        ];
+
+
+
+
+
+
+
+
 
         $fields_form[4]['form'] = [
             'section' => [
@@ -266,6 +331,36 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 'class' => 'btn btn-primary pull-right',
             ],
         ];
+
+//        $fields_form[5]['form'] = [
+//            'section' => [
+//                'title' => $this->l('Analitics')
+//            ],
+//            'legend' => [
+//                'title' => $this->l('Google Analitics'),
+//            ],
+//
+//            'input' => [
+//                [
+//                    'name' => '',
+//                    'type' => 'description',
+//                    'content' =>
+//                        'module:bluepayment/views/templates/admin/_configure/helpers/form/analitics-info.tpl',
+//                ],
+//                [
+//                    'type' => 'text',
+//                    'label' => $this->l('Google Account ID'),
+//                    'name' => $this->module->name_upper.'_GA_TRACKER_ID',
+//                    'size' => 40,
+//                    'help' => $this->l('W Universal Analytics jest to “Identyfikator śledzenia” (np. UA-000000-2). W Google Analytics 4 jest to “Identyfikator pomiaru” (w formacie G-XXXXXXX).'),
+//                ],
+//            ],
+//            'submit' => [
+//                'title' => $this->l('Save'),
+//                'class' => 'btn btn-primary pull-right',
+//            ],
+//        ];
+
 
         $helper = new HelperForm();
 

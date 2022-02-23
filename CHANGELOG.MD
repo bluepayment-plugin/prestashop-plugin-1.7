@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.7.2] 23.02.2022
+- Fixed onepagecheckout redirect payments
+- Added redirect options for BLIK and Google Pay
+- Improved grid payments
+- Update vendors
+
 ## [2.7.1] 09.02.2022
 - Fixed duplicate payments
 - Fixed issues with displaying some payment channels

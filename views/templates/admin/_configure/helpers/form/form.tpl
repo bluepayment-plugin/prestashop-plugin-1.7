@@ -19,6 +19,16 @@
 
         {foreach $fields as $fkey => $fvalue}
 
+{*	        {$fvalue|var_dump}*}
+
+
+{*            {if $fvalue.GROUP ne $lastGroup}*}
+{*                {$fvalue.GROUP}*}
+{*                {assign var="lastGroup" value=$ticket.GROUP}*}
+{*            {/if}*}
+{*            {$fvalue.NAME} {$fvalue.PRICE}*}
+
+
             {if $fkey === 0}
 				<li class="nav-item">
 					<a href="tab_rule_{$tabk}" class="nav-link tab " id="tab_rule_link_{$tabk}"
@@ -35,6 +45,15 @@
                         {$fvalue.form.section.title}
 					</a>
 				</li>
+            {/if}
+
+            {if $fkey === 5}
+		        <li class="nav-item">
+			        <a href="tab_rule_{$tabk}" class="nav-link tab " id="tab_rule_link_{$tabk}"
+			           href="javascript:displaythemeeditorTab('{$tabk}');">
+                        {$fvalue.form.section.title}
+			        </a>
+		        </li>
             {/if}
 
             {$tabk = $tabk+1}
@@ -85,6 +104,9 @@
                             {include file="module:bluepayment/views/templates/admin/_configure/helpers/form/benefits.tpl"}
 
                         {elseif $f == 2}
+							<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
+
+                        {elseif $f == 5}
 							<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
                         {/if}
 
@@ -187,7 +209,7 @@
 							</div>
                         {elseif $f == 2}
                             {hook h='adminPayments'}
-                        {elseif $f == 3}
+                        {elseif  $f == 4 || $f == 5}
 							</div>
                         {/if}
 

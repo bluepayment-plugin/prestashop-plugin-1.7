@@ -17,9 +17,9 @@
 
     {if $selectPayWay}
         <form id="bluepayment-gateway" method="GET">
-            <div class="bluepayment-agent-info">
+            <p class="bluepayment-agent-info" style="padding-top: 10px;">
                 {l s='We will redirect you to the website of our partner Blue Media, where you will make the payment.' mod='bluepayment'}
-            </div>
+            </p>
 
             <div id="blue_payway" class="bluepayment-gateways">
                 <div class="bluepayment-gateways__wrap">

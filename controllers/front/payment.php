@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+
 class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
@@ -165,6 +166,12 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 'created_at' => date('Y-m-d H:i:s'),
             ]
         );
+
+
+        if(Configuration::get('BLUEPAYMENT_GA_TRACKER_ID')) {
+            $analitics = new AnalyticsTracking(Configuration::get('BLUEPAYMENT_GA_TRACKER_ID'));
+            $analitics->ga_send_event('Checkout','Purchase','Success order');
+        }
 
         $this->context->smarty->assign([
             'module_dir' => $this->module->getPathUri(),

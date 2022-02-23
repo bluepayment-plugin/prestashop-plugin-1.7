@@ -281,20 +281,41 @@
                             {/foreach}
 
                         {elseif $_input.type == 'switch'}
-							<span class="switch prestashop-switch fixed-width-lg">
+							<span class="switch prestashop-switch fixed-width-lg"
+
+	                                    {if $_input.size == 'auto'}
+		                                   style="width: 350px !important;"
+		                                {/if}
+		                                >
+
 										{foreach $_input.values as $value}
 											<input type="radio"
-											       name="{$_input.name}"{if $value.value == 1} id="{$_input.name}_on"{else} id="{$_input.name}_off"{/if} value="{$value.value}"{if $fields_value[$_input.name] == $value.value} checked="checked"{/if}{if isset($_input.disabled) && $_input.disabled} disabled="disabled"{/if}/>
-
-
-{strip}
-											<label {if $value.value == 1} for="{$_input.name}_on"{else} for="{$_input.name}_off"{/if}>
+											name="{$_input.name}"
 											{if $value.value == 1}
-                                                {l s='Yes' mod='bluepayment'}
-                                            {else}
-                                                {l s='No' mod='bluepayment'}
-                                            {/if}
-										</label>
+												id="{$_input.name}_on"
+											{else}
+												id="{$_input.name}_off"
+											{/if}
+											value="{$value.value}"
+											{if $fields_value[$_input.name] == $value.value}
+												checked="checked"
+											{/if}
+											{if isset($_input.disabled) && $_input.disabled}
+												disabled="disabled"
+											{/if}
+											/>
+
+
+										{strip}
+											<label {if $value.value == 1} for="{$_input.name}_on"{else} for="{$_input.name}_off"{/if}>
+												{if $value.value == 1}
+
+                                                    {$value.label}
+	                                            {else}
+                                                    {$value.label}
+{*	                                                {l s='No' mod='bluepayment'}*}
+	                                            {/if}
+											</label>
                                         {/strip}
                                         {/foreach}
 										<a class="slide-button btn"></a>
