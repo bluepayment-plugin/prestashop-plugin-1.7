@@ -7,7 +7,6 @@
         "classmap": ["src/","vendor/"]
     },
     "require": {
-        "knplabs/github-api": "^2.2",
         "php": ">=5.6",
         "nyholm/psr7": "^1.2",
         "php-http/curl-client": "^2.1"
