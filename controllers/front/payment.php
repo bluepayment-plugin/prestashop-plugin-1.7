@@ -74,6 +74,12 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
             $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
+
+
+
+
+
+
             $this->module->validateOrder(
                 $cartId,
                 Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
@@ -159,19 +165,17 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             Tools::error_log($exception);
         }
 
+        $ga = $_COOKIE['_ga'] ?? '';
+
         Db::getInstance()->insert(
             'blue_transactions',
             [
                 'order_id'   => $orderId,
                 'created_at' => date('Y-m-d H:i:s'),
+                'gtag_uid' => $ga,
+//                'gtag_state' => (int)1,
             ]
         );
-
-
-        if(Configuration::get('BLUEPAYMENT_GA_TRACKER_ID')) {
-            $analitics = new AnalyticsTracking(Configuration::get('BLUEPAYMENT_GA_TRACKER_ID'));
-            $analitics->ga_send_event('Checkout','Purchase','Success order');
-        }
 
         $this->context->smarty->assign([
             'module_dir' => $this->module->getPathUri(),

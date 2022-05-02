@@ -9,6 +9,9 @@
   font-size: 14px;
   color: #000000;
 }
+.bm-configure .prestashop-switch label {
+  text-transform: none;
+}
 
 .bm-configure p {
   font-size: 13px;
@@ -193,9 +196,33 @@
 }
 
 .modal-dialog {
-  min-width: 900px;
-  max-width: 1200px;
+  min-width: 800px;
+  max-width: 900px;
   width: auto;
+}
+
+.bm-helper p {
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+.bm-helper__header {
+  font-family: "Open Sans,Helvetica,Arial", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 26px;
+}
+.bm-helper__list {
+  padding-left: 18px;
+  list-style-type: decimal;
+}
+.bm-helper__image {
+  padding: 16px 0;
+}
+
+.bm-flex {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .bm-payments__wrap {
@@ -281,6 +308,11 @@ a, a:active, a:focus {
 .bm-info--small p {
   margin: 0;
 }
+
+
+
+
+
 
 .bluepayment-gateways__wrap {
   display: flex;

@@ -13,13 +13,21 @@
  * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-<div style="padding-bottom: 25px">
-    <div class="bluepayment-loader"></div>
-    <div class="bluepayment-loader-bg"></div>
-    <div id="gpay-button"></div>
-    <span id="gpay-url" style="display:none;" data-merchant-info-address="{$gpay_merchantInfo}" data-charge-address="{$gpay_moduleLinkCharge}"></span>
-    <div id="bm-termofuse" class="help-block js-g-pay-terms-of-use" style="display:none; color: red;">
-        {l s='Please accept the [1]Transaction Regulations[/1]' tags=['<strong>'] mod='bluepayment'}
-    </div>
-    <div id="responseGPayMessages" class="help-block"></div>
-</div>
+<span class="bm-payment__elm"></span>
+
+{if $gpayRedirect}
+	<p>{l s='You will be redirected to the website of our partner Blue Media, where you can choose your fast and secure payment method.' mod='bluepayment'}</p>
+{else}
+	<section>
+		<div style="padding-bottom: 25px">
+			<div class="bluepayment-loader"></div>
+			<div class="bluepayment-loader-bg"></div>
+			<div id="gpay-button"></div>
+			<span id="gpay-url" style="display:none;" data-merchant-info-address="{$wallet_merchantInfo}" data-charge-address="{$gpay_moduleLinkCharge}"></span>
+			<div id="bm-termofuse" class="help-block js-g-pay-terms-of-use" style="display:none; color: red;">
+                {l s='Please accept the [1]Transaction Regulations[/1]' tags=['<strong>'] mod='bluepayment'}
+			</div>
+			<div id="responseGPayMessages" class="help-block"></div>
+		</div>
+	</section>
+{/if}

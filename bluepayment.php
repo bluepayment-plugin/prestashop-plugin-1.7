@@ -24,7 +24,6 @@ require dirname(__FILE__).'/vendor/autoload.php';
 class BluePayment extends PaymentModule
 {
     public $name_upper;
-    public $ga_tracker_id;
 
     /**
      * Haki używane przez moduł
@@ -40,11 +39,11 @@ class BluePayment extends PaymentModule
             'displayBackOfficeHeader',
             'displayAdminAfterHeader',
             'adminOrder',
-            'adminPayments'
+            'adminPayments',
+            'displayBeforeBodyClosingTag',
+            'displayProductPriceBlock'
         ];
     public $id_order = null;
-    public $bm_order_id = '';
-
     private $checkHashArray = [];
 
     /**
@@ -69,7 +68,7 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__).'/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.7.2';
+        $this->version = '2.7.4';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -93,7 +92,6 @@ class BluePayment extends PaymentModule
      *
      * @return bool
      */
-
     public function install()
     {
         if (parent::install()) {
@@ -110,15 +108,32 @@ class BluePayment extends PaymentModule
             $this->addOrderStatuses();
 
             // Domyślne ustawienie aktywnego trybu testowego
-            Configuration::updateValue($this->name_upper.'_TEST_ENV', 1);
-            Configuration::updateValue($this->name_upper.'_SHOW_PAYWAY', 1);
-            Configuration::updateValue($this->name_upper.'_SHOW_PAYWAY_LOGO', 1);
-            Configuration::updateValue($this->name_upper.'_SHOW_BANER', 0);
-            Configuration::updateValue($this->name_upper.'_PAYMENT_NAME', 'Pay via Blue Media');
-            Configuration::updateValue($this->name_upper.'_PAYMENT_GROUP_NAME', 'Przelew internetowy');
-            Configuration::updateValue($this->name_upper.'_GA_TRACKER_ID', 0);
-            Configuration::updateValue($this->name_upper.'_BLIK_REDIRECT', 0);
-            Configuration::updateValue($this->name_upper.'_GPAY_REDIRECT', 0);
+            Configuration::updateValue($this->name_upper.'_TEST_ENV', 0, false, 0, 0);
+            Configuration::updateValue($this->name_upper.'_SHOW_PAYWAY', 1, false, 0, 0);
+            Configuration::updateValue($this->name_upper.'_GA_TRACKER_ID', 0, false, 0, 0);
+            Configuration::updateValue($this->name_upper.'_BLIK_REDIRECT', 0, false, 0, 0);
+            Configuration::updateValue($this->name_upper.'_GPAY_REDIRECT', 0, false, 0, 0);
+
+            if (Shop::isFeatureActive()) {
+                $shops = Shop::getContextListShopID();
+
+                foreach ($shops as $shop_id) {
+                    $shop_group_id = (int)Shop::getGroupFromShop((int)$shop_id, true);
+
+                    Configuration::updateValue($this->name_upper.'_PAYMENT_NAME',
+                        'Pay via Blue Media', false, $shop_group_id, (int)$shop_id);
+                    Configuration::updateValue($this->name_upper.'_PAYMENT_GROUP_NAME',
+                        'Przelew internetowy', false, $shop_group_id, (int)$shop_id);
+                }
+
+            } else {
+                Configuration::updateValue($this->name_upper.'_PAYMENT_NAME', 'Pay via Blue Media', false, 0, 0);
+                Configuration::updateValue($this->name_upper.'_PAYMENT_GROUP_NAME', 'Przelew internetowy', false, 0, 0);
+            }
+
+            if (Shop::isFeatureActive()) {
+                Shop::setContext(Shop::CONTEXT_SHOP, $this->context->shop->id);
+            }
 
             return true;
         }
@@ -128,7 +143,6 @@ class BluePayment extends PaymentModule
 
     public function hookDisplayAdminAfterHeader()
     {
-
         try {
             // Łączenie z API Prestashop addons
             $api_url = 'https://api-addons.prestashop.com/';
@@ -175,7 +189,6 @@ class BluePayment extends PaymentModule
      *
      * @return bool
      */
-
     public function uninstall()
     {
 
@@ -208,7 +221,6 @@ class BluePayment extends PaymentModule
      *
      * @return bool
      */
-
     public function installTab()
     {
         try {
@@ -312,10 +324,8 @@ class BluePayment extends PaymentModule
      *
      * @return bool
      */
-
     public function addTabInPayments()
     {
-
         try {
             $payment_tab = new BlueTabPayment();
             $payment_tab->addTab();
@@ -331,10 +341,8 @@ class BluePayment extends PaymentModule
      *
      * @return bool
      */
-
     public function removeTabInPayments()
     {
-
         try {
             $payment_tab = new BlueTabPayment();
             $payment_tab->removeTab();
@@ -348,7 +356,6 @@ class BluePayment extends PaymentModule
     /**
      * Hook to back office header: <head></head>
      */
-
     public function hookDisplayBackOfficeHeader($params)
     {
         $this->addTabInPayments();
@@ -359,7 +366,6 @@ class BluePayment extends PaymentModule
      *
      * @return string
      */
-
     public function getContent()
     {
         Tools::redirectAdmin(
@@ -376,6 +382,12 @@ class BluePayment extends PaymentModule
     {
         require_once _PS_MODULE_DIR_.$this->name.'/sql/install.php';
     }
+
+    public function getPathUrl()
+    {
+        return $this->_path;
+    }
+
 
     public function removeOrderStatuses()
     {
@@ -428,17 +440,30 @@ class BluePayment extends PaymentModule
 
     public function getListChannels($currency)
     {
-        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id_blue_gateway_channels, 
-            gateway_payments, gateway_id, gateway_name, gateway_logo_url, gateway_type, position, bank_name, 
-            gateway_currency, gateway_status, 
-            position FROM `'._DB_PREFIX_.'blue_gateway_channels` 
-            WHERE gateway_currency = "'.pSql($currency).'" ORDER BY position');
+        $id_shop = $this->context->shop->id;
 
-        return $gateway;
+        $query = new DbQuery();
+        $query->select('gc.*, gcs.id_shop');
+        $query->from('blue_gateway_channels', 'gc');
+        $query->leftJoin('blue_gateway_channels_shop', 'gcs',
+            'gc.id_blue_gateway_channels = gcs.id_blue_gateway_channels');
+
+        $query->where('gc.gateway_currency = "'.pSql($currency).'"');
+
+        if (Shop::isFeatureActive()) {
+            $query->where('gcs.id_shop = ' . (int)$id_shop);
+        }
+
+        $query->orderBy('gc.position ASC');
+        $query->groupBy('gc.id_blue_gateway_channels');
+
+        return Db::getInstance()->ExecuteS($query);
     }
 
     public function getListAllPayments($currency = 'PLN', $type = null)
     {
+
+        $id_shop = $this->context->shop->id;
 
         $q = '';
         if ($type === 'wallet') {
@@ -447,22 +472,32 @@ class BluePayment extends PaymentModule
             $q = 'NOT IN ("BLIK","Apple Pay","Google Pay","PBC płatność testowa","Płatność kartą","Kup teraz, zapłać później","Alior Raty")';
         }
 
-        $gateway = Db::getInstance((bool)_PS_USE_SQL_SLAVE_)->executeS('SELECT id, gateway_id, 
-        gateway_name, gateway_logo_url, gateway_type, position, bank_name, gateway_currency, gateway_status, 
-        position FROM `'._DB_PREFIX_.'blue_gateways` 
-        WHERE gateway_name '.$q.' 
-        AND gateway_currency = "'.pSql($currency).'" 
-        ORDER BY position');
+        $query = new DbQuery();
 
-        return $gateway;
+        $query->select('gt.*');
+        $query->from('blue_gateway_transfers', 'gt');
+
+        $query->leftJoin('blue_gateway_transfers_shop', 'gcs', 'gcs.id = gt.id');
+
+        $query->where('gt.gateway_name ' .$q);
+        $query->where('gt.gateway_currency = "'.pSql($currency).'"');
+
+        if (Shop::isFeatureActive()) {
+            $query->where('gcs.id_shop = ' . (int)$id_shop);
+        }
+
+        $query->orderBy('gt.position ASC');
+        $query->groupBy('gt.id');
+
+        return Db::getInstance()->ExecuteS($query);
     }
 
     /**
      * Pobieranie metod płatności w administracji
      */
-
     public function hookAdminPayments()
     {
+
         $list = [];
         $transfer_payments = [];
         $wallets = [];
@@ -492,11 +527,14 @@ class BluePayment extends PaymentModule
             }
         }
 
+        $position_helper = $this->display(__FILE__,
+            'views/templates/admin/_configure/helpers/form/notification-info.tpl');
+
         $this->context->smarty->assign(
             [
                 'list' => $list,
                 'transfer_payments' => $transfer_payments,
-                'wallets' => $wallets
+                'wallets' => $wallets,
             ]
         );
 
@@ -509,10 +547,8 @@ class BluePayment extends PaymentModule
      * @return array
      */
 
-    public function getSortCurrencies()
-    :array
-    {
-        $sortCurrencies = Currency::getCurrencies();
+    public function getSortCurrencies(){
+        $sortCurrencies = Currency::getCurrenciesByIdShop($this->context->shop->id);
 
         usort($sortCurrencies, function ($a, $b) {
             if ($a['id'] == $b['id']) {
@@ -523,20 +559,6 @@ class BluePayment extends PaymentModule
         return (array)$sortCurrencies;
     }
 
-    /**
-     * Pobranie kodów iso dostępnych walut
-     *
-     * @return array
-     */
-
-    public function getIsoCodeCurrencies()
-    :array
-    {
-
-        $sortCurrencies = Currency::getCurrencies();
-
-        return (array)$sortCurrencies;
-    }
 
     public function displayGatewayLogo($gatewayLogo)
     {
@@ -587,6 +609,7 @@ class BluePayment extends PaymentModule
 
     public function getConfigFieldsValues()
     {
+
         $data = [];
 
         foreach ($this->configFields() as $configField) {
@@ -594,10 +617,16 @@ class BluePayment extends PaymentModule
         }
 
         foreach (Language::getLanguages(true) as $lang) {
-            $data[$this->name_upper.'_PAYMENT_NAME'][$lang['id_lang']] =
+
+            if(Configuration::get($this->name_upper.'_PAYMENT_NAME', $lang['id_lang'])) {
+                $data[$this->name_upper.'_PAYMENT_NAME'][$lang['id_lang']] =
                 Configuration::get($this->name_upper.'_PAYMENT_NAME', $lang['id_lang']);
-            $data[$this->name_upper.'_PAYMENT_GROUP_NAME'][$lang['id_lang']] =
+            }
+
+            if(Configuration::get($this->name_upper.'_PAYMENT_GROUP_NAME', $lang['id_lang'])) {
+                $data[$this->name_upper.'_PAYMENT_GROUP_NAME'][$lang['id_lang']] =
                 Configuration::get($this->name_upper.'_PAYMENT_GROUP_NAME', $lang['id_lang']);
+            }
         }
 
         foreach ($this->getSortCurrencies() as $currency) {
@@ -613,7 +642,6 @@ class BluePayment extends PaymentModule
     public function parseConfigByCurrency($key, $currencyIsoCode)
     {
         $data = Tools::unSerialize(Configuration::get($key));
-
         return is_array($data) && array_key_exists($currencyIsoCode, $data) ? $data[$currencyIsoCode] : '';
     }
 
@@ -626,8 +654,6 @@ class BluePayment extends PaymentModule
             $this->name_upper.'_PAYMENT_NAME',
             $this->name_upper.'_PAYMENT_GROUP_NAME',
             $this->name_upper.'_SHOW_PAYWAY',
-            $this->name_upper.'_SHOW_PAYWAY_LOGO',
-            $this->name_upper.'_SHOW_BANER',
             $this->name_upper.'_TEST_ENV',
             $this->name_upper.'_GA_TRACKER_ID',
             $this->name_upper.'_BLIK_REDIRECT',
@@ -635,10 +661,6 @@ class BluePayment extends PaymentModule
         ];
     }
 
-    /**
-     * @throws PrestaShopDatabaseException
-     * @return null|string
-     */
     public function hookAdminOrder($params)
     {
         $this->id_order = $params['id_order'];
@@ -705,7 +727,6 @@ class BluePayment extends PaymentModule
         ]);
 
         return $this->fetch('module:bluepayment/views/templates/admin/status.tpl');
-        //        return $this->setTemplate('/views/templates/admin/status.tpl');
     }
 
     private function bmOrderRefund($amount, $remote_id, $id_order)
@@ -804,20 +825,79 @@ class BluePayment extends PaymentModule
         return $result ? $result : false;
     }
 
+
+
+    private function getWalletsList() {
+        $wallets_array = [
+            GatewayModel::GATEWAY_ID_GOOGLE_PAY,
+            GatewayModel::GATEWAY_ID_APPLE_PAY
+        ];
+
+        return implode(',', $wallets_array);
+    }
+
+
+    private function getImgPayments($type) {
+
+        $currency = $this->context->currency;
+        $id_shop = $this->context->shop->id;
+        $query = null;
+
+        if($type === 'transfers') {
+            $query = new DbQuery();
+            $query->from('blue_gateway_transfers', 'gt');
+            $query->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+            $query->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_BLIK);
+            $query->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_IFRAME);
+            $query->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_CARD);
+            $query->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_GOOGLE_PAY);
+            $query->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_APPLE_PAY);
+            $query->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_SMARTNEY);
+            $query->where('gt.gateway_status = 1');
+            $query->where('gt.gateway_currency = "'.pSql($currency->iso_code).'"');
+
+            if (Shop::isFeatureActive()) {
+                $query->where('gts.id_shop = ' . (int)$id_shop);
+            }
+            $query->select('gateway_logo_url, gateway_name');
+
+        } elseif ($type === 'wallet') {
+            $query = new DbQuery();
+            $query->from('blue_gateway_transfers', 'gt');
+            $query->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+            $query->where('gt.gateway_id IN (' . $this->getWalletsList() . ')');
+            $query->where('gt.gateway_status = 1');
+            $query->where('gt.gateway_currency = "'.pSql($currency->iso_code).'"');
+
+            if (Shop::isFeatureActive()) {
+                $query->where('gts.id_shop = ' . (int)$id_shop);
+            }
+
+            $query->select('gateway_logo_url, gateway_name');
+        }
+
+        return Db::getInstance()->executeS($query);
+
+
+    }
+
+
     /**
      * Tworzenie metod płatności
      */
-
     public function hookPaymentOptions()
     {
+
         if (!$this->active) {
             return null;
         }
 
         $currency = $this->context->currency;
+        $id_shop = $this->context->shop->id;
 
         $serviceId = $this->parseConfigByCurrency($this->name_upper.'_SERVICE_PARTNER_ID', $currency->iso_code);
         $sharedKey = $this->parseConfigByCurrency($this->name_upper.'_SHARED_KEY', $currency->iso_code);
+
         $paymentDataCompleted = !empty($serviceId) && !empty($sharedKey);
 
         if ($paymentDataCompleted === false) {
@@ -833,36 +913,61 @@ class BluePayment extends PaymentModule
 
         require_once dirname(__FILE__).'/sdk/index.php';
 
-        /**
-         * Pobiera wszystkie kanały płatności dla przelewów internetowych
-         */
+        /// Get all transfers
+        $gateway_transfers = new DbQuery();
+        $gateway_transfers->from('blue_gateway_transfers', 'gt');
+        $gateway_transfers->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+        $gateway_transfers->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_BLIK);
+        $gateway_transfers->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_IFRAME);
+        $gateway_transfers->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_CARD);
+        $gateway_transfers->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_GOOGLE_PAY);
+        $gateway_transfers->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_APPLE_PAY);
+        $gateway_transfers->where('gt.gateway_id != ' . GatewayModel::GATEWAY_ID_SMARTNEY);
+        $gateway_transfers->where('gt.gateway_status = 1');
+        $gateway_transfers->where('gt.gateway_currency = "'.pSql($currency->iso_code).'"');
 
-        $gateways = new PrestaShopCollection('BlueGateway', $this->context->language->id);
-        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_BLIK);
-        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_IFRAME);
-        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_CARD);
-        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_GOOGLE_PAY);
-        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_APPLE_PAY);
-        $gateways->where('gateway_id', '!=', GatewayModel::GATEWAY_ID_SMARTNEY);
-        $gateways->where('gateway_status', '=', 1);
-        $gateways->where('gateway_currency', '=', $currency->iso_code);
-        $gateways->orderBy('position');
-        $gateways = $gateways->getResults();
+        if (Shop::isFeatureActive()) {
+            $gateway_transfers->where('gts.id_shop = ' . (int)$id_shop);
+        }
+
+        $gateway_transfers->select('*');
+        $gateway_transfers = Db::getInstance()->executeS($gateway_transfers);
+
+
+        /// Get all wallets
+        $gateway_wallets = new DbQuery();
+        $gateway_wallets->from('blue_gateway_transfers', 'gt');
+        $gateway_wallets->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+        $gateway_wallets->where('gt.gateway_id IN (' . $this->getWalletsList() . ')');
+        $gateway_wallets->where('gt.gateway_status = 1');
+        $gateway_wallets->where('gt.gateway_currency = "'.pSql($currency->iso_code).'"');
+
+        if (Shop::isFeatureActive()) {
+            $gateway_wallets->where('gts.id_shop = ' . (int)$id_shop);
+        }
+
+        $gateway_wallets->select('*');
+        $gateway_wallets1 = Db::getInstance()->executeS($gateway_wallets);
 
         $cart_id_time = $this->context->cart->id.'-'.time();
 
         $this->smarty->assign([
             'module_link' => $moduleLink,
             'ps_version' => _PS_VERSION_,
-            'module_dir' => $this->_path,
+            'module_dir' => $this->getPathUrl(),
             'payment_name' => Configuration::get($this->name_upper.'_PAYMENT_NAME', $this->context->language->id),
             'payment_group_name' =>
                 Configuration::get($this->name_upper.'_PAYMENT_GROUP_NAME', $this->context->language->id),
             'selectPayWay' => Configuration::get($this->name_upper.'_SHOW_PAYWAY'),
-            'showPayWayLogo' => Configuration::get($this->name_upper.'_SHOW_PAYWAY_LOGO'),
-            'showBaner' => Configuration::get($this->name_upper.'_SHOW_BANER'),
-            'gateways' => $gateways,
+            'gateway_transfers' => $gateway_transfers,
+            'gateway_wallets' => $gateway_wallets1,
+            'img_wallets' => $this->getImgPayments('wallet'),
+            'img_transfers' => $this->getImgPayments('transfers'),
             'regulations_get' => $this->context->link->getModuleLink('bluepayment', 'regulationsGet', [], true),
+            'changePayment' => $this->l('change'),
+
+            'gpayRedirect' => Configuration::get($this->name_upper.'_GPAY_REDIRECT'),
+
             'start_payment_translation' => $this->l('Start payment'),
             'start_payment_intro' => $this->l('Internet transfer, BLIK, payment card, Google Pay, Apple Pay'),
             'order_subject_to_payment_obligation_translation' => $this->l('Order with the obligation to pay'),
@@ -875,37 +980,43 @@ class BluePayment extends PaymentModule
             /**
              * Tworzenie grupy płatności
              */
-
-            $blik = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_BLIK, $currency->iso_code);
-            $cardGateway = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_CARD, $currency->iso_code);
-            $gpay = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_GOOGLE_PAY, $currency->iso_code);
-            $smartney = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_SMARTNEY, $currency->iso_code);
-            $applePay = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_APPLE_PAY, $currency->iso_code);
-            $iframe = BlueGateway::gatewayIsActive(GatewayModel::GATEWAY_ID_IFRAME, $currency->iso_code);
+            $blik = BlueGatewayTransfers::gatewayIsActive(GatewayModel::GATEWAY_ID_BLIK, $currency->iso_code);
+            $cardGateway = BlueGatewayTransfers::gatewayIsActive(GatewayModel::GATEWAY_ID_CARD, $currency->iso_code);
+            $gpay = BlueGatewayTransfers::gatewayIsActive(GatewayModel::GATEWAY_ID_GOOGLE_PAY, $currency->iso_code);
+            $smartney = BlueGatewayTransfers::gatewayIsActive(GatewayModel::GATEWAY_ID_SMARTNEY, $currency->iso_code);
+            $applePay = BlueGatewayTransfers::gatewayIsActive(GatewayModel::GATEWAY_ID_APPLE_PAY, $currency->iso_code);
+            $iframe = BlueGatewayTransfers::gatewayIsActive(GatewayModel::GATEWAY_ID_IFRAME, $currency->iso_code);
 
             /**
-             * Inne bramki
+             * Pobieranie grup płatności
              */
+            $payment_group = new DbQuery();
+            $payment_group->select('*');
+            $payment_group->from('blue_gateway_channels', 'gt');
+            $payment_group->leftJoin('blue_gateway_channels_shop', 'gts', 'gts.id_blue_gateway_channels = gt.id_blue_gateway_channels');
+            $payment_group->where('gt.gateway_status = 1');
+            $payment_group->where('gt.gateway_currency = "'.pSql($currency->iso_code).'"');
 
-            $payment_group = new PrestaShopCollection('BlueGatewayChannels', $this->context->language->id);
-            $payment_group->where('gateway_status', '=', 1);
-            $payment_group->where('gateway_currency', '=', $currency->iso_code);
-            $payment_group->orderBy('position');
-            $payment_group = $payment_group->getResults();
+
+            if (Shop::isFeatureActive()) {
+                $payment_group->where('gts.id_shop = ' . (int)$id_shop);
+            }
+
+            $payment_group->orderBy('gt.position');
+            $payment_group = Db::getInstance()->executeS($payment_group);
 
             if (!empty($payment_group)) {
                 foreach ($payment_group as $p_group) {
-                    if ($p_group->gateway_name === 'Przelew internetowy') {
+
+                    if ($p_group['gateway_name'] === 'Przelew internetowy') {
                         $paymentName = Configuration::get(
                             $this->name_upper.'_PAYMENT_GROUP_NAME',
                             $this->context->language->id
                         );
 
-                        if (!empty($gateways)) {
+                        if (!empty($gateway_transfers)) {
                             $newOption = new PaymentOption();
-                            $newOption->setCallToActionText(
-                                $paymentName
-                            )
+                            $newOption->setCallToActionText($paymentName)
                                 ->setAction($moduleLink)
                                 ->setInputs([
                                     [
@@ -935,11 +1046,14 @@ class BluePayment extends PaymentModule
                         }
                     }
 
-                    if ($p_group->gateway_name === 'PBC płatność testowa' ||
-                        $p_group->gateway_name === 'Płatność kartą') {
+                    if ($p_group['gateway_name'] === 'PBC płatność testowa' ||
+                        $p_group['gateway_name'] === 'Płatność kartą') {
                         if ($cardGateway) {
-                            $card = new BlueGateway($cardGateway);
+                            $card = new BlueGatewayTransfers($cardGateway);
                             $cardOption = new PaymentOption();
+                            $cardOption->setAdditionalInformation(
+                                    $this->fetch('module:bluepayment/views/templates/hook/paymentRedirectCard.tpl')
+                                );
                             $cardOption->setCallToActionText($card->gateway_name)
                                 ->setAction($moduleLink)
                                 ->setInputs([
@@ -964,13 +1078,10 @@ class BluePayment extends PaymentModule
                         }
                     }
 
-                    if ($p_group->gateway_name === 'BLIK') {
+                    if ($p_group['gateway_name'] === 'BLIK') {
                         if ($blik) {
-
-                            $blikGateway = new BlueGateway($blik);
-
+                            $blikGateway = new BlueGatewayTransfers($blik);
                             if (Configuration::get($this->name_upper.'_BLIK_REDIRECT')) {
-
                                 $blikOption = new PaymentOption();
                                 $blikOption->setCallToActionText($blikGateway->gateway_name)->setAction($moduleLink)
                                     ->setInputs([
@@ -990,9 +1101,7 @@ class BluePayment extends PaymentModule
                                         $this->fetch('module:bluepayment/views/templates/hook/paymentRedirectBlik.tpl')
                                     );
                                 $newOptions[] = $blikOption;
-
                             } else {
-
                                 $blikModuleLink = $this->context->link->getModuleLink(
                                     'bluepayment',
                                     'chargeBlik',
@@ -1009,127 +1118,79 @@ class BluePayment extends PaymentModule
                                     ->setAction($blikModuleLink)
                                     ->setBinary(true)
                                     ->setLogo($blikGateway->gateway_logo_url)
-                                    ->setForm($this->fetch('module:bluepayment/views/templates/hook/paymentBlik.tpl'));
+                                    ->setAdditionalInformation(
+                                        $this->fetch('module:bluepayment/views/templates/hook/paymentBlik.tpl')
+                                    );
                                 $newOptions[] = $blikOption;
                             }
                         }
                     }
 
-                    if ($p_group->gateway_name === 'Wirtualny portfel') {
+                    if ($p_group['gateway_name'] === 'Wirtualny portfel') {
                         /**
                          * G-pay button will show only in secure enviroments, it mean:
                          * 127.0.0.1, localhost, secure SSL host
                          */
 
-                        if ($gpay) {
+                        if (!empty($gateway_wallets1) && ($gpay || $applePay)) {
 
-                            $gpayGateway = new BlueGateway($gpay);
+                            $walletMerchantInfo = $this->context->link->getModuleLink(
+                                'bluepayment',
+                                'merchantInfo',
+                                [],
+                                true
+                            );
+                            $gpay_moduleLinkCharge = $this->context->link->getModuleLink(
+                                'bluepayment',
+                                'chargeGPay',
+                                [],
+                                true
+                            );
+
+                            $gpayRedirect = false;
                             if (Configuration::get($this->name_upper.'_GPAY_REDIRECT')) {
-
-                                $gpayOption = new PaymentOption();
-                                $gpayOption->setCallToActionText($gpayGateway->gateway_name)->setAction($moduleLink)
-                                    ->setInputs([
-                                        [
-                                            'type' => 'hidden',
-                                            'name' => 'bluepayment_gateway',
-                                            'value' => GatewayModel::GATEWAY_ID_GOOGLE_PAY,
-                                        ],
-                                        [
-                                            'type' => 'hidden',
-                                            'name' => 'bluepayment_gateway_id',
-                                            'value' => GatewayModel::GATEWAY_ID_GOOGLE_PAY,
-                                        ]
-                                    ])
-                                    ->setLogo($gpayGateway->gateway_logo_url)
-                                    ->setAdditionalInformation(
-                                        $this->fetch('module:bluepayment/views/templates/hook/paymentRedirect.tpl')
-                                    );
-                                $newOptions[] = $gpayOption;
-
-                            } else {
-
-                                $gpayMerchantInfo = $this->context->link->getModuleLink(
-                                    'bluepayment',
-                                    'merchantInfo',
-                                    [],
-                                    true
-                                );
-                                $gpay_moduleLinkCharge = $this->context->link->getModuleLink(
-                                    'bluepayment',
-                                    'chargeGPay',
-                                    [],
-                                    true
-                                );
-
-                                $this->smarty->assign([
-                                    'gpay_merchantInfo' => $gpayMerchantInfo,
-                                    'gpay_moduleLinkCharge' => $gpay_moduleLinkCharge,
-                                ]);
-                                $gpayOption = new PaymentOption();
-                                $gpayOption->setCallToActionText($gpayGateway->gateway_name)
-                                    ->setAction($gpayMerchantInfo)
-                                    ->setBinary(true)
-                                    ->setLogo($gpayGateway->gateway_logo_url)
-                                    ->setInputs([
-                                        [
-                                            'type' => 'hidden',
-                                            'name' => 'bluepayment_gateway',
-                                            'value' => 0,
-                                        ],
-                                        [
-                                            'type' => 'hidden',
-                                            'name' => 'gpay_get_merchant_info',
-                                            'value' => $gpayMerchantInfo,
-                                        ]
-                                    ])
-                                    ->setAdditionalInformation(
-                                        $this->fetch('module:bluepayment/views/templates/hook/paymentGpay.tpl')
-                                    );
-                                $newOptions[] = $gpayOption;
+                                $gpayRedirect = true;
                             }
-                        }
 
+                            $this->smarty->assign([
+                                'wallet_merchantInfo' => $walletMerchantInfo,
+                                'gpay_redirect' => $gpayRedirect,
+                                'gpay_moduleLinkCharge' => $gpay_moduleLinkCharge,
+                            ]);
 
-                        /// ApplePay
-
-                        if ($applePay) {
-                            $applePayGateway = new BlueGateway($applePay);
-                            $applePayOption = new PaymentOption();
-                            $applePayOption->setCallToActionText($applePayGateway->gateway_name)
-                                ->setLogo($applePayGateway->gateway_logo_url)
+                            $gpayOption = new PaymentOption();
+                            $gpayOption->setCallToActionText($this->l('Virtual wallet'))
+                                ->setAction($moduleLink)
+                                ->setLogo($this->context->shop->getBaseURL(true).'modules/bluepayment/views/img/blue-media.svg')
                                 ->setAdditionalInformation(
-                                    $this->fetch('module:bluepayment/views/templates/hook/paymentRedirect.tpl')
-                                )
-                                ->setInputs([
-                                    [
-                                        'type' => 'hidden',
-                                        'name' => 'bluepayment_gateway',
-                                        'value' => GatewayModel::GATEWAY_ID_APPLE_PAY,
-                                    ],
-                                    [
-                                        'type' => 'hidden',
-                                        'name' => 'bluepayment_gateway_id',
-                                        'value' => GatewayModel::GATEWAY_ID_APPLE_PAY,
-                                    ],
-                                    [
-                                        'type' => 'hidden',
-                                        'name' => 'bluepayment_cart_id',
-                                        'value' => $cart_id_time,
-                                    ],
-                                ]);
-                            $newOptions[] = $applePayOption;
+                                    $this->fetch('module:bluepayment/views/templates/hook/wallet.tpl')
+                                );
+
+                            $gpayOption->setInputs([
+                                [
+                                    'type' => 'hidden',
+                                    'name' => 'bluepayment_gateway',
+                                    'value' => 0,
+                                ],
+                                [
+                                    'type'  => 'hidden',
+                                    'name'  => 'gpay_get_merchant_info',
+                                    'value' => $walletMerchantInfo,
+                                ]
+                            ]);
+
+                            $newOptions[] = $gpayOption;
                         }
                     }
 
-
-                    if ($p_group->gateway_name === 'Kup teraz, zapłać później') {
+                    if ($p_group['gateway_name'] === 'Kup teraz, zapłać później') {
                         if ($smartney
                             && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH)
                             >= (float)SMARTNEY_MIN_AMOUNT
                             && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH)
                             <= (float)SMARTNEY_MAX_AMOUNT
                         ) {
-                            $smartneyGateway = new BlueGateway($smartney);
+                            $smartneyGateway = new BlueGatewayTransfers($smartney);
                             $smartneyMerchantInfo = $this->context->link->getModuleLink(
                                 'bluepayment',
                                 'merchantInfo',
@@ -1148,6 +1209,9 @@ class BluePayment extends PaymentModule
                                 'smartney_moduleLinkCharge' => $smartney_moduleLinkCharge,
                             ]);
                             $smartneyOption = new PaymentOption();
+                            $smartneyOption->setAdditionalInformation(
+                                $this->fetch('module:bluepayment/views/templates/hook/paymentRedirectSmartney.tpl')
+                            );
                             $smartneyOption->setCallToActionText($smartneyGateway->gateway_name)
                                 ->setAction($moduleLink)
                                 ->setLogo($smartneyGateway->gateway_logo_url)
@@ -1168,11 +1232,14 @@ class BluePayment extends PaymentModule
                     }
 
                     if ($iframe
-                        && $p_group->gateway_name === 'Alior Raty'
+                        && $p_group['gateway_name'] === 'Alior Raty'
                         && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) >= (float)IFRAME_MIN_AMOUNT
                     ) {
-                        $iframeGateway = new BlueGateway($iframe);
+                        $iframeGateway = new BlueGatewayTransfers($iframe);
                         $iframeOption = new PaymentOption();
+                        $iframeOption->setAdditionalInformation(
+                            $this->fetch('module:bluepayment/views/templates/hook/paymentRedirectAliorbank.tpl')
+                        );
                         $iframeOption->setCallToActionText($iframeGateway->gateway_name)
                             ->setAction($moduleLink)
                             ->setInputs([
@@ -1192,6 +1259,8 @@ class BluePayment extends PaymentModule
                     }
                 }
             }
+
+
         } else {
             /**
              * Tworzenie przekierowania dla wszystkich płatności
@@ -1368,18 +1437,63 @@ class BluePayment extends PaymentModule
      */
     public function hookHeader()
     {
-        Media::addJsDef(
-            [
-                'bluepayment_env' => (int)Configuration::get($this->name_upper.'_TEST_ENV') === 1 ?
-                    'TEST' : 'PRODUCTION'
-            ]
-        );
+        Media::addJsDef([
+            'bluepayment_env' => (int)Configuration::get($this->name_upper.'_TEST_ENV') === 1 ? 'TEST' : 'PRODUCTION',
+            'asset_path' => $this->getPathUrl() . 'views/',
+            'change_payment' => $this->l('change'),
+            'read_more' => $this->l('read more'),
+            'get_regulations_url' => $this->context->link->getModuleLink('bluepayment', 'regulationsGet', [], true),
+        ]);
 
-        $this->context->controller->addCSS($this->_path.'views/css/front/front.css');
-        $this->context->controller->addJS($this->_path.'views/js/front.js');
+        $this->context->controller->addCSS($this->_path.'views/css/front.css');
+        $this->context->controller->addJS($this->_path.'views/js/front.min.js');
         $this->context->controller->addJS($this->_path.'views/js/blik_v3.js');
         $this->context->controller->addJS($this->_path.'views/js/gpay.js');
     }
+
+    /**
+     * Gtag data
+     */
+
+    public function hookdisplayBeforeBodyClosingTag()
+    {
+        $controller = Tools::getValue('controller');
+        $tracking_id = Configuration::get('BLUEPAYMENT_GA_TRACKER_ID');
+
+        $this->context->smarty->assign([
+            'tracking_id' => $tracking_id,
+            'controller' => $controller,
+            'bm_ajax_controller' => $this->context->link->getModuleLink(
+                $this->name, 'ajax',
+                array('ajax' => 1
+                )
+            )
+        ]);
+
+        if($controller == 'cart') {
+            $this->context->smarty->assign([
+                'products' => $this->context->cart->getProducts(false, false, null, false),
+            ]);
+        } elseif ($controller == 'order') {
+            $coupons_array = [];
+            $coupons_list = '';
+
+            if($this->context->cart->getCartRules()){
+                foreach($this->context->cart->getCartRules() as $coupon){
+                    $coupons_array[] = $coupon['name'];
+                }
+                $coupons_list = implode(", ", $coupons_array);
+            }
+
+            $this->context->smarty->assign([
+                'products' => $this->context->cart->getProducts(true),
+                'coupons' => $coupons_list,
+            ]);
+        }
+
+        return $this->display($this->local_path, 'views/templates/hook/gtag.tpl');
+    }
+
 
     /**
      * @param $realOrderId
@@ -1391,9 +1505,85 @@ class BluePayment extends PaymentModule
      */
     protected function returnConfirmation($realOrderId, $order_id, $confirmation)
     {
+
+//        if($confirmation == self::TRANSACTION_CONFIRMED) {
+//            /// Send GA event
+//            if(Configuration::get('BLUEPAYMENT_GA_TRACKER_ID')) {
+//
+//                /// Get ga user session
+//                $query = new DbQuery();
+//                $query->from('blue_transactions')
+//                    ->where('order_id like "'.pSQL($order_id).'-%"')
+//                    ->where('gtag_state IS NULL')
+//                    ->select('gtag_uid');
+//                $ga_cid = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query, false);
+//
+//                if($ga_cid) {
+//
+//                    $analitics = new AnalyticsTracking(
+//                        Configuration::get('BLUEPAYMENT_GA_TRACKER_ID'),
+//                        $ga_cid
+//                    );
+//
+//                    $args = [];
+//                    $order_ga = new OrderCore($order_id);
+//
+//                    if ($order_ga->getProducts()) {
+//                        $p_key = 0;
+//                        foreach ($order_ga->getProducts() as $key => $p) {
+//
+//                            $brand = null;
+//                            $category_name = null;
+//
+//                            if ($p['id_manufacturer']) {
+//                                $brand = Manufacturer::getNameById($p['id_manufacturer']);
+//                            }
+//
+//                            $cat = new Category($p['id_category_default'], $this->context->language->id);
+//                            if ($cat) {
+//                                $category_name = $cat->name;
+//                            }
+//
+//                            $p_key++;
+//                            $args['pr'.$p_key.'id'] = $p['product_id'];
+//                            $args['pr'.$p_key.'nm'] = Product::getProductName($p['product_id']);
+//                            $args['pr'.$p_key.'br'] = $brand;
+//                            $args['pr'.$p_key.'ca'] = $category_name;
+//                            //                                $args['pr'.$p_key.'va'] = $attr;
+//                            $args['pr'.$p_key.'pr'] = $p['total_price_tax_incl'];
+//                            $args['pr'.$p_key.'qt'] = $p['product_quantity'];
+//                        }
+//                    }
+//
+//                    $args['cu'] = $this->context->currency->iso_code;
+//                    $args['ti'] = $order_ga->id_cart.'-'.time();
+//                    $args['tr'] = $order_ga->total_paid_tax_incl;
+//                    $args['tt'] = $order_ga->total_paid - $order_ga->total_paid_tax_excl;
+//                    $args['ts'] = $order_ga->total_shipping_tax_incl;
+//                    $args['pa'] = 'purchase';
+//
+//                    $this->debug($args);
+//
+//                    $analitics->gaSendEvent('ecommerce', 'purchase', 'accepted', $args);
+//
+//
+//                    /// Reset state
+//                    $transactionData = [
+//                        'gtag_state' => 1,
+//                    ];
+//                    Db::getInstance()->update('blue_transactions', $transactionData, 'order_id = \''.pSQL($realOrderId).'\'');
+//
+//
+//
+//                }
+//            }
+//        }
+
+
         if (null === $order_id) {
             $order_id = explode('-', $realOrderId)[0];
         }
+
 
         $order = new Order($order_id);
         $currency = new Currency($order->id_currency);
@@ -1448,9 +1638,7 @@ class BluePayment extends PaymentModule
      */
     public function processStatusPayment($response)
     {
-
         $transaction_xml = $response->transactions->transaction;
-        //        $this->debug($response);
 
         if ($this->validAllTransaction($response)) {
             // Aktualizacja statusu zamówienia i transakcji
@@ -1465,6 +1653,18 @@ class BluePayment extends PaymentModule
                 self::TRANSACTION_NOTCONFIRMED
             );
         }
+    }
+
+    public function debug( $texto ) {
+        $logfilename = dirname( __FILE__ ) . '/log.log';
+        file_put_contents( $logfilename, print_r( $texto, true ) );
+    }
+
+    public function initTest($args) {
+
+
+
+        return $this->debug($_COOKIE['_ga']);
     }
 
     /**
@@ -1569,6 +1769,78 @@ class BluePayment extends PaymentModule
                     break;
                 // Jeśli transakcja została zakończona poprawnie
                 case self::PAYMENT_STATUS_SUCCESS:
+
+
+                    /// Send GA event
+                    if(Configuration::get('BLUEPAYMENT_GA_TRACKER_ID')) {
+
+                        /// Get ga user session
+                        $query = new DbQuery();
+                        $query->from('blue_transactions')
+                            ->where('order_id like "'.pSQL($order_id).'-%"')
+                            ->where('gtag_state IS NULL')
+                            ->select('gtag_uid');
+                        $ga_cid = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query, false);
+
+                        if($ga_cid) {
+                            $analitics = new AnalyticsTracking(
+                                Configuration::get('BLUEPAYMENT_GA_TRACKER_ID'),
+                                $ga_cid
+                            );
+
+                            $args = [];
+                            $order_ga = new OrderCore($order_id);
+
+                            if ($order_ga->getProducts()) {
+                                $p_key = 0;
+                                foreach ($order_ga->getProducts() as $key => $p) {
+
+                                    $brand = null;
+                                    $category_name = null;
+
+                                    if ($p['id_manufacturer']) {
+                                        $brand = Manufacturer::getNameById($p['id_manufacturer']);
+                                    }
+
+                                    $cat = new Category($p['id_category_default'], $this->context->language->id);
+                                    if ($cat) {
+                                        $category_name = $cat->name;
+                                    }
+
+                                    $p_key++;
+                                    $args['pr'.$p_key.'id'] = $p['product_id'];
+                                    $args['pr'.$p_key.'nm'] = Product::getProductName($p['product_id']);
+                                    $args['pr'.$p_key.'br'] = $brand;
+                                    $args['pr'.$p_key.'ca'] = $category_name;
+                                    //                                $args['pr'.$p_key.'va'] = $attr;
+                                    $args['pr'.$p_key.'pr'] = $p['total_price_tax_incl'];
+                                    $args['pr'.$p_key.'qt'] = $p['product_quantity'];
+                                }
+                            }
+
+                            $args['cu'] = $this->context->currency->iso_code;
+                            $args['ti'] = $order_ga->id_cart.'-'.time();
+                            $args['tr'] = $order_ga->total_paid_tax_incl;
+                            $args['tt'] = $order_ga->total_paid - $order_ga->total_paid_tax_excl;
+                            $args['ts'] = $order_ga->total_shipping_tax_incl;
+                            $args['pa'] = 'purchase';
+
+                            $this->debug($order_id);
+
+                            $analitics->gaSendEvent('ecommerce', 'purchase', 'accepted', $args);
+
+
+                            /// Reset state
+                            $transactionData = [
+                                'gtag_state' => 1,
+                            ];
+
+                            Db::getInstance()->update('blue_transactions', $transactionData, 'order_id like "'.pSQL($order_id).'-%"');
+
+                        }
+                    }
+
+
                     if ($order->current_state == $status_waiting_pay_id ||
                         $order->current_state == $status_error_pay_id
                     ) {
@@ -1606,7 +1878,10 @@ class BluePayment extends PaymentModule
                 default:
                     break;
             }
+
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_CONFIRMED);
+//            $this->initTest('test');
+
         } else {
             $message = $this->name_upper.' - Order status is cancel or payment status unknown';
             PrestaShopLogger::addLog('BM - '.$message, 3, null, 'OrderState', $order_id);
@@ -1621,6 +1896,7 @@ class BluePayment extends PaymentModule
 
         //@TODO: po zmianie tekstu na klucze do tłumaczeń pobierać nazwę i opis poprzez klucze
         foreach (Language::getLanguages() as $lang) {
+
             if ($lang['locale'] === "pl-PL") {
                 $name_langs[$lang['id_lang']] =
                     $this->trans(
@@ -1659,4 +1935,35 @@ class BluePayment extends PaymentModule
 
         return true;
     }
+
+    /**
+     * Add analytics Gtag
+     *
+     * @param $params
+     * @return void
+     */
+
+    public function hookDisplayProductPriceBlock($params) {
+        if($params['type'] === 'before_price') {
+
+            $product = $params['product'];
+            $brand = '';
+
+            if($product->id_manufacturer) {
+                $brand = Manufacturer::getNameById($product->id_manufacturer);
+            }
+
+            $this->context->smarty->assign([
+                'ga_product_id' => $product->id,
+                'ga_product_name' => $product->name,
+                'ga_product_brand' => $brand,
+                'ga_product_cat' => $product->category_name,
+                'ga_product_price' => $product->price,
+            ]);
+
+            return $this->fetch('module:bluepayment/views/templates/hook/ga_listing.tpl');
+
+        }
+    }
+
 }

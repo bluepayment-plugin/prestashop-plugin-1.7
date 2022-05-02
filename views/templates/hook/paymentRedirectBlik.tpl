@@ -13,6 +13,7 @@
  * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
+<span class="bm-payment__elm" data-open-payment="blik" data-payment-redirect="false"></span>
 <section>
 	<p>{l s='You will be redirected to a page where you enter your BLIK code. You generate the BLIK code in your banking app.' mod='bluepayment'}</p>
 </section>

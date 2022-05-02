@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * BlueMedia_BluePayment extension
  *
@@ -13,220 +14,381 @@
  * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+/* eslint-enable */
 
-$(document).ready(function () {
-    localStorage.removeItem('bluepayment-regulationsGet');
-    regulationsGet();
+import {
+	getIdElement,
+	getPaymentContainer,
+	getPaymentContent,
+	getPaymentForm,
+	hideApplePayOtherBrowser
+} from './_partials/helpers';
 
-    $('#bluepayment-gateway #blue_payway input[name ="bluepayment-gateway-gateway-id"]').change(function() {
+import {
+	extendWalletName,
+	getAllWalletAdditionalInformation,
+	getSelectorWalletSelection,
+	hideAllWalletAdditionalInformation,
+	setWalletTypeSelected
+} from './_partials/wallet';
 
-        $('input[name="bluepayment-hidden-psd2-regulation-id"]').val('');
+import {initSlideshows, Slideshow} from './_partials/slideshow';
 
-        var regulations = localStorage.getItem('bluepayment-regulationsGet');
-        regulations = JSON.parse(regulations);
+import {openModal} from './_partials/modal';
 
-        var selectdGatewayId = this.value;
-        var length = regulations.length;
+import {createMainFrame, createPaymentGroup, getAllPaymentsMethodBM} from "./_partials/frame";
 
-        for (var i = 0; i < length; i++) {
-            if (regulations[i].gatewayID == selectdGatewayId) {
-                showPSD2Clause(selectdGatewayId, regulations[i]);
-                return;
-            }
-        }
+import {getClauses, getTransferClauses} from "./_partials/regulations"
 
-        showNoGatewayInGetRegulations();
-    });
+import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "./_partials/state"
 
-    $('input:radio[name=bluepayment-gateway-gateway-id]').change(function () {
-        var gatewayId = this.value;
-        var button = $('div[id=payment-confirmation]').find("button");
+(function () {
 
-        $('input[name=bluepayment_gateway]').val(gatewayId);
-
-        if (gatewayId >= 1800) {
-            button.text(start_payment_translation);
-        } else {
-            button.text(order_subject_to_payment_obligation_translation);
-        }
-
-    });
+	$(document).ready(function () {
+		bindPsdCheckboxValidator();
+	});
 
 
+	/**
+	 * check if we need to block submit button
+	 * @returns {boolean}
+	 */
+	function validateBmSubmit() {
+		var psdAcceptInput = $('#bluepayment-psd2-accepted');
 
-    $('input:radio[name=payment-option]').change(function () {
-        var base_element = $(this).parent().parent().parent().next();
-        var blueMediaGateways = base_element.find('#bluepayment-gateway').length;
-        var bluemedia_payment_id = base_element.find('input[name=bluepayment_gateway_id]').val();
+		if (!psdAcceptInput.is(':visible')) {
+			return true;
+		}
 
-            if (typeof bluemedia_payment_id !== 'undefined') {
-                $('input[name=bluepayment_gateway]').val(bluemedia_payment_id);
-            }
+		//if visible checkbox to validate
+		if (
+			psdAcceptInput.is(':visible') //if visible checkbox to validate
+			&& !psdAcceptInput.is(':checked')
+			&& $('form#bluepayment-gateway').parent().parent().prev().find('input').prop('checked')  //if selected bluemedia payment
+		) {
+			return false;
+		}
 
-            if (blueMediaGateways) {
-                $('.bluepayment-pis').show()
-            } else {
-                $('.bluepayment-pis').hide()
-            }
-        }
-    );
+		return true;
+	}
 
-    bindPsdCheckboxValidator();
-    hideApplePayOtherBrowser();
-});
+	function actionValidate() {
+		let termsAndConditionsCheckbox = $('section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]');
 
-/**
- * pokazujemy odpowiednia klauzule o ile zostala znaleziona w regulationsGet
- *
- * @param gatewayId
- * @param regulation
- */
-function showPSD2Clause(gatewayId, regulation) {
-    //brak URL (regulaminu) oznacza ze jest to model merchanta i nie wymaga dodatkowego checkboxa
+		if (!validateBmSubmit()) {
+			$('div[id=payment-confirmation] button').prop('disabled', true);
+		} else {
+			termsAndConditionsCheckbox.trigger("change");
+		}
+	}
 
-    //sprawdzamy czy jest to model merchanta
-    if (typeof regulation.url == 'undefined' || regulation.url === '') {
-        clearForMerchantState();
-        $('.ajax-psd2-clause .text').html(regulation.inputLabel);
-        $('.ajax-psd2-clause').show();
-        //ajax-psd2-clause-merchant
-        // input hidden merchant model approved checked
-    } else {//model platnika
-        clearForPayerState();
-        $('.ajax-psd2-clause .text').html(regulation.inputLabel);
-        $('.ajax-psd2-clause').show();
-    }
+	function bindPsdCheckboxValidator() {
+		$('div.content div.payment-options input, section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]')
+			.on('click', function () {
+				setTimeout(function () {
+					actionValidate();
+				}, 55);
+			});
 
-    $('input[name="bluepayment-hidden-psd2-regulation-id"]').val(regulation.regulationID);
-
-    // if (
-    //     regulation.inputLabel
-    //     && regulation.url == '' //to jest to
-    //     // && regulation.inputLabel.indexOf('<a href="https://www.knf.gov.pl') !== -1
-    // ) {
-    //     $('.ajax-psd2-clause .text').html(regulation.inputLabel);
-    //     $('.ajax-psd2-clause').show();
-    //     // $('#bluepayment-gateway .bluepayment-agent-info').hide();
-    // }
-}
+		$('section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]').on('click', function () {
+			actionValidate();
+		});
+	}
 
 
 
+	function BmAHR() {
+		function interceptNetworkRequests(ee) {
+			const open = XMLHttpRequest.prototype.open;
+			const send = XMLHttpRequest.prototype.send;
+			const isRegularXHR = open.toString().indexOf('native code') !== -1;
 
-if(hideApplePayOtherBrowser) {
-    const paymentOptions = $('.payment-option');
-    paymentOptions.each(function() {
-        if( $(this).find('label > span').html() === 'Apple Pay' ) {
-            $(this).css('display', 'none');
-        }
-    });
-}
+			if (isRegularXHR) {
+				XMLHttpRequest.prototype.open = function() {
+					ee.onOpen && ee.onOpen(this, arguments);
+					if (ee.onLoad) {
+						this.addEventListener('load', ee.onLoad.bind(ee, arguments));
+					}
+					if (ee.onError) {
+						this.addEventListener('error', ee.onError.bind(ee));
+					}
+					return open.apply(this, arguments);
+				};
+			}
+			return ee;
+		}
 
+		interceptNetworkRequests({
+			onLoad: initBluepayment
+		});
 
+		function initBluepayment(arg, aa) {
+			initBM();
+		}
 
+	}
 
-function hideApplePayOtherBrowser() {
-    var hideApplePayOtherBrowser = (navigator.userAgent.indexOf('Safari') != -1
-            && navigator.userAgent.indexOf('Chrome') == -1)
-    return hideApplePayOtherBrowser;
-}
+	BmAHR();
 
 
 
 
 
 
+	function initBM() {
+		setTimeout(function () {
+			createPaymentGroup();
+			getGatewayState();
+			radioPayments();
+
+			createMainFrame(getAllPaymentsMethodBM());
+
+			initSlideshows();
+			getClauses();
+		}, 1000);
+	}
 
 
-function regulationsGet() {
-    if (typeof regulations_get_url === 'undefined') {
-        return;
-    }
 
-    var url = regulations_get_url.replace(/&amp;/g, '&');
+	function changingClauseBehavior(key, behavior) {
+		const content = getPaymentContent(key);
+		const clause = document.querySelector('#conditions-to-approve');
 
-    $.ajax(url, {
-        method: "POST",
-        type: "POST",
-        data: {},
-        success: function (data) {
-            localStorage.setItem('bluepayment-regulationsGet', data);
+		if (behavior === 'move') {
+			const formGroup = content.querySelector('.form-group');
+			if (formGroup !== null) {
+				formGroup.append(clause);
+			}
+		} else if (behavior === 'back') {
+			document.querySelector('.payment-options').after(clause);
+		}
+	}
 
-            data = JSON.parse(data);
 
-            //this clause is not related with other clauses, shows only if we have at least one PSD2 label from regulationsGet
-            if (data.length === 0 || typeof data == 'undefined') {
-                $('#bluepayment-gateway .bluepayment-agent-info').hide()
-            }
-        }
-    });
-}
+	function changingButtonBehavior(key, behavior) {
 
-function hideAllBottomClauses() {
-    $('.ajax-psd2-clause .text').html('');
-    $('.ajax-psd2-clause').hide();
-    $('.ajax-psd2-clause-merchant .text').html('');
-    $('.ajax-psd2-clause-merchant').hide();
-}
+		if(document.querySelector('#tc-payment-confirmation')) {
+			return;
+		}
 
-function clearForMerchantState() {
-    hideAllBottomClauses();
-    $('.bluepayment-agent-info-bottom input[name ="bluepayment-psd2-accepted-behalf-user"]').prop('checked', true);
-    $('input #bluepayment-psd2-accepted').prop('checked', false);
-}
+		const content = getPaymentContent(key);
+		const btn = document.querySelector('#payment-confirmation');
 
-function clearForPayerState() {
-    hideAllBottomClauses();
-    $('.bluepayment-agent-info-bottom input[name ="bluepayment-psd2-accepted-behalf-user"]').prop('checked', false);
-}
 
-function showNoGatewayInGetRegulations() {
-    $('.ajax-psd2-clause .text').html('');
-    $('.ajax-psd2-clause').hide();
-    $('#bluepayment-gateway .bluepayment-agent-info').show()
-}
+		let style;
 
-/**
- * check if we need to block submit button
- * @returns {boolean}
- */
-function validateBmSubmit() {
-    var psdAcceptInput = $('#bluepayment-psd2-accepted');
+		if (behavior === 'move') {
+			style = 'block';
+			content.append(btn);
+		} else if (behavior === 'back') {
+			style = 'block';
+			document.querySelector('#conditions-to-approve').after(btn);
+		} else if (behavior === 'hide') {
+			style = 'none';
+		}
 
-    if (!psdAcceptInput.is(':visible')) {
-        return true;
-    }
+		setTimeout(function () {
+			btn.style.display = style;
+		}, 150);
+	}
 
-    //if visible checkbox to validate
-    if (
-        psdAcceptInput.is(':visible') //if visible checkbox to validate
-        && !psdAcceptInput.is(':checked')
-        && $('form#bluepayment-gateway').parent().parent().prev().find('input').prop('checked')  //if selected bluemedia payment
-    ) {
-        return false;
-    }
 
-    return true;
-}
+	function buttonResetPaymentState(key) {
+		document.querySelector('.bm-reset').addEventListener('click', e => {
+			e.stopPropagation();
+			e.preventDefault();
 
-function actionValidate() {
-    var termsAndConditionsCheckbox = $('section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]');
+			ClickResetState(key);
+		}, false);
+	}
 
-    if (!validateBmSubmit()) {
-        $('div[id=payment-confirmation] button').prop('disabled', true);
-    } else {
-        termsAndConditionsCheckbox.trigger("change");
-    }
-}
 
-function bindPsdCheckboxValidator() {
-    $('div.content div.payment-options input, section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]').on('click', function() {
-        setTimeout(function() {
-            actionValidate();
-        },55);
-    });
 
-    $('section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]').on('click', function() {
-        actionValidate();
-    });
-}
+	function checkHasModal(key) {
+		return (getPaymentContent(key).querySelector("[data-bm-modal]"));
+	}
+
+	function modalType(key) {
+		return (getPaymentContent(key).querySelector("[data-open-payment]").getAttribute('data-open-payment'));
+	}
+
+
+	function radioPayments() {
+		const getAllPaymentOptions = document.querySelectorAll('input[name=payment-option]');
+		const listitem = document.getElementsByTagName('input')
+
+		for (const item of getAllPaymentOptions) {
+			item.addEventListener('click', (e) => {
+
+				AllResetState();
+
+				const id = getIdElement(item);
+				const container = getPaymentContainer(id);
+				const content = getPaymentContent(id);
+				const paymentElm = content.querySelector('.bm-payment__elm');
+
+				let paymentName = paymentElm.getAttribute('data-open-payment');
+				let paymentRedirect = paymentElm.getAttribute('data-payment-redirect');
+
+				item.classList.add('active');
+				container.classList.add('active');
+				content.classList.add('active');
+
+
+				if (paymentName === 'blik' && !paymentRedirect) {
+					changingClauseBehavior(id, 'move');
+					changingButtonBehavior(id, 'hide');
+
+				} else if (paymentName === 'wallet') {
+
+				} else {
+					changingClauseBehavior(id, 'back');
+					changingButtonBehavior(id, 'back');
+				}
+
+				/// Opening modal
+				if (checkHasModal(id) && modalType(id)) {
+					openModal(modalType(id));
+					ModalSelectPayment(id, modalType(id));
+				}
+
+			}, false)
+		}
+	}
+
+
+	function createSelectedPaymentWrapElement(item) {
+		const name = item.querySelector('.bluepayment-gateways__name').innerText;
+
+		let createSpan = document.createElement("span")
+		createSpan.innerHTML = name;
+
+		let createPaymentWrap = document.createElement("div")
+		createPaymentWrap.className = 'bm-payment-wrap';
+
+		let createPaymentName = document.createElement("div")
+		createPaymentName.className = 'bm-payment-name';
+
+		let createReset = document.createElement("a")
+		createReset.href = "#";
+		createReset.className = "bm-reset";
+		createReset.innerHTML = change_payment;
+
+		createPaymentName.append(createSpan);
+		createPaymentName.append(createReset);
+		createPaymentWrap.append(createPaymentName);
+
+		return createPaymentWrap;
+	}
+
+
+	function createSelectedPaymentImgElement(item) {
+		const img = item.querySelector('.bluepayment-gateways__img').src;
+		let createImg = document.createElement("img");
+		createImg.src = img;
+
+		return createImg;
+	}
+
+
+	function ModalSelectPayment(key, item) {
+
+		/// Hide applepay
+		hideApplePayOtherBrowser();
+
+		/// Get all payments gateway modal
+		var gateways = document.querySelectorAll('.bm-modal-' + item + ' .bluepayment-gateways__item');
+
+		gateways.forEach(item => {
+			item.addEventListener('click', e => {
+
+				const container = getPaymentContainer(key);
+				const content = getPaymentContent(key);
+				const selectedPayment = container.querySelector('.bm-selected-payment');
+				const paymentName = container.getAttribute('data-payment-name');
+				let createLabel;
+
+				container.querySelector('label').style.display = 'none';
+				container.querySelector('label').classList.add('bm-payment-hide');
+
+				if (!selectedPayment) {
+					createLabel = document.createElement("label")
+					createLabel.className = "bm-selected-payment";
+				} else {
+					selectedPayment.innerHTML = '';
+					createLabel = selectedPayment;
+				}
+
+				createLabel.append(
+					createSelectedPaymentImgElement(item)
+				);
+				createLabel.append(
+					createSelectedPaymentWrapElement(item)
+				);
+
+				//// Ustawienie wartosci
+				if (paymentName === 'transfer' || paymentName === 'wallet') {
+					item.querySelector('.bluepayment-gateways__radio').checked = true;
+					let val = item.querySelector('.bluepayment-gateways__radio').value;
+
+					setGatewayState(key, val);
+					getGatewayState();
+				}
+
+				/// Uruchamianie płatności dla GooglePay, ApplePay
+				const backWallet = item.getAttribute('data-bm-wallet-name')
+
+				if (backWallet && paymentName === 'wallet') {
+
+					/// Ukrywanie elementów
+					hideAllWalletAdditionalInformation(
+						getAllWalletAdditionalInformation()
+					);
+
+					let walletName = backWallet.replace(/\s+/g, '');
+					let showWallet = document.querySelector('.show' + walletName);
+					let walletElement = document.querySelector('[data-payment-desc=wallet]');
+
+					extendWalletName(
+						setWalletTypeSelected,
+						getSelectorWalletSelection(walletElement),
+						walletName
+					)
+
+					let paymentRedirect = content.querySelector('.bm-payment__elm')
+						.getAttribute('data-payment-redirect');
+					let paymentType = content.getAttribute('data-payment-wallet-type');
+
+
+					if (paymentRedirect && (paymentType === 'ApplePay' || paymentType === 'GooglePay')) {
+						changingClauseBehavior(key, 'back');
+						changingButtonBehavior(key, 'back');
+					} else if (!paymentRedirect && paymentType === 'GooglePay') {
+						changingButtonBehavior(key, 'hide');
+						changingClauseBehavior(key, 'move');
+					} else {
+						changingClauseBehavior(key, 'back');
+						changingButtonBehavior(key, 'back');
+					}
+
+					showWallet.style.display = 'block';
+
+				}
+
+				container.appendChild(createLabel);
+
+				document.querySelector('.bm-modal .bm-modal__close').click();
+				document.querySelector('.bm-selected-payment').style.display = 'flex';
+
+				/// Set regulations
+				if (paymentName === 'transfer') {
+					getTransferClauses(item);
+				}
+
+				buttonResetPaymentState(key);
+
+				return false;
+			}, false);
+		});
+	}
+})();

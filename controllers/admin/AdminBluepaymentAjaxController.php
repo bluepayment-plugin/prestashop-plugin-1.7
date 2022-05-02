@@ -75,11 +75,13 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
             Configuration::updateValue($this->module->name_upper.'_SERVICE_PARTNER_ID', serialize($serviceId));
             Configuration::updateValue($this->module->name_upper.'_SHARED_KEY', serialize($sharedKey));
 
-            $gateway_payments = new BlueGateway();
-            $gateway_payments->syncGateways();
 
-            $gateway_group = new BlueGatewayChannels();
-            $gateway_group->syncGateways();
+
+            $gateway = new BlueGateway();
+//            $gateway->clearGateway();
+            $gateway->getTransfers();
+            $gateway->getChannels();
+
 
             $this->ajaxDie(Tools::jsonEncode(['success' => true]));
         } catch (Exception $exception) {

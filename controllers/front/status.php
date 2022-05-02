@@ -22,6 +22,7 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
+
         require_once dirname(__FILE__) . '/../../sdk/index.php';
         header('Content-type: text/xml');
 

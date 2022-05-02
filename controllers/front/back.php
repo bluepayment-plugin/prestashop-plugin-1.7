@@ -32,8 +32,8 @@ class BluePaymentBackModuleFrontController extends ModuleFrontController
         $customer = new CustomerCore($order->id_customer);
 
         Tools::redirect(
-            'index.php?controller=order-confirmation&id_cart=' . $order->id_cart . '&id_module=' . $this->module->id
-            . '&id_order=' . $order->id . '&key=' . $customer->secure_key
+            'index.php?controller=order-confirmation&id_cart='.$order->id_cart.'&id_module='.$this->module->id
+            .'&id_order='.$order->id.'&key='.$customer->secure_key
         );
     }
 }

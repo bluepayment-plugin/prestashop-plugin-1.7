@@ -77,7 +77,7 @@
                                     {assign var='value_text' value=$fields_value[$_input.name][$language.id_lang]}
                                     {if $languages|count > 1}
 										<div class="translatable-field lang-{$language.id_lang}" {if $language.id_lang != $defaultFormLanguage}style="display:none"{/if}>
-										<div class="col-lg-10">
+										<div class="col-lg-9">
                                     {/if}
 
                                 {if isset($_input.maxchar) || isset($_input.prefix) || isset($_input.suffix)}
@@ -122,7 +122,8 @@
 
                                     {if $languages|count > 1}
 										</div>
-										<div class="col-lg-2">
+										<div class="col-lg-3">
+											<div class="bm-flex">
 											<button type="button"
 											        class="btn btn-default dropdown-toggle"
 											        tabindex="-1"
@@ -130,6 +131,7 @@
                                                 {$language.iso_code}
 												<i class="icon-caret-down"></i>
 											</button>
+
 											<ul class="dropdown-menu">
                                                 {foreach from=$languages item=language}
 													<li>
@@ -138,6 +140,20 @@
 													</li>
                                                 {/foreach}
 											</ul>
+
+                                            {if isset($_input.modal)}
+	                                            <a target="#" data-toggle="modal"
+	                                               data-target="#{$_input.modal}" style="cursor:pointer">
+													<img width="22" style="margin-left: 6px;"
+													     class="bm-info--small__icon img-fluid"
+													     src="{$src_img|escape:'html':'UTF-8'}/question.png"
+													/>
+	                                            </a>
+                                            {/if}
+
+											</div>
+
+
 										</div>
                                         {if isset($_input.help)}
 											<div class="col-lg-12">
@@ -145,6 +161,11 @@
 											</div>
                                         {/if}
 										</div>
+
+
+
+
+
                                     {/if}
                                 {/foreach}
 
@@ -177,6 +198,7 @@
                                         {if isset($_input.required) && $_input.required } required="required" {/if}
                                         {if isset($_input.placeholder) && $_input.placeholder } placeholder="{$_input.placeholder}"{/if}
 								/>
+
                                 {if isset($_input.suffix)}
 									<span class="input-group-addon">
 										  {$_input.suffix}
@@ -280,46 +302,57 @@
 										class="help-block">{$value.p}</p>{/if}
                             {/foreach}
 
-                        {elseif $_input.type == 'switch'}
+                        {elseif $_input.type == 'switch' || $_input.type == 'shop'}
+	                        <div class="bm-flex">
 							<span class="switch prestashop-switch fixed-width-lg"
 
-	                                    {if $_input.size == 'auto'}
-		                                   style="width: 350px !important;"
-		                                {/if}
+	                                    {if isset($_input.size) && $_input.size == 'auto'}
+		                                    style="width: 350px !important;"
+                                        {/if}
 		                                >
 
 										{foreach $_input.values as $value}
 											<input type="radio"
-											name="{$_input.name}"
+											       name="{$_input.name}"
 											{if $value.value == 1}
 												id="{$_input.name}_on"
-											{else}
+                                            {else}
 												id="{$_input.name}_off"
-											{/if}
+                                            {/if}
 											value="{$value.value}"
 											{if $fields_value[$_input.name] == $value.value}
 												checked="checked"
-											{/if}
-											{if isset($_input.disabled) && $_input.disabled}
-												disabled="disabled"
-											{/if}
+                                            {/if}
+                                                    {if isset($_input.disabled) && $_input.disabled}
+														disabled="disabled"
+                                                    {/if}
 											/>
-
-
 										{strip}
 											<label {if $value.value == 1} for="{$_input.name}_on"{else} for="{$_input.name}_off"{/if}>
 												{if $value.value == 1}
 
                                                     {$value.label}
-	                                            {else}
+                                                {else}
                                                     {$value.label}
-{*	                                                {l s='No' mod='bluepayment'}*}
-	                                            {/if}
+                                                    {*	                                                {l s='No' mod='bluepayment'}*}
+                                                {/if}
 											</label>
                                         {/strip}
                                         {/foreach}
 										<a class="slide-button btn"></a>
 									</span>
+		                            {if isset($_input.modal)}
+				                        <a target="#" data-toggle="modal"
+				                           data-target="#{$_input.modal}" style="cursor:pointer">
+					                        <img width="22" style="margin-left: 6px;"
+					                             class="bm-info--small__icon img-fluid"
+					                             src="{$src_img|escape:'html':'UTF-8'}/question.png"
+					                        />
+				                        </a>
+		                            {/if}
+	                        </div>
+
+
                             {if isset($_input.help)}
 								<p class="help-text">{$_input.help}</p>
                             {/if}

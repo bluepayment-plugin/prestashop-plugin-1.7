@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.7.4] 1.05.2022
+- Fixed multistore
+- Changes backend options
+- Change frontend design 
+- Refractorization of classes and assets
+- Added backend helpers
+- Changing the payment method selection
+- Promotions of selected payment methods
+- Increasing analytical capabilities by adding data collecting events
+- Update vendors
+
+## [2.7.3] 16.03.2022
+- Fixed multistore 
+- Improved google analytics by increasing analytics events
+- Refractorization of classes
+- Added backend helpers
+- Update vendors
+
 ## [2.7.2] 23.02.2022
 - Fixed onepagecheckout redirect payments
 - Added redirect options for BLIK and Google Pay

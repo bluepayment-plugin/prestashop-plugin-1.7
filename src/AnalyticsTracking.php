@@ -19,44 +19,42 @@ class AnalyticsTracking
 {
 
     private $tracked_id;
+    private $ga_session;
 
-    function __construct($tracked_id)
+    public function __construct($tracked_id, $ga_session)
     {
         $this->tracked_id = $tracked_id;
+        $this->ga_session = $ga_session;
     }
 
-    function gaParseCookie() {
-        if (isset($_COOKIE['_ga'])) {
-            list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
-            $contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
-            $cid = $contents['cid'];
-        } else {
-            $cid = $this->gaGenerateUUID();
+    public function gaParseCookie()
+    {
+        if (!$this->ga_session) {
+            return false;
         }
-        return $cid;
+
+        $ver = false;
+        $domain = false;
+        $cid1 = false;
+        $cid2 = false;
+
+        [$ver, $domain, $cid1, $cid2] = explode('.', $this->ga_session, 4);
+        $contents = ['version' => $ver, 'domainDepth' => $domain, 'cid' => $cid1.'.'.$cid2];
+
+        return $contents['cid'];
     }
 
-    function gaGenerateUUID() {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
-    }
-
-
-    function gaSendData(array $data) {
+    public function gaSendData(array $data)
+    {
         $post_url = 'https://www.google-analytics.com/collect?';
-        $post_url .= http_build_query( $data );
+        $post_url .= http_build_query($data);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $post_url);
-        curl_setopt($ch,CURLOPT_HEADER,true);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-        curl_setopt($ch,CURLOPT_POST,true);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
         $result = curl_exec($ch);
         curl_close($ch);
@@ -64,9 +62,9 @@ class AnalyticsTracking
         return $result;
     }
 
-
-    function ga_send_pageview($hostname=null, $page=null, $title=null) {
-        $data = array(
+    public function gaSendPageView($hostname = null, $page = null, $title = null)
+    {
+        $data = [
             'v' => 1,
             'tid' => $this->tracked_id,
             'cid' => $this->gaParseCookie(),
@@ -74,21 +72,24 @@ class AnalyticsTracking
             'dh' => $hostname,
             'dp' => $page,
             'dt' => $title
-        );
+        ];
         $this->gaSendData($data);
     }
 
-    function ga_send_event($category=null, $action=null, $label=null) {
-        $data = array(
+    public function gaSendEvent($category = null, $action = null, $label = null, $products = [])
+    {
+
+        $data = [
             'v' => 1,
             'tid' => $this->tracked_id,
             'cid' => $this->gaParseCookie(),
             't' => 'event',
             'ec' => $category, //(Required)
             'ea' => $action, //(Required)
-            'el' => $label
-        );
-        $this->gaSendData($data);
-    }
+            'el' => $label,
+        ];
 
+        $data_merge = array_merge($data, $products);
+        $this->gaSendData($data_merge);
+    }
 }

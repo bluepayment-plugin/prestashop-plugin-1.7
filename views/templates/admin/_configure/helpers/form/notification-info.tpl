@@ -13,7 +13,7 @@
  * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-<div class="bm-info--small">
+<div class="bm-info--small bm-info--dev">
 	<img width="22" class="bm-info--small__icon img-fluid" src="{$src_img|escape:'html':'UTF-8'}/info.svg" alt="Info" />
 
 	<p>{l s='The service ID and shared key for the test environment are different from the production data.' mod='bluepayment'}

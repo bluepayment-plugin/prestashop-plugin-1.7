@@ -19,16 +19,6 @@
 
         {foreach $fields as $fkey => $fvalue}
 
-{*	        {$fvalue|var_dump}*}
-
-
-{*            {if $fvalue.GROUP ne $lastGroup}*}
-{*                {$fvalue.GROUP}*}
-{*                {assign var="lastGroup" value=$ticket.GROUP}*}
-{*            {/if}*}
-{*            {$fvalue.NAME} {$fvalue.PRICE}*}
-
-
             {if $fkey === 0}
 				<li class="nav-item">
 					<a href="tab_rule_{$tabk}" class="nav-link tab " id="tab_rule_link_{$tabk}"
@@ -48,12 +38,12 @@
             {/if}
 
             {if $fkey === 5}
-		        <li class="nav-item">
-			        <a href="tab_rule_{$tabk}" class="nav-link tab " id="tab_rule_link_{$tabk}"
-			           href="javascript:displaythemeeditorTab('{$tabk}');">
+				<li class="nav-item">
+					<a href="tab_rule_{$tabk}" class="nav-link tab " id="tab_rule_link_{$tabk}"
+					   href="javascript:displaythemeeditorTab('{$tabk}');">
                         {$fvalue.form.section.title}
-			        </a>
-		        </li>
+					</a>
+				</li>
             {/if}
 
             {$tabk = $tabk+1}
@@ -96,127 +86,127 @@
 
 
                 {foreach $fields as $f => $fieldset}
-                    {foreach $fieldset.form.section as $fieldset2}
+                {foreach $fieldset.form.section as $fieldset2}
 
 
-                        {if $f == 0}
-							<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
-                            {include file="module:bluepayment/views/templates/admin/_configure/helpers/form/benefits.tpl"}
+                {if $f == 0}
+				<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
+                    {include file="./benefits.tpl"}
 
-                        {elseif $f == 2}
-							<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
+                    {elseif $f == 2}
+					<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
 
                         {elseif $f == 5}
-							<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
-                        {/if}
+						<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
+                            {/if}
 
 
-                        {block name="fieldset"}
-                            {capture name='fieldset_name'}{counter name='fieldset_name'}{/capture}
-							<div class="panel"
-							     id="fieldset_{$f}{if isset($smarty.capture.identifier_count) && $smarty.capture.identifier_count}_{$smarty.capture.identifier_count|intval}{/if}{if $smarty.capture.fieldset_name > 1}_{($smarty.capture.fieldset_name - 1)|intval}{/if}">
-                                {foreach $fieldset.form as $key => $field}
+                            {block name="fieldset"}
+                                {capture name='fieldset_name'}{counter name='fieldset_name'}{/capture}
+								<div class="panel"
+								     id="fieldset_{$f}{if isset($smarty.capture.identifier_count) && $smarty.capture.identifier_count}_{$smarty.capture.identifier_count|intval}{/if}{if $smarty.capture.fieldset_name > 1}_{($smarty.capture.fieldset_name - 1)|intval}{/if}">
+                                    {foreach $fieldset.form as $key => $field}
 
-                                    {if $key == 'legend'}
-                                        {block name="legend"}
-											<div class="panel-heading">
-                                                {if isset($field.image) && isset($field.title)}<img src="{$field.image}"
-												                                                    alt="{$field.title|escape:'html':'UTF-8'}" />{/if}
-                                                {if isset($field.icon)}<i class="{$field.icon}"></i>{/if}
-                                                {$field.title}
-											</div>
-                                        {/block}
-                                    {elseif $key == 'description' && $field}
-										<!-- <div class="alert alert-info">{$field}</div> -->
-                                    {elseif $key == 'input'}
+                                        {if $key == 'legend'}
+                                            {block name="legend"}
+												<div class="panel-heading">
+                                                    {if isset($field.image) && isset($field.title)}<img src="{$field.image}"
+													                                                    alt="{$field.title|escape:'html':'UTF-8'}" />{/if}
+                                                    {if isset($field.icon)}<i class="{$field.icon}"></i>{/if}
+                                                    {$field.title}
+												</div>
+                                            {/block}
+                                        {elseif $key == 'description' && $field}
+											<!-- <div class="alert alert-info">{$field}</div> -->
+                                        {elseif $key == 'input'}
 
-                                        {foreach $field as $input}
-                                            {include file="module:bluepayment/views/templates/admin/_configure/helpers/form/configure_fields.tpl" _input=$input}
-                                        {/foreach}
+                                            {foreach $field as $input}
+                                                {include file="./configure_fields.tpl" _input=$input}
+                                            {/foreach}
 
-                                    {elseif $key == 'form_group'}
+                                        {elseif $key == 'form_group'}
 
-                                        {foreach $fieldset.form.form_group.fields as $key2 => $fields_group_input}
-                                            {foreach $fields_group_input as $kkk => $fields_group_form}
-                                                {foreach $fields_group_form as $form_key => $form_subgroup_input}
+                                            {foreach $fieldset.form.form_group.fields as $key2 => $fields_group_input}
+                                                {foreach $fields_group_input as $kkk => $fields_group_form}
+                                                    {foreach $fields_group_form as $form_key => $form_subgroup_input}
 
-                                                    {if $form_key === 'legend'}
-														<div class="section-heading">
-                                                            {$form_subgroup_input.title}
-														</div>
-                                                    {elseif $form_key === 'input'}
+                                                        {if $form_key === 'legend'}
+															<div class="section-heading">
+                                                                {$form_subgroup_input.title}
+															</div>
+                                                        {elseif $form_key === 'input'}
 
-                                                        {foreach $form_subgroup_input as $form_subgroup_field}
-                                                            {include file="module:bluepayment/views/templates/admin/_configure/helpers/form/configure_fields.tpl" _input=$form_subgroup_field}
-                                                        {/foreach}
+                                                            {foreach $form_subgroup_input as $form_subgroup_field}
+                                                                {include file="./configure_fields.tpl" _input=$form_subgroup_field}
+                                                            {/foreach}
 
-                                                    {/if}
+                                                        {/if}
 
+                                                    {/foreach}
                                                 {/foreach}
                                             {/foreach}
-                                        {/foreach}
 
 
 
-                                    {/if}
+                                        {/if}
 
 
 
-                                {/foreach}
+                                    {/foreach}
 
-                                {block name="footer"}
-                                    {capture name='form_submit_btn'}{counter name='form_submit_btn'}{/capture}
-                                    {if isset($fieldset['form']['submit']) || isset($fieldset['form']['buttons'])}
-										<div class="panel-footer">
+                                    {block name="footer"}
+                                        {capture name='form_submit_btn'}{counter name='form_submit_btn'}{/capture}
+                                        {if isset($fieldset['form']['submit']) || isset($fieldset['form']['buttons'])}
+											<div class="panel-footer">
 
-                                            {if isset($fieldset['form']['submit']) && !empty($fieldset['form']['submit'])}
-												<button type="submit" value="1"
-												        id="{if isset($fieldset['form']['submit']['id'])}{$fieldset['form']['submit']['id']}{else}{$table}_form_submit_btn{/if}{if $smarty.capture.form_submit_btn > 1}_{($smarty.capture.form_submit_btn - 1)|intval}{/if}"
-												        name="{if isset($fieldset['form']['submit']['name'])}{$fieldset['form']['submit']['name']}{else}{$submit_action}{/if}{if isset($fieldset['form']['submit']['stay']) && $fieldset['form']['submit']['stay']}AndStay{/if}"
-												        class="{if isset($fieldset['form']['submit']['class'])}{$fieldset['form']['submit']['class']}{else}btn btn-primary pull-right{/if}">
-                                                    {$fieldset['form']['submit']['title']}
-												</button>
-                                            {/if}
+                                                {if isset($fieldset['form']['submit']) && !empty($fieldset['form']['submit'])}
+													<button type="submit" value="1"
+													        id="{if isset($fieldset['form']['submit']['id'])}{$fieldset['form']['submit']['id']}{else}{$table}_form_submit_btn{/if}{if $smarty.capture.form_submit_btn > 1}_{($smarty.capture.form_submit_btn - 1)|intval}{/if}"
+													        name="{if isset($fieldset['form']['submit']['name'])}{$fieldset['form']['submit']['name']}{else}{$submit_action}{/if}{if isset($fieldset['form']['submit']['stay']) && $fieldset['form']['submit']['stay']}AndStay{/if}"
+													        class="{if isset($fieldset['form']['submit']['class'])}{$fieldset['form']['submit']['class']}{else}btn btn-primary pull-right{/if}">
+                                                        {$fieldset['form']['submit']['title']}
+													</button>
+                                                {/if}
 
-                                            {if isset($fieldset['form']['buttons'])}
-                                                {foreach from=$fieldset['form']['buttons'] item=btn key=k}
-                                                    {if isset($btn.href) && trim($btn.href) != ''}
-														<a href="{$btn.href}"
-                                                           {if isset($btn['id'])}id="{$btn['id']}"{/if}
-														   class="btn btn-primary{if isset($btn['class'])} {$btn['class']}{/if}" {if isset($btn.js) && $btn.js} onclick="{$btn.js}"{/if}>{if isset($btn['icon'])}
-																<i class="{$btn['icon']}"></i>
-                                                            {/if}{$btn.title}</a>
-                                                    {else}
-														<button type="button"
-                                                                {if isset($btn['id'])}id="{$btn['id']}"{/if}
-														        class="btn btn-primary{if isset($btn['class'])} {$btn['class']}{/if}"
-														        name="{if isset($btn['name'])}{$btn['name']}{else}submitOptions{$table}{/if}"{if isset($btn.js) && $btn.js} onclick="{$btn.js}"{/if}>{if isset($btn['icon'])}
-																<i class="{$btn['icon']}"></i>
-                                                            {/if}{$btn.title}
-														</button>
-                                                    {/if}
-                                                {/foreach}
-                                            {/if}
+                                                {if isset($fieldset['form']['buttons'])}
+                                                    {foreach from=$fieldset['form']['buttons'] item=btn key=k}
+                                                        {if isset($btn.href) && trim($btn.href) != ''}
+															<a href="{$btn.href}"
+                                                               {if isset($btn['id'])}id="{$btn['id']}"{/if}
+															   class="btn btn-primary{if isset($btn['class'])} {$btn['class']}{/if}" {if isset($btn.js) && $btn.js} onclick="{$btn.js}"{/if}>{if isset($btn['icon'])}
+																	<i class="{$btn['icon']}"></i>
+                                                                {/if}{$btn.title}</a>
+                                                        {else}
+															<button type="button"
+                                                                    {if isset($btn['id'])}id="{$btn['id']}"{/if}
+															        class="btn btn-primary{if isset($btn['class'])} {$btn['class']}{/if}"
+															        name="{if isset($btn['name'])}{$btn['name']}{else}submitOptions{$table}{/if}"{if isset($btn.js) && $btn.js} onclick="{$btn.js}"{/if}>{if isset($btn['icon'])}
+																	<i class="{$btn['icon']}"></i>
+                                                                {/if}{$btn.title}
+															</button>
+                                                        {/if}
+                                                    {/foreach}
+                                                {/if}
 
-										</div>
-                                    {/if}
-                                {/block}
-							</div>
-                        {/block}
-                        {block name="other_fieldsets"}{/block}
+											</div>
+                                        {/if}
+                                    {/block}
+								</div>
+                            {/block}
+                            {block name="other_fieldsets"}{/block}
 
-                        {if $f == 1}
-							</div>
+                            {if $f == 1}
+						</div>
                         {elseif $f == 2}
-                            {hook h='adminPayments'}
+                        {hook h='adminPayments'}
                         {elseif  $f == 4 || $f == 5}
-							</div>
-                        {/if}
+					</div>
+                    {/if}
 
                     {/foreach}
 
                     {$tabkey = $tabkey+1}
-                {/foreach}
+                    {/foreach}
 
 			</form>
         {/block}
@@ -301,10 +291,10 @@
 
 				function checkPayTest(state) {
 					if (state == 1) {
-						$('.bm-info--small').show();
+						$('.bm-info--dev').show();
 
 					} else {
-						$('.bm-info--small').hide();
+						$('.bm-info--dev').hide();
 					}
 				}
 

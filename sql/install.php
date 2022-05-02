@@ -17,7 +17,7 @@ if (!defined('_PS_VERSION_')) {
 
 $sql = [];
 
-$sql[] = ' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'blue_gateways` (
+$sql[] = ' CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'blue_gateway_transfers` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `gateway_id` int(11) NOT NULL,
                 `gateway_status` int(11) NOT NULL,
@@ -29,9 +29,15 @@ $sql[] = ' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'blue_gateways` (
                 `gateway_type` varchar(50) NOT NULL,
                 `gateway_logo_url` varchar(500) DEFAULT NULL,
                 PRIMARY KEY (`id`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . '  DEFAULT CHARSET=UTF8;';
+            ) ENGINE='._MYSQL_ENGINE_.'  DEFAULT CHARSET=UTF8;';
 
-$sql[] = ' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'blue_gateway_channels` (
+$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'blue_gateway_transfers_shop` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `id_shop` INT(10) unsigned NOT NULL,
+                PRIMARY KEY (`id`,`id_shop`)
+        ) ENGINE='._MYSQL_ENGINE_.'  DEFAULT CHARSET=UTF8;';
+
+$sql[] = ' CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'blue_gateway_channels` (
                 `id_blue_gateway_channels` int(11) NOT NULL AUTO_INCREMENT,
                 `gateway_id` int(11) NOT NULL,
                 `gateway_status` int(11) NOT NULL,
@@ -44,11 +50,19 @@ $sql[] = ' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'blue_gateway_channels`
                 `gateway_payments` int(11) NOT NULL,
                 `gateway_logo_url` varchar(500) DEFAULT NULL,
                 PRIMARY KEY (`id_blue_gateway_channels`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . '  DEFAULT CHARSET=UTF8;';
+            ) ENGINE='._MYSQL_ENGINE_.'  DEFAULT CHARSET=UTF8;';
 
-$sql[] = ' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'blue_transactions` (
+$sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'blue_gateway_channels_shop` (
+                `id_blue_gateway_channels` INT(10) NOT NULL AUTO_INCREMENT,
+                `id_shop` INT(10) unsigned NOT NULL,
+                PRIMARY KEY (`id_blue_gateway_channels`,`id_shop`)
+        ) ENGINE='._MYSQL_ENGINE_.'  DEFAULT CHARSET=UTF8;';
+
+$sql[] = ' CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'blue_transactions` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `order_id` varchar(256) DEFAULT NULL,
+                `gtag_uid` varchar(256) DEFAULT NULL,
+                `gtag_state` int(1) DEFAULT NULL,
                 `remote_id` varchar(128) DEFAULT NULL,
                 `amount` DECIMAL(17,2) DEFAULT NULL,
                 `currency` varchar(32) DEFAULT NULL,
@@ -61,16 +75,7 @@ $sql[] = ' CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'blue_transactions` (
                 `created_at` DATETIME DEFAULT NULL,
                 `updated_at` DATETIME DEFAULT NULL,
                 PRIMARY KEY (`id`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . '  DEFAULT CHARSET=UTF8;';
-
-$sql[] = 'TRUNCATE TABLE `' . _DB_PREFIX_ . 'blue_gateway_channels`';
-
-$sql[] = 'INSERT INTO `' . _DB_PREFIX_ . 'blue_gateway_channels` (`id_blue_gateway_channels`, `gateway_id`, 
-    `gateway_status`, `bank_name`, `gateway_name`, `gateway_description`, `position`, `gateway_currency`, 
-    `gateway_type`, `gateway_payments`, `gateway_logo_url`) VALUES (5, 9999, 1, "Przelew internetowy", 
-    "Przelew internetowy", "", 2, "PLN", "1", 1, "/modules/bluepayment/views/img/payments.png"), 
-    (6, 999, 1, "Wirtualny portfel", "Wirtualny portfel", "", 3,
-    "PLN", "1", 1, "/modules/bluepayment/views/img/cards.png")';
+            ) ENGINE='._MYSQL_ENGINE_.'  DEFAULT CHARSET=UTF8;';
 
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {
