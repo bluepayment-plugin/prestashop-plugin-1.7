@@ -75,17 +75,17 @@ let config = {
 					'sass-loader',
 				],
 			},
-			// {
-			//   test: /.(png|woff(2)?|eot|otf|ttf|svg|gif)(\?[a-z0-9=\.]+)?$/,
-			//   use: [
-			//     {
-			//       loader: 'file-loader',
-			//       options: {
-			//         name: '../css/[hash].[ext]',
-			//       },
-			//     },
-			//   ],
-			// },
+			{
+			  test: /.(png|woff(2)?|eot|otf|ttf|svg|gif)(\?[a-z0-9=\.]+)?$/,
+			  use: [
+			    {
+			      loader: 'file-loader',
+			      options: {
+			        name: '../css/[hash].[ext]',
+			      },
+			    },
+			  ],
+			},
 			{
 				test: /\.css$/,
 				use: [MiniCssExtractPlugin.loader, 'style-loader', 'css-loader', 'postcss-loader'],

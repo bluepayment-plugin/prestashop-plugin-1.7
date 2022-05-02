@@ -1,10 +1,11 @@
 # Changelog
 
-## [2.7.4] 1.05.2022
+## [2.7.4] 2.05.2022
 - Fixed multistore
 - Changes backend options
 - Change frontend design 
-- Refractorization of classes and assets
+- Refactoring the SDK connection
+- Refactoring javascript classes and libraries
 - Added backend helpers
 - Changing the payment method selection
 - Promotions of selected payment methods

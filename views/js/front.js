@@ -145,7 +145,7 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 
 			initSlideshows();
 			getClauses();
-		}, 1000);
+		}, 50);
 	}
 
 
