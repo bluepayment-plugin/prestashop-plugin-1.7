@@ -42,12 +42,9 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             return;
         }
 
-        $gateway = new BlueGateway();
-//        $gateway->clearGateway();
-        $gateway->getChannels();
-        $gateway->getTransfers();
-
         parent::initContent();
+
+
 
         if (Tools::getValue('ajax')) {
             if (Tools::getValue('action') == 'updatePositions') {
@@ -62,10 +59,20 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $this->context->controller->addCSS($this->module->getPathUri().'views/css/admin/admin.css');
 
+
+
         $this->content .= $this->renderForm();
+
+        $gateway = new BlueGateway();
+        //        $gateway->clearGateway();
+        $gateway->getChannels();
+        $gateway->getTransfers();
+
         $this->context->smarty->assign([
             'content' => $this->content,
         ]);
+
+
     }
 
     public function renderForm()

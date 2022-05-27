@@ -17,7 +17,6 @@ if (!defined('_PS_VERSION_')) {
 
 class BlueGateway
 {
-
     private $module;
 
     public function __construct()

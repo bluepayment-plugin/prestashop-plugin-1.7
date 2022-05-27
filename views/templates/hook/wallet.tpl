@@ -26,12 +26,16 @@
         {/foreach}
 	</div>
 
-    {include file='module:bluepayment/views/templates/hook/_partials/gPay.tpl'
-    wallet_merchantInfo=$wallet_merchantInfo
-    gpay_moduleLinkCharge=$gpay_moduleLinkCharge}
+	{if $googlePay}
+	    {include file="module:bluepayment/views/templates/hook/_partials/gPay.tpl"
+	    wallet_merchantInfo=$wallet_merchantInfo
+	    gpay_moduleLinkCharge=$gpay_moduleLinkCharge}
+    {/if}
 
-    {include file='module:bluepayment/views/templates/hook/_partials/applePay.tpl'
-    wallet_merchantInfo=$wallet_merchantInfo}
+    {if $applePay}
+        {include file="module:bluepayment/views/templates/hook/_partials/applePay.tpl"
+        wallet_merchantInfo=$wallet_merchantInfo}
+	{/if}
 
 	<script>
 		var start_payment_translation = '{$start_payment_translation|escape:'javascript':'UTF-8'}';

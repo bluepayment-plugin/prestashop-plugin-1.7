@@ -68,7 +68,7 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__).'/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.7.4';
+        $this->version = '2.7.5.1';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -551,10 +551,10 @@ class BluePayment extends PaymentModule
         $sortCurrencies = Currency::getCurrenciesByIdShop($this->context->shop->id);
 
         usort($sortCurrencies, function ($a, $b) {
-            if ($a['id'] == $b['id']) {
+            if ($a['id_currency'] == $b['id_currency']) {
                 return 0;
             }
-            return $a['id'] > $b['id'] ? 1 : -1;
+            return $a['id_currency'] > $b['id_currency'] ? 1 : -1;
         });
         return (array)$sortCurrencies;
     }
@@ -707,9 +707,6 @@ class BluePayment extends PaymentModule
                     $history->changeIdOrderState(Configuration::get('PS_OS_REFUND'), (int)$order->id);
                     $history->addWithemail(true, []);
                     $refund_success[] = $this->l('Successful refund');
-
-                    //Tools::redirectAdmin('index.php?tab=AdminOrders&id_order=' . (int)$order->id . '&vieworder' . '
-                    //&token=' . Tools::getAdminTokenLite('AdminOrders'));
                 }
             }
         }
@@ -933,7 +930,6 @@ class BluePayment extends PaymentModule
         $gateway_transfers->select('*');
         $gateway_transfers = Db::getInstance()->executeS($gateway_transfers);
 
-
         /// Get all wallets
         $gateway_wallets = new DbQuery();
         $gateway_wallets->from('blue_gateway_transfers', 'gt');
@@ -997,7 +993,6 @@ class BluePayment extends PaymentModule
             $payment_group->where('gt.gateway_status = 1');
             $payment_group->where('gt.gateway_currency = "'.pSql($currency->iso_code).'"');
 
-
             if (Shop::isFeatureActive()) {
                 $payment_group->where('gts.id_shop = ' . (int)$id_shop);
             }
@@ -1015,7 +1010,7 @@ class BluePayment extends PaymentModule
                         );
 
                         if (!empty($gateway_transfers)) {
-                            $newOption = new PaymentOption();
+                            $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                             $newOption->setCallToActionText($paymentName)
                                 ->setAction($moduleLink)
                                 ->setInputs([
@@ -1050,7 +1045,7 @@ class BluePayment extends PaymentModule
                         $p_group['gateway_name'] === 'Płatność kartą') {
                         if ($cardGateway) {
                             $card = new BlueGatewayTransfers($cardGateway);
-                            $cardOption = new PaymentOption();
+                            $cardOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                             $cardOption->setAdditionalInformation(
                                     $this->fetch('module:bluepayment/views/templates/hook/paymentRedirectCard.tpl')
                                 );
@@ -1082,7 +1077,7 @@ class BluePayment extends PaymentModule
                         if ($blik) {
                             $blikGateway = new BlueGatewayTransfers($blik);
                             if (Configuration::get($this->name_upper.'_BLIK_REDIRECT')) {
-                                $blikOption = new PaymentOption();
+                                $blikOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                                 $blikOption->setCallToActionText($blikGateway->gateway_name)->setAction($moduleLink)
                                     ->setInputs([
                                         [
@@ -1113,7 +1108,7 @@ class BluePayment extends PaymentModule
                                     'blik_moduleLink' => $blikModuleLink,
                                 ]);
 
-                                $blikOption = new PaymentOption();
+                                $blikOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                                 $blikOption->setCallToActionText($blikGateway->gateway_name)
                                     ->setAction($blikModuleLink)
                                     ->setBinary(true)
@@ -1131,6 +1126,8 @@ class BluePayment extends PaymentModule
                          * G-pay button will show only in secure enviroments, it mean:
                          * 127.0.0.1, localhost, secure SSL host
                          */
+
+//                        if (!empty($gateway_wallets1) ) {
 
                         if (!empty($gateway_wallets1) && ($gpay || $applePay)) {
 
@@ -1156,17 +1153,19 @@ class BluePayment extends PaymentModule
                                 'wallet_merchantInfo' => $walletMerchantInfo,
                                 'gpay_redirect' => $gpayRedirect,
                                 'gpay_moduleLinkCharge' => $gpay_moduleLinkCharge,
+                                'googlePay' => $gpay,
+                                'applePay' => $applePay,
                             ]);
 
-                            $gpayOption = new PaymentOption();
-                            $gpayOption->setCallToActionText($this->l('Virtual wallet'))
+                            $walletOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                            $walletOption->setCallToActionText($this->l('Virtual wallet'))
                                 ->setAction($moduleLink)
                                 ->setLogo($this->context->shop->getBaseURL(true).'modules/bluepayment/views/img/blue-media.svg')
                                 ->setAdditionalInformation(
                                     $this->fetch('module:bluepayment/views/templates/hook/wallet.tpl')
                                 );
 
-                            $gpayOption->setInputs([
+                            $walletOption->setInputs([
                                 [
                                     'type' => 'hidden',
                                     'name' => 'bluepayment_gateway',
@@ -1179,7 +1178,7 @@ class BluePayment extends PaymentModule
                                 ]
                             ]);
 
-                            $newOptions[] = $gpayOption;
+                            $newOptions[] = $walletOption;
                         }
                     }
 
@@ -1208,7 +1207,7 @@ class BluePayment extends PaymentModule
                                 'smartney_merchantInfo' => $smartneyMerchantInfo,
                                 'smartney_moduleLinkCharge' => $smartney_moduleLinkCharge,
                             ]);
-                            $smartneyOption = new PaymentOption();
+                            $smartneyOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                             $smartneyOption->setAdditionalInformation(
                                 $this->fetch('module:bluepayment/views/templates/hook/paymentRedirectSmartney.tpl')
                             );
@@ -1236,7 +1235,7 @@ class BluePayment extends PaymentModule
                         && (float)$this->context->cart->getOrderTotal(true, Cart::BOTH) >= (float)IFRAME_MIN_AMOUNT
                     ) {
                         $iframeGateway = new BlueGatewayTransfers($iframe);
-                        $iframeOption = new PaymentOption();
+                        $iframeOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                         $iframeOption->setAdditionalInformation(
                             $this->fetch('module:bluepayment/views/templates/hook/paymentRedirectAliorbank.tpl')
                         );
@@ -1260,15 +1259,13 @@ class BluePayment extends PaymentModule
                 }
             }
 
-
         } else {
             /**
              * Tworzenie przekierowania dla wszystkich płatności
              */
-
             $paymentName = Configuration::get($this->name_upper.'_PAYMENT_NAME', $this->context->language->id);
 
-            $newOption = new PaymentOption();
+            $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $newOption->setCallToActionText(
                 $paymentName
             )
@@ -1506,80 +1503,6 @@ class BluePayment extends PaymentModule
     protected function returnConfirmation($realOrderId, $order_id, $confirmation)
     {
 
-//        if($confirmation == self::TRANSACTION_CONFIRMED) {
-//            /// Send GA event
-//            if(Configuration::get('BLUEPAYMENT_GA_TRACKER_ID')) {
-//
-//                /// Get ga user session
-//                $query = new DbQuery();
-//                $query->from('blue_transactions')
-//                    ->where('order_id like "'.pSQL($order_id).'-%"')
-//                    ->where('gtag_state IS NULL')
-//                    ->select('gtag_uid');
-//                $ga_cid = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query, false);
-//
-//                if($ga_cid) {
-//
-//                    $analitics = new AnalyticsTracking(
-//                        Configuration::get('BLUEPAYMENT_GA_TRACKER_ID'),
-//                        $ga_cid
-//                    );
-//
-//                    $args = [];
-//                    $order_ga = new OrderCore($order_id);
-//
-//                    if ($order_ga->getProducts()) {
-//                        $p_key = 0;
-//                        foreach ($order_ga->getProducts() as $key => $p) {
-//
-//                            $brand = null;
-//                            $category_name = null;
-//
-//                            if ($p['id_manufacturer']) {
-//                                $brand = Manufacturer::getNameById($p['id_manufacturer']);
-//                            }
-//
-//                            $cat = new Category($p['id_category_default'], $this->context->language->id);
-//                            if ($cat) {
-//                                $category_name = $cat->name;
-//                            }
-//
-//                            $p_key++;
-//                            $args['pr'.$p_key.'id'] = $p['product_id'];
-//                            $args['pr'.$p_key.'nm'] = Product::getProductName($p['product_id']);
-//                            $args['pr'.$p_key.'br'] = $brand;
-//                            $args['pr'.$p_key.'ca'] = $category_name;
-//                            //                                $args['pr'.$p_key.'va'] = $attr;
-//                            $args['pr'.$p_key.'pr'] = $p['total_price_tax_incl'];
-//                            $args['pr'.$p_key.'qt'] = $p['product_quantity'];
-//                        }
-//                    }
-//
-//                    $args['cu'] = $this->context->currency->iso_code;
-//                    $args['ti'] = $order_ga->id_cart.'-'.time();
-//                    $args['tr'] = $order_ga->total_paid_tax_incl;
-//                    $args['tt'] = $order_ga->total_paid - $order_ga->total_paid_tax_excl;
-//                    $args['ts'] = $order_ga->total_shipping_tax_incl;
-//                    $args['pa'] = 'purchase';
-//
-//                    $this->debug($args);
-//
-//                    $analitics->gaSendEvent('ecommerce', 'purchase', 'accepted', $args);
-//
-//
-//                    /// Reset state
-//                    $transactionData = [
-//                        'gtag_state' => 1,
-//                    ];
-//                    Db::getInstance()->update('blue_transactions', $transactionData, 'order_id = \''.pSQL($realOrderId).'\'');
-//
-//
-//
-//                }
-//            }
-//        }
-
-
         if (null === $order_id) {
             $order_id = explode('-', $realOrderId)[0];
         }
@@ -1660,13 +1583,6 @@ class BluePayment extends PaymentModule
         file_put_contents( $logfilename, print_r( $texto, true ) );
     }
 
-    public function initTest($args) {
-
-
-
-        return $this->debug($_COOKIE['_ga']);
-    }
-
     /**
      * Sprawdza czy zamówienie zostało anulowane
      *
@@ -1695,11 +1611,9 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__).'/sdk/index.php';
 
         // Identyfikatory statusów płatności
-
         $status_accept_pay_id = Configuration::get($this->name_upper.'_STATUS_ACCEPT_PAY_ID');
         $status_waiting_pay_id = Configuration::get($this->name_upper.'_STATUS_WAIT_PAY_ID');
         $status_error_pay_id = Configuration::get($this->name_upper.'_STATUS_ERROR_PAY_ID');
-        //        $status_refund_pay_id = Configuration::get($this->name_upper . '_STATUS_REFUND_PAY_ID');
 
         // Status płatności
         $payment_status = pSql((string)$transaction->paymentStatus);
@@ -1713,7 +1627,6 @@ class BluePayment extends PaymentModule
 
         // Objekt zamówienia
         $order = new OrderCore($order_id);
-        //        $order = new OrderCore(81);
         // Obiekt płatności zamówienia
         $order_payments = $order->getOrderPaymentCollection();
 
@@ -1825,8 +1738,6 @@ class BluePayment extends PaymentModule
                             $args['ts'] = $order_ga->total_shipping_tax_incl;
                             $args['pa'] = 'purchase';
 
-                            $this->debug($order_id);
-
                             $analitics->gaSendEvent('ecommerce', 'purchase', 'accepted', $args);
 
 
@@ -1880,7 +1791,6 @@ class BluePayment extends PaymentModule
             }
 
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_CONFIRMED);
-//            $this->initTest('test');
 
         } else {
             $message = $this->name_upper.' - Order status is cancel or payment status unknown';
@@ -1949,16 +1859,16 @@ class BluePayment extends PaymentModule
             $product = $params['product'];
             $brand = '';
 
-            if($product->id_manufacturer) {
-                $brand = Manufacturer::getNameById($product->id_manufacturer);
+            if(isset($product['id_manufacturer'])) {
+                $brand = Manufacturer::getNameById($product['id_manufacturer']);
             }
 
             $this->context->smarty->assign([
-                'ga_product_id' => $product->id,
-                'ga_product_name' => $product->name,
+                'ga_product_id' => $product['id'],
+                'ga_product_name' => $product['name'],
                 'ga_product_brand' => $brand,
-                'ga_product_cat' => $product->category_name,
-                'ga_product_price' => $product->price,
+                'ga_product_cat' => $product['category_name'],
+                'ga_product_price' => $product['price'],
             ]);
 
             return $this->fetch('module:bluepayment/views/templates/hook/ga_listing.tpl');

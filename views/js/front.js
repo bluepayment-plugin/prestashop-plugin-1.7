@@ -20,7 +20,6 @@ import {
 	getIdElement,
 	getPaymentContainer,
 	getPaymentContent,
-	getPaymentForm,
 	hideApplePayOtherBrowser
 } from './_partials/helpers';
 
@@ -32,7 +31,7 @@ import {
 	setWalletTypeSelected
 } from './_partials/wallet';
 
-import {initSlideshows, Slideshow} from './_partials/slideshow';
+import {initSlideshows} from './_partials/slideshow';
 
 import {openModal} from './_partials/modal';
 
@@ -61,24 +60,20 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 		}
 
 		//if visible checkbox to validate
-		if (
-			psdAcceptInput.is(':visible') //if visible checkbox to validate
+		return !(psdAcceptInput.is(':visible') //if visible checkbox to validate
 			&& !psdAcceptInput.is(':checked')
-			&& $('form#bluepayment-gateway').parent().parent().prev().find('input').prop('checked')  //if selected bluemedia payment
-		) {
-			return false;
-		}
+			&& $('form#bluepayment-gateway').parent().parent().prev().find('input').prop('checked'));
 
-		return true;
+
 	}
 
 	function actionValidate() {
-		let termsAndConditionsCheckbox = $('section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]');
+		let conditions = $('section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]');
 
 		if (!validateBmSubmit()) {
 			$('div[id=payment-confirmation] button').prop('disabled', true);
 		} else {
-			termsAndConditionsCheckbox.trigger("change");
+			conditions.trigger("change");
 		}
 	}
 
@@ -99,8 +94,7 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 
 	function BmAHR() {
 		function interceptNetworkRequests(ee) {
-			const open = XMLHttpRequest.prototype.open;
-			const send = XMLHttpRequest.prototype.send;
+			const {open} = XMLHttpRequest.prototype;
 			const isRegularXHR = open.toString().indexOf('native code') !== -1;
 
 			if (isRegularXHR) {
@@ -131,7 +125,7 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 	BmAHR();
 
 
-
+	// initBM();
 
 
 

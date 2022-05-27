@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.7.5.1] 9.05.2022
+- Fixed bugs in older version prestashop
+
 ## [2.7.4] 2.05.2022
 - Fixed multistore
 - Changes backend options

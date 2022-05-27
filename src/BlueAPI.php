@@ -78,7 +78,6 @@ class BlueAPI
 
     private function gatewayAccount($currency_code)
     {
-
         $serviceId = $this->module->parseConfigByCurrency(
             $this->module->name_upper.'_SERVICE_PARTNER_ID',
             $currency_code
@@ -89,6 +88,5 @@ class BlueAPI
         );
 
         return $this->gatewayAuthentication($serviceId, $hashKey);
-        //        return $this->gatewayAuthentication($serviceId[$currency_code], $hashKey[$currency_code]);
     }
 }

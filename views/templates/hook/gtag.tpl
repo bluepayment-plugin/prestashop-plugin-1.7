@@ -65,12 +65,14 @@
 		gtag('event', 'view_item', {
 			"items": [
 				{{/literal}
-					"id": "{$product->id|escape:'htmlall':'UTF-8'}",
-					"name": "{$product->name nofilter}",
-					"brand": "{$product->manufacturer_name|implode:','|escape:'html':'UTF-8'}",
-					"category": "{$product->category nofilter}",
-					"variant": "{$product->id_product_attribute|escape:'htmlall':'UTF-8'}",
-					"price": "{$product->price|escape:'htmlall':'UTF-8'}",
+					"id": "{$product['id_product']|escape:'htmlall':'UTF-8'}",
+					"name": "{$product['name'] nofilter}",
+					{if isset($product['manufacturer_name'])}
+						"brand": "{$product['manufacturer_name']|implode:','|escape:'html':'UTF-8'}",
+					{/if}
+					"category": "{$product['category'] nofilter}",
+					"variant": "{$product['id_product_attribute']|escape:'htmlall':'UTF-8'}",
+					"price": "{$product['price']|escape:'htmlall':'UTF-8'}",
                 {literal}}
 			],{/literal}
             {literal}
