@@ -141,9 +141,7 @@ estetyczny, nowoczesny sposób:
 - Wybraną metodę płatności możesz z łatwością zmienić. Nowy wygląd zapewnia również łatwy dostęp do niezbędnych informacji nt. przekierowań i regulaminów:
 
 ![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_przelew.png)
-- Możesz łatwo wyłączyć widgety BLIK i Google Pay oraz ustawić automatyczne przekierowanie na inną, wybraną metodę płatności.
 
-![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_przekierowanie.png)
 
 ## Analityka
 
