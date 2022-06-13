@@ -11,10 +11,11 @@ Do najważniejszych funkcji modułu zalicza się:
 - obsługę zakupów bez rejestracji w serwisie
 - obsługę dwóch trybów działania – testowego i produkcyjnego (dla każdego z nich wymagane są osobne dane kont, po które zwróć się do nas)
 - wybór banku po stronie sklepu i bezpośrednie przekierowanie do płatności w wybranym banku
+- rozszerzoną analitykę danych, dzięki połączeniu z Google Analytics i dodaniu identyfikatora śledzenia
 
 ### Wymagania
-- Wersja PrestaShop: 1.7.0.0 - 1.7.7.6
-- Wersja PHP zgodna z wymaganiami względem danej wersji sklepu minimum php 7.0
+- Wersja PrestaShop: 1.7
+- Wersja PHP zgodna z wymaganiami względem danej wersji sklepu
 
 ## Aktywacja płatności w panelu administracyjnym PrestaShop
 
@@ -45,7 +46,7 @@ Po pozytywnej weryfikacji przez Blue Media, płatności online zostaną aktywowa
 
 *(Po kliknięciu przycisku pojawi się okno umożliwiające wybór pliku z komputera.)*
 
-● kliknij **Załaduj moduł**
+- kliknij **Załaduj moduł**
 
 Gdy instalacje się zakończy, system przeniesie cię automatycznie do Konfiguracji modułu.
 
@@ -121,7 +122,34 @@ Tworzone są automatycznie w zależności od ustawień statusów transakcji.
 
 ### Powiadomienia mailowe
 
-Powiadomienia o zmianie statusu płatności wysyłane są w zależności od konfiguracji danego statusu. Jeżeli chcesz żeby powiadomienia były wysyłane – zaznacz opcję **Wyślij email do klienta, kiedy zmieni się status zamówienia** (wybrany musi być również odpowiedni szablon).
+Powiadomienia o zmianie statusu płatności wysyłane są w zależności od konfiguracji danego statusu. Jeżeli chcesz, żeby powiadomienia były wysyłane – zaznacz opcję **Wyślij email do klienta, kiedy zmieni się status zamówienia** (wybrany musi być również odpowiedni szablon).
+
+
+
+## Wygląd kanałów płatności
+
+- Metody płatności obsługiwane Blue Media są zgrupowane i zaprezentowane w 
+estetyczny, nowoczesny sposób:
+
+![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_front.png)
+- Wybór metody płatności typu przelew internetowy lub wirtualny portfel jest bardzo prosty, dzięki wdrożeniu wygodnego okienka:
+
+![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_modal.png)
+- Metody płatności Google Pay oraz Apple Pay zostały zgrupowane w pozycji Wirtualny portfel:
+
+![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_wirtualny_portfel.png)
+- Wybraną metodę płatności możesz z łatwością zmienić. Nowy wygląd zapewnia również łatwy dostęp do niezbędnych informacji nt. przekierowań i regulaminów:
+
+![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_przelew.png)
+- Możesz łatwo wyłączyć widgety BLIK i Google Pay oraz ustawić automatyczne przekierowanie na inną, wybraną metodę płatności.
+
+![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_przekierowanie.png)
+
+## Analityka
+
+Rozszerzyliśmy możliwości analityczne modułu, poprzez podłączenie dodatkowych zdarzeń w Google Analytics. Żeby z nich korzystać, należy dodać identyfikator śledzenia w widocznym poniżej polu.
+
+![Analitics](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/analityka.png)
 
 ## Aktualizacja
 
