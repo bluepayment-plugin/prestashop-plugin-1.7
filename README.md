@@ -51,7 +51,7 @@ Po pozytywnej weryfikacji przez Blue Media, płatności online zostaną aktywowa
 
 Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfiguracji modułu.
 
-![Konfiguracja](https://raw.githubusercontent.com/studiodev88/bminstr/main/img/konfiguracja-modulu.png)
+![Konfiguracja](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/konfiguracja-modulu.png)
 
 ## Konfiguracja
 
@@ -75,7 +75,7 @@ Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfigura
 - http(s)://domena_sklepu.pl/module/bluepayment/back
 - http(s)://domena_sklepu.pl/module/bluepayment/status
 
-![Ustawienia](https://raw.githubusercontent.com/studiodev88/bminstr/main/img/konfiguracja-modulu.png)
+![Ustawienia](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/konfiguracja-modulu.png)
 
 ## Ustawienia
 ### Zakładka uwierzytelnianie
