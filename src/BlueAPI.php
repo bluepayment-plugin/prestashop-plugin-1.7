@@ -52,6 +52,30 @@ class BlueAPI
         return false;
     }
 
+    public function isConnectedAPI($serviceId, $hashKey) {
+        require_once dirname(__FILE__).'/../sdk/index.php';
+
+        $test_mode = Configuration::get($this->module->name_upper.'_TEST_ENV');
+        $gateway_mode = $test_mode ?
+            \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX :
+            \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
+
+        $gateway = new \BlueMedia\OnlinePayments\Gateway(
+            $serviceId,
+            $hashKey,
+            $gateway_mode,
+            \BlueMedia\OnlinePayments\Gateway::HASH_SHA256,
+            HASH_SEPARATOR
+        );
+
+        try {
+            return (bool)$gateway->doPaywayList();
+        } catch (\Exception $exception) {
+            return false;
+        }
+
+    }
+
     private function connectFromAPI($serviceId, $hashKey)
     {
         require_once dirname(__FILE__).'/../sdk/index.php';

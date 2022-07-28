@@ -91,6 +91,7 @@ class ComposerStaticInitafb5593694ba213024cdf0ac1cf6f078
     );
 
     public static $classMap = array (
+        'Amplitude' => __DIR__ . '/../..' . '/src/Amplitude.php',
         'AnalyticsTracking' => __DIR__ . '/../..' . '/src/AnalyticsTracking.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'BlueAPI' => __DIR__ . '/../..' . '/src/BlueAPI.php',

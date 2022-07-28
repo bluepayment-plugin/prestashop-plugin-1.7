@@ -44,8 +44,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         parent::initContent();
 
-
-
         if (Tools::getValue('ajax')) {
             if (Tools::getValue('action') == 'updatePositions') {
                 $position = new BlueGatewayChannels();
@@ -54,13 +52,25 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     Tools::getValue('way'),
                     Tools::getValue('id_blue_gateway_channels')
                 );
+
+                $data = [
+                    'events' => [
+                        "event_type" => "payment methods order updated",
+                        "event_properties" => [
+                            "source" => 'Setup'
+                        ],
+                    ],
+                ];
+
+                $amplitude = Amplitude::getInstance();
+                $amplitude->sendEvent($data);
+
             }
         }
 
         $this->context->controller->addCSS($this->module->getPathUri().'views/css/admin/admin.css');
 
-
-
+        
         $this->content .= $this->renderForm();
 
         $gateway = new BlueGateway();
@@ -403,6 +413,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'ajax_controller' => $ajax_controller,
             'ajax_token' => Tools::getAdminTokenLite('AdminBluepaymentAjax'),
             'ajax_payments_token' => Tools::getAdminTokenLite('AdminBluepaymentPayments'),
+            'amplitude_user_id' => Amplitude::getUserId()
         ];
 
         return $helper->generateForm($fields_form);

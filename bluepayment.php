@@ -68,7 +68,7 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__).'/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.7.5.1';
+        $this->version = '2.7.6';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -135,10 +135,64 @@ class BluePayment extends PaymentModule
                 Shop::setContext(Shop::CONTEXT_SHOP, $this->context->shop->id);
             }
 
+
+
+            $data = [
+                'events' => [
+                    "event_type" => "plugin installed",
+                    "event_properties" => [
+                        "deactivated" => true,
+                        "source" => 'Installation'
+                    ],
+                ],
+            ];
+
+            $amplitude = Amplitude::getInstance();
+            $amplitude->sendEvent($data);
+
             return true;
         }
 
         return false;
+    }
+
+    public function enable($force_all = false)
+    {
+
+        $data = [
+            'events' => [
+                "event_type" => "plugin activated",
+                "user_properties" => [
+                    "activated" => true,
+                    "source" => 'Setup',
+//                    "category" => 'Setup',
+                ],
+            ],
+        ];
+        $amplitude = Amplitude::getInstance();
+        $amplitude->sendEvent($data);
+
+        return parent::enable($force_all);
+    }
+
+    public function disable($force_all = false)
+    {
+
+        $data = [
+            'events' => [
+                "event_type" => "plugin deactivated",
+                "user_properties" => [
+                    "deactivated" => true,
+                    "source" => 'Setup',
+//                    "category" => 'Setup',
+                ],
+            ],
+        ];
+
+        $amplitude = Amplitude::getInstance();
+        $amplitude->sendEvent($data);
+
+        return parent::disable($force_all);
     }
 
     public function hookDisplayAdminAfterHeader()
@@ -209,6 +263,19 @@ class BluePayment extends PaymentModule
 
             Configuration::deleteByName($this->name_upper.'_SHARED_KEY');
             Configuration::deleteByName($this->name_upper.'_SERVICE_PARTNER_ID');
+
+            $data = [
+                'events' => [
+                    "event_type" => "plugin deinstalled",
+                    "event_properties" => [
+                        "deactivated" => true,
+                        "source" => 'Installation'
+                    ],
+                ],
+            ];
+
+            $amplitude = Amplitude::getInstance();
+            $amplitude->sendEvent($data);
 
             return true;
         }
@@ -1311,12 +1378,8 @@ class BluePayment extends PaymentModule
         $values_array_filter = array_filter($values_array);
 
         $comma_separated = implode(',', $values_array_filter);
-
         $replaced = str_replace(',', HASH_SEPARATOR, $comma_separated);
-        Configuration::updateValue(
-            $this->name_upper.'_'.time(),
-            $replaced.'|||'.hash(Gateway::HASH_SHA256, $replaced)
-        );
+
         return hash(Gateway::HASH_SHA256, $replaced);
     }
 

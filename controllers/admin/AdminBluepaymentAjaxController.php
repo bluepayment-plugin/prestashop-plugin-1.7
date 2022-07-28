@@ -64,17 +64,40 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
             $sharedKey = [];
 
             foreach ($this->module->getSortCurrencies() as $currency) {
-                $serviceId[$currency['iso_code']] =
-                    Tools::getValue($this->module->name_upper.'_SERVICE_PARTNER_ID_'.$currency['iso_code']);
-                $sharedKey[$currency['iso_code']] =
-                    Tools::getValue($this->module->name_upper.'_SHARED_KEY_'.$currency['iso_code']);
+
+                $parseServiceId = Tools::getValue($this->module->name_upper.'_SERVICE_PARTNER_ID_'.$currency['iso_code']);
+                $parseHashKey = Tools::getValue($this->module->name_upper.'_SHARED_KEY_'.$currency['iso_code']);
+//
+                if($parseServiceId && $parseHashKey ) {
+                    $api = new BlueAPI();
+                    $connect_status = $api->isConnectedAPI($parseServiceId, $parseHashKey);
+                    $status = $connect_status ? "authorization completed" : "authorization failed";
+
+                    PrestaShopLogger::addLog($status . ' ' .$currency['iso_code'], 4);
+
+                    $data = [
+                        'events' => [
+                            "event_type" => $status,
+                            "event_properties" => [
+                                "currency" => $currency['iso_code'],
+                                "source" => 'Setup'
+                            ],
+                        ],
+                    ];
+
+                    $amplitude = Amplitude::getInstance();
+                    $amplitude->sendEvent($data);
+
+                }
+
+                $serviceId[$currency['iso_code']] = $parseServiceId;
+                $sharedKey[$currency['iso_code']] = $parseHashKey;
             }
 
             Configuration::updateValue($this->module->name_upper.'_PAYMENT_NAME', $paymentName);
             Configuration::updateValue($this->module->name_upper.'_PAYMENT_GROUP_NAME', $paymentGroupName);
             Configuration::updateValue($this->module->name_upper.'_SERVICE_PARTNER_ID', serialize($serviceId));
             Configuration::updateValue($this->module->name_upper.'_SHARED_KEY', serialize($sharedKey));
-
 
 
             $gateway = new BlueGateway();

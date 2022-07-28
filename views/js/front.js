@@ -137,6 +137,8 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 
 			createMainFrame(getAllPaymentsMethodBM());
 
+			openDescription();
+
 			initSlideshows();
 			getClauses();
 		}, 50);
@@ -249,6 +251,60 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 			}, false)
 		}
 	}
+
+
+
+	function openDescription() {
+		document.querySelectorAll('[data-toggle=modal]').forEach((element) => {
+			element.addEventListener('click', () => {
+
+				AllResetState();
+
+				console.log(element);
+
+				const elm = element.getAttribute('data-name');
+
+				const paymentName = document.querySelector('[data-payment-name='+ elm +']');
+				const paymentDesc = document.querySelector('[data-payment-desc='+ elm +']');
+
+
+				document.querySelectorAll('.js-additional-information').forEach((element1) => {
+					console.log(element1);
+					element1.classList.remove('active');
+					element1.style.display = 'none';
+				});
+
+
+
+				paymentName.classList.add('active');
+				paymentDesc.classList.add('active');
+				paymentDesc.style.display = 'block';
+
+
+
+
+
+
+
+			});
+		});
+
+
+
+
+
+		document.querySelectorAll('[data-dismiss=modal]').forEach((element) => {
+			element.addEventListener('click', () => {
+				const elm = element.getAttribute('data-name');
+				document.querySelector('[data-payment-name='+ elm +']').classList.remove('active');
+				document.querySelector('[data-payment-desc='+ elm +']').classList.remove('active');
+				document.querySelector('[data-payment-desc='+ elm +']').style.display = 'none';
+			});
+		});
+
+	}
+
+
 
 
 	function createSelectedPaymentWrapElement(item) {

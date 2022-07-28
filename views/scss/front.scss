@@ -458,14 +458,29 @@ body#checkout section.checkout-step .payment-options {
 	  cursor: pointer;
 
 	  img {
-		max-width: 100px;
 		padding-right: 25px;
 		width: 75px;
+		height: auto;
 	  }
 
 	  span {
 		order: 3;
-		font-weight: 600;
+	  }
+
+	  span.bm-promo-desc {
+		margin-top: 3px;
+		display: block;
+		font-weight: 400;
+		font-size: 13px;
+
+		&--info {
+		  margin-top: 9px;
+		  color: #767676;
+		  display: block;
+		  font-weight: 400;
+		  font-size: 12px;
+		}
+
 	  }
 
 	}
@@ -676,6 +691,11 @@ body#checkout section.checkout-step .payment-options .custom-radio {
 .bm-fade {
   transition: opacity .4s cubic-bezier(.65,.05,.36,1);
   opacity: 0;
+
+  &.in {
+	transition: opacity .4s cubic-bezier(.65,.05,.36,1);
+	opacity: 1;
+  }
 
   &.bm-in {
 	transition: opacity .4s cubic-bezier(.65,.05,.36,1);

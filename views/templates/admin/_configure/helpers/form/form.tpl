@@ -13,6 +13,51 @@
  * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
+
+
+
+{literal}
+<script type="text/javascript">
+
+	{/literal}
+	var aplitudeUserId = '{$amplitude_user_id}';
+	{literal}
+
+	(function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
+    ;r.type="text/javascript"
+    ;r.integrity="sha384-piO8kfwxl9OAS2doXzmrLEai7u7SSevgU0P09hOnRm8ZjFfhZbHCudfgSxdTMd/s"
+    ;r.crossOrigin="anonymous";r.async=true
+    ;r.src="https://cdn.amplitude.com/libs/amplitude-8.18.2-min.gz.js"
+    ;r.onload=function(){if(!e.amplitude.runQueuedFunctions){console.log(
+    "[Amplitude] Error: could not load SDK")}};var s=t.getElementsByTagName("script"
+    )[0];s.parentNode.insertBefore(r,s);function i(e,t){e.prototype[t]=function(){
+    this._q.push([t].concat(Array.prototype.slice.call(arguments,0)));return this}}
+	var o=function(){this._q=[];return this};var a=["add","append","clearAll",
+		"prepend","set","setOnce","unset","preInsert","postInsert","remove"];for(
+		var c=0;c<a.length;c++){i(o,a[c])}n.Identify=o;var l=function(){this._q=[]
+    ;return this};var u=["setProductId","setQuantity","setPrice","setRevenueType",
+		"setEventProperties"];for(var p=0;p<u.length;p++){i(l,u[p])}n.Revenue=l;var d=[
+		"init","logEvent","logRevenue","setUserId","setUserProperties","setOptOut",
+		"setVersionName","setDomain","setDeviceId","enableTracking",
+		"setGlobalUserProperties","identify","clearUserProperties","setGroup",
+		"logRevenueV2","regenerateDeviceId","groupIdentify","onInit","onNewSessionStart"
+		,"logEventWithTimestamp","logEventWithGroups","setSessionId","resetSessionId",
+		"getDeviceId","getUserId","setMinTimeBetweenSessionsMillis",
+		"setEventUploadThreshold","setUseDynamicConfig","setServerZone","setServerUrl",
+		"sendEvents","setLibrary","setTransport"];function v(t){function e(e){
+    t[e]=function(){t._q.push([e].concat(Array.prototype.slice.call(arguments,0)))}}
+	for(var n=0;n<d.length;n++){e(d[n])}}v(n);n.getInstance=function(e){e=(
+    !e||e.length===0?"$default_instance":e).toLowerCase();if(
+    !Object.prototype.hasOwnProperty.call(n._iq,e)){n._iq[e]={_q:[]};v(n._iq[e])}
+    return n._iq[e]};e.amplitude=n})(window,document);
+
+	// amplitude.getInstance().init(
+	// 	"3df98a3ac8e0efd57fbe86f86c27b488"
+	// 	,aplitudeUserId
+	// )
+</script>
+{/literal}
+
 <div class="bm-menu">
 	<ul class="nav nav-pills">
         {$tabk = 0}
@@ -91,7 +136,9 @@
 
                 {if $f == 0}
 				<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
+
                     {include file="./benefits.tpl"}
+                    {include file="./benefits2.tpl"}
 
                     {elseif $f == 2}
 					<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
@@ -368,6 +415,27 @@
 					}
 				});
 			}
+
+
+			$('.bm-menu li a').on('click', function (e) {
+				if(e.currentTarget.id === 'tab_rule_link_0') {
+					// amplitude.getInstance().logEvent('authentication page viewed');
+				} else if (e.currentTarget.id === 'tab_rule_link_2') {
+					// amplitude.getInstance().logEvent('payment settings viewed');
+				} else if (e.currentTarget.id === 'tab_rule_link_5') {
+					// amplitude.getInstance().logEvent('analitics page viewed');
+				}
+			});
+
+			$('a[data-amplitude="true"]').on('click', function (e) {
+				var event = $(this).data('amplitude-event');
+				// amplitude.getInstance().logEvent(event);
+			});
+
+			$('#BLUEPAYMENT_STATUS_WAIT_PAY_ID, #BLUEPAYMENT_STATUS_ACCEPT_PAY_ID, #BLUEPAYMENT_STATUS_ERROR_PAY_ID').on('change', function (e) {
+				// amplitude.getInstance().logEvent('payments statuses updated');
+			});
+
 		</script>
     {/if}
 

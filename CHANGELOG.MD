@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.7.5.1] 9.05.2022
+## [2.7.6] 9.06.2022
 - Fixed bugs in older version prestashop
 
 ## [2.7.4] 2.05.2022

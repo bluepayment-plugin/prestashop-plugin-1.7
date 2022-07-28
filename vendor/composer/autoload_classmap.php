@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Amplitude' => $baseDir . '/src/Amplitude.php',
     'AnalyticsTracking' => $baseDir . '/src/AnalyticsTracking.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'BlueAPI' => $baseDir . '/src/BlueAPI.php',

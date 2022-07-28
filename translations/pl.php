@@ -107,6 +107,13 @@ $_MODULE['<{bluepayment}prestashop>container_list_89c496311905ecb848c5058532fd09
 $_MODULE['<{bluepayment}prestashop>container_list_d80da90ed7ec8769245b3a2aa1009037'] = 'Kod BLIK na stronie poza sklepem';
 $_MODULE['<{bluepayment}prestashop>container_list_41e555ccc8668da66e594f02df12723e'] = '(zalecany jeśli korzystasz z modułu typu “One page checkout”)';
 $_MODULE['<{bluepayment}prestashop>redirect-info_b61af6ac16462b20dd4b710c3ed592e2'] = 'Rekomendujemy pozostawienie opcji bez przekierowania. Jeśli korzystasz z modułu typu “One page checkout”, zalecamy ustawić przekierowanie na dedykowaną stronę płatności poza Twoim sklepem.';
+$_MODULE['<{bluepayment}prestashop>benefits2_cbd117d597d081dd492e049769f8c802'] = 'JAK ZACZĄĆ?';
+$_MODULE['<{bluepayment}prestashop>benefits2_f44cf8f8f2bd2b37850107f3e38ee067'] = 'Załóż darmowe konto  w serwisie.';
+$_MODULE['<{bluepayment}prestashop>benefits2_d9776f0775997b2e698c6975420b5c5d'] = 'Zarejestruj się';
+$_MODULE['<{bluepayment}prestashop>benefits2_9ddea5885a31ff234170c4db2af53e6d'] = 'Podaj dane Twojej firmy i potwierdź je przelewem weryfikacyjnym.';
+$_MODULE['<{bluepayment}prestashop>benefits2_6c559d21dd59f7d3bcecd7d753c5b817'] = 'Skonfiguruj płatności w swoim sklepie.';
+$_MODULE['<{bluepayment}prestashop>benefits2_d59048f21fd887ad520398ce677be586'] = 'Dowiedz się więcej';
+$_MODULE['<{bluepayment}prestashop>benefits2_8d409a78343915d3629a929856070783'] = 'o wdrożeniu płatności w Twoim sklepie.';
 $_MODULE['<{bluepayment}prestashop>notification-info_7ae6e99bd015783094c5c8e9e6281764'] = 'Identyfikator serwisu i klucz współdzielony dla środowiska testowego różnią się od danych produkcyjnych.';
 $_MODULE['<{bluepayment}prestashop>notification-info_93336e0bc26854e89a291155e14f90ba'] = 'Żeby uzyskać dane do środowiska testowego,';
 $_MODULE['<{bluepayment}prestashop>notification-info_3aaa356390ac79bd43abad7e49ad70ee'] = 'skontaktuj się z nami.';

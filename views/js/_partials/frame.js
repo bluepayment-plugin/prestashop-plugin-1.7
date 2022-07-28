@@ -124,10 +124,16 @@ export function createPaymentGroup() {
 
 	getAllPaymentsMethodBM('bm-payment__promo').map((item) => {
 		const label = item.querySelector('.bm-promo-label');
+		const container = getPaymentContainer(getIdElement(item));
 		if(label !== null) {
-			const container = getPaymentContainer(getIdElement(item));
-			return container.appendChild(label);
+			container.appendChild(label);
 		}
+
+		const desc = item.querySelector('.bm-promo-desc');
+		if(desc !== null) {
+			container.querySelector('label span').appendChild(desc);
+		}
+
 		return false;
 	});
 
