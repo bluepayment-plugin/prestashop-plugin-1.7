@@ -51,7 +51,11 @@ Po pozytywnej weryfikacji przez Blue Media, płatności online zostaną aktywowa
 
 Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfiguracji modułu.
 
+<<<<<<< HEAD
 ![Konfiguracja](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/konfiguracja-modulu.png)
+=======
+![Konfiguracja](https://raw.githubusercontent.com/studiodev88/bminstr/main/img/konfiguracja-modulu.png)
+>>>>>>> df2bccb9f38a6376d8c4a7b460ce67f1d58daee8
 
 ## Konfiguracja
 
@@ -70,12 +74,20 @@ Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfigura
 ### Konfiguracja modułu
 
 1) Przejdź do zakładki **Moduły > Moduły i usługi** (lub **Menedżer modułów** – w zależności od wersji sklepu) i wybierz z listy modułów kategorię: **Płatność** (lub wyszukaj moduł za pomocą wyszukiwarki).
+<<<<<<< HEAD
 2) Kliknij przycisk Konfiguruj w bloku o nazwie **Płatności Blue Media** i uzupełnij wszystkie dane (otrzymasz je od nas). Jeżeli przycisk **Konfiguruj** nie jest widoczny – należy ponownie zainstalować moduł.
+=======
+2) Kliknij przycisk **Konfiguruj** w bloku o nazwie **Płatności Blue Media** i uzupełnij wszystkie dane (otrzymasz je od nas). Jeżeli przycisk **Konfiguruj** nie jest widoczny – należy ponownie zainstalować moduł.
+>>>>>>> df2bccb9f38a6376d8c4a7b460ce67f1d58daee8
 3) Żeby uzyskać od nas **Identyfikator serwisu partnera** oraz **Klucz współdzielony** – prześlij do nas adresy do komunikacji między sklepem a bramką płatniczą:
 - http(s)://domena_sklepu.pl/module/bluepayment/back
 - http(s)://domena_sklepu.pl/module/bluepayment/status
 
+<<<<<<< HEAD
 ![Ustawienia](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/konfiguracja-modulu.png)
+=======
+![Ustawienia](https://raw.githubusercontent.com/studiodev88/bminstr/main/img/konfiguracja-modulu.png)
+>>>>>>> df2bccb9f38a6376d8c4a7b460ce67f1d58daee8
 
 ## Ustawienia
 ### Zakładka uwierzytelnianie
@@ -84,9 +96,15 @@ Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfigura
 2. Identyfikator serwisu – składa się tylko z cyfr i jest inny dla każdego sklepu (uzyskasz go od Blue Media).
 3. Klucz współdzielony – służy do weryfikacji komunikacji z bramką płatności. Zawiera cyfry i małe litery. Nie należy go udostępniać publicznie (uzyskasz go od Blue Media).
 
+<<<<<<< HEAD
 Jeśli masz więcej niż jedną walutę w sklepie, to pola Identyfikator i Klucz współdzielony będą powielone, żeby można było je przypisać do każdej z walut.
 
 ### Zakładka płatności
+=======
+Jeśli masz więcej niż jedną walutę w sklepie, to pola **Identyfikator** i **Klucz współdzielony** będą powielone, żeby można było je przypisać do każdej z walut. 
+
+### Zakładka płatności 
+>>>>>>> df2bccb9f38a6376d8c4a7b460ce67f1d58daee8
 1. Pokazuj metody płatności w sklepie – gdy opcja jest włączona, klient zobaczy wszystkie dostępne metody płatności (np. BLIK, przelew internetowy, itp.) już na stronie sklepu. Dzięki temu łatwiej i szybciej wybierze tę dogodną dla siebie.
 2. Nazwa modułu płatności w sklepie – jak ma zostać nazwana płatność w której wybieramy bank, za pomocą którego płaci klient.
 3. Lista kanałów płatności – wyświetlona jest lista dostępnych bramek, pozwala na ustawianie kolejności banków metodą 'przeciągnij i upuść'.
@@ -96,8 +114,13 @@ Jeśli masz więcej niż jedną walutę w sklepie, to pola Identyfikator i Klucz
 - Płatność zatwierdzona – status zamówienia w sklepie – ustawiany po potwierdzeniu płatności.
 - Płatność nieudana – status ustawiany w przypadku niepowodzenia płatności lub gdy płatności nie została zrealizowana przez dłuży czas (czas ten ustalamy dla każdego sklepu indywidualnie).
 
+<<<<<<< HEAD
 ### Zakładka analityka
 Rozszerzyliśmy możliwości analityczne modułu, poprzez podłączenie dodatkowych zdarzeń w Google Analytics. Żeby z nich korzystać, należy dodać Identyfikator konta Google w widocznym poniżej polu.
+=======
+### Zakładka analityka 
+Rozszerzyliśmy możliwości analityczne modułu, poprzez podłączenie dodatkowych zdarzeń w Google Analytics. Żeby z nich korzystać, należy dodać **Identyfikator konta Google** w widocznym poniżej polu.
+>>>>>>> df2bccb9f38a6376d8c4a7b460ce67f1d58daee8
 
 Dzięki połączeniu możesz dowiedzieć się m.in. jaka jest konwersja poszczególnych metod płatności lub jak wygląda lejek sprzedażowy na etapie płatności.
 
@@ -125,8 +148,13 @@ Powiadomienia o zmianie statusu płatności wysyłane są w zależności od konf
 
 ## Wygląd kanałów płatności
 
+<<<<<<< HEAD
 - Metody płatności obsługiwane Blue Media są zgrupowane i zaprezentowane w
   estetyczny, nowoczesny sposób:
+=======
+- Metody płatności obsługiwane Blue Media są zgrupowane i zaprezentowane w 
+estetyczny, nowoczesny sposób:
+>>>>>>> df2bccb9f38a6376d8c4a7b460ce67f1d58daee8
 
 ![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_front.png)
 - Wybór metody płatności typu przelew internetowy lub wirtualny portfel jest bardzo prosty, dzięki wdrożeniu wygodnego okienka:
