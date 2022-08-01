@@ -94,11 +94,11 @@ let config = {
 	},
 	plugins: [
 		new MiniCssExtractPlugin({filename: path.join('..', 'css', '[name].css')}),
-		// new webpack.BannerPlugin({
-		// 	banner: METADATA,
-		// 	raw: true,
-		// 	entryOnly: true,
-		// }),
+		new webpack.BannerPlugin({
+			banner: METADATA,
+			raw: true,
+			entryOnly: true,
+		}),
 	]
 };
 
@@ -155,7 +155,7 @@ if (process.env.NODE_ENV === 'production') {
 	}
 }
 
-config.mode = 'development';
-// config.mode = 'production';
+// config.mode = 'development';
+config.mode = 'production';
 
 module.exports = config;

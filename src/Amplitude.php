@@ -21,18 +21,22 @@ class Amplitude
     private $api_key = '3df98a3ac8e0efd57fbe86f86c27b488';
     private static $instance;
 
-    private function __construct() {}
-    private function __clone() {}
+    private function __construct()
+    {
+    }
+
+    private function __clone()
+    {
+    }
 
     public static function getInstance()
     :Amplitude
     {
-        if(self::$instance === null) {
+        if (self::$instance === null) {
             self::$instance = new Amplitude();
         }
         return self::$instance;
     }
-
 
     public static function getUserId()
     :string
@@ -41,27 +45,24 @@ class Amplitude
     }
 
     public function sendEvent(array $data = [])
-    :array
     {
-//        $data['api_key'] = $this->api_key;
-//        $data['events']['time'] = time();
-//        $data['events']['user_id'] = self::getUserId();
-//        $data['events']['os_name'] = 'Prestashop';
-//        $data['events']['os_version'] = _PS_VERSION_;
-//
-//        $payload = json_encode($data);
-//        $post_url = 'https://api2.amplitude.com/2/httpapi';
-//
-//        $ch = curl_init($post_url);
-//        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//        curl_setopt($ch, CURLOPT_POST, true);
-//        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-//        $result = curl_exec($ch);
-//        curl_close($ch);
+        $data['api_key'] = $this->api_key;
+        $data['events']['time'] = time();
+        $data['events']['user_id'] = self::getUserId();
+        $data['events']['os_name'] = 'Prestashop';
+        $data['events']['os_version'] = _PS_VERSION_;
 
-//        return $result;
+        $payload = json_encode($data);
+        $post_url = 'https://api2.amplitude.com/2/httpapi';
 
-        return [];
+        $ch = curl_init($post_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
     }
 }

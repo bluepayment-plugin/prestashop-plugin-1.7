@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{bluepayment}prestashop>bluepayment_3bbf739cedbf82f9f3790f9a351cd363'] = 'BM online payments';
 $_MODULE['<{bluepayment}prestashop>bluepayment_8c00d8812bd29a89eed5597a2a94ac91'] = 'The add-on handles online payments made via Blue Media payment gateway.';
 $_MODULE['<{bluepayment}prestashop>bluepayment_876f23178c29dc2552c0b48bf23cd9bd'] = 'Are you sure you want to delete the module?';

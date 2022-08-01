@@ -12,9 +12,18 @@
  */
 
 define('HASH_SEPARATOR', '|');
-define('IFRAME_MIN_AMOUNT', 100);
+define('ALIOR_MIN_AMOUNT', 50);
+define('ALIOR_MAX_AMOUNT', 7750);
 define('SMARTNEY_MIN_AMOUNT', 100);
 define('SMARTNEY_MAX_AMOUNT', 2500);
 define('BLIK_CODE_LENGTH', 6);
 define('POLISH_ISO_CODE', 'PLN');
 define('DEFAULT_PAYMENT_FORM_LANGUAGE', 'pl');
+
+
+define('GATEWAY_ID_ALIOR', 1506);
+define('GATEWAY_ID_CARD', 1500);
+define('GATEWAY_ID_GOOGLE_PAY', 1512);
+define('GATEWAY_ID_APPLE_PAY', 1513);
+define('GATEWAY_ID_SMARTNEY', 700);
+define('GATEWAY_ID_BLIK', 509);

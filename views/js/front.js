@@ -132,7 +132,6 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 	function initBM() {
 		setTimeout(function () {
 			createPaymentGroup();
-			getGatewayState();
 			radioPayments();
 
 			createMainFrame(getAllPaymentsMethodBM());
@@ -380,6 +379,9 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 				if (paymentName === 'transfer' || paymentName === 'wallet') {
 					item.querySelector('.bluepayment-gateways__radio').checked = true;
 					let val = item.querySelector('.bluepayment-gateways__radio').value;
+
+
+					console.log('key ' + key);
 
 					setGatewayState(key, val);
 					getGatewayState();

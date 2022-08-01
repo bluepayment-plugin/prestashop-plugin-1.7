@@ -17,7 +17,7 @@
 
 	<div class="bm-info">
 
-		<img class="bm-info__img" src="{$src_img|escape:'html':'UTF-8'}/blue-media.svg">
+		<img class="bm-info__img" src="{$src_img|escape:'html':'UTF-8'}/blue-media.svg" alt="Blue Media">
 		<ul class="bm-info__list">
 			<li class="bm-info__item">
                 {l s='Commission only 1.19%' mod='bluepayment'}

@@ -11,6 +11,9 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+use BlueMedia\OnlinePayments\Gateway;
+use BlueMedia\OnlinePayments\Model\Gateway as GatewayModel;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,10 +37,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         return $this->renderForm();
     }
 
-
     public function initContent()
     {
-
         if (!$this->loadObject(true)) {
             return;
         }
@@ -64,13 +65,11 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
                 $amplitude = Amplitude::getInstance();
                 $amplitude->sendEvent($data);
-
             }
         }
 
         $this->context->controller->addCSS($this->module->getPathUri().'views/css/admin/admin.css');
 
-        
         $this->content .= $this->renderForm();
 
         $gateway = new BlueGateway();
@@ -81,15 +80,53 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $this->context->smarty->assign([
             'content' => $this->content,
         ]);
-
-
     }
+
+
+    public function ajaxProcessUpdatePositions()
+    {
+        $idPosition = (int)(Tools::getValue('id'));
+        $way = (int)(Tools::getValue('way'));
+        $positions = Tools::getValue('blue_gateway_channels');
+
+        if (is_array($positions))
+            foreach ($positions as $key => $value) {
+                $pos = explode('_', $value);
+                if ((isset($pos[1]) && isset($pos[2])) && ($pos[2] == $idPosition))
+                {
+                    $position = $key + 1;
+                    break;
+                }
+            }
+
+            $GatewayChannels = new BlueGatewayChannels($idPosition);
+            if (Validate::isLoadedObject($GatewayChannels))
+            {
+                if (isset($position) && $GatewayChannels->updatePosition($idPosition, $way, $position))
+                {
+                    Hook::exec('actionBlueGatewayChannelsUpdate');
+                    die(true);
+                }
+                else
+                    die('{"hasError" : true, errors : "Can not update position"}');
+            }
+            else
+                die('{"hasError" : true, "errors" : "This can not be loaded"}');
+    }
+
+
+
 
     public function renderForm()
     {
+
         $fields_form = [];
         $id_default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
         $statuses = OrderState::getOrderStates($id_default_lang);
+        $currency = $this->context->currency;
+
+        $smartney = (bool) BlueGatewayChannels::gatewayIsActive(GATEWAY_ID_SMARTNEY, $currency->iso_code);
+        $alior = (bool) BlueGatewayChannels::gatewayIsActive(GATEWAY_ID_ALIOR, $currency->iso_code);
 
         $fields_form[0]['form'] = [
             'section' => [
@@ -129,17 +166,9 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         'module:bluepayment/views/templates/admin/_configure/helpers/form/notification-info.tpl',
                 ]
 
-
-
-
-
-
-
-
-
-
             ],
             'submit' => [
+                'save_event' => 'testing enviroment',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
@@ -163,6 +192,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
 
             'submit' => [
+                'save_event' => 'authentication',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
@@ -193,6 +223,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         ],
                     ],
                     'submit' => [
+                        'save_event' => 'authentication',
                         'title' => $this->l('Save'),
                     ],
                 ],
@@ -247,6 +278,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ],
             'submit' => [
+                'save_event' => 'payment visibility',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
@@ -268,10 +300,10 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
 
                 [
-                    'type' => 'switch',
+                    'type' => 'switch-choose',
                     'label' => $this->l('Entering BLIK in a store'),
                     'name' => $this->module->name_upper.'_BLIK_REDIRECT',
-                    'size' => 'auto',
+                    'size' => 'full',
                     'modal' => 'bm-helper-blik',
                     'values' => [
                         [
@@ -287,10 +319,10 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     ],
                 ],
                 [
-                    'type' => 'switch',
+                    'type' => 'switch-choose',
                     'label' => $this->l('Google Pay'),
                     'name' => $this->module->name_upper.'_GPAY_REDIRECT',
-                    'size' => 'auto',
+                    'size' => 'full',
                     'modal' => 'bm-helper-gpay',
                     'values' => [
                         [
@@ -307,12 +339,255 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ],
             'submit' => [
+                'save_event' => 'blik & googlepay',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
         ];
 
-        $fields_form[4]['form'] = [
+
+        if($alior || $smartney) {
+
+            $fields_form[4]['form'] = [
+                'section' => [
+                    'title' => $this->l('Payment settings')
+                ],
+                'legend' => [
+                    'title' => $this->l('PAYMENT PROMOTION'),
+                ],
+                'input' => [
+                    [
+                        'type' => 'infoheading',
+                        'name' => false,
+                        'label' => $this->l('Why promote?'),
+                    ],
+                    [
+                        'name' => false,
+                        'type' => 'description',
+                        'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/promote-icons.tpl',
+                    ],
+
+                    [
+                        'type' => 'infoheading',
+                        'name' => false,
+                        'label' => $this->l('Installment and deferred payments'),
+                    ],
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('Pay later'),
+                        'name' => $this->module->name_upper.'_PROMO_PAY_LATER',
+                        'image' => 'switcher1.png',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('Spread out in instalments'),
+                        'name' => $this->module->name_upper.'_PROMO_INSTALMENTS',
+                        'image' => 'switcher2.png',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('Matching instalments'),
+                        'name' => $this->module->name_upper.'_PROMO_MATCHED_INSTALMENTS',
+                        'image' => 'switcher3.png',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+
+                    /// kanaly
+
+                    [
+                        'type' => 'infoheading',
+                        'name' => false,
+                        'label' => $this->l('Show payment information on the site'),
+                    ],
+
+
+                    /// Opis
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('At the top of the page'),
+                        'name' => $this->module->name_upper.'_PROMO_HEADER',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('Above the footer'),
+                        'name' => $this->module->name_upper.'_PROMO_FOOTER',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('In the product list under filters'),
+                        'name' => $this->module->name_upper.'_PROMO_LISTING',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('On the product page under the buttons'),
+                        'name' => $this->module->name_upper.'_PROMO_PRODUCT',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('In the shopping cart under products'),
+                        'name' => $this->module->name_upper.'_PROMO_CART',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'switch',
+                        'label' => $this->l('On the list of payment methods'),
+                        'name' => $this->module->name_upper.'_PROMO_CHECKOUT',
+                        'size' => 'auto',
+                        'values' => [
+                            [
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Show'),
+                            ],
+                            [
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Hide'),
+                            ],
+                        ],
+                    ],
+                ],
+                'submit' => [
+                    'save_event' => 'payment promotion',
+                    'title' => $this->l('Save'),
+                    'class' => 'btn btn-primary pull-right',
+                ],
+            ];
+        } else {
+            $fields_form[4]['form'] = [
+                'section' => [
+                    'title' => $this->l('Payment settings')
+                ],
+                'legend' => [
+                    'title' => $this->l('PAYMENT PROMOTION'),
+                ],
+                'input' => [
+                    [
+                        'type' => 'infoheading',
+                        'name' => false,
+                        'label' => $this->l('Why promote?'),
+                    ],
+                    [
+                        'name' => false,
+                        'type' => 'description',
+                        'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/promote-icons.tpl',
+                    ],
+                ],
+                'submit' => [
+                    'save_event' => 'payment promotion',
+                    'title' => $this->l('Save'),
+                    'class' => 'btn btn-primary pull-right',
+                ],
+            ];
+        }
+
+
+
+        $fields_form[5]['form'] = [
             'section' => [
                 'title' => $this->l('Payment settings')
             ],
@@ -352,12 +627,13 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ],
             'submit' => [
+                'save_event' => 'payment statuses',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
         ];
 
-        $fields_form[5]['form'] = [
+        $fields_form[6]['form'] = [
             'section' => [
                 'title' => $this->l('Analitics')
             ],
@@ -372,18 +648,110 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         'module:bluepayment/views/templates/admin/_configure/helpers/form/analitics-info.tpl',
                 ],
                 [
+                    'type' => 'switch-choose',
+                    'label' => $this->l('Your version of Google Analytics'),
+                    'name' => $this->module->name_upper.'_GA_TYPE',
+                    'size' => 'full',
+                    'values' => [
+                        [
+                            'id' => 'active_on',
+                            'value' => 1,
+                            'label' => $this->l('Universal Analytics'),
+                        ],
+                        [
+                            'id' => 'active_off',
+                            'value' => 2,
+                            'label' => $this->l('Google Analytics 4'),
+                        ],
+                    ],
+                    'help' => $this->l('Indicate which version of Google Analytics you are using.'),
+                ],
+                [
                     'type' => 'text',
                     'label' => $this->l('Google Account ID'),
                     'name' => $this->module->name_upper.'_GA_TRACKER_ID',
                     'size' => 40,
-                    'help' => $this->l('In Universal Analytics, this is the "Tracking ID" (e.g. UA-000000-2). For Google Analytics 4, the feature is still being worked on.'),
+                    'help' => $this->l('In Universal Analytics, this is the "Tracking ID" (e.g. UA-000000-2). ') .
+                        ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga-id">'
+                        . $this->l('Where can I find the identifier?') . '</a>',
+                ],
+                [
+                    'type' => 'text',
+                    'label' => $this->l('Google Analytics Measurement ID 4'),
+                    'name' => $this->module->name_upper.'_GA4_TRACKER_ID',
+                    'size' => 40,
+                    'help' => $this->l('The identifier is in the format G-XXXXXXX. ')
+                        . ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga4-id">'
+                        . $this->l('Where can I find the measurement ID?') . '</a>',
+                ],
+                [
+                    'type' => 'text',
+                    'label' => $this->l('API secret '),
+                    'name' => $this->module->name_upper.'_GA4_SECRET',
+                    'size' => 40,
+                    'help' => '<a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga4-key">'
+                        . $this->l('How do I create an API secret?') . '</a>',
                 ],
             ],
             'submit' => [
+                'save_event' => 'analitics',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
         ];
+
+
+        $fields_form[7]['form'] = [
+            'section' => [
+                'title' => $this->l('Analitics')
+            ],
+            'legend' => [
+                'title' => $this->l('Events'),
+            ],
+            'input' => [
+                [
+                    'name' => '',
+                    'type' => 'description',
+                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/ga-events.tpl',
+                ],
+            ],
+        ];
+
+
+        $fields_form[8]['form'] = [
+            'section' => [
+                'title' => $this->l('Help')
+            ],
+            'legend' => [
+                'title' => $this->l('HOW TO START?'),
+            ],
+            'input' => [
+                [
+                    'name' => '',
+                    'type' => 'description',
+                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/benefits-help.tpl',
+                ],
+            ],
+        ];
+
+
+        $fields_form[9]['form'] = [
+            'section' => [
+                'title' => $this->l('Help')
+            ],
+            'legend' => [
+                'title' => $this->l('Help'),
+            ],
+            'input' => [
+                [
+                    'name' => '',
+                    'type' => 'description',
+                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/help.tpl',
+                ],
+            ],
+        ];
+
+
 
         $helper = new HelperForm();
 

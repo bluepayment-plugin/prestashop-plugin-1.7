@@ -17,15 +17,18 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_2_7_4()
 {
+
+    define("TABLE", _DB_PREFIX_.'blue_transactions');
+
     $columnExists = Db::getInstance()->executeS('SELECT COUNT(*) as `count`
        FROM information_schema.columns WHERE table_schema = "'._DB_NAME_.'"
-       AND table_name = "'._DB_PREFIX_.'blue_transactions"
+       AND table_name = "'.TABLE.'"
        AND column_name = "gtag_uid"');
 
     $sql = [];
     if (isset($columnExists[0]) && !(int)$columnExists[0]['count']) {
-        $sql[] = 'ALTER TABLE `'._DB_PREFIX_.'blue_transactions` ADD `gtag_uid` varchar(256) DEFAULT NULL AFTER `order_id`';
-        $sql[] = 'ALTER TABLE `'._DB_PREFIX_.'blue_transactions` ADD `gtag_state` int(1) DEFAULT NULL AFTER `order_id`';
+        $sql[] = 'ALTER TABLE `'.TABLE.'` ADD `gtag_uid` varchar(256) DEFAULT NULL AFTER `order_id`';
+        $sql[] = 'ALTER TABLE `'.TABLE.'` ADD `gtag_state` int(1) DEFAULT NULL AFTER `order_id`';
     }
 
     if ($sql) {

@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.7.7] 1.08.2022
+- Added Google Analytics tracking 
+- Added Amplitude tracking 
+- Added promote channels
+- Added display of tags promoting installments
+- Modified sql queries
+- Added support for payment channels from the Czech and Slovak regions
+- Fixed bugs
+- Czech and Slovak language added 
+- Added help tab in module administration
+
 ## [2.7.6] 9.06.2022
 - Fixed bugs in older version prestashop
 

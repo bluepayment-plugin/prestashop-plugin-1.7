@@ -14,21 +14,15 @@
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="aliorbank">
-	<span class="bm-promo-label">
-		{l s='NEW' mod='bluepayment'}
-	</span>
-	<span class="bm-promo-desc" style="display:none;">
-{*		Już od 10,42 x 24 raty 0% <a href="#">Sprawdź</a><br/>*}
-{*		<span class="bm-promo-desc--info">*}
-{*			Informacja o pośredniku kredytowym i kosztach kredytu.*}
-{*			<a href="#" data-toggle="modal" data-name="aliorbank" data-target="#aliorbank-desc">Pokaż</a>*}
-{*		</span>*}
+	<span class="bm-promo-desc">
+		{l s='0% or even 48 installments' mod='bluepayment'}.
+		<a target="_blank" href="https://kalkulator.raty.aliorbank.pl/init?supervisor=B776&promotionList=B">
+			{l s='Check out other installment options' mod='bluepayment'}
+		</a>
+		<br />
 	</span>
 </span>
 <section>
-    <h2 class="bm-payment__subtitle">
-        {l s='0% or even 48 installments' mod='bluepayment'}
-    </h2>
 	<p>
         {l s='We will redirect you to the bank website. After your application and positive verification, the bank will send you a loan agreement via email. You can accept it online. Average time of the whole transaction - 15 minutes.' mod='bluepayment'}
 	</p>
@@ -39,7 +33,7 @@
 		<div class="bm-modal__content">
 			<div class="bm-modal__header">
 				<h5 class="bm-modal__title">
-					Informacja o pośredniku kredytowym i kosztach kredytu
+					{l s='Information about the credit intermediary and credit costs' mod='bluepayment'}
 				</h5>
 				<button type="button" class="bm-modal__close" data-dismiss="modal"
 				        aria-label="{l s='Close' mod='bluepayment'}">
@@ -49,16 +43,13 @@
 			</div>
 
 			<div class="bm-modal__body">
-				<h3>Pośrednik kredytowy</h3>
-				<p>Blue Media S.A. jako pośrednik kredytowy współpracuje z Alior Bank S.A. Zakres umocowania:
-					prezentowanie klientom oferty kredytowej oraz przekierowanie do serwisu internetowegoAlior Bank
-					S.A., w tym do wniosku kredytowego.</p>
-				<h3>Informacja o kosztach kredytu</h3>
-				<p>Oferta kredytowa – pożyczka 0% za miesiąc: Rzeczywista Roczna Stopa Oprocentowania (RRSO) wynosi 0%,
-					kwota pożyczki netto (bez kredytowanych kosztów) 1000 zł, całkowita kwota do zapłaty 1000 zł,
-					oprocentowanie stałe 0%, całkowity koszt pożyczki 0 zł (w tym: prowizja 0 zł odsetki 0 zł), 10
-					miesięcznych równych rat w wysokości 100 zł. Kalkulacja została dokonana na dzień 29.03.2022 r. na
-					reprezentatywnym przykładzie.
+				<h3>{l s='Credit intermediary' mod='bluepayment'}</h3>
+				<p>
+					{l s='Blue Media S.A. as a credit intermediary cooperates with Alior Bank S.A. Scope of empowerment: presenting customers with a credit offer and redirecting them to the Alior Bank website S.A., including to the credit application.' mod='bluepayment'}
+				</p>
+				<h3>{l s='Information about the cost of credit' mod='bluepayment'}</h3>
+				<p>
+                    {l s='Credit offer - 0% loan for one month: The Annual Percentage Rate of Interest (APR) is 0%, net loan amount (excluding borrowed costs) PLN 1000, total amount to be paid PLN 1000, fixed interest rate 0%, total loan cost PLN 0 (including: commission PLN 0 interest PLN 0), 10 monthly equal installments of PLN 100. The calculation was made as of 29/03/2022 on a representative example. representative example.' mod='bluepayment'}
 				</p>
 			</div>
 

@@ -327,21 +327,12 @@ body#checkout section.checkout-step .payment-options {
   }
 
   .additional-information {
-	//margin-bottom: 15px;
-
-
-
 	&.active {
 	  border-bottom: 1px solid #63BB6C;
 	  border-left: 1px solid #63BB6C;
 	  border-right: 1px solid #63BB6C;
 	  padding: 0 16px 16px 16px;
-	  //margin-bottom: 15px;
-
-	  //height: auto;
-
 	}
-
   }
 
   .additional-information[data-payment-bm="true"].active {
@@ -704,12 +695,12 @@ body#checkout section.checkout-step .payment-options .custom-radio {
 }
 
 
-body#checkout section.checkout-step .payment-options .payment-option[data-payment-name="aliorbank"] {
-  border-left: 5px solid #6B113D;
-}
-body#checkout section.checkout-step .payment-options .payment-option[data-payment-name="smartney"] {
-  border-left: 5px solid #FDB840;
-}
+//body#checkout section.checkout-step .payment-options .payment-option[data-payment-name="aliorbank"] {
+//  border-left: 5px solid #6B113D;
+//}
+//body#checkout section.checkout-step .payment-options .payment-option[data-payment-name="smartney"] {
+//  border-left: 5px solid #FDB840;
+//}
 
 .payment-option[data-payment-name="smartney"] {
   .bm-promo-label {
@@ -984,10 +975,6 @@ p.bm-legals {
   .custom-radio {
 	display: none;
   }
-
-
-
-
 }
 
 
@@ -995,3 +982,86 @@ p.bm-legals {
 //  transition: opacity 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
 //  opacity: 0;
 //}
+
+
+/// Promo
+
+.bm-promo-icons {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  &--main {
+	border-top: 1px solid #F1F1F1;
+	border-bottom: 1px solid #F1F1F1;
+
+	@media only screen and (min-width: 1200px) {
+	  flex-direction: row;
+	  justify-content: space-around;
+	}
+
+  }
+
+  &--cart {
+	@media only screen and (min-width: 1200px) {
+	  flex-direction: row;
+	  justify-content: space-around;
+	}
+  }
+
+  &--product {
+
+  }
+
+  &__item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 10px 0;
+  }
+
+  &__icon {
+	margin-right: 6px;
+  }
+
+  &__label {
+	padding: 2px 5px;
+	margin-right: 6px;
+	font-weight: 700;
+	font-size: 12px;
+	line-height: 14px;
+  }
+
+  &__desc {
+	color: #000000;
+	font-weight: 500;
+	font-size: 12px;
+	display: none;
+
+	@media only screen and (min-width: 480px) {
+	  display: block;
+	}
+
+  }
+
+}
+
+.bm-pay-later {
+  background: #FDB83F;
+  color: #ffffff;
+}
+
+.bm-installments {
+  background: #6B113D;
+  color: #ffffff;
+}
+
+.bm-matched-installments {
+  background: #00B5DD;
+  color: #ffffff;
+}
+
+
+.bm-promo-product {
+
+}

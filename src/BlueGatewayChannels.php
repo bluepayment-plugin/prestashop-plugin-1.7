@@ -17,8 +17,10 @@ if (!defined('_PS_VERSION_')) {
 
 class BlueGatewayChannels extends ObjectModel implements GatewayInterface
 {
-
     private $module;
+
+    const TABLE = 'blue_gateway_channels';
+    const PRIMARY = 'id_blue_gateway_channels';
 
     public $id_blue_gateway_channels;
     public $gateway_status;
@@ -33,8 +35,8 @@ class BlueGatewayChannels extends ObjectModel implements GatewayInterface
     public $gateway_logo_url;
 
     public static $definition = [
-        'table' => 'blue_gateway_channels',
-        'primary' => 'id_blue_gateway_channels',
+        'table' => self::TABLE,
+        'primary' => self::PRIMARY,
         'fields' => [
             'id_blue_gateway_channels' => [
                 'type' => self::TYPE_INT,
@@ -101,11 +103,8 @@ class BlueGatewayChannels extends ObjectModel implements GatewayInterface
 
     public function syncGateway($apiGateways, $currency, $position = 0)
     {
-        PrestaShopLogger::addLog('sync gateway channels', 1);
 
         if ($apiGateways) {
-            PrestaShopLogger::addLog('BM - Sync gateway channels', 1);
-
             /// Reset position by currency
             $position = 0;
 
@@ -177,24 +176,49 @@ class BlueGatewayChannels extends ObjectModel implements GatewayInterface
     }
 
     private function getPaymentsIcon()
+    :string
     {
         return $this->module->images_dir.'payments.png';
     }
 
     private function getCardsIcon()
+    :string
     {
         return $this->module->images_dir.'cards.png';
     }
 
-    public function updatePosition($id, $way, $position)
+
+    public function getChannelsPositions($id, $currencyId, $shopId)
     {
-        if ($result = Db::getInstance()->executeS(
-            'SELECT `id_blue_gateway_channels`, `position` FROM `'._DB_PREFIX_.'blue_gateway_channels` 
-            WHERE `id_blue_gateway_channels` = '.(int)$id.' 
-            ORDER BY `position` ASC'
-        )) {
-            // check if dragged row is in the table
+        $q = new \DbQuery();
+        $q->select('gc.id_blue_gateway_channels, gc.position');
+        $q->from(self::TABLE, 'gc');
+        $q->leftJoin('blue_gateway_channels_shop', 'gcs', 'gcs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
+//        $q->where('gc.id_blue_gateway_channels = "'.(int)($id).'"');
+        $q->where('gc.gateway_currency = "'.pSql($currencyId).'"');
+
+        if (Shop::isFeatureActive()) {
+            $q->where('gcs.id_shop = ' . (int)$shopId);
+        }
+
+        $q->orderBy('gc.position ASC');
+        $result = Db::getInstance()->executeS($q);
+
+        return $result;
+    }
+
+
+    public function updatePosition($id, $way, $position)
+    :bool
+    {
+        $currency = Context::getContext()->currency->iso_code;
+        $id_shop = Context::getContext()->shop->id;
+
+        $result = $this->getChannelsPositions($id, $currency, $id_shop);
+
+        if ($result) {
             $movedBlock = false;
+
             foreach ($result as $block) {
                 if ((int)$block['id_blue_gateway_channels'] == (int)$id) {
                     $movedBlock = $block;
@@ -217,13 +241,16 @@ class BlueGatewayChannels extends ObjectModel implements GatewayInterface
         return false;
     }
 
+
+
+
     public static function getLastAvailablePosition()
     {
 
         $id_shop = Context::getContext()->shop->id;
 
         $q = new DbQuery();
-        $q->from('blue_gateway_channels');
+        $q->from(self::TABLE);
         $q->orderBy('position DESC');
         if (Shop::isFeatureActive()) {
             $q->where('gs.id_shop = '.(int)$id_shop);
@@ -240,7 +267,7 @@ class BlueGatewayChannels extends ObjectModel implements GatewayInterface
         $id_shop = Context::getContext()->shop->id;
 
         $q = new DbQuery();
-        $q->from('blue_gateway_channels', 'gc');
+        $q->from(self::TABLE, 'gc');
         $q->leftJoin('blue_gateway_channels_shop', 'gs', 'gs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
         $q->where('gc.gateway_id = '.(int)$gatewayId);
         $q->where('gc.gateway_currency = "'.pSql($currency).'"');
@@ -259,6 +286,7 @@ class BlueGatewayChannels extends ObjectModel implements GatewayInterface
     }
 
     private static function getByGatewayIdAndCurrency($gatewayId, $currency)
+    :BlueGatewayChannels
     {
         return new BlueGatewayChannels(self::gatewayIsActive($gatewayId, $currency, true));
     }

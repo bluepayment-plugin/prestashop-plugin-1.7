@@ -20,7 +20,6 @@ if (!defined('_PS_VERSION_')) {
 
 class CustomStatus
 {
-
     public static function addOrderStates(int $language_id, $base_name)
     {
         $mails_languages = ['pl', 'en'];
@@ -51,14 +50,6 @@ class CustomStatus
                     _PS_MODULE_DIR_ . '/bluepayment/mails/' . $l . '/bluemedia_payment_error.txt',
                     _PS_ROOT_DIR_ . '/mails/' . $l . '/bluemedia_payment_error.txt'
                 );
-                //copy(
-                //_PS_MODULE_DIR_ . '/bluepayment/mails/' . $l . '/bluemedia_refund.html',
-                // _PS_ROOT_DIR_ . '/mails/' . $l . '/bluemedia_refund.html'
-                //);
-                //copy(
-                //_PS_MODULE_DIR_ . '/bluepayment/mails/' . $l . '/bluemedia_refund.txt',
-                // _PS_ROOT_DIR_ . '/mails/' . $l . '/bluemedia_refund.txt'
-                //);
             }
         }
 
@@ -67,7 +58,6 @@ class CustomStatus
         //common features for both statuses
         $module_name = 'bluepayment';
         $unremovable = false;
-
 
         //features for bluemedia pending status
         $pending_color = '#4997F5';
@@ -93,14 +83,6 @@ class CustomStatus
         $payment_error_name_en = "Blue Media: payment error";
         $payment_error_name_pl = "Blue Media: błąd płatności";
 
-        //features for bluemedia payment error status
-        //        $refund_color = '#dedede';
-        //        $refund_template = 'bluemedia_refund';
-        //        $refund_send_email = true;
-        //        $refund_paid = false;
-        //        $refund_name_en = "Blue Media: refund";
-        //        $refund_name_pl = "Blue Media: zwrot płatności";
-
 
         if (!CustomStatus::checkIfStateExists($pending_name_pl, $language_id)
             || CustomStatus::checkIfStateExists($pending_name_en, $language_id)) {
@@ -120,7 +102,6 @@ class CustomStatus
                     $pending->name[$language['id_lang']] = $pending_name_en;
                 }
             }
-
 
             $pending->add();
             $stateId = $pending->id;
@@ -176,30 +157,6 @@ class CustomStatus
             $stateId = $payment_error->id;
             Configuration::updateValue($base_name . '_STATUS_ERROR_PAY_ID', $stateId);
         }
-        //        if (!CustomStatus::checkIfStateExists($refund_name_pl, $language_id)
-        //            || CustomStatus::checkIfStateExists($refund_name_en, $language_id)) {
-        //            // create new completed state
-        //            $refund = new OrderState();
-        //            $refund->module_name = $module_name;
-        //            $refund->template = $refund_template;
-        //            $refund->invoice = false;
-        //            $refund->unremovable = 1;
-        //            $refund->color = $refund_color;
-        //            $refund->send_email = $refund_send_email;
-        //            $refund->paid = $refund_paid;
-        //
-        //            foreach ($languages as $language) {
-        //                if ($language['iso_code'] == "pl") {
-        //                    $refund->name[$language['id_lang']] = $refund_name_pl;
-        //                } else {
-        //                    $refund->name[$language['id_lang']] = $refund_name_en;
-        //                }
-        //            }
-        //
-        //            $refund->add();
-        //            $stateId = $refund->id;
-        //            Configuration::updateValue($base_name . '_STATUS_REFUND_PAY_ID', $stateId);
-        //        }
     }
 
     private static function checkIfStateExists(string $name, $language_id)
@@ -218,15 +175,13 @@ class CustomStatus
 
     public static function removeOrderStates()
     {
-        Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'order_state` WHERE module_name=\'bluepayment\'');
-        Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'order_state_lang` WHERE name LIKE \'%Blue%\'');
+        Db::getInstance()->delete('order_state', 'module_name = bluepayment');
+        Db::getInstance()->delete('order_state_lang', 'name LIKE \'%Blue%\'');
     }
 
     public static function getPendingStateID($language_id)
     {
-
         $states = OrderState::getOrderStates($language_id);
-
         foreach ($states as $state) {
             if ($state['template'] == 'bluemedia_pending') {
                 return $state["id_order_state"];
@@ -237,9 +192,7 @@ class CustomStatus
 
     public static function getConfirmedStateID($language_id)
     {
-
         $states = OrderState::getOrderStates($language_id);
-
         foreach ($states as $state) {
             if ($state['template'] == 'bluemedia_completed') {
                 return $state["id_order_state"];

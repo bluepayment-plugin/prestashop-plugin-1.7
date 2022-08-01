@@ -11,6 +11,8 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+declare(strict_types = 1);
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -20,13 +22,20 @@ class AnalyticsTracking
 
     private $tracked_id;
     private $ga_session;
+    private $api_secret;
 
-    public function __construct($tracked_id, $ga_session)
+    public function __construct($tracked_id, $ga_session, $api_secret = null)
     {
         $this->tracked_id = $tracked_id;
         $this->ga_session = $ga_session;
+        $this->api_secret = $api_secret;
     }
 
+    /**
+     * Handle cid _ga cookie
+     *
+     * @return false|mixed
+     */
     public function gaParseCookie()
     {
         if (!$this->ga_session) {
@@ -44,6 +53,13 @@ class AnalyticsTracking
         return $contents['cid'];
     }
 
+    /**
+     * Data send with curl
+     *
+     * @param array $data
+     *
+     * @return bool|string
+     */
     public function gaSendData(array $data)
     {
         $post_url = 'https://www.google-analytics.com/collect?';
@@ -55,30 +71,52 @@ class AnalyticsTracking
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
         $result = curl_exec($ch);
         curl_close($ch);
 
         return $result;
     }
 
-    public function gaSendPageView($hostname = null, $page = null, $title = null)
+    /**
+     * Data send with curl
+     *
+     * @param array $data
+     *
+     * @return bool|string
+     */
+    public function ga4SendData($data)
     {
-        $data = [
-            'v' => 1,
-            'tid' => $this->tracked_id,
-            'cid' => $this->gaParseCookie(),
-            't' => 'pageview',
-            'dh' => $hostname,
-            'dp' => $page,
-            'dt' => $title
-        ];
-        $this->gaSendData($data);
+        $post_url = 'https://www.google-analytics.com/mp/collect?measurement_id='
+            .$this->tracked_id.'&api_secret='.$this->api_secret;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $post_url);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
     }
 
-    public function gaSendEvent($category = null, $action = null, $label = null, $products = [])
+    /**
+     * Tracking Universal Ga
+     *
+     * @param $category
+     * @param $action
+     * @param $label
+     * @param array $products
+     *
+     * @return bool
+     */
+    public function gaSendEvent($category = null, $action = null, $label = null, array $products = [])
+    :bool
     {
-
         $data = [
             'v' => 1,
             'tid' => $this->tracked_id,
@@ -91,5 +129,26 @@ class AnalyticsTracking
 
         $data_merge = array_merge($data, $products);
         $this->gaSendData($data_merge);
+
+        return (true);
+    }
+
+    /**
+     * Tracking GA 4
+     * @param array $products
+     *
+     * @return bool
+     */
+    public function ga4SendEvent(array $products = [])
+    :bool
+    {
+        $data = [
+            'client_id' => $this->gaParseCookie()
+        ];
+
+        $data_merge = array_merge($data, $products);
+        $this->ga4SendData((json_encode($data_merge, JSON_PRETTY_PRINT)));
+
+        return (true);
     }
 }

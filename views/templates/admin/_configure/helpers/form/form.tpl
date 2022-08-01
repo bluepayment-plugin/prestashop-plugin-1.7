@@ -13,16 +13,11 @@
  * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-
-
-
 {literal}
 <script type="text/javascript">
-
 	{/literal}
 	var aplitudeUserId = '{$amplitude_user_id}';
 	{literal}
-
 	(function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
     ;r.type="text/javascript"
     ;r.integrity="sha384-piO8kfwxl9OAS2doXzmrLEai7u7SSevgU0P09hOnRm8ZjFfhZbHCudfgSxdTMd/s"
@@ -50,11 +45,10 @@
     !e||e.length===0?"$default_instance":e).toLowerCase();if(
     !Object.prototype.hasOwnProperty.call(n._iq,e)){n._iq[e]={_q:[]};v(n._iq[e])}
     return n._iq[e]};e.amplitude=n})(window,document);
-
-	// amplitude.getInstance().init(
-	// 	"3df98a3ac8e0efd57fbe86f86c27b488"
-	// 	,aplitudeUserId
-	// )
+	amplitude.getInstance().init(
+		"3df98a3ac8e0efd57fbe86f86c27b488"
+		,aplitudeUserId
+	)
 </script>
 {/literal}
 
@@ -66,7 +60,7 @@
 
             {if $fkey === 0}
 				<li class="nav-item">
-					<a href="tab_rule_{$tabk}" class="nav-link tab " id="tab_rule_link_{$tabk}"
+					<a href="tab_rule_{$tabk}" data-hash="authorization" class="nav-link tab " id="tab_rule_link_{$tabk}"
 					   href="javascript:displaythemeeditorTab('{$tabk}');">
                         {$fvalue.form.section.title}
 					</a>
@@ -75,20 +69,29 @@
 
             {if $fkey === 2}
 				<li class="nav-item">
-					<a href="tab_rule_{$tabk}" class="nav-link tab " id="tab_rule_link_{$tabk}"
+					<a href="tab_rule_{$tabk}" data-hash="payment-options" class="nav-link tab " id="tab_rule_link_{$tabk}"
 					   href="javascript:displaythemeeditorTab('{$tabk}');">
                         {$fvalue.form.section.title}
 					</a>
 				</li>
             {/if}
 
-            {if $fkey === 5}
+            {if $fkey === 6}
 				<li class="nav-item">
-					<a href="tab_rule_{$tabk}" class="nav-link tab " id="tab_rule_link_{$tabk}"
+					<a href="tab_rule_{$tabk}" data-hash="analitics" class="nav-link tab " id="tab_rule_link_{$tabk}"
 					   href="javascript:displaythemeeditorTab('{$tabk}');">
                         {$fvalue.form.section.title}
 					</a>
 				</li>
+            {/if}
+
+            {if $fkey === 8}
+		        <li class="nav-item">
+			        <a href="tab_rule_{$tabk}" data-hash="help" class="nav-link tab " id="tab_rule_link_{$tabk}"
+			           href="javascript:displaythemeeditorTab('{$tabk}');">
+                        {$fvalue.form.section.title}
+			        </a>
+		        </li>
             {/if}
 
             {$tabk = $tabk+1}
@@ -140,11 +143,11 @@
                     {include file="./benefits.tpl"}
                     {include file="./benefits2.tpl"}
 
-                    {elseif $f == 2}
+                    {elseif $f == 2 || $f == 6 || $f == 8}
 					<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
 
-                        {elseif $f == 5}
-						<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
+{*                        {elseif $f == 6}*}
+{*						<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">*}
                             {/if}
 
 
@@ -208,6 +211,9 @@
 
                                                 {if isset($fieldset['form']['submit']) && !empty($fieldset['form']['submit'])}
 													<button type="submit" value="1"
+                                                            {if isset($fieldset['form']['submit']['save_event']) && !empty($fieldset['form']['submit']['save_event'])}
+													        data-save-event="{$fieldset['form']['submit']['save_event']}"
+													        {/if}
 													        id="{if isset($fieldset['form']['submit']['id'])}{$fieldset['form']['submit']['id']}{else}{$table}_form_submit_btn{/if}{if $smarty.capture.form_submit_btn > 1}_{($smarty.capture.form_submit_btn - 1)|intval}{/if}"
 													        name="{if isset($fieldset['form']['submit']['name'])}{$fieldset['form']['submit']['name']}{else}{$submit_action}{/if}{if isset($fieldset['form']['submit']['stay']) && $fieldset['form']['submit']['stay']}AndStay{/if}"
 													        class="{if isset($fieldset['form']['submit']['class'])}{$fieldset['form']['submit']['class']}{else}btn btn-primary pull-right{/if}">
@@ -246,7 +252,7 @@
 						</div>
                         {elseif $f == 2}
                         {hook h='adminPayments'}
-                        {elseif  $f == 4 || $f == 5}
+                        {elseif  $f == 5 || $f == 7 || $f == 9}
 					</div>
                     {/if}
 
@@ -263,25 +269,121 @@
 	</div>
 
 
-	<script type="text/javascript">
-		$('.tab_rule_tab').hide();
 
+
+	<script type="text/javascript">
+
+		// $(document).ready(function () {
+
+			createSlideShow();
+			function createSlideShow() {
+
+				const slideshows = document.querySelectorAll('.bm-slideshow');
+
+				for (const el of slideshows) {
+
+					const parent = el.dataset.slideshow;
+
+					console.log(parent);
+
+					const elmm = document.querySelector('.paymentList');
+					const slideShowClass = '.bm-' + parent + '-slideshow';
+					// const slideShow = document.querySelector(slideShowClass);
+
+					console.log(slideShowClass);
+
+					if(elmm.querySelector('.bm-slideshow')) {
+						const slider =  new Slideshow1(slideShowClass);
+						slider.init();
+					}
+				}
+			}
+
+			function Slideshow1( element ) {
+				this.el = document.querySelector( element );
+				// this.init();
+
+				// let animal = Object.create(Slideshow1.prototype)
+				// this.el = document.querySelector( element );
+
+				console.log(this.el)
+
+				this.init = function() {
+
+					console.log(element);
+					console.log(this.el)
+
+					// this.wrapper = element.querySelector( ".bm-slideshow" );
+					this.slides = this.el.querySelectorAll( ".slide" );
+					this.previous = this.el.querySelector( ".slider-previous" );
+					this.next = this.el.querySelector( ".slider-next" );
+					this.index = 0;
+					this.total = this.slides.length;
+					this.timer = null;
+
+					this.action();
+				},
+					this._slideTo = function( slide ) {
+					var currentSlide = this.slides[slide];
+					currentSlide.style.opacity = 1;
+
+					for( var i = 0; i < this.slides.length; i++ ) {
+						var slide = this.slides[i];
+						if( slide !== currentSlide ) {
+							slide.style.opacity = 0;
+						}
+					}
+				},
+					this.action = function() {
+					var self = this;
+					self.timer = setInterval(function() {
+						self.index++;
+						if( self.index == self.slides.length ) {
+							self.index = 0;
+						}
+						self._slideTo( self.index );
+
+					}, 3000);
+				}
+			}
+
+
+
+
+
+
+		// });
+
+
+
+		$('.tab_rule_tab').hide();
 		$('#tab_rule_link_0').addClass('active');
 		$('#tab_rule_0').show();
+		window.location.hash = 'authorization';
+		amplitudeMenuEvents();
 
 
 		$('.bm-menu li').on('click', function (e) {
-
 			e.preventDefault();
 
 			var target = $(e.target).attr("href");
 
 			$('.bm-menu li a').removeClass('active');
 			$(this).find('a').addClass('active');
-
 			$('.tab_rule_tab').hide();
 			$('#' + target).show();
+
+
+			const hash = $(this).find('a').data('hash');
+			window.location.hash = hash;
+			amplitudeMenuEvents();
 		});
+
+		function amplitudeMenuEvents() {
+			const hash = window.location.hash.slice(1);
+			amplitude.getInstance().logEvent( hash + ' page viewed');
+			console.log(hash)
+		}
 
 	</script>
 
@@ -312,19 +414,59 @@
 
 			$(document).ready(function () {
 
-				const payTest = $("input[name=BLUEPAYMENT_TEST_ENV]:checked").val();
-				const showPayWay = $("input[name=BLUEPAYMENT_SHOW_PAYWAY]:checked").val();
+				const gaType= $('input[name=BLUEPAYMENT_GA_TYPE]');
+				const payTest = $("input[name=BLUEPAYMENT_TEST_ENV]");
+				const showPayWay = $("input[name=BLUEPAYMENT_SHOW_PAYWAY]");
 
-				$("input[name=BLUEPAYMENT_SHOW_PAYWAY]").click(function (e) {
+				const payTestValue = $("input[name=BLUEPAYMENT_TEST_ENV]:checked").val();
+				const showPayWayValue = $("input[name=BLUEPAYMENT_SHOW_PAYWAY]:checked").val();
+				const gaTypeValue = $('input[name=BLUEPAYMENT_GA_TYPE]:checked').val();
+
+
+				const trackerGaId = $('.bluepayment_ga_tracker_id');
+				const trackerGa4Id = $('.bluepayment_ga4_tracker_id');
+				const trackerGa4Secret = $('.bluepayment_ga4_secret');
+
+				trackerGaId.hide();
+				trackerGa4Id.hide();
+				trackerGa4Secret.hide();
+
+				function checkGaType(state) {
+					if (state === '1') {
+						trackerGaId.show();
+						trackerGa4Id.hide();
+						trackerGa4Secret.hide();
+					} else if(state === '2') {
+						trackerGaId.hide();
+						trackerGa4Id.show();
+						trackerGa4Secret.show();
+					}
+				}
+				checkGaType(gaTypeValue);
+
+
+				$("button[name=submitbluepayment]").click(function (e) {
+                    {literal}
+					amplitude.getInstance().logEvent('section updated',
+						{'event_property': $(this).data('save-event')},
+					);
+					{/literal}
+				});
+
+				showPayWay.click(function () {
 					checkShowPayway($(this).val());
 				})
 
-				$("input[name=BLUEPAYMENT_TEST_ENV]").click(function (e) {
+				payTest.click(function () {
 					checkPayTest($(this).val());
 				})
 
+				gaType.click(function () {
+					checkGaType($(this).val());
+				})
+
 				function checkShowPayway(state) {
-					if (state == 1) {
+					if (state === '1') {
 						$('.bluepayment_payment_group_name').show();
 						$('.bluepayment_payment_name').hide();
 						$('.paymentList').show();
@@ -337,16 +479,15 @@
 				}
 
 				function checkPayTest(state) {
-					if (state == 1) {
+					if (state === '1') {
 						$('.bm-info--dev').show();
-
 					} else {
 						$('.bm-info--dev').hide();
 					}
 				}
 
-				checkPayTest(payTest);
-				checkShowPayway(showPayWay);
+				checkPayTest(payTestValue);
+				checkShowPayway(showPayWayValue);
 
 				initChangesTable();
 
@@ -371,9 +512,7 @@
 			$(document).ready(function () {
 				$('form').on('submit', function (e) {
 					e.preventDefault();
-
 					var data = $(this).serialize() + '&ajax=true&action=SaveConfiguration&token=' + bm_token;
-
 					$.ajax({
 						type: 'POST',
 						cache: false,
@@ -416,24 +555,13 @@
 				});
 			}
 
-
-			$('.bm-menu li a').on('click', function (e) {
-				if(e.currentTarget.id === 'tab_rule_link_0') {
-					// amplitude.getInstance().logEvent('authentication page viewed');
-				} else if (e.currentTarget.id === 'tab_rule_link_2') {
-					// amplitude.getInstance().logEvent('payment settings viewed');
-				} else if (e.currentTarget.id === 'tab_rule_link_5') {
-					// amplitude.getInstance().logEvent('analitics page viewed');
-				}
-			});
-
 			$('a[data-amplitude="true"]').on('click', function (e) {
 				var event = $(this).data('amplitude-event');
-				// amplitude.getInstance().logEvent(event);
+				amplitude.getInstance().logEvent(event);
 			});
 
 			$('#BLUEPAYMENT_STATUS_WAIT_PAY_ID, #BLUEPAYMENT_STATUS_ACCEPT_PAY_ID, #BLUEPAYMENT_STATUS_ERROR_PAY_ID').on('change', function (e) {
-				// amplitude.getInstance().logEvent('payments statuses updated');
+				amplitude.getInstance().logEvent('payments statuses updated');
 			});
 
 		</script>

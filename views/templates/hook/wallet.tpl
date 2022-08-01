@@ -50,7 +50,7 @@
 			<div class="bm-modal__header">
 				<h5 class="bm-modal__title" id="modal-wallet">{l s='Choose bank' mod='bluepayment'}</h5>
 				<button type="button" class="bm-modal__close" data-dismiss="bm-modal" aria-label="{l s='Close' mod='bluepayment'}">
-					<img src="{$module_dir}views/img/close.svg" width="20" {l s='Close' mod='bluepayment'} />
+					<img src="{$module_dir}views/img/close.svg" width="20" alt="{l s='Close' mod='bluepayment'}"/>
 				</button>
 			</div>
 

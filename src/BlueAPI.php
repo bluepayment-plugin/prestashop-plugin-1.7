@@ -52,7 +52,8 @@ class BlueAPI
         return false;
     }
 
-    public function isConnectedAPI($serviceId, $hashKey) {
+    public function isConnectedAPI($serviceId, $hashKey)
+    {
         require_once dirname(__FILE__).'/../sdk/index.php';
 
         $test_mode = Configuration::get($this->module->name_upper.'_TEST_ENV');
@@ -73,7 +74,6 @@ class BlueAPI
         } catch (\Exception $exception) {
             return false;
         }
-
     }
 
     private function connectFromAPI($serviceId, $hashKey)

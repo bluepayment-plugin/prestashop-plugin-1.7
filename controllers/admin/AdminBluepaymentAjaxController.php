@@ -43,7 +43,6 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
     public function ajaxProcessSaveConfiguration()
     {
-
         try {
             foreach ($this->module->configFields() as $configField) {
                 $value = Tools::getValue($configField, Configuration::get($configField));
@@ -71,23 +70,46 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                 if($parseServiceId && $parseHashKey ) {
                     $api = new BlueAPI();
                     $connect_status = $api->isConnectedAPI($parseServiceId, $parseHashKey);
-                    $status = $connect_status ? "authorization completed" : "authorization failed";
+                    $status = (bool)$connect_status;
 
                     PrestaShopLogger::addLog($status . ' ' .$currency['iso_code'], 4);
 
+                    if($status) {
+                        $data = [
+                            'events' => [
+                                "event_type" => "authorization",
+                                "user_properties" => [
+                                    "authorization" => 'completed',
+                                ],
+                            ],
+                        ];
+                    } else {
+                        $data = [
+                            'events' => [
+                                "event_type" => "authorization",
+                                "user_properties" => [
+                                    "authorization" => 'failed',
+                                ],
+                            ],
+                        ];
+                    }
+
+
+                    $amplitude = Amplitude::getInstance();
+                    $amplitude->sendEvent($data);
+                } else {
+
                     $data = [
                         'events' => [
-                            "event_type" => $status,
-                            "event_properties" => [
-                                "currency" => $currency['iso_code'],
-                                "source" => 'Setup'
+                            "event_type" => "authorization",
+                            "user_properties" => [
+                                "authorization" => 'failed',
                             ],
                         ],
                     ];
 
                     $amplitude = Amplitude::getInstance();
                     $amplitude->sendEvent($data);
-
                 }
 
                 $serviceId[$currency['iso_code']] = $parseServiceId;
@@ -99,12 +121,10 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
             Configuration::updateValue($this->module->name_upper.'_SERVICE_PARTNER_ID', serialize($serviceId));
             Configuration::updateValue($this->module->name_upper.'_SHARED_KEY', serialize($sharedKey));
 
-
             $gateway = new BlueGateway();
 //            $gateway->clearGateway();
             $gateway->getTransfers();
             $gateway->getChannels();
-
 
             $this->ajaxDie(Tools::jsonEncode(['success' => true]));
         } catch (Exception $exception) {

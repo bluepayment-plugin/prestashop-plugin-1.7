@@ -244,7 +244,7 @@
 							</span>
 						</p>
 
-						<div style="display:flex; align-items:center">
+						<div class="bm-modal-flex">
 							<img class="bm-helper__image img-responsive" width="330"
 							     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-gpay2.png"
 							     alt="{l s='Google Pay' mod='bluepayment'}">
@@ -312,7 +312,7 @@
 								{l s='(recommended if you use a module like "One page checkout")' mod='bluepayment'}
 							</span>
 						</p>
-						<div style="display:flex; align-items:center">
+						<div class="bm-modal-flex">
 							<img class="bm-helper__image img-responsive" width="330"
 							     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-blik2.png"
 							     alt="{l s='Entering BLIK code' mod='bluepayment'}">

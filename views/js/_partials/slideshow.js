@@ -44,13 +44,9 @@ export function createSlideShow() {
 
 }
 
-
-
 export function initSlideshows() {
 	createSlideShow();
 }
-
-
 
 function Slideshow( element ) {
 	this.el = document.querySelector( element );
@@ -91,7 +87,6 @@ Slideshow.prototype = {
 
 		}, 3000);
 	},
-
 };
 
 

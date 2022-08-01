@@ -15,7 +15,6 @@
 *}
 <script type="text/javascript">
 	ga('require', 'ecommerce');
-
 	ga('ecommerce:addTransaction', {
 		'id': '{$order_id|escape:'html':'UTF-8'}',
 		'affiliation': '{$shop_name|escape:'html':'UTF-8'}',
@@ -36,7 +35,5 @@
 	});
     {/foreach}
 
-
 	ga('ecommerce:send');
-
 </script>

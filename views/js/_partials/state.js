@@ -73,7 +73,7 @@ export function getGatewayState() {
 
 	if(id !== null && getPaymentForm(id) !== null) {
 		const form = getPaymentForm(id);
-		const formValue = form.querySelector('input[name=bluepayment_gateway]');
+		let formValue = form.querySelector('input[name=bluepayment_gateway]');
 		formValue.value = value;
 	}
 }
