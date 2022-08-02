@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.7.7.1] 2.08.2022
+- Fixed bugs main gateway redirect
+
 ## [2.7.7] 1.08.2022
 - Added Google Analytics tracking 
 - Added Amplitude tracking 
