@@ -74,7 +74,7 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__).'/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.7.7.1';
+        $this->version = '2.7.8';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
