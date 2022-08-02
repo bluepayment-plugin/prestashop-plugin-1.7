@@ -24,7 +24,6 @@ export function hideApplePayOtherBrowser() {
 	}
 }
 
-
 export function getIdElement(elm) {
 	const name = elm.id;
 	return name.replace(/\D/g, '');

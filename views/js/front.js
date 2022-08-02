@@ -125,7 +125,7 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 	BmAHR();
 
 
-	// initBM();
+	initBM();
 
 
 
@@ -210,7 +210,6 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 
 	function radioPayments() {
 		const getAllPaymentOptions = document.querySelectorAll('input[name=payment-option]');
-		const listitem = document.getElementsByTagName('input')
 
 		for (const item of getAllPaymentOptions) {
 			item.addEventListener('click', (e) => {
@@ -220,26 +219,29 @@ import {AllResetState, ClickResetState, getGatewayState, setGatewayState} from "
 				const id = getIdElement(item);
 				const container = getPaymentContainer(id);
 				const content = getPaymentContent(id);
+
 				const paymentElm = content.querySelector('.bm-payment__elm');
 
-				let paymentName = paymentElm.getAttribute('data-open-payment');
-				let paymentRedirect = paymentElm.getAttribute('data-payment-redirect');
+				if(paymentElm) {
+					let paymentName = paymentElm.getAttribute('data-open-payment');
+					let paymentRedirect = paymentElm.getAttribute('data-payment-redirect');
+
+					if (paymentName === 'blik' && !paymentRedirect) {
+						changingClauseBehavior(id, 'move');
+						changingButtonBehavior(id, 'hide');
+
+					} else if (paymentName === 'wallet') {
+
+					} else {
+						changingClauseBehavior(id, 'back');
+						changingButtonBehavior(id, 'back');
+					}
+
+				}
 
 				item.classList.add('active');
 				container.classList.add('active');
 				content.classList.add('active');
-
-
-				if (paymentName === 'blik' && !paymentRedirect) {
-					changingClauseBehavior(id, 'move');
-					changingButtonBehavior(id, 'hide');
-
-				} else if (paymentName === 'wallet') {
-
-				} else {
-					changingClauseBehavior(id, 'back');
-					changingButtonBehavior(id, 'back');
-				}
 
 				/// Opening modal
 				if (checkHasModal(id) && modalType(id)) {

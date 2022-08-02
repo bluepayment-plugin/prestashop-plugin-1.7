@@ -49,13 +49,15 @@ export function AllResetState() {
 
 	/// Reset values
 	const transfer = document.querySelector('[data-payment-desc=transfer]');
-	const id = transfer.id.match(/\d+/g)[0];
-	let content = getPaymentForm(id);
+	if(transfer) {
+		const id = transfer.id.match(/\d+/g)[0];
+		let content = getPaymentForm(id);
 
-
-	if(content !== null) {
-		content.querySelector('input[name="bluepayment_gateway"]').value = 0;
+		if(content !== null) {
+			content.querySelector('input[name="bluepayment_gateway"]').value = 0;
+		}
 	}
+
 }
 
 export function setGatewayState(id, value) {

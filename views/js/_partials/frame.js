@@ -105,6 +105,7 @@ export function createPaymentGroup() {
 
 	function markPaymentBm(arr) {
 		for (const el of arr) {
+
 			const container = getPaymentContainer(getIdElement(el));
 			const content = getPaymentContent(getIdElement(el));
 			const paymentName = el.children ? el.children[0].getAttribute('data-open-payment') : null;
@@ -114,8 +115,8 @@ export function createPaymentGroup() {
 				content.setAttribute('data-payment-desc', paymentName);
 			}
 
-			container.setAttribute('data-payment-bm', true);
-			content.setAttribute('data-payment-bm', true);
+			container.setAttribute('data-payment-bm', 'true');
+			content.setAttribute('data-payment-bm', 'true');
 		}
 	}
 

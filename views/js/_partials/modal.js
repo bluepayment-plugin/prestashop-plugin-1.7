@@ -34,8 +34,6 @@ export let Modal = function (el, options) {
 };
 Modal.prototype.show = function () {
 
-	console.log('uruchomione');
-
 	var self = this;
 	// adding backdrop (transparent background) behind the modal
 	if (self.options.backdrop) {
