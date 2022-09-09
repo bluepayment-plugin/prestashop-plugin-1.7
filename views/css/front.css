@@ -124,8 +124,9 @@ div.payment-option > label > img {
   margin-top: 15px;
 }
 .blue-media-body .bm-redirect-page-content p {
+  font-family: Open Sans, Helvetica, Arial, sans-serif !important;
   margin-bottom: 10px;
-  font-size: 18px;
+  font-size: 14px;
   margin-top: 0;
 }
 .blue-media-body .bm-redirect-page input[type=submit] {
