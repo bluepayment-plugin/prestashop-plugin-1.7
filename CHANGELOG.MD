@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.7.9] 8.09.2022
+- Fixed error displaying payments in thecheckout module
+- Fixed bug blocking modal display
+- Code refactoring
+- Ability to translate card payment method
+- Updated amplitude events
+- Fixed bugs main gateway redirect
+- Corrected translations
+- Adding namespace
+- Improved code standards
+
 ## [2.7.8] 2.08.2022
 - Fixed bugs main gateway redirect
 

@@ -5,23 +5,15 @@
 
 # Node artifact files
 node_modules/
-dist/
 
 # Compiled Java class files
 *.class
-
-# Compiled Python bytecode
-*.py[cod]
-
-# Log files
-*.log
 
 # Package files
 *.jar
 
 # Maven
 target/
-dist/
 
 # JetBrains IDE
 .idea/
@@ -48,3 +40,19 @@ Thumbs.db
 *.mov
 *.wmv
 *.zip
+
+vendor/
+tests/
+
+config_pl.xml
+
+composer.phar
+config_*.xml
+.env.prod
+.env.inte
+.env
+
+.php_cs.cache
+.env.old-integ
+
+_dev

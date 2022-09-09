@@ -15,22 +15,25 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * @property BluePayment $module
- */
+use BluePayment\Service\Transactions;
+
 class BluePaymentStatusModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
-
         require_once dirname(__FILE__) . '/../../sdk/index.php';
         header('Content-type: text/xml');
 
-        try {
-            $this->module->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
-        } catch (Exception $exception) {
-            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [], true));
-        }
+//        try {
+            $transaction = new Transactions($this->module);
+            $transaction->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
+
+//        } catch (Exception $exception) {
+//            $this->module->debug($exception);
+
+
+//            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [], true));
+//        }
 
         exit;
     }

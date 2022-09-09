@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -11,12 +12,19 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use BluePayment\Analyse\Amplitude;
+use BluePayment\Api\BlueAPI;
+use BluePayment\Api\BlueGateway;
+use BluePayment\Until\Helper;
+use BluePayment\Until\AdminHelper;
 
 class AdminBluepaymentAjaxController extends ModuleAdminController
 {
+    const EVENT_PLUGIN_AUTH = 'plugin authorized';
+
+    const API_AUTHENTICATION_SUCCESS = 'authorization completed';
+    const API_AUTHENTICATION_FAILED = 'authorization failed';
+
     public function __construct()
     {
         parent::__construct();
@@ -44,7 +52,7 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
     public function ajaxProcessSaveConfiguration()
     {
         try {
-            foreach ($this->module->configFields() as $configField) {
+            foreach (Helper::getFields() as $configField) {
                 $value = Tools::getValue($configField, Configuration::get($configField));
                 Configuration::updateValue($configField, $value);
             }
@@ -54,56 +62,67 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
             foreach (Language::getLanguages(true) as $lang) {
                 $paymentName[$lang['id_lang']] =
-                    Tools::getValue($this->module->name_upper.'_PAYMENT_NAME_'.$lang['id_lang']);
+                    Tools::getValue($this->module->name_upper . '_PAYMENT_NAME_' . $lang['id_lang']);
                 $paymentGroupName[$lang['id_lang']] =
-                    Tools::getValue($this->module->name_upper.'_PAYMENT_GROUP_NAME_'.$lang['id_lang']);
+                    Tools::getValue($this->module->name_upper . '_PAYMENT_GROUP_NAME_' . $lang['id_lang']);
             }
 
             $serviceId = [];
             $sharedKey = [];
 
-            foreach ($this->module->getSortCurrencies() as $currency) {
+            foreach (AdminHelper::getSortCurrencies() as $currency) {
+                $parseServiceId = Tools::getValue(
+                    $this->module->name_upper . '_SERVICE_PARTNER_ID_' . $currency['iso_code']
+                );
+                $parseHashKey = Tools::getValue(
+                    $this->module->name_upper . '_SHARED_KEY_' . $currency['iso_code']
+                );
 
-                $parseServiceId = Tools::getValue($this->module->name_upper.'_SERVICE_PARTNER_ID_'.$currency['iso_code']);
-                $parseHashKey = Tools::getValue($this->module->name_upper.'_SHARED_KEY_'.$currency['iso_code']);
-//
-                if($parseServiceId && $parseHashKey ) {
-                    $api = new BlueAPI();
+                if ($parseServiceId && $parseHashKey) {
+                    $api = new BlueAPI($this->module);
                     $connect_status = $api->isConnectedAPI($parseServiceId, $parseHashKey);
-                    $status = (bool)$connect_status;
 
-                    PrestaShopLogger::addLog($status . ' ' .$currency['iso_code'], 4);
-
-                    if($status) {
+                    if ($connect_status) {
+                        PrestaShopLogger::addLog(
+                            self::API_AUTHENTICATION_SUCCESS . ' - currency ' . $currency['iso_code'],
+                            1
+                        );
                         $data = [
                             'events' => [
-                                "event_type" => "authorization",
+                                "event_type" => self::API_AUTHENTICATION_SUCCESS,
                                 "user_properties" => [
-                                    "authorization" => 'completed',
+                                    self::EVENT_PLUGIN_AUTH => true,
                                 ],
                             ],
                         ];
                     } else {
+                        PrestaShopLogger::addLog(
+                            self::API_AUTHENTICATION_FAILED . ' - currency ' . $currency['iso_code'],
+                            1
+                        );
                         $data = [
                             'events' => [
-                                "event_type" => "authorization",
+                                "event_type" => self::API_AUTHENTICATION_FAILED,
                                 "user_properties" => [
-                                    "authorization" => 'failed',
+                                    self::EVENT_PLUGIN_AUTH => false,
                                 ],
                             ],
                         ];
                     }
 
-
                     $amplitude = Amplitude::getInstance();
                     $amplitude->sendEvent($data);
                 } else {
+                    PrestaShopLogger::addLog(
+                        self::API_AUTHENTICATION_FAILED . ' wrong key - currency ' . $currency['iso_code'],
+                        1
+                    );
 
                     $data = [
                         'events' => [
-                            "event_type" => "authorization",
+                            "event_type" => self::API_AUTHENTICATION_FAILED,
                             "user_properties" => [
-                                "authorization" => 'failed',
+                                self::EVENT_PLUGIN_AUTH => false,
                             ],
                         ],
                     ];
@@ -116,20 +135,21 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                 $sharedKey[$currency['iso_code']] = $parseHashKey;
             }
 
-            Configuration::updateValue($this->module->name_upper.'_PAYMENT_NAME', $paymentName);
-            Configuration::updateValue($this->module->name_upper.'_PAYMENT_GROUP_NAME', $paymentGroupName);
-            Configuration::updateValue($this->module->name_upper.'_SERVICE_PARTNER_ID', serialize($serviceId));
-            Configuration::updateValue($this->module->name_upper.'_SHARED_KEY', serialize($sharedKey));
+            Configuration::updateValue($this->module->name_upper . '_PAYMENT_NAME', $paymentName);
+            Configuration::updateValue($this->module->name_upper . '_PAYMENT_GROUP_NAME', $paymentGroupName);
+            Configuration::updateValue($this->module->name_upper . '_SERVICE_PARTNER_ID', serialize($serviceId));
+            Configuration::updateValue($this->module->name_upper . '_SHARED_KEY', serialize($sharedKey));
 
-            $gateway = new BlueGateway();
-//            $gateway->clearGateway();
+            $gateway = new BlueGateway($this->module, new BlueAPI($this->module));
             $gateway->getTransfers();
             $gateway->getChannels();
 
             $this->ajaxDie(Tools::jsonEncode(['success' => true]));
         } catch (Exception $exception) {
-            PrestaShopLogger::addLog('BM - Ajax Error', 4);
-
+            PrestaShopLogger::addLog(
+                'BM - Ajax Error',
+                4
+            );
             $this->ajaxDie(Tools::jsonEncode(['success' => false]));
         }
     }

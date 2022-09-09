@@ -59,7 +59,7 @@
 					<div id="blue_payway" class="bluepayment-gateways">
 						<div class="bluepayment-gateways__wrap">
                             {foreach from=$gateway_wallets item=row name='gateway_wallets'}
-								<div class="bluepayment-gateways__item"
+								<div class="bluepayment-gateways__item" data-bm-gateway-id="{$row['gateway_id']}"
 								     data-bm-back="wallet"
 								     data-bm-wallet-name="{$row['gateway_name']}">
 									<input type="radio" id="{$row['gateway_name']}"

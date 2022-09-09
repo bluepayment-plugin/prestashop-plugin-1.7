@@ -37,17 +37,26 @@ const METADATA = "/**\n" +
 let config = {
 	target: ["web", "es5"],
 	entry: {
-		front: ['./views/js/front.js', './views/scss/front.scss'],
-		// error: ['./css/error.scss'],
+		front: [
+            './_dev/js/front.js',
+            './_dev/scss/front.scss',
+        ],
+        admin: [
+            './_dev/scss/admin.scss',
+        ]
 	},
 	output: {
 		path: path.resolve(__dirname, './views/js'),
 		filename: '[name].min.js',
 	},
-	resolve: {
-		preferRelative: true,
-		extensions: ['*', '.js']
-	},
+	// resolve: {
+	// 	preferRelative: true,
+	// 	extensions: ['*', '.js']
+	// },
+    stats: {
+        children: true,
+        colors: true,
+    },
 	module: {
 		rules: [
 			{
@@ -74,17 +83,6 @@ let config = {
 					'postcss-loader',
 					'sass-loader',
 				],
-			},
-			{
-			  test: /.(png|woff(2)?|eot|otf|ttf|svg|gif)(\?[a-z0-9=\.]+)?$/,
-			  use: [
-			    {
-			      loader: 'file-loader',
-			      options: {
-			        name: '../css/[hash].[ext]',
-			      },
-			    },
-			  ],
 			},
 			{
 				test: /\.css$/,
@@ -155,7 +153,7 @@ if (process.env.NODE_ENV === 'production') {
 	}
 }
 
-// config.mode = 'development';
-config.mode = 'production';
+config.mode = 'development';
+// config.mode = 'production';
 
 module.exports = config;

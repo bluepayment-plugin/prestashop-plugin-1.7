@@ -11,19 +11,27 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-define('HASH_SEPARATOR', '|');
-define('ALIOR_MIN_AMOUNT', 50);
-define('ALIOR_MAX_AMOUNT', 7750);
-define('SMARTNEY_MIN_AMOUNT', 100);
-define('SMARTNEY_MAX_AMOUNT', 2500);
-define('BLIK_CODE_LENGTH', 6);
-define('POLISH_ISO_CODE', 'PLN');
-define('DEFAULT_PAYMENT_FORM_LANGUAGE', 'pl');
+define('BM_SDK_PATH', dirname(__FILE__) . '/../sdk/index.php');
+const BM_IMAGES_PATH = _MODULE_DIR_ . 'bluepayment/views/img/';
+const SERVICE_PARTNER_ID = '_SERVICE_PARTNER_ID';
+const SHARED_KEY = '_SHARED_KEY';
+
+const HASH_SEPARATOR = '|';
+const ALIOR_MIN_AMOUNT = 50;
+const ALIOR_MAX_AMOUNT = 7750;
+const SMARTNEY_MIN_AMOUNT = 100;
+const SMARTNEY_MAX_AMOUNT = 2500;
+const BLIK_CODE_LENGTH = 6;
+const POLISH_ISO_CODE = 'PLN';
+const DEFAULT_PAYMENT_FORM_LANGUAGE = 'pl';
 
 
-define('GATEWAY_ID_ALIOR', 1506);
-define('GATEWAY_ID_CARD', 1500);
-define('GATEWAY_ID_GOOGLE_PAY', 1512);
-define('GATEWAY_ID_APPLE_PAY', 1513);
-define('GATEWAY_ID_SMARTNEY', 700);
-define('GATEWAY_ID_BLIK', 509);
+const GATEWAY_ID_ALIOR = 1506;
+const GATEWAY_ID_CARD = 1500;
+const GATEWAY_ID_GOOGLE_PAY = 1512;
+const GATEWAY_ID_APPLE_PAY = 1513;
+const GATEWAY_ID_SMARTNEY = 700;
+const GATEWAY_ID_BLIK = 509;
+
+const GATEWAY_ID_WALLET = 999;
+const GATEWAY_ID_TRANSFER = 9999;

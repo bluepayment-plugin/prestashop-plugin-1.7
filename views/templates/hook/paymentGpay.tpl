@@ -23,7 +23,9 @@
 			<div class="bluepayment-loader"></div>
 			<div class="bluepayment-loader-bg"></div>
 			<div id="gpay-button"></div>
-			<span id="gpay-url" style="display:none;" data-merchant-info-address="{$wallet_merchantInfo}" data-charge-address="{$gpay_moduleLinkCharge}"></span>
+			<span id="gpay-url" style="display:none;"
+			      data-merchant-info-address="{$wallet_merchantInfo}"
+			      data-charge-address="{$gpay_moduleLinkCharge}"></span>
 			<div id="bm-termofuse" class="help-block js-g-pay-terms-of-use" style="display:none; color: red;">
                 {l s='Please accept the [1]Transaction Regulations[/1]' tags=['<strong>'] mod='bluepayment'}
 			</div>

@@ -33,7 +33,7 @@ function upgrade_module_2_7_4()
 
     if ($sql) {
         foreach ($sql as $query) {
-            if (Db::getInstance()->execute($query) == false) {
+            if (Db::getInstance()->execute($query)) {
                 return Db::getInstance()->getMsgError();
             }
         }

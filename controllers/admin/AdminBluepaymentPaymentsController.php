@@ -14,9 +14,14 @@
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\Gateway as GatewayModel;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use Configuration as Cfg;
+
+use BluePayment\Api\BlueGateway;
+use BluePayment\Api\BlueAPI;
+use BluePayment\Api\BlueGatewayChannels;
+use BluePayment\Analyse\Amplitude;
+use BluePayment\Until\Helper;
+use BluePayment\Until\AdminHelper;
 
 class AdminBluepaymentPaymentsController extends ModuleAdminController
 {
@@ -45,35 +50,32 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         parent::initContent();
 
-        if (Tools::getValue('ajax')) {
-            if (Tools::getValue('action') == 'updatePositions') {
-                $position = new BlueGatewayChannels();
-                $position->updatePosition(
-                    Tools::getValue('id'),
-                    Tools::getValue('way'),
-                    Tools::getValue('id_blue_gateway_channels')
-                );
+        if (Tools::getValue('ajax') && Tools::getValue('action') == 'updatePositions') {
+            $position = new BlueGatewayChannels();
+            $position->updatePosition(
+                Tools::getValue('id'),
+                Tools::getValue('way'),
+                Tools::getValue('id_blue_gateway_channels')
+            );
 
-                $data = [
-                    'events' => [
-                        "event_type" => "payment methods order updated",
-                        "event_properties" => [
-                            "source" => 'Setup'
-                        ],
+            $data = [
+                'events' => [
+                    "event_type" => "payment methods order updated",
+                    "event_properties" => [
+                        "source" => 'Setup'
                     ],
-                ];
+                ],
+            ];
 
-                $amplitude = Amplitude::getInstance();
-                $amplitude->sendEvent($data);
-            }
+            $amplitude = Amplitude::getInstance();
+            $amplitude->sendEvent($data);
         }
 
-        $this->context->controller->addCSS($this->module->getPathUri().'views/css/admin/admin.css');
+        $this->context->controller->addCSS($this->module->getPathUrl().'views/css/admin.css');
 
         $this->content .= $this->renderForm();
 
-        $gateway = new BlueGateway();
-        //        $gateway->clearGateway();
+        $gateway = new BlueGateway($this->module, new BlueAPI($this->module));
         $gateway->getChannels();
         $gateway->getTransfers();
 
@@ -89,29 +91,27 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $way = (int)(Tools::getValue('way'));
         $positions = Tools::getValue('blue_gateway_channels');
 
-        if (is_array($positions))
+        if (is_array($positions)) {
             foreach ($positions as $key => $value) {
                 $pos = explode('_', $value);
-                if ((isset($pos[1]) && isset($pos[2])) && ($pos[2] == $idPosition))
-                {
+                if ((isset($pos[1]) && isset($pos[2])) && ($pos[2] == $idPosition)) {
                     $position = $key + 1;
                     break;
                 }
             }
 
             $GatewayChannels = new BlueGatewayChannels($idPosition);
-            if (Validate::isLoadedObject($GatewayChannels))
-            {
-                if (isset($position) && $GatewayChannels->updatePosition($idPosition, $way, $position))
-                {
+            if (Validate::isLoadedObject($GatewayChannels)) {
+                if (isset($position) && $GatewayChannels->updatePosition($idPosition, $way, $position)) {
                     Hook::exec('actionBlueGatewayChannelsUpdate');
                     die(true);
-                }
-                else
+                } else {
                     die('{"hasError" : true, errors : "Can not update position"}');
-            }
-            else
+                }
+            } else {
                 die('{"hasError" : true, "errors" : "This can not be loaded"}');
+            }
+        }
     }
 
 
@@ -122,7 +122,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $fields_form = [];
         $id_default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
-        $statuses = OrderState::getOrderStates($id_default_lang);
+        $statuses = OrderState::getOrderStates($id_default_lang, true);
         $currency = $this->context->currency;
 
         $smartney = (bool) BlueGatewayChannels::gatewayIsActive(GATEWAY_ID_SMARTNEY, $currency->iso_code);
@@ -168,7 +168,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
             ],
             'submit' => [
-                'save_event' => 'testing enviroment',
+                'save_event' => 'ŚRODOWISKO TESTOWE',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
@@ -192,14 +192,14 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
 
             'submit' => [
-                'save_event' => 'authentication',
+                'save_event' => 'UWIERZYTELNIANIE',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
 
         ];
 
-        foreach ($this->module->getSortCurrencies() as $currency) {
+        foreach (AdminHelper::getSortCurrencies() as $currency) {
             $fields_form[1]['form']['form_group']['fields'][] = [
                 'form' => [
                     'legend' => [
@@ -278,7 +278,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ],
             'submit' => [
-                'save_event' => 'payment visibility',
+                'save_event' => 'WIDOCZNOŚĆ METOD PŁATNOŚCI',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
@@ -339,7 +339,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ],
             'submit' => [
-                'save_event' => 'blik & googlepay',
+                'save_event' => 'USTAWIENIA PRZEKIEROWAŃ PŁATNOŚCI',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
@@ -552,7 +552,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     ],
                 ],
                 'submit' => [
-                    'save_event' => 'payment promotion',
+                    'save_event' => 'PROMOWANIE PŁATNOŚCI',
                     'title' => $this->l('Save'),
                     'class' => 'btn btn-primary pull-right',
                 ],
@@ -578,7 +578,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     ],
                 ],
                 'submit' => [
-                    'save_event' => 'payment promotion',
+                    'save_event' => 'PROMOWANIE PŁATNOŚCI',
                     'title' => $this->l('Save'),
                     'class' => 'btn btn-primary pull-right',
                 ],
@@ -627,7 +627,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ],
             'submit' => [
-                'save_event' => 'payment statuses',
+                'save_event' => 'STATUSY PŁATNOŚCI',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
@@ -694,7 +694,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ],
             'submit' => [
-                'save_event' => 'analitics',
+                'save_event' => 'GOOGLE ANALITICS',
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
@@ -751,8 +751,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-
-
         $helper = new HelperForm();
 
         // Moduł, token i currentIndex
@@ -775,7 +773,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $ajax_controller = $link->getAdminLink('AdminBluepaymentAjax');
 
         $helper->tpl_vars = [
-            'fields_value' => $this->module->getConfigFieldsValues(),
+            'fields_value' => $this->getConfigFieldsValues(),
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
             'ajax_controller' => $ajax_controller,
@@ -786,4 +784,48 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         return $helper->generateForm($fields_form);
     }
+
+
+    /**
+     * Get form values
+     * @return array
+     */
+    private function getConfigFieldsValues()
+    {
+        $data = [];
+        foreach (Helper::getFields() as $field) {
+            $data[$field] = Tools::getValue($field, Cfg::get($field));
+        }
+
+        /// Languages
+        foreach (Helper::getFieldsLang() as $field) {
+            foreach (Language::getLanguages(true) as $lang) {
+                if(Cfg::get($field, $lang['id_lang'])) {
+                    $data[$field][$lang['id_lang']] = Cfg::get($field, $lang['id_lang']);
+                }
+            }
+        }
+
+        /// Currencies
+        foreach (Helper::getFieldsService() as $field) {
+            foreach (AdminHelper::getSortCurrencies() as $currency) {
+                $data[$field.'_'.$currency['iso_code']] =
+                    Helper::parseConfigByCurrency($field, $currency['iso_code']);
+            }
+        }
+//
+//
+//        foreach (AdminHelper::getSortCurrencies() as $currency) {
+//
+//            $data[$this->name_upper.'_SERVICE_PARTNER_ID_'.$currency['iso_code']] =
+//                $this->parseConfigByCurrency($this->module->name_upper.'_SERVICE_PARTNER_ID', $currency['iso_code']);
+//            $data[$this->name_upper.'_SHARED_KEY_'.$currency['iso_code']] =
+//                $this->parseConfigByCurrency($this->name_upper.'_SHARED_KEY', $currency['iso_code']);
+//
+//        }
+
+        return $data;
+    }
+
+
 }

@@ -448,7 +448,9 @@
 				$("button[name=submitbluepayment]").click(function (e) {
                     {literal}
 					amplitude.getInstance().logEvent('section updated',
-						{'event_property': $(this).data('save-event')},
+						{
+							'section': $(this).data('save-event')
+						},
 					);
 					{/literal}
 				});

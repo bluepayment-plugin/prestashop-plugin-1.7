@@ -30,7 +30,7 @@ function upgrade_module_2_7_0($module)
                 `gateway_status` int(11) NOT NULL,
                 `bank_name` varchar(100) NOT NULL,
                 `gateway_name` varchar(100) NOT NULL,
-                `gateway_description` varchar(1000) DEFAULT NULL,
+                `gateway_description` varchar(255) DEFAULT NULL,
                 `position` int(11) DEFAULT NULL,
                 `gateway_currency` varchar(50) NOT NULL,
                 `gateway_type` varchar(50) NOT NULL,
@@ -44,7 +44,7 @@ function upgrade_module_2_7_0($module)
      ** Here we execute the SQL
      */
     foreach ($sql as $query) {
-        if (Db::getInstance()->execute($query) == false) {
+        if (Db::getInstance()->execute($query)) {
             return Db::getInstance()->getMsgError();
         }
     }

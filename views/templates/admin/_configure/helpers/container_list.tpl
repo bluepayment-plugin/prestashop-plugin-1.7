@@ -47,8 +47,8 @@
 												     src="{$card['gateway_logo_url']}"
 												     alt="{$card['gateway_name']}">
 												<span class="bluepayment-gateways__name">
-																{$card['gateway_name']}
-															</span>
+													{$card['gateway_name']}
+												</span>
 											</label>
 										</div>
                                     {/foreach}

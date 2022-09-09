@@ -11,13 +11,8 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use BluePayment\Until\Helper;
 
-/**
- * @property BluePayment $module
- */
 class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
 {
     /**
@@ -86,7 +81,7 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
 
     private function getTotalAmount()
     {
-        if (Validate::isLoadedObject($this->context->cart) && $this->context->cart->OrderExists() == false) {
+        if (Validate::isLoadedObject($this->context->cart) && (bool)!$this->context->cart->OrderExists()) {
             $cart = $this->context->cart;
         } else {
             $postOrderId = pSQL(Tools::getValue('postOrderId'));
@@ -94,8 +89,6 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
             if (empty($postOrderId)) {
                 $cart = $this->context->cart;
             } else {
-                // https://www.prestashop.com/forums/topic/598871-restore-cart-with-order-id-or-order-details/
-                // https://stackoverflow.com/questions/42735643/want-to-restore-the-cart-with-the-order-id-and-details-in-prestashop
                 $orderIdItem = explode('-', $postOrderId);
                 $orderIdItem = empty($orderIdItem[0]) ? 0 : $orderIdItem[0];
                 $cart = Cart::getCartByOrderId($orderIdItem);
@@ -118,14 +111,8 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
         require_once dirname(__FILE__) . '/../../sdk/index.php';
 
         $currency = $this->context->currency->iso_code;
-        $serviceId = $this->module->parseConfigByCurrency(
-            $this->module->name_upper . '_SERVICE_PARTNER_ID',
-            $currency
-        );
-        $sharedKey = $this->module->parseConfigByCurrency(
-            $this->module->name_upper . '_SHARED_KEY',
-            $currency
-        );
+        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
+        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ?
@@ -135,7 +122,7 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
         $gateway = new \BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
 
         /**
-         * string MerchantDomain for BM should be different than localhost
+         * string MerchantDomain for BM should be different localhost
          */
         $data = [
             'ServiceID'      => $serviceId,
@@ -143,7 +130,7 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
         ];
 
         $hash = array_merge($data, [$sharedKey]);
-        $hash = $this->module->generateAndReturnHash($hash);
+        $hash = Helper::generateAndReturnHash($hash);
         Tools::error_log('G-Pay get MerchantInfo parameters: ' . print_r($data, 1));
         $data['Hash'] = $hash;
         $fields = is_array($data) ? http_build_query($data) : $data;

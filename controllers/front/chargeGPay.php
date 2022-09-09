@@ -11,16 +11,22 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use BluePayment\Until\Helper;
 
 /**
  * @property BluePayment $module
  */
 class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
 {
-    const INVALID_REQUEST = 'Invalid request';
+    const FAILURE_DURRING_MSG = 'An error occurred during the transaction.';
+    const FAILURE_PAID_MSG = 'Your transaction has already been paid.';
+    const FAILURE_EXPIRED = 'Google Pay token has expired. Try again.';
+
+    const PAYMENT_SUCCESS = 'Payment has been successfully completed.';
+    const PAYMENT_PROGRESS = 'Transaction in progress.';
+    const PAYMENT_WAITING = 'We are waiting for payment confirmation';
+    const PAYMENT_FAILED = 'Transaction failed.';
+    const PAYMENT_EXPIRED = 'The code has expired. Try again.';
 
     /**
      * @throws PrestaShopDatabaseException
@@ -39,21 +45,13 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
         $status = true;
         $postOrderId = pSQL(Tools::getValue('postOrderId'));
 
-        if (Validate::isLoadedObject($this->context->cart) && $this->context->cart->OrderExists() == false) {
+        if (Validate::isLoadedObject($this->context->cart) && !$this->context->cart->OrderExists()) {
             $cart = $this->context->cart;
         } else {
             if (empty($postOrderId)) {
                 $cart = $this->context->cart;
             } else {
-                // https://www.prestashop.com/forums/topic/598871-restore-cart-with-order-id-or-order-details/
-                // https://stackoverflow.com/questions/42735643/want-to-restore-the-cart-with-the-order-id-and-details-in-prestashop
-                $orderIdItem = explode('-', $postOrderId);
-                $orderIdItem = empty($orderIdItem[0]) ? 0 : $orderIdItem[0];
-                $cart = Cart::getCartByOrderId($orderIdItem);
-
-                if (!Validate::isLoadedObject($cart) || (int) $this->context->cart->id != $cart->id) {
-                    throw new OrderException('Invalid cart provided.');
-                }
+                $cart = $this->checkIfEmptyOrderId($postOrderId);
             }
         }
 
@@ -79,18 +77,13 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             exit;
         }
 
-        $currency = $this->context->currency->iso_code;
-
-        $serviceId = $this->module->parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
-        $sharedKey = $this->module->parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
-
         $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
         $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
         $customer = new Customer($cart->id_customer);
         $customerEmail = $customer->email;
 
-        if (Validate::isLoadedObject($this->context->cart) && $this->context->cart->OrderExists() == false) {
+        if (Validate::isLoadedObject($this->context->cart) && !$this->context->cart->OrderExists()) {
             $this->moduleValidateOrder($cart->id, $amount, $customer);
         }
 
@@ -103,17 +96,12 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
         $token = Tools::getValue('token');
         require_once dirname(__FILE__) . '/../../sdk/index.php';
 
-        $transaction = $this->getTransactionData(
+        $result = $this->createTransaction(
             $orderId,
-            (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_GOOGLE_PAY
+            $amount,
+            $customerEmail,
+            $token
         );
-
-        if (empty($transaction)) {
-            $request = $this->sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $token);
-            $result = $this->validateRequest($request, $orderId);
-        } else {
-            $result = $this->validateTransaction($transaction, $orderId);
-        }
 
         $result['postOrderId'] = $orderId;
 
@@ -156,7 +144,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
         ];
 
         $hash = array_merge($data, [$sharedKey]);
-        $hash = $this->module->generateAndReturnHash($hash);
+        $hash = Helper::generateAndReturnHash($hash);
 
         $data['Hash'] = $hash;
         $fields = is_array($data) ? http_build_query($data) : $data;
@@ -191,14 +179,14 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
         if (isset($transaction->payment_status) && $transaction->payment_status == 'SUCCESS') {
             $array = [
                 'status'      => 'SUCCESS',
-                'message'     => $this->module->l('Payment has been successfully completed.', 'chargegpay'),
+                'message'     => $this->module->l(self::PAYMENT_SUCCESS, 'chargegpay'),
                 'transaction' => $transaction
             ];
         }
         if (isset($transaction->payment_status) && $transaction->payment_status == 'PENDING') {
             $array = [
                 'status'      => 'PENDING',
-                'message'     => $this->module->l('We are waiting for payment confirmation', 'chargegpay'),
+                'message'     => $this->module->l(self::PAYMENT_WAITING, 'chargegpay'),
                 'transaction' => $transaction
             ];
         }
@@ -207,26 +195,69 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
         ) {
             $array = [
                 'status'  => 'FAILURE',
-                'message' => $this->module->l('Transaction failed.', 'chargegpay'),
+                'message' => $this->module->l(self::PAYMENT_FAILED, 'chargegpay'),
             ];
             Db::getInstance()->update(
                 'blue_transactions',
                 ['created_at' => date('Y-m-d H:i:s')],
-                'order_id = \'' . (int) $orderId . '\''
+                'order_id = ' . (int) $orderId
             );
         }
 
         if (empty($array)) {
             $array = [
                 'status'  => 'FAILURE',
-                'message' => $this->module->l('The code has expired. Try again.', 'chargegpay'),
+                'message' => $this->module->l(self::PAYMENT_EXPIRED, 'chargegpay'),
             ];
         }
 
         return $array;
     }
 
+    private function checkIfEmptyOrderId($postOrderId)
+    {
+        if (empty($postOrderId)) {
+            $cart = $this->context->cart;
+        } else {
+            $orderIdItem = explode('-', $postOrderId);
+            $orderIdItem = empty($orderIdItem[0]) ? 0 : $orderIdItem[0];
+            $cart = Cart::getCartByOrderId($orderIdItem);
+
+            if (!Validate::isLoadedObject($cart) || (int) $this->context->cart->id != $cart->id) {
+                throw new OrderException('Invalid cart provided.');
+            }
+        }
+
+        return $cart;
+    }
+
+
+    private function createTransaction($orderId, $amount, $customerEmail, $token)
+    :array
+    {
+        $currency = $this->context->currency->iso_code;
+
+        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
+        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
+
+        $transaction = $this->getTransactionData(
+            $orderId,
+            (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_GOOGLE_PAY
+        );
+
+        if (empty($transaction)) {
+            $request = $this->sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $token);
+            $result = $this->validateRequest($request, $orderId);
+        } else {
+            $result = $this->validateTransaction($transaction, $orderId);
+        }
+
+        return $result;
+    }
+
+
     private function validateRequest($response, $orderId)
+    :array
     {
         $array = [];
         $data = [
@@ -234,114 +265,125 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             'created_at' => date('Y-m-d H:i:s'),
         ];
 
-        $query = new DbQuery();
-        $query->from('blue_transactions')
-            ->where('order_id = \'' . (int) $orderId . '\'')
-            ->select('*');
-
-        $transaction = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
-        $gateway_id = (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_GOOGLE_PAY;
-
-        if (!isset($response->confirmation)) {
-            if ($response->status == 'PENDING') {
-                $array = [
-                    'status'  => 'PENDING',
-                    'message' => $this->module->l('Transaction in progress.', 'chargegpay'),
-                ];
-
-                $data['payment_status'] = 'PENDING';
-                if (empty($transaction)) {
-                    $data['gateway_id'] = $gateway_id;
-                    Db::getInstance()->insert('blue_transactions', $data);
-                } else {
-                    unset($data['order_id']);
-                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
-                }
-
-                if ($response->redirecturl && isset($response->redirecturl[0])) {
-                    $redirectUrl = (array)$response->redirecturl;
-                    $array['redirectUrl'] = isset($redirectUrl[0]) ? $redirectUrl[0] : null;
-                } elseif ($response->redirecturl) {
-                    $array['redirectUrl'] = $response->redirecturl;
-                }
-            } elseif ($response->status == 'SUCCESS') {
-                $array = [
-                    'status'  => 'SUCCESS',
-                    'message' => $this->module->l('Payment has been successfully completed.', 'chargegpay'),
-                ];
-                $data['payment_status'] = 'SUCCESS';
-                if (empty($transaction)) {
-                    $data['gateway_id'] = $gateway_id;
-                    Db::getInstance()->insert('blue_transactions', $data);
-                } else {
-                    unset($data['order_id']);
-                    Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
-                }
-            } else {
-                $array = [
-                    'status'  => 'FAILURE',
-                    'message' => $this->module->l('An error occurred during the transaction.', 'chargegpay'),
-                ];
-            }
-        } elseif (isset($response->confirmation) &&
-            $response->confirmation == 'NOTCONFIRMED' &&
-            $response->reason == 'WRONG_TICKET'
-        ) {
-            $array = [
-                'status'  => 'FAILURE',
-                'message' => $this->module->l('An error occurred during the transaction.', 'chargegpay'),
-            ];
-            $data['payment_status'] = 'WRONG_TICKET';
-            if (empty($transaction)) {
-                $data['gateway_id'] = $gateway_id;
-                Db::getInstance()->insert('blue_transactions', $data);
-            } else {
-                unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
-            }
-        } elseif (isset($response->confirmation) &&
-            $response->confirmation == 'NOTCONFIRMED' &&
-            $response->reason == 'MULTIPLY_PAID_TRANSACTION'
-        ) {
-            $array = [
-                'status'  => 'FAILURE',
-                'message' => $this->module->l('Your transaction has already been paid.', 'chargegpay'),
-            ];
-            $data['payment_status'] = 'MULTIPLY_PAID_TRANSACTION';
-            if (empty($transaction)) {
-                $data['gateway_id'] = $gateway_id;
-                Db::getInstance()->insert('blue_transactions', $data);
-            } else {
-                unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
-            }
-        } elseif (isset($response->confirmation) &&
-            $response->confirmation == 'NOTCONFIRMED' &&
-            $response->reason == 'START_AMOUNT_OUT_OF_RANGE'
-        ) {
-            $array = [
-                'status'  => 'FAILURE',
-                'message' => $this->module->l('An error occurred during the transaction.', 'chargegpay'),
-            ];
-            $data['payment_status'] = 'START_AMOUNT_OUT_OF_RANGE';
-            if (empty($transaction)) {
-                $data['gateway_id'] = $gateway_id;
-                Db::getInstance()->insert('blue_transactions', $data);
-            } else {
-                unset($data['order_id']);
-                Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . (int) $orderId . '\'');
-            }
+        if (isset($response->confirmation)) {
+            $array = $this->hasConfirmation($response, $orderId, $data);
+        } else {
+            $array = $this->emptyConfirmation($response, $orderId);
         }
 
         if (empty($array)) {
             $array = [
                 'status'  => 'FAILURE',
-                'message' => $this->module->l('Google Pay token has expired. Try again.', 'chargegpay'),
+                'message' => $this->module->l(self::FAILURE_EXPIRED, 'chargegpay'),
             ];
         }
 
         return $array;
     }
+
+
+
+    private function emptyConfirmation($response, $orderId)
+    :array
+    {
+        if ($response->status == 'PENDING') {
+            $array = [
+                'status'  => 'PENDING',
+                'message' => $this->module->l(self::PAYMENT_PROGRESS, 'chargegpay'),
+            ];
+
+            $data['payment_status'] = 'PENDING';
+            $this->transactionQuery($orderId, $data);
+
+            if ($response->redirecturl && isset($response->redirecturl[0])) {
+                $redirectUrl = (array)$response->redirecturl;
+                $array['redirectUrl'] = $redirectUrl[0] ?? null;
+            } elseif ($response->redirecturl) {
+                $array['redirectUrl'] = $response->redirecturl;
+            }
+        } elseif ($response->status == 'SUCCESS') {
+            $array = [
+                'status'  => 'SUCCESS',
+                'message' => $this->module->l(self::PAYMENT_SUCCESS, 'chargegpay'),
+            ];
+            $data['payment_status'] = 'SUCCESS';
+            $this->transactionQuery($orderId, $data);
+        } else {
+            $array = [
+                'status'  => 'FAILURE',
+                'message' => $this->module->l(self::FAILURE_DURRING_MSG, 'chargegpay'),
+            ];
+        }
+
+        return $array;
+    }
+
+
+
+    private function hasConfirmation($response, $orderId, $data)
+    :array
+    {
+        $array = [];
+        if ($response->confirmation == 'NOTCONFIRMED' && $response->reason == 'WRONG_TICKET') {
+            $array = [
+                'status'  => 'FAILURE',
+                'message' => $this->module->l(self::FAILURE_DURRING_MSG, 'chargegpay'),
+            ];
+            $data['payment_status'] = 'WRONG_TICKET';
+            $this->transactionQuery($orderId, $data);
+        } elseif ($response->confirmation == 'NOTCONFIRMED' && $response->reason == 'MULTIPLY_PAID_TRANSACTION') {
+            $array = [
+                'status'  => 'FAILURE',
+                'message' => $this->module->l(self::FAILURE_PAID_MSG, 'chargegpay'),
+            ];
+            $data['payment_status'] = 'MULTIPLY_PAID_TRANSACTION';
+            $this->transactionQuery($orderId, $data);
+        } elseif ($response->confirmation == 'NOTCONFIRMED' && $response->reason == 'START_AMOUNT_OUT_OF_RANGE') {
+            $array = [
+                'status'  => 'FAILURE',
+                'message' => $this->module->l(self::FAILURE_DURRING_MSG, 'chargegpay'),
+            ];
+            $data['payment_status'] = 'START_AMOUNT_OUT_OF_RANGE';
+            $this->transactionQuery($orderId, $data);
+        }
+        return $array;
+    }
+
+
+
+    /**
+     * Create transaction and insert sql query
+     * @param int $orderId
+     * @param $data
+     */
+    private function transactionQuery(int $orderId, $data)
+    {
+        $gateway_id = (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_SMARTNEY;
+        $transaction = $this->getTransactionByOrderId($orderId);
+
+        if (empty($transaction)) {
+            $data['gateway_id'] = $gateway_id;
+            Db::getInstance()->insert('blue_transactions', $data);
+        } else {
+            unset($data['order_id']);
+            Db::getInstance()->update('blue_transactions', $data, 'order_id = '.$orderId);
+        }
+    }
+
+    /**
+     * Get transaction by order id
+     * @param $orderId
+     * @return mixed
+     */
+    private function getTransactionByOrderId($orderId)
+    {
+        $query = new DbQuery();
+        $query->from('blue_transactions')
+            ->where('order_id = '. (int)($orderId))
+            ->select('*');
+        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
+    }
+
 
     /**
      * @param $orderId
@@ -353,7 +395,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
     {
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = \'' . pSQL($orderId) . '\'')
+            ->where('order_id = ' . (int)$orderId)
             ->where('gateway_id = \'' . pSQL($gateway_id) . '\'')
             ->select('*');
 

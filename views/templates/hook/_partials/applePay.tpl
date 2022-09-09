@@ -14,6 +14,6 @@
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <span class="bm-payment__elm" data-payment-redirect="true"></span>
-<div class="showApplePay bm-wallet-content">
+<div class="showApplePay bm-wallet-content" data-show-bm-gateway-id="1513" style="display: none;">
 	<span class="bm-small-info">{l s='You will be redirected to the website of our partner Blue Media, where you can choose your fast and secure payment method.' mod='bluepayment'}</span>
 </div>

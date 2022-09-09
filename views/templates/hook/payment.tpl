@@ -25,7 +25,6 @@
 	</span>
     {else}
 	<span class="bm-payment__elm" data-open-payment="maingateway"></span>
-    {*	<span class="bm-payment__elm" data-open-payment="maingateway"></span>*}
 	<section>
 		<span class="bm-small-info">
 	        {l s='You will be redirected to the website of our partner Blue Media, where you can choose your fast and secure payment method.' mod='bluepayment'}
@@ -40,7 +39,7 @@
         {if !$selectPayWay}
 		<script>
 			var start_payment_intro = '{$start_payment_intro|escape:'javascript':'UTF-8'}';
-			document.addEventListener("DOMContentLoaded", function (event) {
+			document.addEventListener("DOMContentLoaded", function () {
 				var base_element = $('input[name=bluepayment-hidden-psd2-regulation-id]').parent().parent().prev().prev();
 				var payment_subtitle = $("<p></p>").text(start_payment_intro);
 				base_element.find('label span').append(payment_subtitle);
@@ -78,7 +77,7 @@
 						<div id="blue_payway" class="bluepayment-gateways">
 							<div class="bluepayment-gateways__wrap">
                                 {foreach from=$gateway_transfers item=row name='gateway_transfers'}
-									<div class="bluepayment-gateways__item">
+									<div class="bluepayment-gateways__item" data-bm-gateway-id="{$row['gateway_id']}">
 										<label for="{$row['gateway_name']}">
 											<input type="radio" id="{$row['gateway_name']}"
 											       class="bluepayment-gateways__radio"

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -17,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
 
 class BluepaymentAjaxModuleFrontController extends ModuleFrontController
 {
-
+    public $ajax;
     public function __construct()
     {
         parent::__construct();
@@ -36,14 +37,11 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
         $ajax = true;
 
         parent::initContent();
-
-
         if (Tools::getValue('action') == 'GaRemoveProduct') {
-
             $product_id = Tools::getValue('id_product');
-            $product_id_attribute = Tools::getValue('id_product');
+            $product_id_attribute = Tools::getValue('id_attribute');
 
-            if(!$product_id) {
+            if (!$product_id) {
                 return;
             }
 
@@ -64,12 +62,22 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
                             'brand' => $product->manufacturer_name,
                             'category' => $product->category,
                             'variant' => $product_id_attribute,
-                            'price' => $product->price,
+                            'price' => $product->price
                         ]
                     ]
                 )
             );
         }
-
     }
+
+//    private function hasProductInCart($productId) {
+//        $cart = Context::getContext()->cart;
+//        foreach($cart->getProducts() as $product) {
+//            if($product['id_product'] === $productId) {
+//                return $product['cart_quantity'];
+//            }
+//        }
+//
+//        return null;
+//    }
 }

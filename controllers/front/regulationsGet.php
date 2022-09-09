@@ -11,13 +11,8 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use BluePayment\Until\Helper;
 
-/**
- * @property BluePayment $module
- */
 class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontController
 {
     /**
@@ -52,9 +47,8 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
         require_once dirname(__FILE__) . '/../../sdk/index.php';
 
         $currency = $this->context->currency->iso_code;
-        $serviceId = $this->module->parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
-        $sharedKey = $this->module->parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
-
+        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
+        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
 
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
@@ -65,7 +59,7 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
         $gateway = new \BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
 
         /**
-         * string MerchantDomain for BM should be different than localhost
+         * string MerchantDomain for BM should be different localhost
          */
         $data = [
             'ServiceID' => $serviceId,
@@ -73,7 +67,7 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
         ];
 
         $data = array_merge($data, [$sharedKey]);
-        $hash = $this->module->generateAndReturnHash($data);
+        $hash = Helper::generateAndReturnHash($data);
 
         $data['Hash'] = $hash;
         $fields = is_array($data) ? http_build_query($data) : $data;

@@ -13,72 +13,42 @@
 
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\TransactionStandard;
-
-/**
- * @property BluePayment $module
- */
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
+use BluePayment\Until\Helper;
 
 class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
     public $display_column_left = false;
 
-    /**
-     * @throws PrestaShopException
-     * @throws Exception
-     */
     public function initContent()
     {
         parent::initContent();
 
+//        dump(Tools::getAllValues());
+//        die();
+
         $cart = $this->context->cart;
 
-        if ($cart->id_customer === 0
-            || $cart->id_address_delivery === 0
-            || $cart->id_address_invoice === 0
-            || !$this->module->active
+        if ($cart->id_customer === 0 || $cart->id_address_delivery === 0
+            || $cart->id_address_invoice === 0 || !$this->module->active
         ) {
             Tools::redirect('index.php?controller=order&step=1');
         }
 
-        // Sprawdzenie czy opcja płatności jest nadal aktywna w przypadku kiedy klient dokona zmiany adresu
-        // przed finalizacją zamówienia
-        $authorized = false;
-        foreach (Module::getPaymentModules() as $module) {
-            if ($module['name'] === 'bluepayment') {
-                $authorized = true;
-                break;
-            }
-        }
-
-        if (!$authorized) {
+        if (!$this->moduleAuthorized()) {
             die($this->module->l('This payment method is not available.', 'bluepayment'));
         }
 
-        // Stworzenie obiektu klienta na podstawie danych z koszyka
         $customer = new Customer($cart->id_customer);
-
-        // Jeśli nie udało się stworzyć i załadować obiektu klient, przekieruj na 1 krok
         if (!Validate::isLoadedObject($customer)) {
             Tools::redirect('index.php?controller=order&step=1');
         }
 
-        if (Validate::isLoadedObject($this->context->cart) && $this->context->cart->OrderExists() == false) {
+        if (Validate::isLoadedObject($this->context->cart) && !$this->context->cart->OrderExists()) {
             $cartId = $cart->id;
 
             $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
             $amount = number_format(round($totalPaid, 2), 2, '.', '');
-
-
-
-
-
-
 
             $this->module->validateOrder(
                 $cartId,
@@ -91,8 +61,6 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 false,
                 $customer->secure_key
             );
-
-            $order = Order::getByCartId($cartId);
             $orderId = $this->module->currentOrder . '-' . time();
         } else {
             $bluepaymentCartId = Tools::getValue('bluepayment_cart_id', null);
@@ -113,17 +81,50 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             }
         }
 
+        $gateway_id = (int)Tools::getValue('bluepayment_gateway', 0);
+
+        $this->context->smarty->assign([
+            'module_dir' => $this->module->getPathUrl(),
+            'form'       => $this->createTransaction($gateway_id, $orderId, $amount, $customer),
+        ]);
+
+        $this->createTransactionQuery($orderId);
+
+        $this->setTemplate('module:bluepayment/views/templates/front/payment.tpl');
+    }
+
+    /**
+     * Check if the payment option is still active in case the customer
+     * makes a change of address before finalizing the order
+     * @return bool
+     */
+    private function moduleAuthorized()
+    :bool
+    {
+        $authorized = false;
+        foreach (Module::getPaymentModules() as $module) {
+            if ($module['name'] === 'bluepayment') {
+                $authorized = true;
+                break;
+            }
+        }
+        return $authorized;
+    }
+
+
+    private function createTransaction($gateway_id, $orderId, $amount, $customer)
+    {
         $isoCode = $this->context->currency->iso_code;
 
+        $service_id = (int)Helper::parseConfigByCurrency(
+            $this->module->name_upper . '_SERVICE_PARTNER_ID',
+            $isoCode
+        );
 
-        // Identyfikator serwisu partnera
-        $service_id = (int)$this->module
-            ->parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $isoCode);
-
-        // Klucz współdzielony
-        $shared_key = $this->module->parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $isoCode);
-
-        $gateway_id = (int)Tools::getValue('bluepayment_gateway', 0);
+        $shared_key = Helper::parseConfigByCurrency(
+            $this->module->name_upper . '_SHARED_KEY',
+            $isoCode
+        );
 
         require_once dirname(__FILE__) . '/../../sdk/index.php';
 
@@ -165,6 +166,12 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             Tools::error_log($exception);
         }
 
+        return $form;
+    }
+
+
+    private function createTransactionQuery($orderId)
+    {
         $ga = $_COOKIE['_ga'] ?? '';
 
         Db::getInstance()->insert(
@@ -173,15 +180,8 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 'order_id'   => $orderId,
                 'created_at' => date('Y-m-d H:i:s'),
                 'gtag_uid' => $ga,
-//                'gtag_state' => (int)1,
             ]
         );
-
-        $this->context->smarty->assign([
-            'module_dir' => $this->module->getPathUri(),
-            'form'       => $form,
-        ]);
-
-        $this->setTemplate('module:bluepayment/views/templates/front/payment.tpl');
     }
+
 }
