@@ -1,5 +1,5 @@
 # Instrukcja modułu BluePayment dla platformy PrestaShop 1.7
-**Wersja wtyczki**: 2.7.8
+**Wersja wtyczki**: 2.7.9
 
 ## Podstawowe informacje
 BluePayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7.
@@ -97,7 +97,7 @@ Jeśli masz więcej niż jedną walutę w sklepie, to pola Identyfikator i Klucz
 ### Zakładka analityka
 Rozszerzyliśmy możliwości analityczne modułu, poprzez podłączenie dodatkowych zdarzeń w Google Analytics. Żeby z nich korzystać, należy dodać Identyfikator konta Google w widocznym poniżej polu.
 
-Dzięki połączeniu możesz dowiedzieć się m.in. jaka jest konwersja poszczególnych metod płatności lub jak wygląda lejek sprzedażowy na etapie płatności.
+Dzięki połączeniu możesz poznać dokładną ścieżkę zakupową klienta oraz sprawdzić jego zachowania na poszczególnych etapach procesu i na tej podstawie podjąć działania optymalizujące działanie sklepu.
 
 ![Analityka](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/analityka.png)
 
