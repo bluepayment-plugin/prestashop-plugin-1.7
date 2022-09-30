@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace BluePayment\Api;
 
 use BlueMedia\OnlinePayments\Gateway;
-use BluePayment\Until\AdminHelper;
+use BlueMedia\OnlinePayments\Model\PaywayList;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 use Module;
@@ -31,41 +31,79 @@ class BlueAPI
         $this->module = $module;
     }
 
-    private function gatewayAuthentication($serviceId, $hashKey)
+    public function gatewayAuthentication($merchantData, $mode)
     {
-        if ($serviceId > 0 && !empty($hashKey)) {
-            return $this->connectFromAPI($serviceId, $hashKey);
+        if (
+            isset($merchantData[0]) &&
+            !empty($merchantData[0]) &&
+            isset($merchantData[1]) &&
+            !empty($merchantData[1])
+        ) {
+            return $this->connectFromAPI($merchantData[0], $merchantData[1], $mode);
         }
 
-        return false;
+        return null;
     }
 
-    public function getGatewaysFromAPI($channels)
-    {
-        $position = 0;
 
-        if (!is_object($channels)) {
+    public function getApiMode(): string
+    {
+        $testMode = Cfg::get($this->module->name_upper . '_TEST_ENV');
+        return $testMode ? 'sandbox' : 'live';
+    }
+
+    public function getApiMerchantData($currencyCode): array
+    {
+        $serviceId = Helper::parseConfigByCurrency(
+            $this->module->name_upper . '_SERVICE_PARTNER_ID',
+            $currencyCode
+        );
+        $hashKey = Helper::parseConfigByCurrency(
+            $this->module->name_upper . '_SHARED_KEY',
+            $currencyCode
+        );
+
+        return $serviceId && $hashKey ? [$serviceId, $hashKey] : [];
+    }
+
+    /**
+     * @param $gateway
+     * @param $mode
+     * @param $currencies
+     *
+     * @return bool
+     */
+    public function getGatewaysFromAPI($gateway, $mode, $currencies): bool
+    {
+        if (!is_object($gateway)) {
             return false;
         }
 
-        foreach (AdminHelper::getSortCurrencies() as $currency) {
-            $apiResponse = $this->gatewayAccount($currency['iso_code']);
-            if ($apiResponse) {
-                $position = (int) $channels->syncGateway($apiResponse, $currency, $position);
+        if ($currencies && $mode) {
+            foreach ($currencies as $currency) {
+                $getMerchantData = $this->getApiMerchantData($currency['iso_code']);
+                $apiResponse = $this->gatewayAccount($getMerchantData, $currency['iso_code'], $mode);
+
+                $this->getApiResponseSyncGateway($gateway, $apiResponse, $currency);
             }
+        } else {
+            return false;
         }
 
-        return false;
+        return true;
     }
 
-    public function isConnectedAPI($serviceId, $hashKey): bool
+    public function getApiResponseSyncGateway($gateway, $response, $currency, $position = 0)
+    {
+        if ($gateway && $response && $currency) {
+            return $gateway->syncGateway($response, $currency, $position);
+        }
+        return null;
+    }
+
+    public function isConnectedAPI($serviceId, $hashKey, $gatewayMode): bool
     {
         require_once BM_SDK_PATH;
-
-        $testMode = Cfg::get($this->module->name_upper . '_TEST_ENV');
-        $gatewayMode = $testMode ?
-            Gateway::MODE_SANDBOX :
-            Gateway::MODE_LIVE;
 
         $gateway = new Gateway(
             $serviceId,
@@ -82,35 +120,38 @@ class BlueAPI
         }
     }
 
-    private function connectFromAPI($serviceId, $hashKey)
+    public function connectFromAPI($serviceId, $hashKey, $mode): ?PaywayList
     {
         require_once BM_SDK_PATH;
-
-        $testMode = Cfg::get($this->module->name_upper . '_TEST_ENV');
-        $gatewayMode = $testMode ?
-            Gateway::MODE_SANDBOX :
-            Gateway::MODE_LIVE;
 
         $gateway = new Gateway(
             $serviceId,
             $hashKey,
-            $gatewayMode,
-            Gateway::HASH_SHA256,
+            $mode,
+            'sha256',
             HASH_SEPARATOR
         );
 
         try {
             return $gateway->doPaywayList();
-        } catch (\Exception $exception) {
-            return false;
+        } catch (\RuntimeException $exception) {
+            return null;
         }
     }
 
-    private function gatewayAccount($currencyCode)
+    /**
+     * @param $merchantData
+     * @param $currencyCode
+     * @param $mode
+     *
+     * @return PaywayList|null
+     */
+    public function gatewayAccount($merchantData, $currencyCode, $mode)
     {
-        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currencyCode);
-        $hashKey = Helper::parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currencyCode);
+        if (is_array($merchantData) && $currencyCode && $mode) {
+            return $this->gatewayAuthentication($merchantData, $mode);
+        }
 
-        return $this->gatewayAuthentication($serviceId, $hashKey);
+        return null;
     }
 }

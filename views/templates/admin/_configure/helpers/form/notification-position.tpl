@@ -14,7 +14,7 @@
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <div class="bm-info--small" style="margin-top: 26px">
-	<img width="22" class="bm-info--small__icon img-fluid" src="{$src_img|escape:'html':'UTF-8'}/info.svg" alt="Info" />
+	<img width="22" class="bm-info--small__icon img-fluid" src="{$bm_assets_images|escape:'html':'UTF-8'}/info.svg" alt="Info" />
 
 	<p>{l s='Reorder the modules so that Blue Media payments display first in your store.' mod='bluepayment'}
 		<a href="#" data-toggle="modal" data-target="#bm-helper-position" style="cursor:pointer">
@@ -39,7 +39,7 @@
 						{l s='Reorder the modules so that Blue Media payments display first in your store.' mod='bluepayment'}
 					</p>
 					<img class="bm-helper__image img-responsive" width="330"
-					     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-position.png"
+					     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-position.png"
 					     alt="{l s='How to change the order?' mod='bluepayment'}">
 
 					<span class="bm-helper__header">{l s='How to change the order?' mod='bluepayment'}</span>
@@ -51,7 +51,7 @@
 					</ul>
 
 					<img class="bm-helper__image img-responsive" width="860"
-					     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-position2.png"
+					     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-position2.png"
 					     alt="{l s='How to change the order?' mod='bluepayment'}">
 				</div>
 			</div>

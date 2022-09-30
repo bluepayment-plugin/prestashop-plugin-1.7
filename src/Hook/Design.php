@@ -34,7 +34,8 @@ class Design extends AbstractHook
 
 
     /**
-     * Header hook
+     * @codeCoverageIgnore
+     * Header hooks
      */
     public function header()
     {
@@ -56,7 +57,7 @@ class Design extends AbstractHook
     /**
      * Add analytics Gtag
      * @param $params
-     * @return void
+     * @return void|null
      */
     public function displayProductPriceBlock($params)
     {
@@ -78,6 +79,8 @@ class Design extends AbstractHook
 
             return $this->module->fetch('module:bluepayment/views/templates/hook/ga_listing.tpl');
         }
+
+        return null;
     }
 
 
@@ -85,9 +88,9 @@ class Design extends AbstractHook
      * Adds promoted payments to the top of the page
      * @return string|null
      */
-    public function displayBanner()
+    public function displayBanner(): ?string
     {
-        if (Cfg::get($this->module->name_upper . '_PROMO_HEADER')) {
+        if ($this->configuration->get($this->module->name_upper . '_PROMO_HEADER')) {
             $this->getSmartyAssets();
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/header.tpl');
         }
@@ -98,22 +101,23 @@ class Design extends AbstractHook
      * Adds promoted payments above the footer
      * @return string|null
      */
-    public function hookDisplayFooterBefore()
+    public function hookDisplayFooterBefore(): ?string
     {
-        if (Cfg::get($this->module->name_upper . '_PROMO_FOOTER')) {
+        if ($this->configuration->get($this->module->name_upper . '_PROMO_FOOTER')) {
             $this->getSmartyAssets();
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/footer.tpl');
         }
         return null;
     }
 
+
     /**
      * Adds promoted payments under the buttons in the product page
      * @return string|null
      */
-    public function displayProductAdditionalInfo()
+    public function displayProductAdditionalInfo(): ?string
     {
-        if (Cfg::get($this->module->name_upper . '_PROMO_PRODUCT')) {
+        if ($this->configuration->get($this->module->name_upper . '_PROMO_PRODUCT')) {
             $this->getSmartyAssets('product');
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/product.tpl');
         }
@@ -124,9 +128,9 @@ class Design extends AbstractHook
      * Adds promoted payments sidebar
      * @return string|null
      */
-    public function getSidebarPromo()
+    public function getSidebarPromo(): ?string
     {
-        if (Cfg::get($this->module->name_upper . '_PROMO_LISTING')) {
+        if ($this->configuration->get($this->module->name_upper . '_PROMO_LISTING')) {
             $this->getSmartyAssets('sidebar');
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/labels.tpl');
         }
@@ -135,6 +139,7 @@ class Design extends AbstractHook
 
 
     /**
+     * @codeCoverageIgnore
      * Adds promoted payments in the left column on the category subpage
      */
     public function displayLeftColumn()
@@ -143,6 +148,7 @@ class Design extends AbstractHook
     }
 
     /**
+     * @codeCoverageIgnore
      * Adds promoted payments in the right column on the category subpage
      */
     public function displayRightColumn()
@@ -154,9 +160,9 @@ class Design extends AbstractHook
      * Adds promoted payments in the shopping cart under products
      * @return string|null
      */
-    public function displayShoppingCartFooter()
+    public function displayShoppingCartFooter(): ?string
     {
-        if (Cfg::get($this->module->name_upper . '_PROMO_CART')) {
+        if ($this->configuration->get($this->module->name_upper . '_PROMO_CART')) {
             $this->getSmartyAssets('cart');
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/labels.tpl');
         }
@@ -167,7 +173,7 @@ class Design extends AbstractHook
      * Gtag data
      * @return string
      */
-    public function displayBeforeBodyClosingTag()
+    public function displayBeforeBodyClosingTag(): string
     {
         $controller = \Tools::getValue('controller');
 
@@ -228,21 +234,22 @@ class Design extends AbstractHook
      *
      * @param string $type
      * @return void
+     * @codeCoverageIgnore
      */
-    private function getSmartyAssets(string $type = 'main')
+    public function getSmartyAssets(string $type = 'main')
     {
-        $pay_later = Cfg::get($this->module->name_upper . '_PROMO_PAY_LATER');
+        $payLater = Cfg::get($this->module->name_upper . '_PROMO_PAY_LATER');
         $instalment = Cfg::get($this->module->name_upper . '_PROMO_INSTALMENTS');
-        $match_instalments = Cfg::get($this->module->name_upper . '_PROMO_MATCHED_INSTALMENTS');
-        $promo_checkout = Cfg::get($this->module->name_upper . '_PROMO_CHECKOUT');
+        $matchInstalments = Cfg::get($this->module->name_upper . '_PROMO_MATCHED_INSTALMENTS');
+        $promoCheckout = Cfg::get($this->module->name_upper . '_PROMO_CHECKOUT');
 
         $this->context->smarty->assign(
             [
-                'bm_assets_images' => $this->module->images_dir,
+                'bm_assets_images' => $this->module->getAssetImages(),
                 'bm_instalment' => $instalment,
-                'bm_pay_later' => $pay_later,
-                'bm_matched_instalments' => $match_instalments,
-                'bm_promo_checkout' => $promo_checkout,
+                'bm_pay_later' => $payLater,
+                'bm_matched_instalments' => $matchInstalments,
+                'bm_promo_checkout' => $promoCheckout,
                 'bm_promo_type' => $type
             ]
         );

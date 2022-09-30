@@ -25,30 +25,49 @@ use Language;
 use PrestaShopLogger;
 use Configuration as Cfg;
 use BluePayment\Until\Helper;
+use BluePayment\Adapter\ConfigurationAdapter;
 
 class Configure
 {
-    protected $translator;
     protected $module;
+    protected $configurationAdapter;
+    protected $customStatus;
+    protected $translator;
     protected $name;
 
-    const TRANSLATE_GROUP = 'Modules.Bluepayment';
+    public const TRANSLATE_GROUP = 'Modules.Bluepayment';
 
-    public function __construct(\BluePayment $module, TranslatorInterface $translator)
-    {
+    public function __construct(
+        \BluePayment $module,
+        ConfigurationAdapter $configurationAdapter,
+        TranslatorInterface $translator
+    ) {
         $this->module = $module;
         $this->translator = $translator;
+        $this->configurationAdapter = $configurationAdapter;
+
         $this->name = \Tools::strtoupper($this->module->name);
     }
 
     public function install(): bool
     {
-       return $this->installConfiguration() && $this->addOrderStatuses();
+        return $this->installConfiguration(Shop::isFeatureActive()) &&
+            $this->addOrderStatuses(
+                new CustomStatus()
+            );
     }
 
     public function uninstall(): bool
     {
-        return $this->uninstallConfiguration() && $this->removeOrderStatuses();
+        $fields = [
+            'normal' => Helper::getFields(),
+            'lang' => Helper::getFieldsLang()
+        ];
+
+        return $this->uninstallConfiguration(
+            $fields
+        ) &&
+            $this->removeOrderStatuses(new CustomStatus());
     }
 
 
@@ -56,63 +75,162 @@ class Configure
      * Create configuration fields
      * @return bool
      */
-    public function installConfiguration(): bool
+    public function installConfiguration($isMultiStore = false): bool
     {
         $res = true;
 
-        if (Shop::isFeatureActive()) {
+        if ($isMultiStore) {
             foreach (Shop::getContextListShopID() as $shop_id) {
                 $group_id = Shop::getGroupFromShop($shop_id, true);
 
-                $res &= Cfg::updateValue($this->name . '_TEST_ENV', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_SHOW_PAYWAY', 1, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_GA_TYPE', 2, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_GA_TRACKER_ID', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_GA4_TRACKER_ID', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_GA4_SECRET', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_BLIK_REDIRECT', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_GPAY_REDIRECT', 0, false, $group_id, $shop_id);
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_TEST_ENV',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_SHOW_PAYWAY',
+                    1,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_GA_TYPE',
+                    2,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_GA_TRACKER_ID',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_GA4_TRACKER_ID',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_GA4_SECRET',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_BLIK_REDIRECT',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_GPAY_REDIRECT',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
 
-                $res &= Cfg::updateValue($this->name . '_PROMO_PAY_LATER', 1, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_PROMO_INSTALMENTS', 1, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_PROMO_MATCHED_INSTALMENTS', 1, false, $group_id, $shop_id);
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_PAY_LATER',
+                    1,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_INSTALMENTS',
+                    1,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_MATCHED_INSTALMENTS',
+                    1,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
 
-                $res &= Cfg::updateValue($this->name . '_PROMO_HEADER', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_PROMO_FOOTER', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_PROMO_LISTING', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_PROMO_PRODUCT', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_PROMO_CART', 0, false, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_PROMO_CHECKOUT', 1, false, $group_id, $shop_id);
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_HEADER',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_FOOTER',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_LISTING',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_PRODUCT',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_CART',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PROMO_CHECKOUT',
+                    1,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
             }
         } else {
             /* Sets up Global configuration */
-            $res = Cfg::updateValue($this->name . '_TEST_ENV', 0);
-            $res &= Cfg::updateValue($this->name . '_SHOW_PAYWAY', 1);
-            $res &= Cfg::updateValue($this->name . '_GA_TYPE', 2);
-            $res &= Cfg::updateValue($this->name . '_GA_TRACKER_ID', 0);
-            $res &= Cfg::updateValue($this->name . '_GA4_TRACKER_ID', 0);
-            $res &= Cfg::updateValue($this->name . '_GA4_SECRET', 0);
-            $res &= Cfg::updateValue($this->name . '_BLIK_REDIRECT', 0);
-            $res &= Cfg::updateValue($this->name . '_GPAY_REDIRECT', 0);
+            $res = $this->configurationAdapter->updateValue($this->name . '_TEST_ENV', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_SHOW_PAYWAY', 1);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_GA_TYPE', 2);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_GA_TRACKER_ID', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_GA4_TRACKER_ID', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_GA4_SECRET', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_BLIK_REDIRECT', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_GPAY_REDIRECT', 0);
 
-            $res &= Cfg::updateValue($this->name . '_PROMO_PAY_LATER', 1);
-            $res &= Cfg::updateValue($this->name . '_PROMO_INSTALMENTS', 1);
-            $res &= Cfg::updateValue($this->name . '_PROMO_MATCHED_INSTALMENTS', 1);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_PAY_LATER', 1);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_INSTALMENTS', 1);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_MATCHED_INSTALMENTS', 1);
 
-            $res &= Cfg::updateValue($this->name . '_PROMO_HEADER', 0);
-            $res &= Cfg::updateValue($this->name . '_PROMO_FOOTER', 0);
-            $res &= Cfg::updateValue($this->name . '_PROMO_LISTING', 0);
-            $res &= Cfg::updateValue($this->name . '_PROMO_PRODUCT', 0);
-            $res &= Cfg::updateValue($this->name . '_PROMO_CART', 0);
-            $res &= Cfg::updateValue($this->name . '_PROMO_CHECKOUT', 1);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_HEADER', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_FOOTER', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_LISTING', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_PRODUCT', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_CART', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_CHECKOUT', 1);
         }
 
-        if (!$res) {
-            PrestaShopLogger::addLog('Error configuration', 3);
-            return false;
-        }
-
-        $res &= $this->installConfigurationTranslations();
+        $res &= $this->installConfigurationTranslations(
+            $isMultiStore
+        );
 
         $smarty = \Context::getContext()->smarty;
         \Tools::clearAllCache($smarty);
@@ -122,49 +240,66 @@ class Configure
     }
 
 
-    public function uninstallConfiguration(): bool
+    public function uninstallConfiguration($fields): bool
     {
-
         $res = true;
 
-        foreach (Helper::getFields() as $field) {
-            $res &= Cfg::deleteByName($field);
+        if (isset($fields['normal']) && !empty($fields['normal'])) {
+            foreach ($fields['normal'] as $field) {
+                $res &= $this->configurationAdapter->deleteByName($field);
+            }
+        } else {
+            \PrestaShopLogger::addLog('BM - Cant uninstall statuses ', 4);
+            $res = false;
         }
 
-        foreach (Helper::getFieldsLang() as $field) {
-            $res &= Cfg::deleteByName($field);
+        if (isset($fields['lang']) && !empty($fields['lang'])) {
+            foreach ($fields['lang'] as $field) {
+                $res &= $this->configurationAdapter->deleteByName($field);
+            }
+        } else {
+            \PrestaShopLogger::addLog('BM - Cant uninstall statuses ', 4);
+            $res = false;
         }
 
-        $res &= Cfg::deleteByName($this->name . '_SHARED_KEY');
-        $res &= Cfg::deleteByName($this->name . '_SERVICE_PARTNER_ID');
+        $res &= $this->configurationAdapter->deleteByName($this->name . '_SHARED_KEY');
+        $res &= $this->configurationAdapter->deleteByName($this->name . '_SERVICE_PARTNER_ID');
 
         return (bool) $res;
     }
 
 
-    public function addOrderStatuses(): bool
+
+
+    public function addOrderStatuses($customStatus): bool
     {
+        $res = false;
+
         try {
-            CustomStatus::addOrderStates(
+            $res = $customStatus->addOrderStates(
                 \Context::getContext()->language->id,
                 $this->module->name_upper
             );
-            return true;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             \PrestaShopLogger::addLog('BM - Add statuses - error', 4);
-            return false;
         }
+
+        return $res;
     }
 
-    public function removeOrderStatuses():bool
+
+    public function removeOrderStatuses($customStatus): bool
     {
+        $res = false;
+
         try {
-            CustomStatus::removeOrderStates();
-            return true;
-        } catch (Exception $exception) {
+            $customStatus->removeOrderStates();
+            $res = true;
+        } catch (\Exception $exception) {
             \PrestaShopLogger::addLog('BM - Remove statuses - error', 4);
-            return false;
         }
+
+        return $res;
     }
 
 
@@ -172,7 +307,7 @@ class Configure
      * Install default text translations for fields in the main configuration
      * @return bool
      */
-    public function installConfigurationTranslations(): bool
+    public function installConfigurationTranslations($isMultiStore = false): bool
     {
         $res = true;
 
@@ -209,16 +344,26 @@ class Configure
             }
         }
 
-        if (Shop::isFeatureActive()) {
+        if ($isMultiStore) {
             foreach (Shop::getContextListShopID() as $shop_id) {
                 $group_id = Shop::getGroupFromShop($shop_id, true);
 
-                $res &= Cfg::updateValue($this->name . '_PAYMENT_NAME', $name_lang, $group_id, $shop_id);
-                $res &= Cfg::updateValue($this->name . '_PAYMENT_GROUP_NAME', $name_group_lang, $group_id, $shop_id);
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PAYMENT_NAME',
+                    $name_lang,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_PAYMENT_GROUP_NAME',
+                    $name_group_lang,
+                    $group_id,
+                    $shop_id
+                );
             }
         } else {
-            $res &= Cfg::updateValue($this->name . '_PAYMENT_NAME', $name_lang);
-            $res &= Cfg::updateValue($this->name . '_PAYMENT_GROUP_NAME', $name_group_lang);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PAYMENT_NAME', $name_lang);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_PAYMENT_GROUP_NAME', $name_group_lang);
         }
 
         return (bool) $res;

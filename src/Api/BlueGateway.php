@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Api;
 
+use BluePayment\Until\AdminHelper;
 use Module;
 use BluePayment\BlueAPI;
 
@@ -30,51 +31,26 @@ class BlueGateway
         $this->module = $module;
     }
 
+    public function getMode()
+    {
+        return $this->api->getApiMode();
+    }
+
     public function getTransfers()
     {
-        $this->api->getGatewaysFromAPI(new BlueGatewayTransfers());
+        return $this->api->getGatewaysFromAPI(
+            new BlueGatewayTransfers(),
+            $this->getMode(),
+            AdminHelper::getSortCurrencies()
+        );
     }
 
     public function getChannels()
     {
-        $this->api->getGatewaysFromAPI(new BlueGatewayChannels());
-    }
-
-    public function clearGateway()
-    {
-        $id_shop = \Context::getContext()->shop->id;
-
-        try {
-            $sql = 'DELETE gt.*, gs.*
-                FROM ' . _DB_PREFIX_ . 'blue_gateway_transfers gt
-                INNER JOIN ' . _DB_PREFIX_ . 'blue_gateway_transfers_shop gs
-                ON (gs.id = gt.id)';
-
-            if (\Shop::isFeatureActive()) {
-                $sql .= 'WHERE gs.id_shop = ' . (int)$id_shop;
-            }
-
-            \Db::getInstance()->execute($sql);
-            \PrestaShopLogger::addLog('BM - Clear gateway transfers', 1);
-        } catch (Exception $exception) {
-            \PrestaShopLogger::addLog('BM - Error clear gateway transfers', 1);
-        }
-
-        try {
-            $sql = 'DELETE gtt.*, gss.*
-                FROM `' . _DB_PREFIX_ . 'blue_gateway_channels` gtt
-                INNER JOIN `' . _DB_PREFIX_ . 'blue_gateway_channels_shop` gss
-                ON (gss.id_blue_gateway_channels = gtt.id_blue_gateway_channels)';
-
-            if (\Shop::isFeatureActive()) {
-                $sql .= 'WHERE gss.id_shop = ' . (int)$id_shop;
-            }
-
-            \Db::getInstance()->execute($sql);
-
-            \PrestaShopLogger::addLog('BM - Clear gateway channels', 1);
-        } catch (Exception $exception) {
-            \PrestaShopLogger::addLog('BM - Error clear gateway channels', 1);
-        }
+        return $this->api->getGatewaysFromAPI(
+            new BlueGatewayChannels(),
+            $this->getMode(),
+            AdminHelper::getSortCurrencies()
+        );
     }
 }

@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.8.0] 30.09.2022
+- Code refactoring
+- Updated amplitude events
+- Corrected translations
+
 ## [2.7.9] 8.09.2022
 - Fixed error displaying payments in thecheckout module
 - Fixed bug blocking modal display

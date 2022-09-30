@@ -26,7 +26,7 @@ use BluePayment\Until\Helper;
 
 class Payment extends AbstractHook
 {
-    const AVAILABLE_HOOKS = [
+    public const AVAILABLE_HOOKS = [
         'paymentReturn',
         'orderConfirmation',
     ];
@@ -41,25 +41,47 @@ class Payment extends AbstractHook
      */
     public function paymentReturn($params)
     {
-        if (!$this->module->active || !isset($params['order']) || ($params['order']->module != $this->module->name)) {
+        if (!$this->module->active ||
+            !isset($params['order']) ||
+            ($params['order']->module != $this->module->name)) {
             return null;
         }
 
         $currency = new \Currency($params['order']->id_currency);
 
+        $orderData = $this->getDataToOrderResults(
+            $params,
+            $currency
+        );
+
+        if(!$orderData) {
+            return;
+        }
+
+        return $this->module->fetch('module:bluepayment/views/templates/hook/paymentReturn.tpl');
+    }
+
+
+    public function getDataToOrderResults($params, $currency)
+    :bool
+    {
         $products = [];
 
-        foreach ($params['order']->getProducts() as $product) {
-            $cat = new \Category($product['id_category_default'], $this->context->language->id);
+        if (!empty($params['order']->getProducts())) {
+            foreach ($params['order']->getProducts() as $product) {
+                $cat = new \Category($product['id_category_default'], $this->context->language->id);
 
-            $newProduct = new \stdClass();
-            $newProduct->name = $product['product_name'];
-            $newProduct->category = $cat->name;
-            $newProduct->price = $product['price'];
-            $newProduct->quantity = $product['product_quantity'];
-            $newProduct->sku = $product['product_reference'];
+                $newProduct = new \stdClass();
+                $newProduct->name = $product['product_name'];
+                $newProduct->category = $cat->name;
+                $newProduct->price = $product['price'];
+                $newProduct->quantity = $product['product_quantity'];
+                $newProduct->sku = $product['product_reference'];
 
-            $products[] = $newProduct;
+                $products[] = $newProduct;
+            }
+        } else {
+            return false;
         }
 
         $this->context->smarty->assign([
@@ -72,12 +94,16 @@ class Payment extends AbstractHook
             'products' => $products,
         ]);
 
-        return $this->module->fetch('module:bluepayment/views/templates/hook/paymentReturn.tpl');
+        return true;
     }
 
 
     public function orderConfirmation($params)
     {
+        if (!$params['order'] || !$params['order']->id) {
+            return null;
+        }
+
         $id_default_lang = (int)Cfg::get('PS_LANG_DEFAULT');
         $order = new \OrderCore($params['order']->id);
         $state = $order->getCurrentStateFull($id_default_lang);

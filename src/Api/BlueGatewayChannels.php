@@ -29,8 +29,8 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 {
     private $module;
 
-    const TABLE = 'blue_gateway_channels';
-    const PRIMARY = 'id_blue_gateway_channels';
+    public const TABLE = 'blue_gateway_channels';
+    public const PRIMARY = 'id_blue_gateway_channels';
 
     public $id_blue_gateway_channels;
     public $gateway_status;
@@ -133,10 +133,11 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public function createTransferPaymentOption(): GatewayModel
     {
         $gateway = new GatewayModel();
-        $gateway->setGatewayId((string)GATEWAY_ID_TRANSFER)->setGatewayName((string) 'Przelew internetowy');
+        $gateway->setGatewayId((string)GATEWAY_ID_TRANSFER)->setGatewayName('Przelew internetowy');
         $gateway->setGatewayType('1');
-        $gateway->setBankName((string)'Przelew internetowy');
-        $gateway->setIconUrl((string)$this->getPaymentsIcon());
+        $gateway->setBankName('Przelew internetowy');
+        $gateway->setGatewayPayment('1');
+        $gateway->setIconUrl($this->module->getAssetImages() . $this->getPaymentsIcon());
 
         return $gateway;
     }
@@ -147,7 +148,8 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
         $gateway->setGatewayId((string)GATEWAY_ID_WALLET)->setGatewayName('Wirtualny portfel');
         $gateway->setGatewayType('1');
         $gateway->setBankName('Wirtualny portfel');
-        $gateway->setIconUrl($this->getCardsIcon());
+        $gateway->setGatewayPayment('1');
+        $gateway->setIconUrl($this->module->getAssetImages() . $this->getCardsIcon());
 
         return $gateway;
     }
@@ -156,13 +158,10 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 
 
 
-    public function syncGateway($apiGateways, $currency, $position = 1)
+    public function syncGateway($apiGateways, $currency, $position = 1): ?BlueGatewayChannels
     {
-
-        if ($apiGateways) {
+        if ($apiGateways && $currency) {
             /// Reset position by currency
-            $position = 1;
-
             $paymentsGroup = $apiGateways->getGateways();
             $paymentOptionsArray = $this->getOnlyGroups($paymentsGroup);
             $paymentOptionsArray[GATEWAY_ID_TRANSFER] = $this->createTransferPaymentOption();
@@ -173,7 +172,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                     $currency['iso_code']
                 );
 
-                if (!$this->gatewayIsActive($paymentGateway->getGatewayId(), $currency['iso_code'], true)) {
+                if (!$this->isChannelActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
                     $payway->gateway_logo_url = $paymentGateway->getIconUrl();
                     $payway->bank_name = $paymentGateway->getBankName();
                     $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
@@ -182,37 +181,45 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                     $payway->gateway_currency = $currency['iso_code'];
                     $payway->force_id = true;
                     $payway->gateway_id = $paymentGateway->getGatewayId();
+
+                    if ($paymentGateway->getGatewayId() == '9999' || $paymentGateway->getGatewayId() == '999') {
+                        $payway->gateway_payments = '1';
+                    }
+
                     $payway->position = (int)$position;
                     $payway->save();
                     $position++;
                 }
             }
-            return $position;
-        } else {
-            PrestaShopLogger::addLog('BM - Error sync gateway channels', 1);
+            return $payway;
         }
 
-        return $position;
+        PrestaShopLogger::addLog('BM - Error sync gateway channels', 3);
+        return null;
     }
 
-    private function getPaymentsIcon(): string
+    public function getPaymentsIcon(): string
     {
-        return $this->module->images_dir . 'payments.png';
+        return 'payments.png';
     }
 
-    private function getCardsIcon(): string
+    public function getCardsIcon(): string
     {
-        return $this->module->images_dir . 'cards.png';
+        return 'cards.png';
     }
 
 
+    /**
+     * @codeCoverageIgnore
+     * Prestashop function overwrite change position gateway
+     */
     public function getChannelsPositions($id, $shopId)
     {
         $q = new \DbQuery();
         $q->select('gc.id_blue_gateway_channels, gc.position');
         $q->from(self::TABLE, 'gc');
         $q->leftJoin('blue_gateway_channels_shop', 'gcs', 'gcs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
-        $q->where('gc.id_blue_gateway_channels = "'.(int)($id).'"');
+        $q->where('gc.id_blue_gateway_channels = "' . (int)($id) . '"');
         if (Shop::isFeatureActive()) {
             $q->where('gcs.id_shop = ' . (int)$shopId);
         }
@@ -221,7 +228,10 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
         return Db::getInstance()->executeS($q);
     }
 
-
+    /**
+     * @codeCoverageIgnore
+     * Prestashop function overwrite update position gateway
+     */
     public function updatePosition($id, $way, $position): bool
     {
         $id_shop = Context::getContext()->shop->id;
@@ -253,51 +263,40 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     }
 
 
-
-
-    public static function getLastAvailablePosition()
-    {
-
-        $id_shop = Context::getContext()->shop->id;
-
-        $q = new DbQuery();
-        $q->from(self::TABLE);
-        $q->orderBy('position DESC');
-        if (Shop::isFeatureActive()) {
-            $q->where('gs.id_shop = ' . (int)$id_shop);
-        }
-        $q->select('position');
-
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($q, false);
-
-        return $result ? (int)$result['position'] + 1 : 0;
-    }
-
-    public static function gatewayIsActive($gatewayId, $currency, $ignoreStatus = false)
+    public static function getChannelId($gatewayId, $currency)
     {
         $id_shop = Context::getContext()->shop->id;
 
         $q = new DbQuery();
+        $q->select('gc.id_blue_gateway_channels');
         $q->from(self::TABLE, 'gc');
         $q->leftJoin('blue_gateway_channels_shop', 'gs', 'gs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
         $q->where('gc.gateway_id = ' . (int)$gatewayId);
         $q->where('gc.gateway_currency = "' . pSql($currency) . '"');
+        $q->where('gc.gateway_status = 1');
 
         if (Shop::isFeatureActive()) {
             $q->where('gs.id_shop = ' . (int)$id_shop);
-        }
-
-        $q->select('gc.id_blue_gateway_channels');
-
-        if (!$ignoreStatus) {
-            $q->where('gc.gateway_status = 1');
         }
 
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($q);
     }
 
-    private static function getByGatewayIdAndCurrency($gatewayId, $currency): BlueGatewayChannels
+
+    /**
+     * @param $gatewayId
+     * @param $currency
+     *
+     * @return bool
+     */
+    public static function isChannelActive($gatewayId, $currency): bool
     {
-        return new BlueGatewayChannels(self::gatewayIsActive($gatewayId, $currency, true));
+        return (bool) self::getChannelId($gatewayId, $currency);
+    }
+
+
+    public static function getByGatewayIdAndCurrency($gatewayId, $currency): BlueGatewayChannels
+    {
+        return new BlueGatewayChannels(self::isChannelActive($gatewayId, $currency));
     }
 }

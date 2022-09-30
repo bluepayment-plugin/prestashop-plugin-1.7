@@ -22,6 +22,8 @@ use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 use BluePayment\Until\Helper;
+use Shop;
+use Db;
 
 class InternetTransfer implements GatewayType
 {
@@ -44,6 +46,35 @@ class InternetTransfer implements GatewayType
             true
         );
 
+        /// Get all transfers
+        if(!is_object(Context::getContext()->currency)){
+            $currency = Context::getContext()->currency['iso_code'];
+        }
+        else{
+            $currency = Context::getContext()->currency->iso_code;
+        }
+        $idShop = Context::getContext()->shop->id;
+        $gatewayTransfer = new \DbQuery();
+        $gatewayTransfer->from('blue_gateway_transfers', 'gt');
+        $gatewayTransfer->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+        $gatewayTransfer->where('gt.gateway_id NOT IN (' . Helper::getGatewaysList() . ')');
+        $gatewayTransfer->where('gt.gateway_status = 1');
+        $gatewayTransfer->where('gt.gateway_currency = "' . pSql($currency) . '"');
+
+        if (Shop::isFeatureActive()) {
+            $gatewayTransfer->where('gts.id_shop = ' . (int)$idShop);
+        }
+
+        $gatewayTransfer->select('*');
+        $gatewayTransfer = Db::getInstance()->executeS($gatewayTransfer);
+
+        Context::getContext()->smarty->assign([
+            'selectPayWay' => Config::get($module->name_upper . '_SHOW_PAYWAY'),
+            'start_payment_translation' => $module->l('Start payment'),
+            'order_subject_to_payment_obligation_translation' => $module->l('Order with the obligation to pay'),
+            'img_transfers' => Helper::getImgPayments('transfers', $currency, $idShop),
+            'gateway_transfers' => $gatewayTransfer,
+        ]);
         $option = new PaymentOption();
         $option->setCallToActionText($paymentName)
             ->setAction($moduleLink)

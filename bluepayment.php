@@ -26,12 +26,13 @@ require_once dirname(__FILE__) . '/vendor/autoload.php';
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Install\Installer;
 use BluePayment\Configure\Configure;
-use BluePayment\HookDispatcher;
+use BluePayment\Hook\HookDispatcher;
 use BluePayment\Service\FactoryPaymentMethods;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
+use BluePayment\Adapter\ConfigurationAdapter;
 
-class BluePayment extends PaymentModule
+class BluePayment extends \PaymentModule
 {
     public $name_upper;
 
@@ -120,10 +121,15 @@ class BluePayment extends PaymentModule
      */
     private $hookDispatcher;
 
+    /**
+     * @var Db
+     */
+    private $database;
+
     public $id_order = null;
 
-    const PLUGIN_ACTIVATED = 'plugin activated';
-    const PLUGIN_DEACTIVATED = 'plugin deactivated';
+    public const PLUGIN_ACTIVATED = 'plugin activated';
+    public const PLUGIN_DEACTIVATED = 'plugin deactivated';
 
     public function __construct()
     {
@@ -134,7 +140,7 @@ class BluePayment extends PaymentModule
         require_once dirname(__FILE__) . '/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.7.9';
+        $this->version = '2.8.0';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -152,7 +158,7 @@ class BluePayment extends PaymentModule
         );
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
-        $this->hookDispatcher = new HookDispatcher($this);
+        $this->hookDispatcher = new HookDispatcher($this, new ConfigurationAdapter($this->context->shop->id));
     }
 
     /**
@@ -163,6 +169,10 @@ class BluePayment extends PaymentModule
     public function install(): bool
     {
         $state = true;
+
+        if (version_compare(phpversion(), '7.0.0', '<')) {
+            $state = false;
+        }
 
         if (!parent::install() || false === (new Installer($this, $this->getTranslator()))->install()) {
             $state = false;
@@ -193,7 +203,13 @@ class BluePayment extends PaymentModule
                 $state = false;
             }
 
-            if (false === (new Configure($this, $this->getTranslator()))->uninstall()) {
+            if (
+                false === (new Configure(
+                    $this,
+                    new ConfigurationAdapter($this->getContext()->shop->id),
+                    $this->getTranslator()
+                ))->uninstall()
+            ) {
                 $state = false;
             }
         }
@@ -204,12 +220,15 @@ class BluePayment extends PaymentModule
 
     public function enable($force_all = false)
     {
-
-        if (false === (new Configure($this, $this->getTranslator()))->install()) {
+        if (
+            false === (new Configure(
+                $this,
+                new ConfigurationAdapter($this->getContext()->shop->id),
+                $this->getTranslator()
+            ))->install()
+        ) {
             return false;
         }
-
-
 
         $data = [
             'events' => [
@@ -262,14 +281,28 @@ class BluePayment extends PaymentModule
     /**
      * Dispatch hooks
      * @param string $methodName
-     * @param array $arguments
+     * @param $arguments
      */
-    public function __call(string $methodName, array $arguments = [])
+    public function __call(string $methodName, $arguments = [])
     {
         return $this->getHookDispatcher()->dispatch(
             $methodName,
             !empty($arguments[0]) ? $arguments[0] : []
         );
+    }
+
+
+    /**
+     * Return the current database instance
+     * @return Db
+     */
+    public function getDatabase(): Db
+    {
+        if ($this->database === null) {
+            $this->database = Db::getInstance();
+        }
+
+        return $this->database;
     }
 
 
@@ -297,7 +330,6 @@ class BluePayment extends PaymentModule
      */
     public function hookPaymentOptions()
     {
-
         if (!$this->active) {
             return null;
         }
@@ -362,8 +394,16 @@ class BluePayment extends PaymentModule
             'selectPayWay' => Cfg::get($this->name_upper . '_SHOW_PAYWAY'),
             'gateway_transfers' => $gatewayTransfer,
             'gateway_wallets' => $gatewayWallet,
-            'img_wallets' => Helper::getImgPayments('wallet'),
-            'img_transfers' => Helper::getImgPayments('transfers'),
+            'img_wallets' => Helper::getImgPayments(
+                'wallet',
+                $this->getContext()->currency->iso_code,
+                $this->getContext()->shop->id
+            ),
+            'img_transfers' => Helper::getImgPayments(
+                'transfers',
+                $this->getContext()->currency->iso_code,
+                $this->getContext()->shop->id
+            ),
             'regulations_get' => $this->context->link->getModuleLink('bluepayment', 'regulationsGet', [], true),
             'changePayment' => $this->l('change'),
             'bm_promo_checkout' => Cfg::get($this->name_upper . '_PROMO_CHECKOUT'),
@@ -393,9 +433,14 @@ class BluePayment extends PaymentModule
         return $this->_path;
     }
 
-    public function debug( $texto ) {
-        $logfilename = dirname( __FILE__ ) . '/log.log';
-        file_put_contents( $logfilename, print_r( $texto, true ) );
+    public function getAssetImages(): string
+    {
+        return $this->images_dir;
     }
 
+    public function debug($texto)
+    {
+        $logfilename = dirname(__FILE__) . '/log.log';
+        file_put_contents($logfilename, print_r($texto, true));
+    }
 }

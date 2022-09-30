@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
+use BluePayment\Until\Helper;
 use Context;
 use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -70,9 +71,10 @@ class Card implements GatewayType
      */
     public function isActive(): bool
     {
-        return (bool)BlueGatewayTransfers::gatewayIsActive(
+        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        return BlueGatewayTransfers::isTransferActive(
             GATEWAY_ID_CARD,
-            Context::getContext()->currency->iso_code
+            $iso_code
         );
     }
 }

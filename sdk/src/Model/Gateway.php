@@ -149,6 +149,18 @@ class Gateway extends AbstractModel
      */
     private $bankName = '';
 
+
+    /**
+     * Group.
+     *
+     * @var string
+     */
+    private $gatewayPayment = '';
+
+
+
+
+
     /**
      * Icon URL.
      *
@@ -255,6 +267,32 @@ class Gateway extends AbstractModel
     public function setBankName($bankName)
     {
         $this->bankName = (string)$bankName;
+
+        return $this;
+    }
+
+
+    /**
+     * Get gateway sub payments.
+     *
+     * @return string
+     */
+    public function getGatewayPayment()
+    {
+        return $this->gatewayPayment;
+    }
+
+
+    /**
+     * Sets group
+     *
+     * @param string $gatewayType
+     *
+     * @return $this
+     */
+    public function setGatewayPayment(string $gatewayType)
+    {
+        $this->gatewayType = (string)$gatewayType;
 
         return $this;
     }

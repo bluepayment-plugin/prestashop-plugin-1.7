@@ -11,6 +11,15 @@
       "bluepayment.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "BluePayment\\": "src/",
+      "BluePayment\\Tests\\": "tests/php/"
+    },
+    "classmap": [
+      "bluepayment.php"
+    ]
+  },
   "require": {
     "php": ">=7.1",
     "ext-json": "*",
@@ -24,17 +33,27 @@
     "prepend-autoloader": false,
     "optimize-autoloader": true,
     "platform": {
-      "php": "7.4"
+      "php": "7.3"
     }
   },
   "require-dev": {
     "phpstan/phpstan": "^1.8.0",
     "squizlabs/php_codesniffer": "^3.7.1",
     "phpmd/phpmd": "@stable",
-    "prestashop/php-dev-tools": "^4.2"
+    "prestashop/php-dev-tools": "^4.2",
+    "phpunit/phpunit": "^8",
+    "mockery/mockery": "^1.2"
   },
   "type": "prestashop-module",
   "scripts": {
-    "build:prod": "composer install -v --no-dev"
+    "build:prod": "composer install -v --no-dev",
+    "test": [
+      "@putenv XDEBUG_MODE=coverage",
+      "@php -d date.timezone=UTC ./vendor/bin/phpunit -c tests/php/phpunit.xml"
+    ],
+    "test:coverage": [
+      "@putenv XDEBUG_MODE=coverage",
+      "phpunit --color=always --coverage-html=\"build\""
+    ]
   }
 }

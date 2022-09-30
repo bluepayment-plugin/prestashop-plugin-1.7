@@ -87,9 +87,9 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
         ],
     ];
 
-    public function __construct($id = null, $id_lang = null, $id_shop = null)
+    public function __construct($id = null, $idLang = null, $idShop = null)
     {
-        parent::__construct($id, $id_lang, $id_shop);
+        parent::__construct($id, $idLang, $idShop);
         $this->module = new BluePayment();
 
         if (Shop::isFeatureActive()) {
@@ -97,64 +97,70 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
         }
     }
 
-    public function syncGateway($apiGateways, $currency, $position = 0)
+    public function syncGateway($apiGateways, $currency, $position = 0): ?BlueGatewayTransfers
     {
-        PrestaShopLogger::addLog('sync gateway transfers', 1);
-
-        if ($apiGateways) {
-            PrestaShopLogger::addLog('BM - Sync gateway transfers', 1);
-
+        if ($apiGateways && $currency) {
             foreach ($apiGateways->getGateways() as $paymentGateway) {
                 if ($paymentGateway->getGatewayName() !== 'Kartowa płatność automatyczna') {
                     $payway = self::getByGatewayIdAndCurrency(
                         $paymentGateway->getGatewayId(),
                         $currency['iso_code']
                     );
-                    $payway->gateway_logo_url = $paymentGateway->getIconUrl();
-                    $payway->bank_name = $paymentGateway->getBankName();
-                    $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
-                    $payway->gateway_name = $paymentGateway->getGatewayName();
-                    $payway->gateway_type = 1;
-                    $payway->gateway_currency = $currency['iso_code'];
-                    $payway->force_id = true;
-                    $payway->gateway_id = $paymentGateway->getGatewayId();
-                    $payway->position = (int)$position;
-                    $payway->save();
-                    (int)$position++;
+
+
+                    if (!$this->isTransferActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
+                        $payway->gateway_logo_url = $paymentGateway->getIconUrl();
+                        $payway->bank_name = $paymentGateway->getBankName();
+                        $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
+                        $payway->gateway_name = $paymentGateway->getGatewayName();
+                        $payway->gateway_type = 1;
+                        $payway->gateway_currency = $currency['iso_code'];
+                        $payway->force_id = true;
+                        $payway->gateway_id = $paymentGateway->getGatewayId();
+                        $payway->position = (int)$position;
+                        $payway->save();
+                        (int)$position++;
+                    }
                 }
             }
-
-            return (int)$position;
-        } else {
-            PrestaShopLogger::addLog('BM - Error sync gateway transfers', 1);
+            return $payway;
         }
 
-        return (int)$position;
+        PrestaShopLogger::addLog('BM - Error sync gateway transfers', 1);
+        return null;
     }
 
-    public static function gatewayIsActive($gatewayId, $currency, $ignoreStatus = false)
+    public static function getTransferId($gatewayId, $currency)
     {
-        $id_shop = Context::getContext()->shop->id;
+        $idShop = Context::getContext()->shop->id;
 
         $query = new DbQuery();
+        $query->select('gt.id');
         $query->from('blue_gateway_transfers', 'gt');
         $query->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
         $query->where('gt.gateway_id = ' . (int)$gatewayId);
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
+        $query->where('gt.gateway_status = 1');
         if (Shop::isFeatureActive()) {
-            $query->where('gts.id_shop = ' . (int)$id_shop);
-        }
-        $query->select('gt.id');
-
-        if (!$ignoreStatus) {
-            $query->where('gt.gateway_status = 1');
+            $query->where('gts.id_shop = ' . (int)$idShop);
         }
 
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
     }
 
-    private static function getByGatewayIdAndCurrency($gatewayId, $currency)
+    /**
+     * @param $gatewayId
+     * @param $currency
+     *
+     * @return bool
+     */
+    public static function isTransferActive($gatewayId, $currency): bool
     {
-        return new BlueGatewayTransfers(self::gatewayIsActive($gatewayId, $currency, true));
+        return (bool) self::getTransferId($gatewayId, $currency);
+    }
+
+    private static function getByGatewayIdAndCurrency($gatewayId, $currency): BlueGatewayTransfers
+    {
+        return new BlueGatewayTransfers(self::isTransferActive($gatewayId, $currency));
     }
 }

@@ -56,9 +56,9 @@ class AnalyticsTracking
      *
      * @param array $data
      *
-     * @return bool|string
+     * @return array
      */
-    public function gaSendData(array $data)
+    public function gaSendData(array $data): array
     {
         $postUrl = 'https://www.google-analytics.com/collect?';
         $postUrl .= http_build_query($data);
@@ -70,9 +70,13 @@ class AnalyticsTracking
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         $result = curl_exec($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        return $result;
+        return [
+            'statusCode' => $statusCode,
+            'resp' => $result
+        ];
     }
 
     /**
@@ -80,9 +84,9 @@ class AnalyticsTracking
      *
      * @param array $data
      *
-     * @return bool|string
+     * @return array
      */
-    public function ga4SendData($data)
+    public function ga4SendData(array $data): array
     {
         $postUrl = 'https://www.google-analytics.com/mp/collect?measurement_id='
             . $this->trackedId . '&api_secret=' . $this->secretApi;
@@ -97,9 +101,15 @@ class AnalyticsTracking
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
         $result = curl_exec($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        return $result;
+        return [
+            'statusCode' => $statusCode,
+            'resp' => $result
+        ];
+
+//        return $result;
     }
 
     /**
@@ -110,9 +120,9 @@ class AnalyticsTracking
      * @param $label
      * @param array $products
      *
-     * @return bool
+     * @return array
      */
-    public function gaSendEvent($category = null, $action = null, $label = null, array $products = []): bool
+    public function gaSendEvent($category = null, $action = null, $label = null, array $products = []): array
     {
         $data = [
             'v' => 1,
@@ -125,23 +135,18 @@ class AnalyticsTracking
         ];
 
         $dataMerge = array_merge($data, $products);
-        $this->gaSendData($dataMerge);
-
-        return (true);
+        return $this->gaSendData($dataMerge);
     }
 
-    public function test($test){
-        return $test;
-    }
 
     /**
      * Tracking GA 4
      *
      * @param array $products
      *
-     * @return bool
+     * @return array
      */
-    public function ga4SendEvent(array $products = []): bool
+    public function ga4SendEvent(array $products = []): array
     {
         $data = [
             'client_id' => $this->gaParseCookie()
@@ -149,11 +154,8 @@ class AnalyticsTracking
 
         $dataMerge = array_merge($data, $products);
 
-        $this->ga4SendData((json_encode($dataMerge, JSON_PRETTY_PRINT)));
-
-        $module = \Module::getInstanceByName('bluepayment');
-        $module->debug($dataMerge);
-
-        return (true);
+        return $this->ga4SendData((array)(json_encode($dataMerge, JSON_PRETTY_PRINT)));
+//        $module = \Module::getInstanceByName('bluepayment');
+//        $module->debug($dataMerge);
     }
 }

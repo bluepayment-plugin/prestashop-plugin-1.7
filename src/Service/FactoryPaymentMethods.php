@@ -21,6 +21,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Db;
 use DbQuery;
 use Shop;
+use Context;
 
 class FactoryPaymentMethods
 {
@@ -35,7 +36,12 @@ class FactoryPaymentMethods
 
     public function getGroup()
     {
-        $currency = $this->context->currency->iso_code;
+        if(!is_object(Context::getContext()->currency)){
+            $currency = Context::getContext()->currency['iso_code'];
+        }
+        else{
+            $currency = Context::getContext()->currency->iso_code;
+        }
         $idShop = $this->context->shop->id;
 
         $q = new DbQuery();

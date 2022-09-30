@@ -33,6 +33,7 @@ class Transformer
                         'gatewayName' => $gateway->getGatewayName(),
                         'gatewayType' => $gateway->getGatewayType(),
                         'bankName'    => $gateway->getBankName(),
+                        'gatewayPayments'    => $gateway->getGatewayPayment(),
                         'iconURL'     => $gateway->getIconUrl(),
                         'statusDate'  => ($gateway->getStatusDate() instanceof DateTime) ?
                             $gateway->getStatusDate()->format(Gateway::DATETIME_FORMAT_LONGER) : '',
@@ -78,6 +79,10 @@ class Transformer
 
                     if (isset($gateway->bankName)) {
                         $gatewayModel->setBankName((string)$gateway->bankName);
+                    }
+
+                    if (isset($gateway->gatewayPayment)) {
+                        $gatewayModel->setGatewayPayment((string)$gateway->gatewayPayment);
                     }
 
                     if (isset($gateway->iconURL)) {

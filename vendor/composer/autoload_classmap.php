@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'BluePayment' => $baseDir . '/bluepayment.php',
+    'BluePayment\\Adapter\\ConfigurationAdapter' => $baseDir . '/src/Adapter/ConfigurationAdapter.php',
     'BluePayment\\Analyse\\Amplitude' => $baseDir . '/src/Analyse/Amplitude.php',
     'BluePayment\\Analyse\\AnalyticsTracking' => $baseDir . '/src/Analyse/AnalyticsTracking.php',
     'BluePayment\\Api\\BlueAPI' => $baseDir . '/src/Api/BlueAPI.php',
@@ -15,10 +16,10 @@ return array(
     'BluePayment\\Api\\BlueGatewayTransfers' => $baseDir . '/src/Api/BlueGatewayTransfers.php',
     'BluePayment\\Api\\GatewayInterface' => $baseDir . '/src/Api/GatewayInterface.php',
     'BluePayment\\Configure\\Configure' => $baseDir . '/src/Configure/Configure.php',
-    'BluePayment\\HookDispatcher' => $baseDir . '/src/HookDispatcher.php',
     'BluePayment\\Hook\\AbstractHook' => $baseDir . '/src/Hook/AbstractHook.php',
     'BluePayment\\Hook\\Admin' => $baseDir . '/src/Hook/Admin.php',
     'BluePayment\\Hook\\Design' => $baseDir . '/src/Hook/Design.php',
+    'BluePayment\\Hook\\HookDispatcher' => $baseDir . '/src/Hook/HookDispatcher.php',
     'BluePayment\\Hook\\Payment' => $baseDir . '/src/Hook/Payment.php',
     'BluePayment\\Install\\Installer' => $baseDir . '/src/Install/Installer.php',
     'BluePayment\\Service\\FactoryPaymentMethods' => $baseDir . '/src/Service/FactoryPaymentMethods.php',

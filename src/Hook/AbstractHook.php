@@ -17,32 +17,35 @@ declare(strict_types=1);
 namespace BluePayment\Hook;
 
 use Context;
+use BluePayment\Adapter\ConfigurationAdapter;
 
 abstract class AbstractHook
 {
-    const AVAILABLE_HOOKS = [];
+    public const AVAILABLE_HOOKS = [];
 
     /**
      * @var \BluePayment
      */
     protected $module;
 
+    protected $configuration;
+
     /**
      * @var \Context
      */
     protected $context;
 
-
-    public function __construct(\BluePayment $module)
+    public function __construct(\BluePayment $module, $configuration)
     {
         $this->module = $module;
+        $this->configuration = $configuration;
         $this->context = $module->getContext();
     }
 
     /**
      * @return array
      */
-    public function getAvailableHooks()
+    public function getAvailableHooks(): array
     {
         return static::AVAILABLE_HOOKS;
     }

@@ -21,8 +21,12 @@ use Configuration as Cfg;
 
 class CustomStatus
 {
-    public static function addOrderStates(int $language_id, $base_name)
+
+
+
+    public function addOrderStates(int $language_id, $base_name): bool
     {
+        $res = false;
         $mails_languages = ['pl', 'en'];
 
         foreach ($mails_languages as $l) {
@@ -109,6 +113,7 @@ class CustomStatus
             $pending->add();
             $stateId = $pending->id;
             Cfg::updateValue($base_name . '_STATUS_WAIT_PAY_ID', $stateId);
+            $res = true;
         }
 
         if (
@@ -136,6 +141,7 @@ class CustomStatus
             $completed->add();
             $stateId = $completed->id;
             Cfg::updateValue($base_name . '_STATUS_ACCEPT_PAY_ID', $stateId);
+            $res = true;
         }
 
         if (
@@ -163,10 +169,13 @@ class CustomStatus
             $payment_error->add();
             $stateId = $payment_error->id;
             Cfg::updateValue($base_name . '_STATUS_ERROR_PAY_ID', $stateId);
+            $res = true;
         }
+
+        return (bool) $res;
     }
 
-    private static function checkIfStateExists(string $name, $language_id): bool
+    public static function checkIfStateExists(string $name, $language_id): bool
     {
         $states = \OrderState::getOrderStates($language_id);
 
@@ -179,10 +188,14 @@ class CustomStatus
         return false;
     }
 
-    public static function removeOrderStates()
+    public function removeOrderStates(): bool
     {
-        Db::getInstance()->delete('order_state', 'module_name = "bluepayment"');
-        Db::getInstance()->delete('order_state_lang', 'name LIKE \'%Blue Media%\'');
+        $res = true;
+
+        $res &= Db::getInstance()->delete('order_state', 'module_name = "bluepayment"');
+        $res &= Db::getInstance()->delete('order_state_lang', 'name LIKE \'%Blue Media%\'');
+
+        return (bool) $res;
     }
 
     public static function getPendingStateID($language_id)

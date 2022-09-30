@@ -15,6 +15,12 @@
 *}
 <div class="panel">
 
+	<style>
+		.bm-info__item::before {
+            background-image: url('/modules/bluepayment/views/img/check.png');
+		}
+	</style>
+
 	<div class="bm-info">
 
 		<img class="bm-info__img" src="{$src_img|escape:'html':'UTF-8'}/blue-media.svg" alt="Blue Media">

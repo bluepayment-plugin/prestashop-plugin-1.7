@@ -30,7 +30,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
     {
         $this->bootstrap = true;
         parent::__construct();
-        Context::getContext()->smarty->assign('src_img', $this->module->images_dir);
+        Context::getContext()->smarty->assign('src_img', $this->module->getAssetImages());
 
         if (!$this->module->active) {
             Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules', true));
@@ -125,8 +125,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $statuses = OrderState::getOrderStates($id_default_lang, true);
         $currency = $this->context->currency;
 
-        $smartney = (bool) BlueGatewayChannels::gatewayIsActive(GATEWAY_ID_SMARTNEY, $currency->iso_code);
-        $alior = (bool) BlueGatewayChannels::gatewayIsActive(GATEWAY_ID_ALIOR, $currency->iso_code);
+        $smartney = BlueGatewayChannels::isChannelActive(GATEWAY_ID_SMARTNEY, $currency->iso_code);
+        $alior = BlueGatewayChannels::isChannelActive(GATEWAY_ID_ALIOR, $currency->iso_code);
 
         $fields_form[0]['form'] = [
             'section' => [
@@ -779,7 +779,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'ajax_controller' => $ajax_controller,
             'ajax_token' => Tools::getAdminTokenLite('AdminBluepaymentAjax'),
             'ajax_payments_token' => Tools::getAdminTokenLite('AdminBluepaymentPayments'),
-            'amplitude_user_id' => Amplitude::getUserId()
+            'amplitude_user_id' => Amplitude::getUserId(),
+            'bm_assets_images' => $this->module->getAssetImages(),
         ];
 
         return $helper->generateForm($fields_form);

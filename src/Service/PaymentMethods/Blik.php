@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
+use BluePayment\Until\Helper;
 use Configuration as Config;
 use Context;
 use Module;
@@ -89,9 +90,10 @@ class Blik implements GatewayType
      */
     public function isActive(): bool
     {
-        return (bool)BlueGatewayTransfers::gatewayIsActive(
+        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        return BlueGatewayTransfers::isTransferActive(
             GATEWAY_ID_BLIK,
-            Context::getContext()->currency->iso_code
+            $iso_code
         );
     }
 }

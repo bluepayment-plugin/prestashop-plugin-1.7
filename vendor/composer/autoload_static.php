@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1b345866f401362bdd6fe74360abc75e
+class ComposerStaticInitefa014b3ab807ae21ffc659c723b694b
 {
     public static $prefixLengthsPsr4 = array (
         'B' => 
@@ -22,6 +22,7 @@ class ComposerStaticInit1b345866f401362bdd6fe74360abc75e
 
     public static $classMap = array (
         'BluePayment' => __DIR__ . '/../..' . '/bluepayment.php',
+        'BluePayment\\Adapter\\ConfigurationAdapter' => __DIR__ . '/../..' . '/src/Adapter/ConfigurationAdapter.php',
         'BluePayment\\Analyse\\Amplitude' => __DIR__ . '/../..' . '/src/Analyse/Amplitude.php',
         'BluePayment\\Analyse\\AnalyticsTracking' => __DIR__ . '/../..' . '/src/Analyse/AnalyticsTracking.php',
         'BluePayment\\Api\\BlueAPI' => __DIR__ . '/../..' . '/src/Api/BlueAPI.php',
@@ -30,10 +31,10 @@ class ComposerStaticInit1b345866f401362bdd6fe74360abc75e
         'BluePayment\\Api\\BlueGatewayTransfers' => __DIR__ . '/../..' . '/src/Api/BlueGatewayTransfers.php',
         'BluePayment\\Api\\GatewayInterface' => __DIR__ . '/../..' . '/src/Api/GatewayInterface.php',
         'BluePayment\\Configure\\Configure' => __DIR__ . '/../..' . '/src/Configure/Configure.php',
-        'BluePayment\\HookDispatcher' => __DIR__ . '/../..' . '/src/HookDispatcher.php',
         'BluePayment\\Hook\\AbstractHook' => __DIR__ . '/../..' . '/src/Hook/AbstractHook.php',
         'BluePayment\\Hook\\Admin' => __DIR__ . '/../..' . '/src/Hook/Admin.php',
         'BluePayment\\Hook\\Design' => __DIR__ . '/../..' . '/src/Hook/Design.php',
+        'BluePayment\\Hook\\HookDispatcher' => __DIR__ . '/../..' . '/src/Hook/HookDispatcher.php',
         'BluePayment\\Hook\\Payment' => __DIR__ . '/../..' . '/src/Hook/Payment.php',
         'BluePayment\\Install\\Installer' => __DIR__ . '/../..' . '/src/Install/Installer.php',
         'BluePayment\\Service\\FactoryPaymentMethods' => __DIR__ . '/../..' . '/src/Service/FactoryPaymentMethods.php',
@@ -58,9 +59,9 @@ class ComposerStaticInit1b345866f401362bdd6fe74360abc75e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1b345866f401362bdd6fe74360abc75e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1b345866f401362bdd6fe74360abc75e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit1b345866f401362bdd6fe74360abc75e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$classMap;
 
         }, null, ClassLoader::class);
     }

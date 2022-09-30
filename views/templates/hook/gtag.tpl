@@ -46,9 +46,9 @@
                         {foreach from=$products item=product}
                             {literal}{{/literal}
 							"id": "{$product['id_product']|escape:'htmlall':'UTF-8'}",
-							"name": "{$product['name'] nofilter}",
-							"brand": "{$product['manufacturer_name'] nofilter}",
-							"category": "{$product['category'] nofilter}",
+							"name": "{$product['name']|cleanHtml nofilter}",
+							"brand": "{$product['manufacturer_name']|cleanHtml nofilter}",
+							"category": "{$product['category']|cleanHtml nofilter}",
 							"variant": "{$product['id_product_attribute']}",
 							"quantity": "{$product['cart_quantity']|escape:'htmlall':'UTF-8'}",
 							"price": "{$product['price']|escape:'htmlall':'UTF-8'}",
@@ -75,11 +75,11 @@
 		        "events": [
                     {{/literal}
                         "id": "{$product['id_product']|escape:'htmlall':'UTF-8'}",
-                        "name": "{$product['name'] nofilter}",
+                        "name": "{$product['name']|cleanHtml nofilter}",
                         {if isset($product['manufacturer_name'])}
                         "brand": "{$product['manufacturer_name']|implode:','|escape:'html':'UTF-8'}",
                         {/if}
-                        "category": "{$product['category'] nofilter}",
+                        "category": "{$product['category']|cleanHtml nofilter}",
                         "variant": "{$product['id_product_attribute']|escape:'htmlall':'UTF-8'}",
                         "price": "{$product['price']|escape:'htmlall':'UTF-8'}",
                     {literal}}
@@ -95,11 +95,11 @@
 			"items": [
 				{{/literal}
 					"id": "{$product['id_product']|escape:'htmlall':'UTF-8'}",
-					"name": "{$product['name'] nofilter}",
+					"name": "{$product['name']|cleanHtml nofilter}",
                     {if isset($product['manufacturer_name'])}
 					"brand": "{$product['manufacturer_name']|implode:','|escape:'html':'UTF-8'}",
                     {/if}
-					"category": "{$product['category'] nofilter}",
+					"category": "{$product['category']|cleanHtml nofilter}",
 					"variant": "{$product['id_product_attribute']|escape:'htmlall':'UTF-8'}",
 					"price": "{$product['price']|escape:'htmlall':'UTF-8'}",
                     {literal}}

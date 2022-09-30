@@ -74,10 +74,12 @@ class Helper
         ];
     }
 
-    public static function getImgPayments($type)
+    public static function getImgPayments($type, $currency, $idShop)
     {
-        $currency = Context::getContext()->currency;
-        $id_shop = Context::getContext()->shop->id;
+
+        if (!$currency || !$idShop) {
+            return false;
+        }
 
         $query = new DbQuery();
         $query->from('blue_gateway_transfers', 'gt');
@@ -90,10 +92,10 @@ class Helper
         }
 
         $query->where('gt.gateway_status = 1');
-        $query->where('gt.gateway_currency = "' . pSql($currency->iso_code) . '"');
+        $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
 
         if (Shop::isFeatureActive()) {
-            $query->where('gts.id_shop = ' . (int)$id_shop);
+            $query->where('gts.id_shop = ' . (int)$idShop);
         }
 
         $query->select('gateway_logo_url, gateway_name');
@@ -119,12 +121,12 @@ class Helper
 
     public static function getWalletsList(): string
     {
-        $walletsArray = [
+        $walletArray = [
             GATEWAY_ID_GOOGLE_PAY,
             GATEWAY_ID_APPLE_PAY
         ];
 
-        return implode(',', $walletsArray);
+        return implode(',', $walletArray);
     }
 
     public static function parseConfigByCurrency($key, $currencyIsoCode)
@@ -160,9 +162,9 @@ class Helper
     /**
      * @param $id_order
      * @throws PrestaShopDatabaseException
-     * @return bool | array
+     * @return array
      */
-    public static function getOrdersByOrderId($id_order)
+    public static function getOrdersByOrderId($id_order): array
     {
         $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'blue_transactions
 			WHERE order_id like "' . pSQL($id_order) . '-%"
@@ -189,5 +191,16 @@ class Helper
         $replaced = str_replace(',', HASH_SEPARATOR, $comma_separated);
 
         return hash(Gateway::HASH_SHA256, $replaced);
+    }
+
+    public static function getIsoFromContext($context): string
+    {
+        if(!is_object($context->currency)){
+            $iso_code = $context->currency['iso_code'];
+        }
+        else{
+            $iso_code = $context->currency->iso_code;
+        }
+        return $iso_code;
     }
 }

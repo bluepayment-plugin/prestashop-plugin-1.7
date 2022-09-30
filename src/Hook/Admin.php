@@ -26,27 +26,28 @@ use BluePayment\Until\Helper;
 
 class Admin extends AbstractHook
 {
-    const AVAILABLE_HOOKS = [
+    public const AVAILABLE_HOOKS = [
         'adminPayments',
         'adminOrder',
         'displayAdminAfterHeader'
+
     ];
 
     /**
      * Payment statuses
      */
-    const PAYMENT_STATUS_PENDING = 'PENDING';
-    const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
-    const PAYMENT_STATUS_FAILURE = 'FAILURE';
+    public const PAYMENT_STATUS_PENDING = 'PENDING';
+    public const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
+    public const PAYMENT_STATUS_FAILURE = 'FAILURE';
 
     /**
      * Get the payment methods available in the administration
      */
     public function adminPayments()
     {
-        $list = $transfer_payments = $wallets = [];
+        $list = $transferPayments = $wallets = [];
 
-        $adminHelper = new AdminHelper();
+        $adminHelper = new AdminHelper($this->module);
 
         foreach (AdminHelper::getSortCurrencies() as $currency) {
             $paymentList = $adminHelper->getListChannels($currency['iso_code']);
@@ -57,13 +58,13 @@ class Admin extends AbstractHook
             }
 
             if ($adminHelper->getListAllPayments($currency['iso_code'], 'transfer')) {
-                $transfer_payments[$currency['iso_code']] = $adminHelper->getListAllPayments(
+                $transferPayments[$currency['iso_code']] = $adminHelper->getListAllPayments(
                     $currency['iso_code'],
                     'transfer'
                 );
             }
 
-            if ($adminHelper->getListAllPayments($currency['iso_code'], 'transfer')) {
+            if ($adminHelper->getListAllPayments($currency['iso_code'], 'wallet')) {
                 $wallets[$currency['iso_code']] = $adminHelper->getListAllPayments(
                     $currency['iso_code'],
                     'wallet'
@@ -71,15 +72,11 @@ class Admin extends AbstractHook
             }
         }
 
-        $this->module->display(
-            $this->module->getPathUrl(),
-            'views/templates/admin/_configure/helpers/form/notification-info.tpl'
-        );
-
         $this->context->smarty->assign(
             [
                 'list' => $list,
-                'transfer_payments' => $transfer_payments,
+                'transfer_payments' => $transferPayments,
+                'bm_assets_images' => $this->module->getAssetImages(),
                 'wallets' => $wallets,
             ]
         );
@@ -91,43 +88,43 @@ class Admin extends AbstractHook
     }
 
 
-    public function displayAdminAfterHeader()
+    public function displayAdminAfterHeader(): string
     {
-        try {
-            // Connect to Prestashop addons API
-            $api_url = 'https://api-addons.prestashop.com/';
-            $params = '?format=json&iso_lang=pl&iso_code=pl&method=module&id_module=49791&method=listing&action=module';
-
-            $api_request = $api_url . $params;
-
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $api_request);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-            $output = curl_exec($curl);
-            curl_close($curl);
-
-            $api_response = json_decode($output);
-            $ver = $api_response->modules[0]->version;
-
-            $this->context->smarty->assign(['version' => $ver]);
-
-            if ($ver && version_compare($ver, $this->module->version, '>')) {
-                \PrestaShopLogger::addLog('BM - Dostępna aktualizacja', 1);
-                return $this->module->fetch('module:bluepayment/views/templates/admin/_partials/upgrade.tpl');
-            }
-        } catch (Exception $e) {
-            \PrestaShopLogger::addLog('Brak aktualizacji', 3);
-        }
-
-        return null;
+        $apiUrl = 'https://api-addons.prestashop.com/';
+        $version = $this->module->version;
+        // Connect to Prestashop addons API
+        return $this->getAddonsUpdate($apiUrl, $version);
     }
 
+    public function getAddonsUpdate($apiUrl, $version): string
+    {
+        // Connect to Prestashop addons API
+        $params = '?format=json&iso_lang=pl&iso_code=pl&method=module&id_module=49791&method=listing&action=module';
+        $apiRequest = $apiUrl . $params;
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $apiRequest);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        $output = curl_exec($curl);
+        curl_close($curl);
+
+        $apiResponse = json_decode($output);
+        $ver = $apiResponse->modules[0]->version;
+
+        $this->context->smarty->assign(['version' => $ver]);
+
+        if ($ver && version_compare($ver, $version, '>')) {
+            \PrestaShopLogger::addLog('BM - Dostępna aktualizacja', 1);
+            return $this->module->fetch('module:bluepayment/views/templates/admin/_partials/upgrade.tpl');
+        }
+        return '';
+    }
 
     public function adminOrder($params)
     {
         $this->module->id_order = $params['id_order']; /// todo seter
-        $order = new Order($this->id_order);
+        $order = new Order($this->module->id_order);
 
         $output = '';
 
@@ -180,7 +177,7 @@ class Admin extends AbstractHook
             'BM_ORDER_ID' => $this->module->id_order,
             'BM_CANCEL_ORDER_MESSAGE' => $updateOrderStatusMessage,
             'SHOW_REFUND' => $refundable,
-            'REFUND_FULL_AMOUNT' => number_format($order->total_paid, 2, '.', ''),
+            'REFUND_FULL_AMOUNT' => number_format((float) $order->total_paid, 2, '.', ''),
             'REFUND_ERRORS' => $refund_errors,
             'REFUND_SUCCESS' => $refund_success,
             'REFUND_TYPE' => $refund_type,

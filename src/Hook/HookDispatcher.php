@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -13,14 +14,16 @@
 
 declare(strict_types=1);
 
-namespace BluePayment;
+namespace BluePayment\Hook;
+
+use BluePayment\Adapter\ConfigurationAdapter;
 
 class HookDispatcher
 {
     const CLASSES = [
-        Hook\Design::class,
-        Hook\Admin::class,
-        Hook\Payment::class,
+        Design::class,
+        Admin::class,
+        Payment::class,
     ];
 
     /**
@@ -42,17 +45,21 @@ class HookDispatcher
      */
     private $module;
 
+
+    private $configuration;
+
     /**
      * Init hooks
      *
      * @param \BluePayment $module
      */
-    public function __construct(\BluePayment $module)
+    public function __construct(\BluePayment $module, $configuration)
     {
         $this->module = $module;
+        $this->configuration = $configuration;
 
         foreach (self::CLASSES as $hookClass) {
-            $hook = new $hookClass($this->module);
+            $hook = new $hookClass($this->module, $this->configuration);
             $this->availableHooks = array_merge($this->availableHooks, $hook->getAvailableHooks());
             $this->hooks[] = $hook;
         }
@@ -76,7 +83,7 @@ class HookDispatcher
      *
      * @return mixed
      */
-    public function dispatch($hookName, array $params = [])
+    public function dispatch(string $hookName, array $params = [])
     {
         $hookName = preg_replace('~^hook~', '', $hookName);
 

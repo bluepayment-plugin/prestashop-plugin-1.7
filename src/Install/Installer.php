@@ -30,7 +30,7 @@ use Context;
 
 class Installer
 {
-    const MODULE_ADMIN_CONTROLLERS = [
+    public const MODULE_ADMIN_CONTROLLERS = [
         [
             'class_name' => 'AdminBluepaymentPayments',
             'visible' => false,
@@ -46,19 +46,21 @@ class Installer
     ];
 
 
-    const PLUGIN_INSTALLED = 'plugin installed';
-    const PLUGIN_UNINSTALLED = 'plugin uninstalled';
+    public const PLUGIN_INSTALLED = 'plugin installed';
+    public const PLUGIN_UNINSTALLED = 'plugin uninstalled';
 
     /**
      * @var \BluePayment
      */
     private $module;
     protected $translator;
+    protected $db;
 
     public function __construct(\BluePayment $module, TranslatorInterface $translator)
     {
         $this->module = $module;
         $this->translator = $translator;
+        $this->db = Db::getInstance();
     }
 
     /**
@@ -67,10 +69,6 @@ class Installer
      */
     public function install(): bool
     {
-        if (version_compare(phpversion(), '7.0.0', '<')) {
-            return false;
-        }
-
         $this->installDb();
         $this->installTabs();
         $this->installContext();
@@ -96,18 +94,32 @@ class Installer
      * Sql data installation
      * @throws Exception
      */
-    private function installDb()
+    public function installDb($custom_path = null)
     {
-        $this->executeSqlFromFile($this->module->getLocalPath() . 'src/Install/install.sql');
+        $sql_path = $this->module->getLocalPath() . 'src/Install/install.sql';
+        if ($custom_path) {
+            $sql_path = $custom_path;
+        }
+        if (!file_exists($sql_path)) {
+            return false;
+        }
+        $this->executeSqlFromFile($sql_path, $this->db);
     }
 
     /**
      * Deleting sql data
      * @throws Exception
      */
-    private function uninstallDb()
+    public function uninstallDb($custom_path = null)
     {
-        $this->executeSqlFromFile($this->module->getLocalPath() . 'src/Install/uninstall.sql');
+        $sql_path = $this->module->getLocalPath() . 'src/Install/uninstall.sql';
+        if ($custom_path) {
+            $sql_path = $custom_path;
+        }
+        if (!file_exists($sql_path)) {
+            return false;
+        }
+        $this->executeSqlFromFile($sql_path, $this->db);
     }
 
     /**
@@ -159,41 +171,86 @@ class Installer
     /**
      * Remove all tabs controller
      */
-    public function uninstallTabs(): bool
+    public function uninstallTabs($tabId = 0): bool
     {
         foreach (static::MODULE_ADMIN_CONTROLLERS as $controller) {
             $id_tab = (int) \Tab::getIdFromClassName($controller['class_name']);
             $tab = new \Tab($id_tab);
             if (\Validate::isLoadedObject($tab)) {
-                $parentTabID = $tab->id_parent;
+                $parentTabID = $tabId ?: $tab->id_parent;
                 $tab->delete();
-                $tabCount = \Tab::getNbTabs((int)$parentTabID);
+                $tabCount = $this->getTabElements($parentTabID);
                 if ($tabCount == 0) {
-                    $parentTab = new \Tab((int)$parentTabID);
-                    $parentTab->delete();
+                    $this->deleteCurrentTab((int) $parentTabID);
                 }
             }
         }
-
         return true;
     }
+
+
+    public function deleteCurrentTab($parentTabID)
+    {
+        $parentTab = new \Tab((int)$parentTabID);
+        $parentTab->delete();
+    }
+
+    public function getTabElements($parentTabID)
+    {
+        if ($parentTabID == '-1') {
+            return 0;
+        }
+        return \Tab::getNbTabs((int)$parentTabID);
+    }
+
 
     /**
      * Execute sql files
      * @param string $path
      * @throws Exception
      */
-    private function executeSqlFromFile(string $path)
+    public function executeSqlFromFile(string $path, $dba = null)
     {
-        $db = Db::getInstance();
+//        dump($dba);
+
+        $db = $dba ?? $this->db;
+
+//        dump($db);
+
+        if (!file_exists($path)) {
+            return false;
+        }
         $sqlStatements = Tools::file_get_contents($path);
         $sqlStatements = str_replace(['_DB_PREFIX_', '_MYSQL_ENGINE_'], [_DB_PREFIX_, _MYSQL_ENGINE_], $sqlStatements);
 
-        try {
-            $db->execute($sqlStatements);
-        } catch (Exception $exception) {
-            throw new InvalidArgumentException($exception->getMessage());
+        $status = $this->sqlExecute($db, $sqlStatements);
+
+        if (!$status) {
+            throw new \Exception();
         }
+
+        return true;
+
+//        try {
+////            $db->execute(-1);
+//            $this->sqlExecute($db, $sqlStatements);
+//        } catch (\InvalidArgumentException $exception) {
+////            throw new Exception();
+//            return 'fasasd';
+////            throw new \Exception($exception->getMessage());
+//        }
+    }
+
+
+    public function sqlExecute($db, $sqlStatements)
+    {
+        if ($sqlStatements && is_object($db)) {
+            return $db->execute($sqlStatements);
+        } else {
+            return false;
+        }
+//        return false;
+//        throw new \Exception();
     }
 
 

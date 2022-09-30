@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
+use BluePayment\Until\Helper;
 use Configuration as Config;
 use Context;
 use Module;
@@ -81,17 +82,21 @@ class Smartney implements GatewayType
     /**
      * @return bool
      */
-    public function isActive(): bool
+    public function isActive($cart_total = null): bool
     {
-        $smartney = (bool)BlueGatewayTransfers::gatewayIsActive(
+        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        if(!$cart_total){
+            $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
+        }
+        $smartney = BlueGatewayTransfers::isTransferActive(
             GATEWAY_ID_SMARTNEY,
-            Context::getContext()->currency->iso_code
+            $iso_code
         );
 
         if (
             $smartney
-            && (float)Context::getContext()->cart->getOrderTotal(true, Cart::BOTH) >= (float)SMARTNEY_MIN_AMOUNT
-            && (float)Context::getContext()->cart->getOrderTotal(true, Cart::BOTH) <= (float)SMARTNEY_MAX_AMOUNT
+            && (float)$cart_total >= (float)SMARTNEY_MIN_AMOUNT
+            && (float)$cart_total <= (float)SMARTNEY_MAX_AMOUNT
         ) {
             return true;
         }

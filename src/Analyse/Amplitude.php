@@ -23,13 +23,17 @@ class Amplitude
     private $api_key = '3df98a3ac8e0efd57fbe86f86c27b488';
     private static $instance;
 
-
+    /**
+     * @throws \Exception
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }
 
     /**
      * @throws \Exception
+     * @codeCoverageIgnore
      */
     private function __clone()
     {
@@ -38,6 +42,7 @@ class Amplitude
 
     /**
      * @throws \Exception
+     * @codeCoverageIgnore
      */
     private function __wakeup()
     {
@@ -47,7 +52,7 @@ class Amplitude
     public static function getInstance(): Amplitude
     {
         if (self::$instance === null) {
-            self::$instance = new Amplitude();
+            self::$instance = new self();
         }
         return self::$instance;
     }

@@ -130,7 +130,7 @@
 								</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-name.png"
+						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-name.png"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 
@@ -141,7 +141,7 @@
 								</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-name2.png"
+						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-name2.png"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 				</div>
@@ -177,7 +177,7 @@
 								</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-payment.png"
+						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-payment.png"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 
@@ -188,7 +188,7 @@
 								</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-payment2.png"
+						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-payment2.png"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 				</div>
@@ -226,7 +226,7 @@
 							</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-gpay.png"
+						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-gpay.png"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 					<div class="col-sm-6"></div>
@@ -246,13 +246,13 @@
 
 						<div class="bm-modal-flex">
 							<img class="bm-helper__image img-responsive" width="330"
-							     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-gpay2.png"
+							     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-gpay2.png"
 							     alt="{l s='Google Pay' mod='bluepayment'}">
 							<img class="bm-helper__image img-responsive" width="32" style="margin: 10px;"
-							     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-gpay3.png"
+							     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-gpay3.png"
 							     alt="{l s='Google Pay' mod='bluepayment'}">
 							<img class="bm-helper__image img-responsive" width="330"
-							     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-gpay4.png"
+							     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-gpay4.png"
 							     alt="{l s='Google Pay' mod='bluepayment'}">
 						</div>
 
@@ -294,7 +294,7 @@
 							</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-blik.png"
+						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-blik.png"
 						     alt="{l s='Entering BLIK code' mod='bluepayment'}">
 					</div>
 					<div class="col-sm-6">
@@ -314,13 +314,13 @@
 						</p>
 						<div class="bm-modal-flex">
 							<img class="bm-helper__image img-responsive" width="330"
-							     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-blik2.png"
+							     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-blik2.png"
 							     alt="{l s='Entering BLIK code' mod='bluepayment'}">
 							<img class="bm-helper__image img-responsive" width="32" style="margin: 10px;"
-							     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-blik3.png"
+							     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-blik3.png"
 							     alt="{l s='Entering BLIK code' mod='bluepayment'}">
 							<img class="bm-helper__image img-responsive" width="330"
-							     src="{$src_img|escape:'html':'UTF-8'}/helpers/helper-blik4.png"
+							     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-blik4.png"
 							     alt="{l s='Entering BLIK code' mod='bluepayment'}">
 						</div>
 					</div>

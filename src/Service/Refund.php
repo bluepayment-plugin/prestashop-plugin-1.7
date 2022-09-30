@@ -29,7 +29,7 @@ class Refund
 
     public function refundOrder($amount, $remoteId, \Currency $currency): array
     {
-        $amount = number_format($amount, 2, '.', '');
+        $amount = number_format((float) $amount, 2, '.', '');
 
         $serviceId = Helper::parseConfigByCurrency(
             $this->module->name_upper . SERVICE_PARTNER_ID,

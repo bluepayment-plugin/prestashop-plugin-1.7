@@ -49,16 +49,23 @@ let config = {
 		path: path.resolve(__dirname, './views/js'),
 		filename: '[name].min.js',
 	},
-	// resolve: {
+	resolve: {
 	// 	preferRelative: true,
 	// 	extensions: ['*', '.js']
-	// },
+
+        modules: ['.', 'node_modules']
+
+	},
     stats: {
         children: true,
         colors: true,
     },
 	module: {
 		rules: [
+            {
+                test: /\.(png|jpg)$/,
+                loader: 'url-loader'
+            },
 			{
 				test: /\.m?js$/,
 				exclude: /node_modules/,
@@ -80,13 +87,27 @@ let config = {
 				use: [
 					MiniCssExtractPlugin.loader,
 					'css-loader',
-					'postcss-loader',
-					'sass-loader',
+
+
+
+					'sass-loader'
 				],
 			},
 			{
 				test: /\.css$/,
-				use: [MiniCssExtractPlugin.loader, 'style-loader', 'css-loader', 'postcss-loader'],
+				use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+
+                        }
+                    },
+                    'style-loader',
+                ]
+
 			},
 		],
 	},
@@ -116,44 +137,74 @@ if (process.env.NODE_ENV === 'production') {
 						drop_console: true,
 					},
 					output: {
-						beautify: false,
+						// beautify: false,
 						comments: false,
 						// comments: 'some',
-						preamble: METADATA,
+						// preamble: METADATA,
 					},
-					mangle: { // see https://github.com/mishoo/UglifyJS2#mangle-options
-						keep_fnames: false,
-						toplevel: true,
-					},
+					// mangle: { // see https://github.com/mishoo/UglifyJS2#mangle-options
+					// 	keep_fnames: false,
+					// 	toplevel: true,
+					// },
 				}
 			})
 		]
 	}
 } else {
-	config.optimization = {
-		minimizer: [
-			new UglifyJsPlugin({
-				sourceMap: true,
-				extractComments: false,
-				uglifyOptions: {
-					// compress: {
-					// 	sequences: true,
-					// 	conditionals: true,
-					// 	booleans: true,
-					// 	if_return: true,
-					// 	join_vars: true,
-					// 	drop_console: true,
-					// },
-					output: {
-						comments: false,
-					},
-				}
-			})
-		]
-	}
+    config.optimization = {
+        minimizer: [
+            new UglifyJsPlugin({
+                sourceMap: false,
+                extractComments: false,
+                uglifyOptions: {
+                    compress: {
+                        sequences: true,
+                        conditionals: true,
+                        booleans: true,
+                        if_return: true,
+                        join_vars: true,
+                        drop_console: true,
+                    },
+                    output: {
+                        beautify: false,
+                        comments: false,
+                        // comments: 'some',
+                        // preamble: METADATA,
+                    },
+                    // mangle: { // see https://github.com/mishoo/UglifyJS2#mangle-options
+                    // 	keep_fnames: false,
+                    // 	toplevel: true,
+                    // },
+                }
+            })
+        ]
+    }
+
+
+	// config.optimization = {
+	// 	minimizer: [
+	// 		new UglifyJsPlugin({
+	// 			sourceMap: true,
+	// 			extractComments: false,
+	// 			uglifyOptions: {
+	// 				// compress: {
+	// 				// 	sequences: true,
+	// 				// 	conditionals: true,
+	// 				// 	booleans: true,
+	// 				// 	if_return: true,
+	// 				// 	join_vars: true,
+	// 				// 	drop_console: true,
+	// 				// },
+	// 				output: {
+	// 					comments: false,
+	// 				},
+	// 			}
+	// 		})
+	// 	]
+	// }
 }
 
-config.mode = 'development';
-// config.mode = 'production';
+// config.mode = 'development';
+config.mode = 'production';
 
 module.exports = config;

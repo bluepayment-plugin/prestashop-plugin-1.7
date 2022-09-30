@@ -32,17 +32,17 @@ class Transactions
     /**
      * Payment confirmed
      */
-    const TRANSACTION_CONFIRMED = 'CONFIRMED';
-    const TRANSACTION_NOTCONFIRMED = 'NOTCONFIRMED';
+    public const TRANSACTION_CONFIRMED = 'CONFIRMED';
+    public const TRANSACTION_NOTCONFIRMED = 'NOTCONFIRMED';
 
     /**
      * Payment statuses
      */
-    const PAYMENT_STATUS_PENDING = 'PENDING';
-    const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
-    const PAYMENT_STATUS_FAILURE = 'FAILURE';
+    public const PAYMENT_STATUS_PENDING = 'PENDING';
+    public const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
+    public const PAYMENT_STATUS_FAILURE = 'FAILURE';
 
-    const BM_PREFIX = 'BM - ';
+    public const BM_PREFIX = 'BM - ';
 
     /**
      * @var array
@@ -89,7 +89,7 @@ class Transactions
      * @param $transaction
      * @throws Exception
      */
-    private function updateStatusTransactionAndOrder($transaction)
+    public function updateStatusTransactionAndOrder($transaction)
     {
         require_once BM_SDK_PATH;
 
@@ -145,7 +145,11 @@ class Transactions
         ];
 
 
-        Db::getInstance()->update('blue_transactions', $transactionData, 'order_id = \'' . $this->pSQL($realOrderId) . '\'');
+        Db::getInstance()->update(
+            'blue_transactions',
+            $transactionData,
+            'order_id = \'' . $this->pSQL($realOrderId) . '\''
+        );
 
         $total_paid = $order->total_paid;
         $amount = number_format(round($total_paid, 2), 2, '.', '');
@@ -227,7 +231,6 @@ class Transactions
                                                 'price' => $p['total_price_tax_incl'],
                                                 'quantity' => $p['product_quantity'],
                                         ];
-
                                     }
                                 }
                             }
@@ -329,8 +332,7 @@ class Transactions
      * Checks if the order has been cancelled
      * @param object $order
      */
-    private function isOrderCompleted($order)
-    :bool
+    public function isOrderCompleted($order): bool
     {
         $status = $order->getCurrentState();
         $stateOrderTab = [Cfg::get('PS_OS_CANCELED')];
@@ -347,9 +349,8 @@ class Transactions
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException|DOMException
      */
-    private function returnConfirmation($realOrderId, $order_id, $confirmation)
+    public function returnConfirmation($realOrderId, $order_id, $confirmation)
     {
-
         if (null === $order_id) {
             $order_id = explode('-', $realOrderId)[0];
         }
@@ -401,25 +402,25 @@ class Transactions
         echo $dom->saveXML();
     }
 
-
-
-
-
     /**
      * Validates the compliance of the received XML
      *
-     * @param SimpleXMLElement $response
+     * @param \SimpleXMLElement $response
      *
      * @return bool
      */
-    public function validAllTransaction(\SimpleXMLElement $response)
-    :bool
+    public function validAllTransaction(\SimpleXMLElement $response): bool
     {
-
         require_once BM_SDK_PATH;
 
         $responseOrder = $response->transactions->transaction->orderID;
+        if (!$responseOrder) {
+            return false;
+        }
         $order = explode('-', (string) $responseOrder)[0];
+        if (!is_numeric($order)) {
+            return false;
+        }
 
         $order = new \OrderCore($order);
         $currency = new \Currency($order->id_currency);
@@ -450,7 +451,7 @@ class Transactions
         return $localHash === $hash;
     }
 
-    private function checkInList($list)
+    public function checkInList($list)
     {
         foreach ((array)$list as $row) {
             if (is_object($row)) {
@@ -461,9 +462,8 @@ class Transactions
         }
     }
 
-    function pSQL($string, $htmlOK = false)
+    public function pSQL($string, $htmlOK = false)
     {
         return Db::getInstance()->escape($string, $htmlOK);
     }
-
 }

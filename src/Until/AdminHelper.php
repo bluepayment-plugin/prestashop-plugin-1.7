@@ -29,6 +29,16 @@ use Module;
 
 class AdminHelper
 {
+    protected $module;
+    public function __construct(\BluePayment $module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * Native prestashop function generate HelperList to admin
+     * @codeCoverageIgnore
+     */
     public function renderAdditionalOptionsList($module, $payments, $title)
     {
         $helper = new HelperList();
@@ -52,40 +62,41 @@ class AdminHelper
     }
 
 
-
-
-
-
-
-
-
     public function displayGatewayLogo($gatewayLogo, $object)
     {
-
         $name = _MODULE_DIR_ . 'bluepayment/views/img/';
+        $context = $this->module->getContext();
 
         $currency = $object['gateway_currency'];
 
         if ($gatewayLogo === $name . 'payments.png') {
-            $result = '<div class="bm-slideshow-wrapper">';
-            $result .= '<div class="bm-transfers' . $currency . '-slideshow bm-slideshow" data-slideshow="transfers' . $currency . '">';
-            foreach (Helper::getImgPayments('transfers') as $row) {
-                $result .= '<div class="slide">';
-                $result .= '<img src="' . $row['gateway_logo_url'] . '" alt="' . $row['gateway_name'] . '">';
-                $result .= '</div>';
-            }
-            $result .= '</div>';
-            $result .= '</div>';
+            $context->smarty->assign([
+                'gateway_slideshow' => Helper::getImgPayments(
+                    'transfers',
+                    $context->currency->iso_code,
+                    $context->shop->id
+                ),
+                'gateway_type' => 'transfers',
+                'currency' => $currency
+            ]);
+
+            $result = $this->module->fetch(
+                'module:bluepayment/views/templates/admin/_configure/helpers/form/button-payment-transfer.tpl'
+            );
         } elseif ($gatewayLogo === $name . 'cards.png') {
-            $result = '<div class="bm-slideshow-wrapper">';
-            $result .= '<div class="bm-wallet' . $currency . '-slideshow bm-slideshow" data-slideshow="wallet' . $currency . '">';
-            foreach (Helper::getImgPayments('wallet') as $row) {
-                $result .= '<div class="slide">';
-                $result .= '<img src="' . $row['gateway_logo_url'] . '" alt="' . $row['gateway_name'] . '">';
-                $result .= '</div>';
-            }
-            $result .= '</div>';
-            $result .= '</div>';
+            $context->smarty->assign([
+                'gateway_slideshow' => Helper::getImgPayments(
+                    'wallet',
+                    $context->currency->iso_code,
+                    $context->shop->id
+                ),
+                'gateway_type' => 'transfers',
+                'currency' => $currency
+            ]);
+
+            $result = $this->module->fetch(
+                'module:bluepayment/views/templates/admin/_configure/helpers/form/button-payment-transfer.tpl'
+            );
         } else {
             $result = '<img width="65" class="img-fluid" src="' . $gatewayLogo . '" />';
         }
@@ -107,13 +118,9 @@ class AdminHelper
         }
     }
 
-
-
-
-
     public function getListChannels($currency)
     {
-        $id_shop = Context::getContext()->shop->id;
+        $idShop = Context::getContext()->shop->id;
 
         $query = new DbQuery();
         $query->select('gc.*, gcs.id_shop');
@@ -124,7 +131,7 @@ class AdminHelper
         $query->where('gc.gateway_currency = "' . pSql($currency) . '"');
 
         if (Shop::isFeatureActive()) {
-            $query->where('gcs.id_shop = ' . (int)$id_shop);
+            $query->where('gcs.id_shop = ' . (int)$idShop);
         }
 
         $query->orderBy('gc.position ASC');
@@ -135,7 +142,7 @@ class AdminHelper
 
 
 
-    private function getGatewaysListFields($module): array
+    public function getGatewaysListFields($module): array
     {
         return [
             'position' => [
@@ -148,7 +155,7 @@ class AdminHelper
             'gateway_logo_url' => [
                 'title' => $module->l('Payment method'),
                 'callback' => 'displayGatewayLogo',
-                'callback_object' => self::class,
+                'callback_object' => $this,
                 'orderby' => false,
                 'search' => false,
             ],
@@ -159,7 +166,7 @@ class AdminHelper
             'gateway_payments' => [
                 'title' => '',
                 'callback' => 'displayGatewayPayments',
-                'callback_object' => self::class,
+                'callback_object' => $this,
                 'orderby' => false,
             ],
         ];
@@ -170,8 +177,7 @@ class AdminHelper
 
     public function getListAllPayments($currency = 'PLN', $type = null)
     {
-
-        $id_shop = Context::getContext()->shop->id;
+        $idShop = Context::getContext()->shop->id;
 
         $q = '';
         if ($type === 'wallet') {
@@ -184,11 +190,11 @@ class AdminHelper
         $query->select('gt.*');
         $query->from('blue_gateway_transfers', 'gt');
         $query->leftJoin('blue_gateway_transfers_shop', 'gcs', 'gcs.id = gt.id');
-        $query->where('gt.gateway_name ' . $q);
+        $query->where('gt.gateway_id ' . $q);
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
 
         if (Shop::isFeatureActive()) {
-            $query->where('gcs.id_shop = ' . (int)$id_shop);
+            $query->where('gcs.id_shop = ' . (int)$idShop);
         }
 
         $query->orderBy('gt.position ASC');
@@ -203,9 +209,9 @@ class AdminHelper
      * Sort currency by id
      * @return array
      */
-    public static function getSortCurrencies(): array
+    public static function getSortCurrencies($currency = null): array
     {
-        $sortCurrencies = Currency::getCurrenciesByIdShop(Context::getContext()->shop->id);
+        $sortCurrencies = $currency ?: Currency::getCurrenciesByIdShop(Context::getContext()->shop->id);
 
         usort($sortCurrencies, function ($a, $b) {
             if ($a['id_currency'] == $b['id_currency']) {

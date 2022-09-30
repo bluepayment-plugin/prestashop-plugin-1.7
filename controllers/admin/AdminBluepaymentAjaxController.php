@@ -12,18 +12,20 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
 use BluePayment\Until\Helper;
 use BluePayment\Until\AdminHelper;
+use Configuration as Cfg;
 
 class AdminBluepaymentAjaxController extends ModuleAdminController
 {
-    const EVENT_PLUGIN_AUTH = 'plugin authorized';
+    public const EVENT_PLUGIN_AUTH = 'plugin authorized';
 
-    const API_AUTHENTICATION_SUCCESS = 'authorization completed';
-    const API_AUTHENTICATION_FAILED = 'authorization failed';
+    public const API_AUTHENTICATION_SUCCESS = 'authorization completed';
+    public const API_AUTHENTICATION_FAILED = 'authorization failed';
 
     public function __construct()
     {
@@ -80,7 +82,11 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
                 if ($parseServiceId && $parseHashKey) {
                     $api = new BlueAPI($this->module);
-                    $connect_status = $api->isConnectedAPI($parseServiceId, $parseHashKey);
+
+                    $testMode = Cfg::get($this->module->name_upper . '_TEST_ENV');
+                    $gatewayMode = $testMode ? 'sandbox' : 'live';
+
+                    $connect_status = $api->isConnectedAPI($parseServiceId, $parseHashKey, $gatewayMode);
 
                     if ($connect_status) {
                         PrestaShopLogger::addLog(
