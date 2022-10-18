@@ -40,7 +40,6 @@ class MainGateway implements GatewayType
             [],
             true
         );
-
         $option = new PaymentOption();
         $option->setCallToActionText($paymentName)
             ->setAction($moduleLink)

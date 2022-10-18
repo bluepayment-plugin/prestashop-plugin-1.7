@@ -26,7 +26,7 @@ use BluePayment\Until\Helper;
 
 class Admin extends AbstractHook
 {
-    public const AVAILABLE_HOOKS = [
+    const AVAILABLE_HOOKS = [
         'adminPayments',
         'adminOrder',
         'displayAdminAfterHeader'
@@ -36,9 +36,9 @@ class Admin extends AbstractHook
     /**
      * Payment statuses
      */
-    public const PAYMENT_STATUS_PENDING = 'PENDING';
-    public const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
-    public const PAYMENT_STATUS_FAILURE = 'FAILURE';
+    const PAYMENT_STATUS_PENDING = 'PENDING';
+    const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
+    const PAYMENT_STATUS_FAILURE = 'FAILURE';
 
     /**
      * Get the payment methods available in the administration

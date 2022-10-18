@@ -24,16 +24,15 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
         require_once dirname(__FILE__) . '/../../sdk/index.php';
         header('Content-type: text/xml');
 
-//        try {
-            $transaction = new Transactions($this->module);
+        try {
+            $transaction = new Transactions(
+                $this->module,
+                new OrderHistory()
+            );
             $transaction->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
-
-//        } catch (Exception $exception) {
-//            $this->module->debug($exception);
-
-
-//            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [], true));
-//        }
+        } catch (Exception $exception) {
+            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [], true));
+        }
 
         exit;
     }

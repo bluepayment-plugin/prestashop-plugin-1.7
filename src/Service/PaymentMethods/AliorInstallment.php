@@ -30,14 +30,13 @@ class AliorInstallment implements GatewayType
         \Module $module,
         array $data = []
     ): PaymentOption {
-
         $moduleLink = Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
             [],
             true
         );
-        Context::getContext()->smarty->assign('module_dir', $module->getAssetImages());
+
         $option = new PaymentOption();
         $option->setCallToActionText($module->l($data['gateway_name']))
             ->setAction($moduleLink)
@@ -66,12 +65,12 @@ class AliorInstallment implements GatewayType
      */
     public function isActive($cart_total = null): bool
     {
-        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        $isoCode = Helper::getIsoFromContext(Context::getContext());
         $alior = BlueGatewayTransfers::isTransferActive(
             GATEWAY_ID_ALIOR,
-            $iso_code
+            $isoCode
         );
-        if(!$cart_total){
+        if (!$cart_total) {
             $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
         }
         if (

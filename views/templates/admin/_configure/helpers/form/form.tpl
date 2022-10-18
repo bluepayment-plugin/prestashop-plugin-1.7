@@ -284,13 +284,9 @@
 
 					const parent = el.dataset.slideshow;
 
-					console.log(parent);
-
 					const elmm = document.querySelector('.paymentList');
 					const slideShowClass = '.bm-' + parent + '-slideshow';
 					// const slideShow = document.querySelector(slideShowClass);
-
-					console.log(slideShowClass);
 
 					if(elmm.querySelector('.bm-slideshow')) {
 						const slider =  new Slideshow1(slideShowClass);
@@ -301,17 +297,8 @@
 
 			function Slideshow1( element ) {
 				this.el = document.querySelector( element );
-				// this.init();
-
-				// let animal = Object.create(Slideshow1.prototype)
-				// this.el = document.querySelector( element );
-
-				console.log(this.el)
 
 				this.init = function() {
-
-					console.log(element);
-					console.log(this.el)
 
 					// this.wrapper = element.querySelector( ".bm-slideshow" );
 					this.slides = this.el.querySelectorAll( ".slide" );
@@ -348,14 +335,6 @@
 			}
 
 
-
-
-
-
-		// });
-
-
-
 		$('.tab_rule_tab').hide();
 		$('#tab_rule_link_0').addClass('active');
 		$('#tab_rule_0').show();
@@ -382,7 +361,6 @@
 		function amplitudeMenuEvents() {
 			const hash = window.location.hash.slice(1);
 			amplitude.getInstance().logEvent( hash + ' page viewed');
-			console.log(hash)
 		}
 
 	</script>

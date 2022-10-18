@@ -26,7 +26,7 @@ class BluePaymentPaymentStatusModuleFrontController extends ModuleFrontControlle
         parent::initContent();
 
         $this->context->smarty->assign([
-            'module_dir' => $this->module->getPathUrl(),
+            'bm_dir' => $this->module->getPathUrl(),
             'home_url'   => _PS_BASE_URL_,
             'urls'       => $this->getTemplateVarUrls(),
         ]);

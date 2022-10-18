@@ -186,7 +186,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'name' => '',
                     'type' => 'description',
-                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/auth-info.tpl',
+                    'content' => './auth-info.tpl',
                 ],
 
             ],
@@ -295,8 +295,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'name' => '',
                     'type' => 'description',
-                    'content' =>
-                        'module:bluepayment/views/templates/admin/_configure/helpers/form/redirect-info.tpl',
+                    'content' => './redirect-info.tpl',
                 ],
 
                 [
@@ -364,7 +363,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'name' => false,
                         'type' => 'description',
-                        'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/promote-icons.tpl',
+                        'content' => './promote-icons.tpl',
                     ],
 
                     [
@@ -574,7 +573,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'name' => false,
                         'type' => 'description',
-                        'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/promote-icons.tpl',
+                        'content' => './promote-icons.tpl',
                     ],
                 ],
                 'submit' => [
@@ -644,8 +643,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'name' => '',
                     'type' => 'description',
-                    'content' =>
-                        'module:bluepayment/views/templates/admin/_configure/helpers/form/analitics-info.tpl',
+                    'content' => './analitics-info.tpl',
                 ],
                 [
                     'type' => 'switch-choose',
@@ -712,7 +710,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'name' => '',
                     'type' => 'description',
-                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/ga-events.tpl',
+                    'content' => './ga-events.tpl',
                 ],
             ],
         ];
@@ -729,7 +727,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'name' => '',
                     'type' => 'description',
-                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/benefits-help.tpl',
+                    'content' => './benefits-help.tpl',
                 ],
             ],
         ];
@@ -746,7 +744,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'name' => '',
                     'type' => 'description',
-                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/help.tpl',
+                    'content' => './help.tpl',
                 ],
             ],
         ];

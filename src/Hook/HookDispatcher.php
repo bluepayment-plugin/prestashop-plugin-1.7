@@ -92,7 +92,5 @@ class HookDispatcher
                 return call_user_func([$hook, $hookName], $params);
             }
         }
-
-//        return null;
     }
 }

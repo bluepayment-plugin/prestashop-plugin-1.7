@@ -22,10 +22,10 @@ use Configuration as Cfg;
 
 class AdminBluepaymentAjaxController extends ModuleAdminController
 {
-    public const EVENT_PLUGIN_AUTH = 'plugin authorized';
+    const EVENT_PLUGIN_AUTH = 'plugin authorized';
 
-    public const API_AUTHENTICATION_SUCCESS = 'authorization completed';
-    public const API_AUTHENTICATION_FAILED = 'authorization failed';
+    const API_AUTHENTICATION_SUCCESS = 'authorization completed';
+    const API_AUTHENTICATION_FAILED = 'authorization failed';
 
     public function __construct()
     {

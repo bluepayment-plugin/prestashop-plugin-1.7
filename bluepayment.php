@@ -31,8 +31,9 @@ use BluePayment\Service\FactoryPaymentMethods;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 use BluePayment\Adapter\ConfigurationAdapter;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
-class BluePayment extends \PaymentModule
+class BluePayment extends PaymentModule
 {
     public $name_upper;
 
@@ -45,11 +46,6 @@ class BluePayment extends \PaymentModule
      * @var string
      */
     public $name;
-
-    /**
-     * @var null
-     */
-    public $tracked_id;
 
     /**
      * @var string
@@ -121,26 +117,21 @@ class BluePayment extends \PaymentModule
      */
     private $hookDispatcher;
 
-    /**
-     * @var Db
-     */
-    private $database;
 
     public $id_order = null;
 
-    public const PLUGIN_ACTIVATED = 'plugin activated';
-    public const PLUGIN_DEACTIVATED = 'plugin deactivated';
+    const PLUGIN_ACTIVATED = 'plugin activated';
+    const PLUGIN_DEACTIVATED = 'plugin deactivated';
 
     public function __construct()
     {
         $this->name = 'bluepayment';
-        $this->tracked_id = null;
-        $this->name_upper = \Tools::strtoupper($this->name);
+        $this->name_upper = Tools::strtoupper($this->name);
 
         require_once dirname(__FILE__) . '/config/config.inc.php';
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.8.0';
+        $this->version = '2.8.1';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -293,21 +284,7 @@ class BluePayment extends \PaymentModule
 
 
     /**
-     * Return the current database instance
-     * @return Db
-     */
-    public function getDatabase(): Db
-    {
-        if ($this->database === null) {
-            $this->database = Db::getInstance();
-        }
-
-        return $this->database;
-    }
-
-
-    /**
-     * Post form method
+     * Redirect to admin controller
      * @return void
      */
     public function getContent()
@@ -318,7 +295,7 @@ class BluePayment extends \PaymentModule
     }
 
 
-    public function HookTranslateElements()
+    public function hookTranslateElements()
     {
         $this->l('Payment by card');
         $this->l('Virtual wallet');
@@ -371,7 +348,6 @@ class BluePayment extends \PaymentModule
         $gatewayTransfer->select('*');
         $gatewayTransfer = Db::getInstance()->executeS($gatewayTransfer);
 
-
         /// Get all wallets
         $gatewayWallet = new \DbQuery();
         $gatewayWallet->from('blue_gateway_transfers', 'gt');
@@ -390,7 +366,7 @@ class BluePayment extends \PaymentModule
         $this->context->smarty->assign([
             'module_link' => $moduleLink,
             'ps_version' => _PS_VERSION_,
-            'module_dir' => $this->getPathUrl(),
+            'bm_dir' => $this->getPathUrl(),
             'selectPayWay' => Cfg::get($this->name_upper . '_SHOW_PAYWAY'),
             'gateway_transfers' => $gatewayTransfer,
             'gateway_wallets' => $gatewayWallet,
@@ -440,7 +416,11 @@ class BluePayment extends \PaymentModule
 
     public function debug($texto)
     {
-        $logfilename = dirname(__FILE__) . '/log.log';
-        file_put_contents($logfilename, print_r($texto, true));
+        $logDir = dirname(__FILE__);
+
+        $log  = "User: " . $_SERVER['REMOTE_ADDR'] . ' - ' . date("F j, Y, g:i a") . PHP_EOL .
+            print_r($texto, true) . PHP_EOL .
+            "-------------------------";
+        file_put_contents($logDir . '/log_' . date("j.n.Y") . '.log', $log, FILE_APPEND);
     }
 }

@@ -21,7 +21,7 @@ use Configuration as Cfg;
 class Design extends AbstractHook
 {
     const AVAILABLE_HOOKS = [
-        'header',
+        'actionFrontControllerSetMedia',
         'displayBeforeBodyClosingTag',
         'displayProductPriceBlock',
         'displayBanner',
@@ -37,8 +37,9 @@ class Design extends AbstractHook
      * @codeCoverageIgnore
      * Header hooks
      */
-    public function header()
+    public function actionFrontControllerSetMedia()
     {
+
         \Media::addJsDef([
             'bluepayment_env' => (int)Cfg::get($this->module->name_upper . '_TEST_ENV') === 1 ? 'TEST' : 'PRODUCTION',
             'asset_path' => $this->module->getPathUrl() . 'views/',
@@ -47,12 +48,13 @@ class Design extends AbstractHook
             'get_regulations_url' => $this->context->link->getModuleLink('bluepayment', 'regulationsGet', [], true),
         ]);
 
-        $this->context->controller->addCSS($this->module->getPathUrl() . 'views/css/front.css');
-        $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/front.min.js');
-        $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/blik_v3.js');
-        $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/gpay.js');
-    }
+        $path = 'modules/' . $this->module->name. '/views/';
 
+        $this->context->controller->registerStylesheet('bm-front-css', $path . 'css/front.css');
+        $this->context->controller->registerJavascript('bm-front-js', $path . 'js/front.min.js');
+        $this->context->controller->registerJavascript('bm-blik-js', $path . 'js/blik_v3.js');
+        $this->context->controller->registerJavascript('bm-gpay-js', $path . 'js/gpay.js');
+    }
 
     /**
      * Add analytics Gtag

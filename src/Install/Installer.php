@@ -30,7 +30,7 @@ use Context;
 
 class Installer
 {
-    public const MODULE_ADMIN_CONTROLLERS = [
+    const MODULE_ADMIN_CONTROLLERS = [
         [
             'class_name' => 'AdminBluepaymentPayments',
             'visible' => false,
@@ -45,9 +45,10 @@ class Installer
         ],
     ];
 
+    const PLUGIN_INSTALLED = 'plugin installed';
+    const PLUGIN_UNINSTALLED = 'plugin uninstalled';
 
-    public const PLUGIN_INSTALLED = 'plugin installed';
-    public const PLUGIN_UNINSTALLED = 'plugin uninstalled';
+    const PLUGIN_VERSION = 'plugin version';
 
     /**
      * @var \BluePayment
@@ -65,9 +66,11 @@ class Installer
 
     /**
      * Installer
+     *
      * @throws Exception
      */
-    public function install(): bool
+    public function install()
+    :bool
     {
         $this->installDb();
         $this->installTabs();
@@ -79,9 +82,11 @@ class Installer
 
     /**
      * Uninstall
+     *
      * @throws Exception
      */
-    public function uninstall(): bool
+    public function uninstall()
+    :bool
     {
         $this->uninstallDb();
         $this->uninstallTabs();
@@ -92,11 +97,12 @@ class Installer
 
     /**
      * Sql data installation
+     *
      * @throws Exception
      */
     public function installDb($custom_path = null)
     {
-        $sql_path = $this->module->getLocalPath() . 'src/Install/install.sql';
+        $sql_path = $this->module->getLocalPath().'src/Install/install.sql';
         if ($custom_path) {
             $sql_path = $custom_path;
         }
@@ -108,11 +114,12 @@ class Installer
 
     /**
      * Deleting sql data
+     *
      * @throws Exception
      */
     public function uninstallDb($custom_path = null)
     {
-        $sql_path = $this->module->getLocalPath() . 'src/Install/uninstall.sql';
+        $sql_path = $this->module->getLocalPath().'src/Install/uninstall.sql';
         if ($custom_path) {
             $sql_path = $custom_path;
         }
@@ -125,7 +132,8 @@ class Installer
     /**
      * Install tab controller
      */
-    public function installTabs(): bool
+    public function installTabs()
+    :bool
     {
         $res = true;
 
@@ -167,27 +175,26 @@ class Installer
         return $res;
     }
 
-
     /**
      * Remove all tabs controller
      */
-    public function uninstallTabs($tabId = 0): bool
+    public function uninstallTabs($tabId = 0)
+    :bool
     {
         foreach (static::MODULE_ADMIN_CONTROLLERS as $controller) {
-            $id_tab = (int) \Tab::getIdFromClassName($controller['class_name']);
+            $id_tab = (int)\Tab::getIdFromClassName($controller['class_name']);
             $tab = new \Tab($id_tab);
             if (\Validate::isLoadedObject($tab)) {
-                $parentTabID = $tabId ?: $tab->id_parent;
+                $parentTabID = $tabId ? : $tab->id_parent;
                 $tab->delete();
                 $tabCount = $this->getTabElements($parentTabID);
                 if ($tabCount == 0) {
-                    $this->deleteCurrentTab((int) $parentTabID);
+                    $this->deleteCurrentTab((int)$parentTabID);
                 }
             }
         }
         return true;
     }
-
 
     public function deleteCurrentTab($parentTabID)
     {
@@ -203,19 +210,16 @@ class Installer
         return \Tab::getNbTabs((int)$parentTabID);
     }
 
-
     /**
      * Execute sql files
+     *
      * @param string $path
+     *
      * @throws Exception
      */
     public function executeSqlFromFile(string $path, $dba = null)
     {
-//        dump($dba);
-
         $db = $dba ?? $this->db;
-
-//        dump($db);
 
         if (!file_exists($path)) {
             return false;
@@ -230,17 +234,7 @@ class Installer
         }
 
         return true;
-
-//        try {
-////            $db->execute(-1);
-//            $this->sqlExecute($db, $sqlStatements);
-//        } catch (\InvalidArgumentException $exception) {
-////            throw new Exception();
-//            return 'fasasd';
-////            throw new \Exception($exception->getMessage());
-//        }
     }
-
 
     public function sqlExecute($db, $sqlStatements)
     {
@@ -249,12 +243,7 @@ class Installer
         } else {
             return false;
         }
-//        return false;
-//        throw new \Exception();
     }
-
-
-
 
     public function eventInstalled()
     {
@@ -262,6 +251,7 @@ class Installer
             'events' => [
                 "event_type" => self::PLUGIN_INSTALLED,
                 "user_properties" => [
+                    self::PLUGIN_VERSION => _PS_VERSION_,
                     self::PLUGIN_INSTALLED => true,
                 ]
             ],
@@ -276,6 +266,7 @@ class Installer
             'events' => [
                 "event_type" => self::PLUGIN_UNINSTALLED,
                 "user_properties" => [
+                    self::PLUGIN_VERSION => _PS_VERSION_,
                     self::PLUGIN_INSTALLED => false,
                 ]
             ],

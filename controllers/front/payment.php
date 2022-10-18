@@ -24,9 +24,6 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
 
-//        dump(Tools::getAllValues());
-//        die();
-
         $cart = $this->context->cart;
 
         if ($cart->id_customer === 0 || $cart->id_address_delivery === 0
@@ -84,7 +81,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         $gateway_id = (int)Tools::getValue('bluepayment_gateway', 0);
 
         $this->context->smarty->assign([
-            'module_dir' => $this->module->getPathUrl(),
+            'bm_dir' => $this->module->getPathUrl(),
             'form'       => $this->createTransaction($gateway_id, $orderId, $amount, $customer),
         ]);
 

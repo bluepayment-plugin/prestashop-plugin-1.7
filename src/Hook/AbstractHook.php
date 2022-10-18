@@ -21,7 +21,7 @@ use BluePayment\Adapter\ConfigurationAdapter;
 
 abstract class AbstractHook
 {
-    public const AVAILABLE_HOOKS = [];
+    const AVAILABLE_HOOKS = [];
 
     /**
      * @var \BluePayment

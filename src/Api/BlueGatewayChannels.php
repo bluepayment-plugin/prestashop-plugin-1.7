@@ -29,8 +29,8 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 {
     private $module;
 
-    public const TABLE = 'blue_gateway_channels';
-    public const PRIMARY = 'id_blue_gateway_channels';
+    const TABLE = 'blue_gateway_channels';
+    const PRIMARY = 'id_blue_gateway_channels';
 
     public $id_blue_gateway_channels;
     public $gateway_status;

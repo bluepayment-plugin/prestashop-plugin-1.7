@@ -20,7 +20,7 @@
 		<div class="bluepayment-loader-bg"></div>
 		<div style="padding-bottom: 25px;">
 			<div class="form-group">
-				<label class="col-form-label bm-small-info">
+				<label class="col-form-label bm-small-info" style="text-align: left">
                     {l s='Insert BlikCode number' mod='bluepayment'}
 				</label>
 				<input id="bluepayment-blikCode" class="form-control" type="text" name="bluepayment_input_blikCode"

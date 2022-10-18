@@ -37,7 +37,7 @@
 				</h5>
 				<button type="button" class="bm-modal__close" data-dismiss="modal"
 				        aria-label="{l s='Close' mod='bluepayment'}">
-					<img src="{$module_dir}views/img/close.svg" width="20"
+					<img src="{$bm_dir}views/img/close.svg" width="20"
 					     alt="{l s='Close' mod='bluepayment'}"/>
 				</button>
 			</div>

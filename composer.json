@@ -41,7 +41,7 @@
     "squizlabs/php_codesniffer": "^3.7.1",
     "phpmd/phpmd": "@stable",
     "prestashop/php-dev-tools": "^4.2",
-    "phpunit/phpunit": "^8",
+    "phpunit/phpunit": "8.5.29",
     "mockery/mockery": "^1.2"
   },
   "type": "prestashop-module",

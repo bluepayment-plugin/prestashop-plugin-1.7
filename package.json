@@ -1,6 +1,6 @@
 {
   "name": "bluepayment",
-  "version": "3.7.3",
+  "version": "3.8.1",
   "description": "BluePayment",
   "main": "front.js",
   "scripts": {
@@ -9,7 +9,16 @@
     "scss-lint": "stylelint \"**/*.scss\" --formatter verbose",
     "scss-fix": "stylelint \"**/*.scss\" --fix",
     "lint": "eslint -c .eslintrc.js --ext .js,.vue ./js",
-    "lint-fix": "eslint -c .eslintrc.js --ext .js,.vue ./js --fix"
+    "lint-fix": "eslint -c .eslintrc.js --ext .js,.vue ./js --fix",
+    "test": "mocha _dev/test/**/*_test.js",
+    "cover:unit": "nyc --silent npm run test",
+    "cover:report": "nyc report --reporter=lcov --reporter=text --report-dir='./jscoverage'",
+    "cover:reporthtml": "nyc report --reporter=html --report-dir='./jscoverage'",
+    "test:coverage": "npm run cover:unit && npm run cover:report",
+    "test:coveragehtml": "npm run cover:unit && npm run cover:reporthtml"
+  },
+  "nyc": {
+    "exclude": ["**/*_test.js"]
   },
   "keywords": [
     "payment"
@@ -32,7 +41,9 @@
     "expose-loader": "^3.0.0",
     "file-loader": "^6.2.0",
     "mini-css-extract-plugin": "^1.6.0",
+    "mocha": "^10.0.0",
     "node-sass": "^6.0.1",
+    "nyc": "^15.1.0",
     "postcss-flexibility": "^1.0.2",
     "postcss-loader": "^6.1.1",
     "sass-loader": "^12.1.0",

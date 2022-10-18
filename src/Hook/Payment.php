@@ -26,9 +26,10 @@ use BluePayment\Until\Helper;
 
 class Payment extends AbstractHook
 {
-    public const AVAILABLE_HOOKS = [
+    const AVAILABLE_HOOKS = [
         'paymentReturn',
         'orderConfirmation',
+        'actionObjectOrderHistoryAddAfter'
     ];
 
 
@@ -62,8 +63,7 @@ class Payment extends AbstractHook
     }
 
 
-    public function getDataToOrderResults($params, $currency)
-    :bool
+    public function getDataToOrderResults($params, $currency): bool
     {
         $products = [];
 
@@ -115,5 +115,25 @@ class Payment extends AbstractHook
         ]);
 
         return $this->module->fetch('module:bluepayment/views/templates/hook/order-confirmation.tpl');
+    }
+
+
+    public function actionObjectOrderHistoryAddAfter($params)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.7.5', '<')) {
+            // PrestaShop < 1.7.7.5
+            $acceptedStates = [
+                Cfg::get($this->module->name_upper . '_STATUS_ACCEPT_PAY_ID'),
+                Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID')
+            ];
+            if (in_array($params['object']->id_order_state, $acceptedStates)) {
+                $this->module->debug('< 1.7.7.5');
+                $this->module->debug('hookActionObjectOrderHistoryAddAfter');
+                $this->module->debug($params);
+                $order = new \Order($params['object']->id_order);
+                $idHistoryState = Helper::getLastOrderState((int)$params['object']->id_order);
+                Helper::sendEmail($order, [], $idHistoryState);
+            }
+        }
     }
 }

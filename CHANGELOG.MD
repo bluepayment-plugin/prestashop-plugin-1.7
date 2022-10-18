@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.1] 18.10.2022
+- Fixed blik status autoupdate
+- Fixed blik analytics
+- Fixed e-mail bluemedia statuses in prestashop < 1.7.7.4
+- Fixed payment status in history order
+- Fixed error displaying payments in checkout in older prestashop version
+
 ## [2.8.0] 30.09.2022
 - Code refactoring
 - Updated amplitude events

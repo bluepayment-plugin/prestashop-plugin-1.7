@@ -19,7 +19,7 @@
     <section id="main" style="padding: 20px">
         <div class="box">
             <a href="https://bluepayment.pl" target="_blank">
-                <img src="{$module_dir}views/img/bluepayment.svg" class="payment-brand" alt="Bluemedia" />
+                <img src="{$bm_dir}views/img/bluepayment.svg" class="payment-brand" alt="Bluemedia" />
             </a>
             <h1>
                 {l s='Payment failed' mod='bluepayment'}

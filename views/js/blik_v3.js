@@ -49,7 +49,6 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response) {
-                    console.log(JSON.stringify(response));
                     if (response.status === 'PENDING') {
                         if (typeof response.redirectUrl !== "undefined" && response.redirectUrl.length > 10) {
                             window.location.href = response.redirectUrl;

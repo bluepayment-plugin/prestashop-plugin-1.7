@@ -35,7 +35,7 @@ class Configure
     protected $translator;
     protected $name;
 
-    public const TRANSLATE_GROUP = 'Modules.Bluepayment';
+    const TRANSLATE_GROUP = 'Modules.Bluepayment';
 
     public function __construct(
         \BluePayment $module,
@@ -64,10 +64,7 @@ class Configure
             'lang' => Helper::getFieldsLang()
         ];
 
-        return $this->uninstallConfiguration(
-            $fields
-        ) &&
-            $this->removeOrderStatuses(new CustomStatus());
+        return $this->uninstallConfiguration($fields);
     }
 
 

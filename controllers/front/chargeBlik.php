@@ -236,16 +236,17 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                     'status'  => 'PENDING',
                     'message' => $this->module->l('Confirm the operation in your bank\'s application.', 'chargeblik'),
                 ];
-                $data['blik_status'] = 'PENDING';
 
+                $data['blik_status'] = 'PENDING';
                 $this->transactionQuery($transaction, $orderId, $data);
             } elseif ($response->paymentStatus == 'SUCCESS') {
+
                 $array = [
                     'status'  => 'SUCCESS',
                     'message' => $this->module->l('Payment has been successfully completed.', 'chargeblik'),
                 ];
-                $data['blik_status'] = 'SUCCESS';
 
+                $data['blik_status'] = 'SUCCESS';
                 $this->transactionQuery($transaction, $orderId, $data);
             } else {
                 $array = [
@@ -262,7 +263,6 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 'message' => $this->module->l('The entered code is not valid.', 'chargeblik'),
             ];
             $data['blik_status'] = 'WRONG_TICKET';
-
             $this->transactionQuery($transaction, $orderId, $data);
         } elseif (isset($response->confirmation) &&
             $response->confirmation == 'NOTCONFIRMED' &&
@@ -273,7 +273,6 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 'message' => $this->module->l('Your BLIK transaction has already been paid for.', 'chargeblik'),
             ];
             $data['blik_status'] = 'MULTIPLY_PAID_TRANSACTION';
-
             $this->transactionQuery($transaction, $orderId, $data);
         }
 
@@ -311,12 +310,24 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 'status'  => 'SUCCESS',
                 'message' => $this->module->l('Payment has been successfully completed.', 'chargeblik'),
             ];
+            $data['blik_status'] = 'SUCCESS';
+            $this->transactionQuery($transaction, $orderId, $data);
         }
         if (isset($transaction->blik_status) && $transaction->blik_status == 'PENDING') {
             $array = [
                 'status'  => 'PENDING',
                 'message' => $this->module->l('Confirm the operation in your bank\'s application.', 'chargeblik'),
             ];
+
+            if($transaction->payment_status == 'SUCCESS') {
+
+                $ga = $_COOKIE['_ga'] ?? '';
+
+                $data['blik_status'] = 'SUCCESS';
+                $data['gtag_uid'] = $ga;
+                $this->transactionQuery($transaction, $orderId, $data);
+            }
+
         }
         if (isset($transaction->created_at) &&
             time() >= strtotime('+2 minutes', strtotime($transaction->created_at))
@@ -325,11 +336,9 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 'status'  => 'FAILURE',
                 'message' => $this->module->l('The BLIK code has expired.', 'chargeblik'),
             ];
-            Db::getInstance()->update(
-                'blue_transactions',
-                ['created_at' => date('Y-m-d H:i:s')],
-                'order_id = \'' . pSQL($orderId) . '\''
-            );
+
+            $data['blik_status'] = 'FAILURE';
+            $this->transactionQuery($transaction, $orderId, $data);
         }
 
         if (empty($array)) {

@@ -85,7 +85,7 @@ class Smartney implements GatewayType
     public function isActive($cart_total = null): bool
     {
         $iso_code = Helper::getIsoFromContext(Context::getContext());
-        if(!$cart_total){
+        if (!$cart_total) {
             $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
         }
         $smartney = BlueGatewayTransfers::isTransferActive(

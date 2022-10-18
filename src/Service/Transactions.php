@@ -26,33 +26,38 @@ use Product;
 use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Until\Helper;
 use BluePayment\Analyse\AnalyticsTracking;
+use ObjectModel;
 
 class Transactions
 {
     /**
      * Payment confirmed
      */
-    public const TRANSACTION_CONFIRMED = 'CONFIRMED';
-    public const TRANSACTION_NOTCONFIRMED = 'NOTCONFIRMED';
+    const TRANSACTION_CONFIRMED = 'CONFIRMED';
+    const TRANSACTION_NOTCONFIRMED = 'NOTCONFIRMED';
 
     /**
      * Payment statuses
      */
-    public const PAYMENT_STATUS_PENDING = 'PENDING';
-    public const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
-    public const PAYMENT_STATUS_FAILURE = 'FAILURE';
+    const PAYMENT_STATUS_PENDING = 'PENDING';
+    const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
+    const PAYMENT_STATUS_FAILURE = 'FAILURE';
 
-    public const BM_PREFIX = 'BM - ';
+    const BM_PREFIX = 'BM - ';
 
     /**
      * @var array
      */
     private $checkHashArray = [];
     private $module;
+    private $orderHistory;
 
-    public function __construct(\BluePayment $module)
-    {
+    public function __construct(
+        \BluePayment $module,
+        \OrderHistory $orderHistory
+    ) {
         $this->module = $module;
+        $this->orderHistory = $orderHistory;
     }
 
 
@@ -144,12 +149,7 @@ class Transactions
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-
-        Db::getInstance()->update(
-            'blue_transactions',
-            $transactionData,
-            'order_id = \'' . $this->pSQL($realOrderId) . '\''
-        );
+        $this->updateTransactionQuery($realOrderId, $transactionData);
 
         $total_paid = $order->total_paid;
         $amount = number_format(round($total_paid, 2), 2, '.', '');
@@ -160,15 +160,11 @@ class Transactions
                 case self::PAYMENT_STATUS_PENDING:
                     // Jeśli aktualny status zamówienia jest różny od ustawionego jako "oczekiwanie na płatność"
                     if ($order->current_state != $status_waiting_pay_id) {
-                        $new_history = new \OrderHistory();
-                        $new_history->id_order = $order_id;
-                        $new_history->changeIdOrderState($status_waiting_pay_id, $order_id);
-                        $new_history->addWithemail(true);
+                        $this->changeOrderStatus($order, $remote_id, $status_waiting_pay_id);
                     }
                     break;
                 // Jeśli transakcja została zakończona poprawnie
                 case self::PAYMENT_STATUS_SUCCESS:
-
                     /// Send GA event
                     if (
                         Cfg::get('BLUEPAYMENT_GA_TRACKER_ID') ||
@@ -197,7 +193,10 @@ class Transactions
                                         $brand = Manufacturer::getNameById($p['id_manufacturer']);
                                     }
 
-                                    $cat = new \Category($p['id_category_default'], \Context::getContext()->language->id);
+                                    $cat = new \Category(
+                                        $p['id_category_default'],
+                                        \Context::getContext()->language->id
+                                    );
                                     if ($cat) {
                                         $category_name = $cat->name;
                                     }
@@ -212,17 +211,6 @@ class Transactions
                                         $args['pr' . $p_key . 'pr'] = $p['total_price_tax_incl'];
                                         $args['pr' . $p_key . 'qt'] = $p['product_quantity'];
                                     } elseif (Cfg::get('BLUEPAYMENT_GA_TYPE') === '2') {
-//                                        $items = [
-//                                            [
-//                                                'item_id' => $p['product_id'],
-//                                                'item_name' => Product::getProductName($p['product_id']),
-//                                                'item_brand' => $brand,
-//                                                'item_category' => $category_name,
-//                                                'price' => $p['total_price_tax_incl'],
-//                                                'quantity' => $p['product_quantity'],
-//                                            ]
-//                                        ];
-
                                         $items[$p_key - 1] = [
                                                 'item_id' => $p['product_id'],
                                                 'item_name' => Product::getProductName($p['product_id']),
@@ -272,13 +260,9 @@ class Transactions
                             $transactionData = [
                                 'gtag_state' => 1,
                             ];
-
-                            Db::getInstance()->update(
-                                'blue_transactions',
-                                $transactionData,
-                                'order_id like "' . $this->pSQL($order_id) . '-%"'
-                            );
+                            $this->updateTransactionQuery($order_id, $transactionData);
                         }
+
                     }
 
 
@@ -286,17 +270,11 @@ class Transactions
                         $order->current_state == $status_waiting_pay_id ||
                         $order->current_state == $status_error_pay_id
                     ) {
-                        $new_history = new \OrderHistory();
-                        $new_history->id_order = $order_id;
-                        $new_history->changeIdOrderState($status_accept_pay_id, $order_id);
-                        $new_history->addWithemail(true);
+                        $this->changeOrderStatus($order, $remote_id, $status_accept_pay_id);
+
                         if ((string)$transaction->gatewayID == (string)GATEWAY_ID_BLIK) {
                             $transactionData['blik_status'] = (string)$transaction->paymentStatus;
-                            Db::getInstance()->update(
-                                'blue_transactions',
-                                $transactionData,
-                                'order_id = \'' . $this->pSQL($realOrderId) . '\''
-                            );
+                            $this->updateTransactionQuery($realOrderId, $transactionData);
                         }
 
                         if (is_object($order_payment)) {
@@ -308,17 +286,14 @@ class Transactions
                     }
                     break;
                 case self::PAYMENT_STATUS_FAILURE:
-                    // Jeśli aktualny status zamówienia jest równy ustawionemu jako "oczekiwanie na płatność"
                     if ($order->current_state == $status_waiting_pay_id) {
-                        $new_history = new \OrderHistory();
-                        $new_history->id_order = $order_id;
-                        $new_history->changeIdOrderState($status_error_pay_id, $order_id);
-                        $new_history->addWithemail(true);
+                        $this->changeOrderStatus($order, $remote_id, $status_error_pay_id);
                     }
                     break;
                 default:
                     break;
             }
+
             $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_CONFIRMED);
         } else {
             $message = $this->module->name_upper . ' - Order status is cancel or payment status unknown';
@@ -326,6 +301,43 @@ class Transactions
             $this->returnConfirmation($realOrderId, $order_id, $message);
         }
     }
+
+
+
+
+
+    public function updateTransactionQuery($orderId, $transactionData)
+    {
+        return Db::getInstance()->update(
+            'blue_transactions',
+            $transactionData,
+            'order_id = \'' . $this->pSQL($orderId) . '\''
+        );
+    }
+
+
+
+    public function changeOrderStatus($order, $remoteId, $statusId): bool
+    {
+        $this->orderHistory->id_order = (int) $order->id;
+        $this->orderHistory->changeIdOrderState(
+            (int) $statusId,
+            $order,
+            true
+        );
+
+        try {
+            $this->orderHistory->addWithemail(true, []);
+        } catch (\Exception $exception) {
+            \PrestaShopLogger::addLog(
+                $exception,
+                1
+            );
+        }
+
+        return true;
+    }
+
 
 
     /**

@@ -71,10 +71,10 @@ class Card implements GatewayType
      */
     public function isActive(): bool
     {
-        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        $isoCode = Helper::getIsoFromContext(Context::getContext());
         return BlueGatewayTransfers::isTransferActive(
             GATEWAY_ID_CARD,
-            $iso_code
+            $isoCode
         );
     }
 }

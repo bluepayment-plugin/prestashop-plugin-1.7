@@ -155,7 +155,5 @@ class AnalyticsTracking
         $dataMerge = array_merge($data, $products);
 
         return $this->ga4SendData((array)(json_encode($dataMerge, JSON_PRETTY_PRINT)));
-//        $module = \Module::getInstanceByName('bluepayment');
-//        $module->debug($dataMerge);
     }
 }

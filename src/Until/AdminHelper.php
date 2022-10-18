@@ -66,7 +66,6 @@ class AdminHelper
     {
         $name = _MODULE_DIR_ . 'bluepayment/views/img/';
         $context = $this->module->getContext();
-
         $currency = $object['gateway_currency'];
 
         if ($gatewayLogo === $name . 'payments.png') {
@@ -81,7 +80,7 @@ class AdminHelper
             ]);
 
             $result = $this->module->fetch(
-                'module:bluepayment/views/templates/admin/_configure/helpers/form/button-payment-transfer.tpl'
+                'module:bluepayment/views/templates/admin/_configure/helpers/form/button-payment.tpl'
             );
         } elseif ($gatewayLogo === $name . 'cards.png') {
             $context->smarty->assign([
@@ -95,7 +94,7 @@ class AdminHelper
             ]);
 
             $result = $this->module->fetch(
-                'module:bluepayment/views/templates/admin/_configure/helpers/form/button-payment-transfer.tpl'
+                'module:bluepayment/views/templates/admin/_configure/helpers/form/button-payment.tpl'
             );
         } else {
             $result = '<img width="65" class="img-fluid" src="' . $gatewayLogo . '" />';

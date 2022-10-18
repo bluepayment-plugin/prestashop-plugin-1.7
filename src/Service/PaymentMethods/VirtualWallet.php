@@ -57,30 +57,14 @@ class VirtualWallet implements GatewayType
             $gpayRedirect = true;
         }
 
-        if(!is_object(Context::getContext()->currency)){
+        if (!is_object(Context::getContext()->currency)) {
             $currency = Context::getContext()->currency['iso_code'];
-        }
-        else{
+        } else {
             $currency = Context::getContext()->currency->iso_code;
         }
         $googlePay = $this->checkIfActiveSubChannel(GATEWAY_ID_GOOGLE_PAY, $currency);
         $applePay = $this->checkIfActiveSubChannel(GATEWAY_ID_APPLE_PAY, $currency);
-
         $idShop = Context::getContext()->shop->id;
-
-        $gatewayWallet = new \DbQuery();
-        $gatewayWallet->from('blue_gateway_transfers', 'gt');
-        $gatewayWallet->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
-        $gatewayWallet->where('gt.gateway_id IN (' . Helper::getWalletsList() . ')');
-        $gatewayWallet->where('gt.gateway_status = 1');
-        $gatewayWallet->where('gt.gateway_currency = "' . pSql($currency) . '"');
-
-        if (Shop::isFeatureActive()) {
-            $gatewayWallet->where('gts.id_shop = ' . (int)$idShop);
-        }
-
-        $gatewayWallet->select('*');
-        $gatewayWallet = Db::getInstance()->executeS($gatewayWallet);
 
         Context::getContext()->smarty->assign([
             'wallet_merchantInfo' => $walletMerchantInfo,
@@ -89,7 +73,6 @@ class VirtualWallet implements GatewayType
             'googlePay' => $googlePay,
             'applePay' => $applePay,
             'img_wallets' => Helper::getImgPayments('wallet', $currency, $idShop),
-            'gateway_wallets' => $gatewayWallet,
         ]);
 
         $option = new PaymentOption();
@@ -121,10 +104,10 @@ class VirtualWallet implements GatewayType
      */
     public function isActive(): bool
     {
-        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        $isoCode = Helper::getIsoFromContext(Context::getContext());
 
-        $googlePay = $this->checkIfActiveSubChannel(GATEWAY_ID_GOOGLE_PAY, $iso_code);
-        $applePay = $this->checkIfActiveSubChannel(GATEWAY_ID_APPLE_PAY, $iso_code);
+        $googlePay = $this->checkIfActiveSubChannel(GATEWAY_ID_GOOGLE_PAY, $isoCode);
+        $applePay = $this->checkIfActiveSubChannel(GATEWAY_ID_APPLE_PAY, $isoCode);
 
         return $googlePay || $applePay;
     }
@@ -132,7 +115,7 @@ class VirtualWallet implements GatewayType
 
     public function checkIfActiveSubChannel($gatewayId, $currency): bool
     {
-        return BlueGatewayChannels::isChannelActive(
+        return BlueGatewayTransfers::isTransferActive(
             $gatewayId,
             $currency
         );
