@@ -251,7 +251,7 @@ class Installer
             'events' => [
                 "event_type" => self::PLUGIN_INSTALLED,
                 "user_properties" => [
-                    self::PLUGIN_VERSION => _PS_VERSION_,
+                    self::PLUGIN_VERSION => $this->module->version,
                     self::PLUGIN_INSTALLED => true,
                 ]
             ],
@@ -266,7 +266,7 @@ class Installer
             'events' => [
                 "event_type" => self::PLUGIN_UNINSTALLED,
                 "user_properties" => [
-                    self::PLUGIN_VERSION => _PS_VERSION_,
+                    self::PLUGIN_VERSION => $this->module->version,
                     self::PLUGIN_INSTALLED => false,
                 ]
             ],
