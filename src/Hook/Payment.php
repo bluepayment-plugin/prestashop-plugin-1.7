@@ -127,9 +127,6 @@ class Payment extends AbstractHook
                 Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID')
             ];
             if (in_array($params['object']->id_order_state, $acceptedStates)) {
-                $this->module->debug('< 1.7.7.5');
-                $this->module->debug('hookActionObjectOrderHistoryAddAfter');
-                $this->module->debug($params);
                 $order = new \Order($params['object']->id_order);
                 $idHistoryState = Helper::getLastOrderState((int)$params['object']->id_order);
                 Helper::sendEmail($order, [], $idHistoryState);

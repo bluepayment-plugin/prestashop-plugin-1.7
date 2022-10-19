@@ -26,7 +26,7 @@ class CustomStatus
 
     public function addOrderStates(int $language_id, $base_name): bool
     {
-        $res = false;
+        $res = true;
         $mails_languages = ['pl', 'en'];
 
         foreach ($mails_languages as $l) {
@@ -90,8 +90,8 @@ class CustomStatus
 
 
         if (
-            !CustomStatus::checkIfStateExists($pending_name_pl, $language_id)
-            || CustomStatus::checkIfStateExists($pending_name_en, $language_id)
+            !CustomStatus::checkIfStateExists($pending_name_pl, $language_id) &&
+            !CustomStatus::checkIfStateExists($pending_name_en, $language_id)
         ) {
             // create new pending state
             $pending = new \OrderState();
@@ -110,22 +110,23 @@ class CustomStatus
                 }
             }
 
-            $pending->add();
-            $stateId = $pending->id;
-            Cfg::updateValue($base_name . '_STATUS_WAIT_PAY_ID', $stateId);
-            $res = true;
+            if(!$pending->add()) {
+                $res = false;
+            }
+
+            Cfg::updateValue($base_name . '_STATUS_WAIT_PAY_ID', $pending->id);
         }
 
         if (
-            !CustomStatus::checkIfStateExists($completed_name_pl, $language_id)
-            || CustomStatus::checkIfStateExists($completed_name_en, $language_id)
+            !CustomStatus::checkIfStateExists($completed_name_pl, $language_id) &&
+            !CustomStatus::checkIfStateExists($completed_name_en, $language_id)
         ) {
             // create new completed state
             $completed = new \OrderState();
             $completed->module_name = $module_name;
             $completed->template = $completed_template;
             $completed->invoice = 1;
-            $completed->unremovable = 1;
+            $completed->unremovable = $unremovable;
             $completed->color = $completed_color;
             $completed->send_email = $completed_send_email;
             $completed->paid = $completed_paid;
@@ -138,15 +139,16 @@ class CustomStatus
                 }
             }
 
-            $completed->add();
-            $stateId = $completed->id;
-            Cfg::updateValue($base_name . '_STATUS_ACCEPT_PAY_ID', $stateId);
-            $res = true;
+            if(!$completed->add()) {
+                $res = false;
+            }
+
+            Cfg::updateValue($base_name . '_STATUS_ACCEPT_PAY_ID', $completed->id);
         }
 
         if (
-            !CustomStatus::checkIfStateExists($payment_error_name_pl, $language_id)
-            || CustomStatus::checkIfStateExists($payment_error_name_en, $language_id)
+            !CustomStatus::checkIfStateExists($payment_error_name_pl, $language_id) &&
+            !CustomStatus::checkIfStateExists($payment_error_name_en, $language_id)
         ) {
             // create new pending state
             $payment_error = new \OrderState();
@@ -165,14 +167,14 @@ class CustomStatus
                 }
             }
 
+            if(!$payment_error->add()) {
+                $res = false;
+            }
 
-            $payment_error->add();
-            $stateId = $payment_error->id;
-            Cfg::updateValue($base_name . '_STATUS_ERROR_PAY_ID', $stateId);
-            $res = true;
+            Cfg::updateValue($base_name . '_STATUS_ERROR_PAY_ID', $payment_error->id);
         }
 
-        return (bool) $res;
+        return $res;
     }
 
     public static function checkIfStateExists(string $name, $language_id): bool

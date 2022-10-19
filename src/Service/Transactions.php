@@ -26,7 +26,6 @@ use Product;
 use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Until\Helper;
 use BluePayment\Analyse\AnalyticsTracking;
-use ObjectModel;
 
 class Transactions
 {
