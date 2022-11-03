@@ -12,6 +12,7 @@
  */
 
 use BluePayment\Until\Helper;
+use BluePayment\Config\Config;
 
 class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 {
@@ -28,7 +29,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         $blikCode = pSQL(Tools::getValue('blikCode'));
         $postOrderId = pSQL(Tools::getValue('postOrderId'));
 
-        if (preg_match('/[^a-z_\-0-9 ]/i', $blikCode) && Tools::strlen($blikCode) !== BLIK_CODE_LENGTH) {
+        if (preg_match('/[^a-z_\-0-9 ]/i', $blikCode) && Tools::strlen($blikCode) !== Config::BLIK_CODE_LENGTH) {
             $status = false;
         }
 
@@ -62,8 +63,8 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
         $currency = $this->context->currency->iso_code;
 
-        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
-        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
+        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
+        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . Config::SHARED_KEY, $currency);
 
         $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
         $amount = number_format(round($totalPaid, 2), 2, '.', '');

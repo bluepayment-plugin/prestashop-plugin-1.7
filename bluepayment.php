@@ -21,9 +21,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once dirname(__FILE__) . '/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use BluePayment\Analyse\Amplitude;
+use BluePayment\Config\Config;
 use BluePayment\Install\Installer;
 use BluePayment\Configure\Configure;
 use BluePayment\Hook\HookDispatcher;
@@ -117,21 +118,15 @@ class BluePayment extends PaymentModule
      */
     private $hookDispatcher;
 
-
     public $id_order = null;
-
-    const PLUGIN_ACTIVATED = 'plugin activated';
-    const PLUGIN_DEACTIVATED = 'plugin deactivated';
 
     public function __construct()
     {
         $this->name = 'bluepayment';
         $this->name_upper = Tools::strtoupper($this->name);
 
-        require_once dirname(__FILE__) . '/config/config.inc.php';
-
         $this->tab = 'payments_gateways';
-        $this->version = '2.8.1';
+        $this->version = '2.8.2';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -150,6 +145,7 @@ class BluePayment extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
         $this->hookDispatcher = new HookDispatcher($this, new ConfigurationAdapter($this->context->shop->id));
+
     }
 
     /**
@@ -223,9 +219,9 @@ class BluePayment extends PaymentModule
 
         $data = [
             'events' => [
-                "event_type" => self::PLUGIN_ACTIVATED,
+                "event_type" => Config::PLUGIN_ACTIVATED,
                 "user_properties" => [
-                    self::PLUGIN_ACTIVATED => true,
+                    Config::PLUGIN_ACTIVATED => true,
                 ],
             ],
         ];
@@ -239,9 +235,9 @@ class BluePayment extends PaymentModule
     {
         $data = [
             'events' => [
-                "event_type" => self::PLUGIN_DEACTIVATED,
+                "event_type" => Config::PLUGIN_DEACTIVATED,
                 "user_properties" => [
-                    self::PLUGIN_ACTIVATED => false,
+                    Config::PLUGIN_ACTIVATED => false,
                 ],
             ],
         ];
@@ -271,10 +267,13 @@ class BluePayment extends PaymentModule
 
     /**
      * Dispatch hooks
+     *
      * @param string $methodName
-     * @param $arguments
+     * @param array $arguments
+     *
+     * @return mixed
      */
-    public function __call(string $methodName, $arguments = [])
+    public function __call(string $methodName, array $arguments = [])
     {
         return $this->getHookDispatcher()->dispatch(
             $methodName,
@@ -287,12 +286,13 @@ class BluePayment extends PaymentModule
      * Redirect to admin controller
      * @return void
      */
-    public function getContent()
+    public function getContent(): void
     {
         \Tools::redirectAdmin(
-            $this->context->link->getAdminLink('AdminBluepaymentPayments')
+            $this->getContext()->link->getAdminLink('AdminBluepaymentPayments')
         );
     }
+
 
 
     public function hookTranslateElements()
@@ -315,11 +315,11 @@ class BluePayment extends PaymentModule
         $id_shop = $this->context->shop->id;
 
         $serviceId = Helper::parseConfigByCurrency(
-            $this->name_upper . SERVICE_PARTNER_ID,
+            $this->name_upper . Config::SERVICE_PARTNER_ID,
             $currency->iso_code
         );
         $sharedKey = Helper::parseConfigByCurrency(
-            $this->name_upper . SHARED_KEY,
+            $this->name_upper . Config::SHARED_KEY,
             $currency->iso_code
         );
 
@@ -331,7 +331,7 @@ class BluePayment extends PaymentModule
 
         $moduleLink = $this->context->link->getModuleLink('bluepayment', 'payment', [], true);
 
-        require_once BM_SDK_PATH;
+
 
         /// Get all transfers
         $gatewayTransfer = new \DbQuery();
@@ -414,11 +414,11 @@ class BluePayment extends PaymentModule
         return $this->images_dir;
     }
 
-    public function debug($texto)
+    public function debug($texto): void
     {
-        $logDir = dirname(__FILE__);
+        $logDir = __DIR__;
 
-        $log  = "User: " . $_SERVER['REMOTE_ADDR'] . ' - ' . date("F j, Y, g:i a") . PHP_EOL .
+        $log = PHP_EOL . "User: " . $_SERVER['REMOTE_ADDR'] . ' - ' . date("F j, Y, g:i a") . PHP_EOL .
             print_r($texto, true) . PHP_EOL .
             "-------------------------";
         file_put_contents($logDir . '/log_' . date("j.n.Y") . '.log', $log, FILE_APPEND);

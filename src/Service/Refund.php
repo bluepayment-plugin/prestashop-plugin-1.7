@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Service;
 
+use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 
 class Refund
@@ -32,11 +33,11 @@ class Refund
         $amount = number_format((float) $amount, 2, '.', '');
 
         $serviceId = Helper::parseConfigByCurrency(
-            $this->module->name_upper . SERVICE_PARTNER_ID,
+            $this->module->name_upper . Config::SERVICE_PARTNER_ID,
             $currency->iso_code
         );
         $sharedKey = Helper::parseConfigByCurrency(
-            $this->module->name_upper . SHARED_KEY,
+            $this->module->name_upper . Config::SHARED_KEY,
             $currency->iso_code
         );
         $messageId = $this->randomString(32);

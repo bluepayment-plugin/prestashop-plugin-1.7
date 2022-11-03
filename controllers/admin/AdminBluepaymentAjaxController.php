@@ -16,23 +16,19 @@ use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
+use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 use BluePayment\Until\AdminHelper;
 use Configuration as Cfg;
 
 class AdminBluepaymentAjaxController extends ModuleAdminController
 {
-    const EVENT_PLUGIN_AUTH = 'plugin authorized';
-
-    const API_AUTHENTICATION_SUCCESS = 'authorization completed';
-    const API_AUTHENTICATION_FAILED = 'authorization failed';
-
     public function __construct()
     {
         parent::__construct();
     }
 
-    public function initContent()
+    public function initContent(): void
     {
         if (!$this->loadObject(true)) {
             return;
@@ -90,27 +86,27 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
                     if ($connect_status) {
                         PrestaShopLogger::addLog(
-                            self::API_AUTHENTICATION_SUCCESS . ' - currency ' . $currency['iso_code'],
+                            Config::API_AUTHENTICATION_SUCCESS . ' - currency ' . $currency['iso_code'],
                             1
                         );
                         $data = [
                             'events' => [
-                                "event_type" => self::API_AUTHENTICATION_SUCCESS,
+                                "event_type" => Config::API_AUTHENTICATION_SUCCESS,
                                 "user_properties" => [
-                                    self::EVENT_PLUGIN_AUTH => true,
+                                    Config::PLUGIN_AUTH => true,
                                 ],
                             ],
                         ];
                     } else {
                         PrestaShopLogger::addLog(
-                            self::API_AUTHENTICATION_FAILED . ' - currency ' . $currency['iso_code'],
+                            Config::API_AUTHENTICATION_FAILED . ' - currency ' . $currency['iso_code'],
                             1
                         );
                         $data = [
                             'events' => [
-                                "event_type" => self::API_AUTHENTICATION_FAILED,
+                                "event_type" => Config::API_AUTHENTICATION_FAILED,
                                 "user_properties" => [
-                                    self::EVENT_PLUGIN_AUTH => false,
+                                    Config::PLUGIN_AUTH => false,
                                 ],
                             ],
                         ];
@@ -120,15 +116,15 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                     $amplitude->sendEvent($data);
                 } else {
                     PrestaShopLogger::addLog(
-                        self::API_AUTHENTICATION_FAILED . ' wrong key - currency ' . $currency['iso_code'],
+                        Config::API_AUTHENTICATION_FAILED . ' wrong key - currency ' . $currency['iso_code'],
                         1
                     );
 
                     $data = [
                         'events' => [
-                            "event_type" => self::API_AUTHENTICATION_FAILED,
+                            "event_type" => Config::API_AUTHENTICATION_FAILED,
                             "user_properties" => [
-                                self::EVENT_PLUGIN_AUTH => false,
+                                Config::PLUGIN_AUTH => false,
                             ],
                         ],
                     ];
@@ -143,8 +139,8 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
             Configuration::updateValue($this->module->name_upper . '_PAYMENT_NAME', $paymentName);
             Configuration::updateValue($this->module->name_upper . '_PAYMENT_GROUP_NAME', $paymentGroupName);
-            Configuration::updateValue($this->module->name_upper . '_SERVICE_PARTNER_ID', serialize($serviceId));
-            Configuration::updateValue($this->module->name_upper . '_SHARED_KEY', serialize($sharedKey));
+            Configuration::updateValue($this->module->name_upper . Config::SERVICE_PARTNER_ID, serialize($serviceId));
+            Configuration::updateValue($this->module->name_upper . Config::SHARED_KEY, serialize($sharedKey));
 
             $gateway = new BlueGateway($this->module, new BlueAPI($this->module));
             $gateway->getTransfers();
@@ -153,7 +149,7 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
             $this->ajaxDie(Tools::jsonEncode(['success' => true]));
         } catch (Exception $exception) {
             PrestaShopLogger::addLog(
-                'BM - Ajax Error',
+                'Blue Media - Ajax Error',
                 4
             );
             $this->ajaxDie(Tools::jsonEncode(['success' => false]));

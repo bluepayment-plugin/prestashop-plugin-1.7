@@ -18,20 +18,21 @@ namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Until\Helper;
-use Configuration as Config;
+use Configuration as Cfg;
 use Context;
 use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
+use BluePayment\Config\Config;
 
 class Blik implements GatewayType
 {
     public function getPaymentOption(
-        \Module $module,
+        \BluePayment $module,
         array $data = []
     ): PaymentOption {
 
-        if (Config::get($module->name_upper . '_BLIK_REDIRECT')) {
+        if (Cfg::get($module->name_upper . '_BLIK_REDIRECT')) {
             $moduleLink = Context::getContext()->link->getModuleLink(
                 'bluepayment',
                 'payment',
@@ -47,12 +48,12 @@ class Blik implements GatewayType
                     [
                         'type' => 'hidden',
                         'name' => 'bluepayment_gateway',
-                        'value' => GATEWAY_ID_BLIK,
+                        'value' => Config::GATEWAY_ID_BLIK,
                     ],
                     [
                         'type' => 'hidden',
                         'name' => 'bluepayment_gateway_id',
-                        'value' => GATEWAY_ID_BLIK,
+                        'value' => Config::GATEWAY_ID_BLIK,
                     ]
                 ])
                 ->setLogo($data['gateway_logo_url'])
@@ -92,7 +93,7 @@ class Blik implements GatewayType
     {
         $iso_code = Helper::getIsoFromContext(Context::getContext());
         return BlueGatewayTransfers::isTransferActive(
-            GATEWAY_ID_BLIK,
+            Config::GATEWAY_ID_BLIK,
             $iso_code
         );
     }

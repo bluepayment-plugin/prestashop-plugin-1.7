@@ -26,6 +26,7 @@ use HelperList;
 use AdminController;
 use Tools;
 use Module;
+use BluePayment\Config\Config;
 
 class AdminHelper
 {
@@ -111,7 +112,7 @@ class AdminHelper
                 '_',
                 $object['gateway_name']
             ) . '_' . $object['gateway_currency'] . '">
-            <img class="img-fluid" width="24" src="' . BM_IMAGES_PATH . 'question.png" alt=""></div>';
+            <img class="img-fluid" width="24" src="' . Config::BM_IMAGES_PATH . 'question.png" alt=""></div>';
         } else {
             return '';
         }
@@ -202,10 +203,11 @@ class AdminHelper
         return Db::getInstance()->ExecuteS($query);
     }
 
-
-
     /**
      * Sort currency by id
+     *
+     * @param null $currency
+     *
      * @return array
      */
     public static function getSortCurrencies($currency = null): array

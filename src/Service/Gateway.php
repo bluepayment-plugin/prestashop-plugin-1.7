@@ -26,7 +26,7 @@ class Gateway
     private $gateway;
 
     public function __construct(
-        \Module $module,
+        \BluePayment $module,
         GatewayType $gateway
     ) {
         $this->gateway = $gateway;

@@ -19,6 +19,7 @@ namespace BluePayment\Api;
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\PaywayList;
 use BluePayment\Until\Helper;
+use BluePayment\Config\Config;
 use Configuration as Cfg;
 use Module;
 
@@ -55,11 +56,11 @@ class BlueAPI
     public function getApiMerchantData($currencyCode): array
     {
         $serviceId = Helper::parseConfigByCurrency(
-            $this->module->name_upper . '_SERVICE_PARTNER_ID',
+            $this->module->name_upper . Config::SERVICE_PARTNER_ID,
             $currencyCode
         );
         $hashKey = Helper::parseConfigByCurrency(
-            $this->module->name_upper . '_SHARED_KEY',
+            $this->module->name_upper . Config::SHARED_KEY,
             $currencyCode
         );
 
@@ -103,14 +104,14 @@ class BlueAPI
 
     public function isConnectedAPI($serviceId, $hashKey, $gatewayMode): bool
     {
-        require_once BM_SDK_PATH;
+        Config::getSdk();
 
         $gateway = new Gateway(
             $serviceId,
             $hashKey,
             $gatewayMode,
             Gateway::HASH_SHA256,
-            HASH_SEPARATOR
+            Config::HASH_SEPARATOR
         );
 
         try {
@@ -122,14 +123,14 @@ class BlueAPI
 
     public function connectFromAPI($serviceId, $hashKey, $mode): ?PaywayList
     {
-        require_once BM_SDK_PATH;
+        Config::getSdk();
 
         $gateway = new Gateway(
             $serviceId,
             $hashKey,
             $mode,
             'sha256',
-            HASH_SEPARATOR
+            Config::HASH_SEPARATOR
         );
 
         try {

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace BluePayment\Install;
 
 use BluePayment\Analyse\Amplitude;
+use BluePayment\Config\Config;
 use Db;
 use Exception;
 use Module;
@@ -44,11 +45,6 @@ class Installer
             'name' => 'Blue Media - Ajax',
         ],
     ];
-
-    const PLUGIN_INSTALLED = 'plugin installed';
-    const PLUGIN_UNINSTALLED = 'plugin uninstalled';
-
-    const PLUGIN_VERSION = 'plugin version';
 
     /**
      * @var \BluePayment
@@ -249,10 +245,10 @@ class Installer
     {
         $data = [
             'events' => [
-                "event_type" => self::PLUGIN_INSTALLED,
+                "event_type" => Config::PLUGIN_INSTALLED,
                 "user_properties" => [
-                    self::PLUGIN_VERSION => $this->module->version,
-                    self::PLUGIN_INSTALLED => true,
+                    Config::PLUGIN_VERSION => $this->module->version,
+                    Config::PLUGIN_INSTALLED => true,
                 ]
             ],
         ];
@@ -264,10 +260,10 @@ class Installer
     {
         $data = [
             'events' => [
-                "event_type" => self::PLUGIN_UNINSTALLED,
+                "event_type" => Config::PLUGIN_UNINSTALLED,
                 "user_properties" => [
-                    self::PLUGIN_VERSION => $this->module->version,
-                    self::PLUGIN_INSTALLED => false,
+                    Config::PLUGIN_VERSION => $this->module->version,
+                    Config::PLUGIN_INSTALLED => false,
                 ]
             ],
         ];

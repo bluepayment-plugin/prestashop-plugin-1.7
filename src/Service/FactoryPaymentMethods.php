@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace BluePayment\Service;
 
 use BluePayment\Service\PaymentMethods\MainGateway;
+use BluePayment\Config\Config;
 use Symfony\Component\Translation\TranslatorInterface;
 use Db;
 use DbQuery;
@@ -28,7 +29,7 @@ class FactoryPaymentMethods
     protected $module;
     protected $context;
 
-    public function __construct(\Module $module)
+    public function __construct(\BluePayment $module)
     {
         $this->module = $module;
         $this->context = $module->getContext();
@@ -61,22 +62,22 @@ class FactoryPaymentMethods
     public function getPaymentMethodName($gatewayId): string
     {
         switch ($gatewayId) {
-            case GATEWAY_ID_TRANSFER:
+            case Config::GATEWAY_ID_TRANSFER:
                 $gateway = 'InternetTransfer';
                 break;
-            case GATEWAY_ID_WALLET:
+            case Config::GATEWAY_ID_WALLET:
                 $gateway = 'VirtualWallet';
                 break;
-            case GATEWAY_ID_CARD:
+            case Config::GATEWAY_ID_CARD:
                 $gateway = 'Card';
                 break;
-            case GATEWAY_ID_ALIOR:
+            case Config::GATEWAY_ID_ALIOR:
                 $gateway = 'AliorInstallment';
                 break;
-            case GATEWAY_ID_SMARTNEY:
+            case Config::GATEWAY_ID_SMARTNEY:
                 $gateway = 'Smartney';
                 break;
-            case GATEWAY_ID_BLIK:
+            case Config::GATEWAY_ID_BLIK:
                 $gateway = 'Blik';
                 break;
             default:

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Until\Helper;
-use Configuration as Config;
+use Configuration as Cfg;
 use Context;
 use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -25,10 +25,10 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 class MainGateway implements GatewayType
 {
     public function getPaymentOption(
-        \Module $module,
+        \BluePayment $module,
         array $data = []
     ): PaymentOption {
-        $paymentName = Config::get(
+        $paymentName = Cfg::get(
             $module->name_upper . '_PAYMENT_NAME',
             Context::getContext()->language->id
         );

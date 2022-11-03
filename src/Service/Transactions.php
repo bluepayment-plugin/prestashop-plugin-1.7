@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Service;
 
+use BluePayment\Config\Config;
 use Module;
 use PrestaShopLogger;
 use Validate;
@@ -42,7 +43,7 @@ class Transactions
     const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
     const PAYMENT_STATUS_FAILURE = 'FAILURE';
 
-    const BM_PREFIX = 'BM - ';
+    const BM_PREFIX = 'Blue Media - ';
 
     /**
      * @var array
@@ -95,12 +96,12 @@ class Transactions
      */
     public function updateStatusTransactionAndOrder($transaction)
     {
-        require_once BM_SDK_PATH;
+        Config::getSdk();
 
         /// Payment status identifiers
-        $status_accept_pay_id = Cfg::get($this->module->name_upper . '_STATUS_ACCEPT_PAY_ID');
-        $status_waiting_pay_id = Cfg::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID');
-        $status_error_pay_id = Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
+        $statusAcceptId = (int)Cfg::get($this->module->name_upper . '_STATUS_ACCEPT_PAY_ID');
+        $statusWaitingId = (int)Cfg::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID');
+        $statusErrorId = (int)Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
 
         /// Payment status
         $payment_status = $this->pSql((string)$transaction->paymentStatus);
@@ -157,12 +158,9 @@ class Transactions
             switch ($payment_status) {
                 // Jeśli transakcja została rozpoczęta
                 case self::PAYMENT_STATUS_PENDING:
-                    // Jeśli aktualny status zamówienia jest różny od ustawionego jako "oczekiwanie na płatność"
-                    if ($order->current_state != $status_waiting_pay_id) {
-                        $this->changeOrderStatus($order, $remote_id, $status_waiting_pay_id);
-                    }
+                        $this->changeOrdersStatus($order, $statusWaitingId);
                     break;
-                // Jeśli transakcja została zakończona poprawnie
+//                 Jeśli transakcja została zakończona poprawnie
                 case self::PAYMENT_STATUS_SUCCESS:
                     /// Send GA event
                     if (
@@ -264,30 +262,23 @@ class Transactions
 
                     }
 
+                    $this->changeOrdersStatus($order, $statusAcceptId);
 
-                    if (
-                        $order->current_state == $status_waiting_pay_id ||
-                        $order->current_state == $status_error_pay_id
-                    ) {
-                        $this->changeOrderStatus($order, $remote_id, $status_accept_pay_id);
-
-                        if ((string)$transaction->gatewayID == (string)GATEWAY_ID_BLIK) {
-                            $transactionData['blik_status'] = (string)$transaction->paymentStatus;
-                            $this->updateTransactionQuery($realOrderId, $transactionData);
-                        }
-
-                        if (is_object($order_payment)) {
-                            $order_payment = $order->getOrderPayments()[0];
-                            $order_payment->amount = $amount;
-                            $order_payment->transaction_id = $remote_id;
-                            $order_payment->update();
-                        }
+                    if ((string)$transaction->gatewayID == (string)Config::GATEWAY_ID_BLIK) {
+                        $transactionData['blik_status'] = (string)$transaction->paymentStatus;
+                        $this->updateTransactionQuery($realOrderId, $transactionData);
                     }
+
+                    if (is_object($order_payment)) {
+                        $order_payment = $order->getOrderPayments()[0];
+                        $order_payment->amount = $amount;
+                        $order_payment->transaction_id = $remote_id;
+                        $order_payment->update();
+                    }
+
                     break;
                 case self::PAYMENT_STATUS_FAILURE:
-                    if ($order->current_state == $status_waiting_pay_id) {
-                        $this->changeOrderStatus($order, $remote_id, $status_error_pay_id);
-                    }
+                        $this->changeOrdersStatus($order, $statusErrorId);
                     break;
                 default:
                     break;
@@ -302,9 +293,6 @@ class Transactions
     }
 
 
-
-
-
     public function updateTransactionQuery($orderId, $transactionData)
     {
         return Db::getInstance()->update(
@@ -314,29 +302,79 @@ class Transactions
         );
     }
 
-
-
-    public function changeOrderStatus($order, $remoteId, $statusId): bool
+    /**
+     * Change order states
+     * @param $orders
+     * @param $statusId
+     *
+     * @return bool
+     */
+    public function changeOrderStatus($orders, $statusId): bool
     {
-        $this->orderHistory->id_order = (int) $order->id;
-        $this->orderHistory->changeIdOrderState(
-            (int) $statusId,
-            $order,
-            true
-        );
+        $i = 0;
+        foreach ($orders as $orderId) {
+            $order = new \OrderCore($orderId);
+            $currentOrderStatus = (int) $order->getCurrentState();
+            $existPayment = !$order->hasInvoice();
 
-        try {
-            $this->orderHistory->addWithemail(true, []);
-        } catch (\Exception $exception) {
-            \PrestaShopLogger::addLog(
-                $exception,
-                1
+            if ($currentOrderStatus === $statusId) {
+                return false;
+            }
+
+            $this->orderHistory->id_order = (int) $orderId;
+            $this->orderHistory->changeIdOrderState(
+                (int) $statusId,
+                $order,
+                $existPayment
             );
+
+            if($i === 0) {
+                if (!$this->orderHistory->addWithemail(true, [])) {
+                    Helper::sendEmail(
+                        (int) $orderId,
+                        [],
+                        $currentOrderStatus
+                    );
+                }
+            }
+            $i++;
         }
 
         return true;
     }
 
+    /**
+     * Get all orders ids and change status
+     *
+     * @param $order
+     * @param int $statusId
+     */
+    public function changeOrdersStatus($order, int $statusId): void
+    {
+        $ordersArray = [];
+        foreach ($this->getBrother($order) as $subOrder) {
+            $ordersArray[] = $subOrder['id_order'];
+        }
+        $orders = array_merge($ordersArray, [$order->id]);
+
+        $this->changeOrderStatus($orders, $statusId);
+    }
+
+
+
+    /**
+     * Get all orders by reference and card id
+     */
+    public function getBrother($order)
+    {
+        $sql = new \DbQuery();
+        $sql->select('id_order');
+        $sql->from('orders');
+        $sql->where('reference = "'. $order->reference. '"');
+        $sql->where('id_cart = "'. (int) $order->id_cart. '"');
+
+        return Db::getInstance()->executeS($sql);
+    }
 
 
     /**
@@ -371,13 +409,13 @@ class Transactions
 
         // Partner service id
         $service_id = Helper::parseConfigByCurrency(
-            $this->module->name_upper . SERVICE_PARTNER_ID,
+            $this->module->name_upper . Config::SERVICE_PARTNER_ID,
             $currency->iso_code
         );
 
         /// Shared key
         $shared_key = Helper::parseConfigByCurrency(
-            $this->module->name_upper . SHARED_KEY,
+            $this->module->name_upper . Config::SHARED_KEY,
             $currency->iso_code
         );
 
@@ -422,7 +460,7 @@ class Transactions
      */
     public function validAllTransaction(\SimpleXMLElement $response): bool
     {
-        require_once BM_SDK_PATH;
+        Config::getSdk();
 
         $responseOrder = $response->transactions->transaction->orderID;
         if (!$responseOrder) {
@@ -437,11 +475,11 @@ class Transactions
         $currency = new \Currency($order->id_currency);
 
         $service_id = Helper::parseConfigByCurrency(
-            $this->module->name_upper . SERVICE_PARTNER_ID,
+            $this->module->name_upper . Config::SERVICE_PARTNER_ID,
             $currency->iso_code
         );
         $shared_key = Helper::parseConfigByCurrency(
-            $this->module->name_upper . SHARED_KEY,
+            $this->module->name_upper . Config::SHARED_KEY,
             $currency->iso_code
         );
 
@@ -457,7 +495,7 @@ class Transactions
             $this->checkInList($trans);
         }
         $this->checkHashArray[] = $shared_key;
-        $localHash = hash(Gateway::HASH_SHA256, implode(HASH_SEPARATOR, $this->checkHashArray));
+        $localHash = hash(Gateway::HASH_SHA256, implode(Config::HASH_SEPARATOR, $this->checkHashArray));
 
         return $localHash === $hash;
     }

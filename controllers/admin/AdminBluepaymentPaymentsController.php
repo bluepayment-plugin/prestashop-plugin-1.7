@@ -22,6 +22,7 @@ use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Until\Helper;
 use BluePayment\Until\AdminHelper;
+use BluePayment\Config\Config;
 
 class AdminBluepaymentPaymentsController extends ModuleAdminController
 {
@@ -125,8 +126,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $statuses = OrderState::getOrderStates($id_default_lang, true);
         $currency = $this->context->currency;
 
-        $smartney = BlueGatewayChannels::isChannelActive(GATEWAY_ID_SMARTNEY, $currency->iso_code);
-        $alior = BlueGatewayChannels::isChannelActive(GATEWAY_ID_ALIOR, $currency->iso_code);
+        $smartney = BlueGatewayChannels::isChannelActive(Config::GATEWAY_ID_SMARTNEY, $currency->iso_code);
+        $alior = BlueGatewayChannels::isChannelActive(Config::GATEWAY_ID_ALIOR, $currency->iso_code);
 
         $fields_form[0]['form'] = [
             'section' => [
@@ -812,16 +813,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     Helper::parseConfigByCurrency($field, $currency['iso_code']);
             }
         }
-//
-//
-//        foreach (AdminHelper::getSortCurrencies() as $currency) {
-//
-//            $data[$this->name_upper.'_SERVICE_PARTNER_ID_'.$currency['iso_code']] =
-//                $this->parseConfigByCurrency($this->module->name_upper.'_SERVICE_PARTNER_ID', $currency['iso_code']);
-//            $data[$this->name_upper.'_SHARED_KEY_'.$currency['iso_code']] =
-//                $this->parseConfigByCurrency($this->name_upper.'_SHARED_KEY', $currency['iso_code']);
-//
-//        }
 
         return $data;
     }

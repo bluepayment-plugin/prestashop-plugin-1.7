@@ -15,6 +15,7 @@ return array(
     'BluePayment\\Api\\BlueGatewayChannels' => $baseDir . '/src/Api/BlueGatewayChannels.php',
     'BluePayment\\Api\\BlueGatewayTransfers' => $baseDir . '/src/Api/BlueGatewayTransfers.php',
     'BluePayment\\Api\\GatewayInterface' => $baseDir . '/src/Api/GatewayInterface.php',
+    'BluePayment\\Config\\Config' => $baseDir . '/src/Config/Config.php',
     'BluePayment\\Configure\\Configure' => $baseDir . '/src/Configure/Configure.php',
     'BluePayment\\Hook\\AbstractHook' => $baseDir . '/src/Hook/AbstractHook.php',
     'BluePayment\\Hook\\Admin' => $baseDir . '/src/Hook/Admin.php',

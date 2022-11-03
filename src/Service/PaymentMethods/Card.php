@@ -22,11 +22,12 @@ use Context;
 use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
+use BluePayment\Config\Config;
 
 class Card implements GatewayType
 {
     public function getPaymentOption(
-        \Module $module,
+        \BluePayment $module,
         array $data = []
     ): PaymentOption {
 
@@ -45,12 +46,12 @@ class Card implements GatewayType
                 [
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway',
-                    'value' => GATEWAY_ID_CARD,
+                    'value' => Config::GATEWAY_ID_CARD,
                 ],
                 [
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway_id',
-                    'value' => GATEWAY_ID_CARD,
+                    'value' => Config::GATEWAY_ID_CARD,
                 ],
                 [
                     'type' => 'hidden',
@@ -73,7 +74,7 @@ class Card implements GatewayType
     {
         $isoCode = Helper::getIsoFromContext(Context::getContext());
         return BlueGatewayTransfers::isTransferActive(
-            GATEWAY_ID_CARD,
+            Config::GATEWAY_ID_CARD,
             $isoCode
         );
     }

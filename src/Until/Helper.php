@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace BluePayment\Until;
 
 use BlueMedia\OnlinePayments\Gateway;
+use BluePayment\Config\Config;
 use Currency;
 use Context;
 use DbQuery;
@@ -106,12 +107,12 @@ class Helper
     public static function getGatewaysList(): string
     {
         $gatewayArray = [
-            GATEWAY_ID_BLIK,
-            GATEWAY_ID_ALIOR,
-            GATEWAY_ID_CARD,
-            GATEWAY_ID_GOOGLE_PAY,
-            GATEWAY_ID_APPLE_PAY,
-            GATEWAY_ID_SMARTNEY
+            Config::GATEWAY_ID_BLIK,
+            Config::GATEWAY_ID_ALIOR,
+            Config::GATEWAY_ID_CARD,
+            Config::GATEWAY_ID_GOOGLE_PAY,
+            Config::GATEWAY_ID_APPLE_PAY,
+            Config::GATEWAY_ID_SMARTNEY
         ];
 
         return implode(',', $gatewayArray);
@@ -121,8 +122,8 @@ class Helper
     public static function getWalletsList(): string
     {
         $walletArray = [
-            GATEWAY_ID_GOOGLE_PAY,
-            GATEWAY_ID_APPLE_PAY
+            Config::GATEWAY_ID_GOOGLE_PAY,
+            Config::GATEWAY_ID_APPLE_PAY
         ];
 
         return implode(',', $walletArray);
@@ -181,13 +182,13 @@ class Helper
      */
     public static function generateAndReturnHash($data): string
     {
-        require_once BM_SDK_PATH;
+        Config::getSdk();
 
         $values_array = array_values($data);
         $values_array_filter = array_filter($values_array);
 
         $comma_separated = implode(',', $values_array_filter);
-        $replaced = str_replace(',', HASH_SEPARATOR, $comma_separated);
+        $replaced = str_replace(',', Config::HASH_SEPARATOR, $comma_separated);
 
         return hash(Gateway::HASH_SHA256, $replaced);
     }
@@ -213,13 +214,11 @@ class Helper
 
     public static function getLastOrderState($idOrder)
     {
-        $stateId = \Db::getInstance()->getValue('
-        SELECT `id_order_history`
+        return \Db::getInstance()->getValue('
+        SELECT `id_order_state`
         FROM `' . _DB_PREFIX_ . 'order_history`
         WHERE `id_order` = ' . (int) $idOrder . '
         ORDER BY `date_add` DESC, `id_order_history` DESC');
-
-        return $stateId;
     }
 
 
@@ -247,7 +246,7 @@ class Helper
                 '{id_order}' => (int) $order->id,
                 '{order_name}' => $order->getUniqReference(),
                 '{followup}' => str_replace('@', $order->getWsShippingNumber(), $carrierUrl),
-                '{shipping_number}' => $order->getWsShippingNumber(),
+                '{shipping_number}' => $order->getWsShippingNumber()
             ];
 
             if ($result['module_name']) {
@@ -262,7 +261,10 @@ class Helper
             }
 
             $context = \Context::getContext();
-            $data['{total_paid}'] = \Tools::getContextLocale($context)->formatPrice((float) $order->total_paid, \Currency::getIsoCodeById((int) $order->id_currency));
+            $data['{total_paid}'] = \Tools::getContextLocale($context)->formatPrice(
+                (float) $order->total_paid,
+                \Currency::getIsoCodeById((int) $order->id_currency)
+            );
 
             if (\Validate::isLoadedObject($order)) {
                 // Attach invoice and / or delivery-slip if they exists and status is set to attach them

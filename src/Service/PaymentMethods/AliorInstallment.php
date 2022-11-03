@@ -18,6 +18,7 @@ namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Until\Helper;
+use BluePayment\Config\Config;
 use Context;
 use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -27,7 +28,7 @@ use Cart;
 class AliorInstallment implements GatewayType
 {
     public function getPaymentOption(
-        \Module $module,
+        \BluePayment $module,
         array $data = []
     ): PaymentOption {
         $moduleLink = Context::getContext()->link->getModuleLink(
@@ -44,12 +45,12 @@ class AliorInstallment implements GatewayType
                 [
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway',
-                    'value' => GATEWAY_ID_ALIOR,
+                    'value' => Config::GATEWAY_ID_ALIOR,
                 ],
                 [
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway_id',
-                    'value' => GATEWAY_ID_ALIOR,
+                    'value' => Config::GATEWAY_ID_ALIOR,
                 ],
             ])
             ->setLogo($data['gateway_logo_url'])
@@ -67,7 +68,7 @@ class AliorInstallment implements GatewayType
     {
         $isoCode = Helper::getIsoFromContext(Context::getContext());
         $alior = BlueGatewayTransfers::isTransferActive(
-            GATEWAY_ID_ALIOR,
+            Config::GATEWAY_ID_ALIOR,
             $isoCode
         );
         if (!$cart_total) {
@@ -75,8 +76,8 @@ class AliorInstallment implements GatewayType
         }
         if (
             $alior
-            && (float)$cart_total >= (float)ALIOR_MIN_AMOUNT
-            && (float)$cart_total <= (float)ALIOR_MAX_AMOUNT
+            && (float)$cart_total >= (float) Config::ALIOR_MIN_AMOUNT
+            && (float)$cart_total <= (float) Config::ALIOR_MAX_AMOUNT
         ) {
             return true;
         }

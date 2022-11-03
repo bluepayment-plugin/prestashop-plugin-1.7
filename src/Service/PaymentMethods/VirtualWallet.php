@@ -19,18 +19,18 @@ namespace BluePayment\Service\PaymentMethods;
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Until\Helper;
-use Configuration as Config;
 use Context;
 use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Configuration as Cfg;
 use Db;
 use Shop;
+use BluePayment\Config\Config;
 
 class VirtualWallet implements GatewayType
 {
     public function getPaymentOption(
-        \Module $module,
+        \BluePayment $module,
         array $data = []
     ): PaymentOption {
         $moduleLink = Context::getContext()->link->getModuleLink(
@@ -53,7 +53,7 @@ class VirtualWallet implements GatewayType
         );
 
         $gpayRedirect = false;
-        if (Config::get($module->name_upper . '_GPAY_REDIRECT')) {
+        if (Cfg::get($module->name_upper . '_GPAY_REDIRECT')) {
             $gpayRedirect = true;
         }
 
@@ -62,8 +62,8 @@ class VirtualWallet implements GatewayType
         } else {
             $currency = Context::getContext()->currency->iso_code;
         }
-        $googlePay = $this->checkIfActiveSubChannel(GATEWAY_ID_GOOGLE_PAY, $currency);
-        $applePay = $this->checkIfActiveSubChannel(GATEWAY_ID_APPLE_PAY, $currency);
+        $googlePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_GOOGLE_PAY, $currency);
+        $applePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_APPLE_PAY, $currency);
         $idShop = Context::getContext()->shop->id;
 
         Context::getContext()->smarty->assign([
@@ -106,8 +106,8 @@ class VirtualWallet implements GatewayType
     {
         $isoCode = Helper::getIsoFromContext(Context::getContext());
 
-        $googlePay = $this->checkIfActiveSubChannel(GATEWAY_ID_GOOGLE_PAY, $isoCode);
-        $applePay = $this->checkIfActiveSubChannel(GATEWAY_ID_APPLE_PAY, $isoCode);
+        $googlePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_GOOGLE_PAY, $isoCode);
+        $applePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_APPLE_PAY, $isoCode);
 
         return $googlePay || $applePay;
     }

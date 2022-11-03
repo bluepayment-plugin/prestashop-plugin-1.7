@@ -16,13 +16,12 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
-use BluePayment;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 interface GatewayType
 {
     public function getPaymentOption(
-        \Module $module,
+        \BluePayment $module,
         array $data = []
     ): PaymentOption;
     public function isActive(): bool;

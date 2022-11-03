@@ -24,6 +24,7 @@ use Shop;
 use Tools;
 use PrestaShopLogger;
 use BluePayment;
+use BluePayment\Config\Config;
 
 class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 {
@@ -117,10 +118,10 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public function getOnlyGroups($group): array
     {
         $gatewayArray = [
-            GATEWAY_ID_BLIK,
-            GATEWAY_ID_ALIOR,
-            GATEWAY_ID_CARD,
-            GATEWAY_ID_SMARTNEY
+            Config::GATEWAY_ID_BLIK,
+            Config::GATEWAY_ID_ALIOR,
+            Config::GATEWAY_ID_CARD,
+            Config::GATEWAY_ID_SMARTNEY
         ];
         return array_filter($group, function ($val) use ($gatewayArray) {
             return in_array($val->getGatewayId(), $gatewayArray);
@@ -133,7 +134,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public function createTransferPaymentOption(): GatewayModel
     {
         $gateway = new GatewayModel();
-        $gateway->setGatewayId((string)GATEWAY_ID_TRANSFER)->setGatewayName('Przelew internetowy');
+        $gateway->setGatewayId((string)Config::GATEWAY_ID_TRANSFER)->setGatewayName('Przelew internetowy');
         $gateway->setGatewayType('1');
         $gateway->setBankName('Przelew internetowy');
         $gateway->setGatewayPayment('1');
@@ -145,7 +146,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public function createWalletPaymentOption(): GatewayModel
     {
         $gateway = new GatewayModel();
-        $gateway->setGatewayId((string)GATEWAY_ID_WALLET)->setGatewayName('Wirtualny portfel');
+        $gateway->setGatewayId((string)Config::GATEWAY_ID_WALLET)->setGatewayName('Wirtualny portfel');
         $gateway->setGatewayType('1');
         $gateway->setBankName('Wirtualny portfel');
         $gateway->setGatewayPayment('1');
@@ -164,8 +165,8 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
             /// Reset position by currency
             $paymentsGroup = $apiGateways->getGateways();
             $paymentOptionsArray = $this->getOnlyGroups($paymentsGroup);
-            $paymentOptionsArray[GATEWAY_ID_TRANSFER] = $this->createTransferPaymentOption();
-            $paymentOptionsArray[GATEWAY_ID_WALLET] = $this->createWalletPaymentOption();
+            $paymentOptionsArray[Config::GATEWAY_ID_TRANSFER] = $this->createTransferPaymentOption();
+            $paymentOptionsArray[Config::GATEWAY_ID_WALLET] = $this->createWalletPaymentOption();
             foreach ($paymentOptionsArray as $paymentGateway) {
                 $payway = self::getByGatewayIdAndCurrency(
                     $paymentGateway->getGatewayId(),

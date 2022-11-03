@@ -14,6 +14,7 @@
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\TransactionStandard;
 use BluePayment\Until\Helper;
+use BluePayment\Config\Config;
 
 class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 {
@@ -114,12 +115,12 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         $isoCode = $this->context->currency->iso_code;
 
         $service_id = (int)Helper::parseConfigByCurrency(
-            $this->module->name_upper . '_SERVICE_PARTNER_ID',
+            $this->module->name_upper . Config::SERVICE_PARTNER_ID,
             $isoCode
         );
 
         $shared_key = Helper::parseConfigByCurrency(
-            $this->module->name_upper . '_SHARED_KEY',
+            $this->module->name_upper . Config::SHARED_KEY,
             $isoCode
         );
 
@@ -135,8 +136,8 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             ->setAmount($amount)
             ->setCustomerEmail($customer->email)
             ->setCurrency($isoCode)
-            ->setHtmlFormLanguage($this->context->language->iso_code ? : DEFAULT_PAYMENT_FORM_LANGUAGE)
-            ->setLanguage($this->context->language->iso_code ? : DEFAULT_PAYMENT_FORM_LANGUAGE);
+            ->setHtmlFormLanguage($this->context->language->iso_code ? : Config::DEFAULT_PAYMENT_FORM_LANGUAGE)
+            ->setLanguage($this->context->language->iso_code ? : Config::DEFAULT_PAYMENT_FORM_LANGUAGE);
 
 
         $regulationId = Tools::getValue('bluepayment-hidden-psd2-regulation-id', null);

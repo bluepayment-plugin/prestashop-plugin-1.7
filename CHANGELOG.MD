@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.2] 02.11.2022
+- Change the display of information about an available module update
+- Change the behavior of statuses when the product is out of stock
+- Added amplitude analytics events
+- Refactoring config constants
+- Improved status changes when ordering multiple delivery methods
+
 ## [2.8.1] 18.10.2022
 - Fixed blik status autoupdate
 - Fixed blik analytics

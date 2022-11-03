@@ -18,7 +18,7 @@ namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Until\Helper;
-use Configuration as Config;
+use BluePayment\Config\Config;
 use Context;
 use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -28,7 +28,7 @@ use Cart;
 class Smartney implements GatewayType
 {
     public function getPaymentOption(
-        \Module $module,
+        \BluePayment $module,
         array $data = []
     ): PaymentOption {
         $moduleLink = Context::getContext()->link->getModuleLink(
@@ -63,12 +63,12 @@ class Smartney implements GatewayType
                 [
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway',
-                    'value' => GATEWAY_ID_SMARTNEY,
+                    'value' => Config::GATEWAY_ID_SMARTNEY,
                 ],
                 [
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway_id',
-                    'value' => GATEWAY_ID_SMARTNEY,
+                    'value' => Config::GATEWAY_ID_SMARTNEY,
                 ],
             ])
             ->setLogo($data['gateway_logo_url'])
@@ -89,14 +89,14 @@ class Smartney implements GatewayType
             $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
         }
         $smartney = BlueGatewayTransfers::isTransferActive(
-            GATEWAY_ID_SMARTNEY,
+            Config::GATEWAY_ID_SMARTNEY,
             $iso_code
         );
 
         if (
             $smartney
-            && (float)$cart_total >= (float)SMARTNEY_MIN_AMOUNT
-            && (float)$cart_total <= (float)SMARTNEY_MAX_AMOUNT
+            && (float)$cart_total >= (float) Config::SMARTNEY_MIN_AMOUNT
+            && (float)$cart_total <= (float) Config::SMARTNEY_MAX_AMOUNT
         ) {
             return true;
         }

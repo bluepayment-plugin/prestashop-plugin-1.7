@@ -11,6 +11,7 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
+use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 
 /**
@@ -237,8 +238,8 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
     {
         $currency = $this->context->currency->iso_code;
 
-        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . '_SERVICE_PARTNER_ID', $currency);
-        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . '_SHARED_KEY', $currency);
+        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
+        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . Config::SHARED_KEY, $currency);
 
         $transaction = $this->getTransactionData(
             $orderId,

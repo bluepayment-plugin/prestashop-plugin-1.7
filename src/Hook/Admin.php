@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
-use Configuration as Config;
+use Configuration as Cfg;
 use OrderHistory;
 use Order;
 use Tools;
@@ -100,7 +100,8 @@ class Admin extends AbstractHook
     {
         // Connect to Prestashop addons API
         $params = '?format=json&iso_lang=pl&iso_code=pl&method=module&id_module=49791&method=listing&action=module';
-        $apiRequest = $apiUrl . $params;
+        $currentVersionPs = '&version=' . _PS_VERSION_;
+        $apiRequest = $apiUrl . $params . $currentVersionPs;
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $apiRequest);
@@ -109,15 +110,19 @@ class Admin extends AbstractHook
         $output = curl_exec($curl);
         curl_close($curl);
 
-        $apiResponse = json_decode($output);
-        $ver = $apiResponse->modules[0]->version;
+        try {
+            $apiResponse = json_decode($output);
+            $ver = $apiResponse->modules[0]->version ?? null;
+            $this->context->smarty->assign(['version' => $ver]);
 
-        $this->context->smarty->assign(['version' => $ver]);
-
-        if ($ver && version_compare($ver, $version, '>')) {
-            \PrestaShopLogger::addLog('BM - Dostępna aktualizacja', 1);
-            return $this->module->fetch('module:bluepayment/views/templates/admin/_partials/upgrade.tpl');
+            if ($ver && version_compare($ver, $version, '>')) {
+                \PrestaShopLogger::addLog('Blue Media - Dostępna aktualizacja', 2);
+                return $this->module->fetch('module:bluepayment/views/templates/admin/_partials/upgrade.tpl');
+            }
+        } catch (\Exception $e) {
+            \PrestaShopLogger::addLog('Blue Media - Błąd sprawdzania aktualizacji', 2);
         }
+
         return '';
     }
 
@@ -165,7 +170,7 @@ class Admin extends AbstractHook
                     $history = new OrderHistory();
                     $history->id_order = (int)$order->id;
                     $history->id_employee = (int)$this->context->employee->id;
-                    $history->changeIdOrderState(Config::get('PS_OS_REFUND'), (int)$order->id);
+                    $history->changeIdOrderState(Cfg::get('PS_OS_REFUND'), (int)$order->id);
                     $history->addWithemail(true, []);
                     $refund_success[] = $this->module->l('Successful refund');
                 }

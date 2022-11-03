@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Configure;
 
+use BluePayment\Config\Config;
 use BluePayment\Statuses\CustomStatus;
 use Module;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -259,8 +260,8 @@ class Configure
             $res = false;
         }
 
-        $res &= $this->configurationAdapter->deleteByName($this->name . '_SHARED_KEY');
-        $res &= $this->configurationAdapter->deleteByName($this->name . '_SERVICE_PARTNER_ID');
+        $res &= $this->configurationAdapter->deleteByName($this->name . Config::SHARED_KEY);
+        $res &= $this->configurationAdapter->deleteByName($this->name . Config::SERVICE_PARTNER_ID);
 
         return (bool) $res;
     }
