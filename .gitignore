@@ -42,7 +42,7 @@ Thumbs.db
 *.zip
 
 vendor/
-tests/
+
 
 config_pl.xml
 
@@ -50,9 +50,18 @@ composer.phar
 config_*.xml
 .env.prod
 .env.inte
-.env
 
 .php_cs.cache
 .env.old-integ
 
-_dev
+_dev/node_modules/
+
+**/build
+*.html
+/build/
+.php-cs-fixer.cache
+
+.nyc_output
+jscoverage
+package-lock.json
+
