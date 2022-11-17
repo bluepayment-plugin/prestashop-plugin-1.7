@@ -33,6 +33,7 @@ use BluePayment\Until\Helper;
 use Configuration as Cfg;
 use BluePayment\Adapter\ConfigurationAdapter;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Symfony\Component\Dotenv\Dotenv;
 
 class BluePayment extends PaymentModule
 {
@@ -126,7 +127,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.8.2';
+        $this->version = '2.8.3';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -145,7 +146,7 @@ class BluePayment extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
         $this->hookDispatcher = new HookDispatcher($this, new ConfigurationAdapter($this->context->shop->id));
-
+        $this->setEnv();
     }
 
     /**
@@ -293,6 +294,18 @@ class BluePayment extends PaymentModule
         );
     }
 
+    public function setEnv(): void
+    {
+        $dotenv = new Dotenv();
+        $env = __DIR__ . '/.env';
+        $envDev = __DIR__ . '/.env.dev';
+
+        if (file_exists($envDev)) {
+            $dotenv->load($envDev);
+        } else {
+            $dotenv->load($env);
+        }
+    }
 
 
     public function hookTranslateElements()

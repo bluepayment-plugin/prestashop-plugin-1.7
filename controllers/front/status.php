@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -31,7 +32,9 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
             );
             $transaction->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
         } catch (Exception $exception) {
-            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [], true));
+            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [
+                'error' => 'Payment error (' . print_r($exception) . ')'
+            ], true));
         }
 
         exit;

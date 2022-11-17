@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.8.3] 17.11.2022
+- Added Env settings
+- Fixed error ITN
+- Fixed a status change that occurred after a status change in some time after an order 
+
 ## [2.8.2] 02.11.2022
 - Change the display of information about an available module update
 - Change the behavior of statuses when the product is out of stock

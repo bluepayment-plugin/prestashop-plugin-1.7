@@ -17,6 +17,7 @@
 <script type="text/javascript">
 	{/literal}
 	var aplitudeUserId = '{$amplitude_user_id}';
+    var aplitudeId = '{$amplitude_id}';
 	{literal}
 	(function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
     ;r.type="text/javascript"
@@ -46,8 +47,8 @@
     !Object.prototype.hasOwnProperty.call(n._iq,e)){n._iq[e]={_q:[]};v(n._iq[e])}
     return n._iq[e]};e.amplitude=n})(window,document);
 	amplitude.getInstance().init(
-		"3df98a3ac8e0efd57fbe86f86c27b488"
-		,aplitudeUserId
+        aplitudeId,
+		aplitudeUserId
 	)
 </script>
 {/literal}

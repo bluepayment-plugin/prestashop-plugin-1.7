@@ -27,10 +27,10 @@
 			<p class="warning">
                 {l s='Transaction status unknown.' mod='bluepayment'}
 			</p>
-            {if isset($errorReason|escape:'html':'UTF-8')}
+            {if isset($error)}
 				<p>
 					<strong>
-                        {$errorReason|escape:'html':'UTF-8'}
+                        {$error|escape:'html':'UTF-8'}
 					</strong>
 				</p>
             {/if}

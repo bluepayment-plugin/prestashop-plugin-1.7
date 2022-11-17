@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Service;
 
+use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
 use Module;
 use PrestaShopLogger;
@@ -33,17 +34,17 @@ class Transactions
     /**
      * Payment confirmed
      */
-    const TRANSACTION_CONFIRMED = 'CONFIRMED';
-    const TRANSACTION_NOTCONFIRMED = 'NOTCONFIRMED';
+    public const TRANSACTION_CONFIRMED = 'CONFIRMED';
+    public const TRANSACTION_NOTCONFIRMED = 'NOTCONFIRMED';
 
     /**
      * Payment statuses
      */
-    const PAYMENT_STATUS_PENDING = 'PENDING';
-    const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
-    const PAYMENT_STATUS_FAILURE = 'FAILURE';
+    public const PAYMENT_STATUS_PENDING = 'PENDING';
+    public const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
+    public const PAYMENT_STATUS_FAILURE = 'FAILURE';
 
-    const BM_PREFIX = 'Blue Media - ';
+    public const BM_PREFIX = 'Blue Media - ';
 
     /**
      * @var array
@@ -60,14 +61,14 @@ class Transactions
         $this->orderHistory = $orderHistory;
     }
 
-
-
-
     /**
      * Reads the data and checks the consistency of the transaction/payment data
      * According to the information obtained from the 'StatusModuleFront' controller
+     *
      * @param $response
+     *
      * @throws Exception
+     * @throws \DOMException
      */
     public function processStatusPayment($response)
     {
@@ -88,11 +89,13 @@ class Transactions
         }
     }
 
-
     /**
      * Update the status of the order, transaction and send email to the customer
+     *
      * @param $transaction
+     *
      * @throws Exception
+     * @throws \DOMException
      */
     public function updateStatusTransactionAndOrder($transaction)
     {
@@ -100,41 +103,39 @@ class Transactions
 
         /// Payment status identifiers
         $statusAcceptId = (int)Cfg::get($this->module->name_upper . '_STATUS_ACCEPT_PAY_ID');
-        $statusWaitingId = (int)Cfg::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID');
         $statusErrorId = (int)Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
 
         /// Payment status
-        $payment_status = $this->pSql((string)$transaction->paymentStatus);
+        $paymentStatus = $this->pSql((string)$transaction->paymentStatus);
 
         /// The transaction id assigned by the gateway
-        $remote_id = $this->pSql((string)$transaction->remoteID);
+        $remoteId = $this->pSql((string)$transaction->remoteID);
 
         /// Order id
         $realOrderId = $this->pSql((string)$transaction->orderID);
-        $order_id = explode('-', (string) $realOrderId)[0];
+        $orderId = explode('-', (string) $realOrderId)[0];
 
-        $order = new \OrderCore($order_id);
-        $order_payments = $order->getOrderPaymentCollection();
+        $order = new \OrderCore($orderId);
+        $orderPayments = $order->getOrderPaymentCollection();
 
-
-        if (is_object($order_payments)) {
-            $order_payment = $order_payments;
+        if (is_object($orderPayments)) {
+            $orderPayment = $orderPayments;
         } else {
-            $order_payment = new \OrderPaymentCore();
+            $orderPayment = new \OrderPaymentCore();
         }
 
         if (!Validate::isLoadedObject($order)) {
             $message = $this->module->name_upper . ' - Order not found';
-            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', $order_id);
-            $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_NOTCONFIRMED);
+            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', $orderId);
+            $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_NOTCONFIRMED);
 
             return;
         }
 
-        if (!is_object($order_payment)) {
+        if (!is_object($orderPayment)) {
             $message = $this->module->name_upper . ' - Order payment not found';
-            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'OrderPayment', $order_id);
-            $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_NOTCONFIRMED);
+            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'OrderPayment', $orderId);
+            $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_NOTCONFIRMED);
             return;
         }
 
@@ -153,145 +154,231 @@ class Transactions
 
         $total_paid = $order->total_paid;
         $amount = number_format(round($total_paid, 2), 2, '.', '');
-        // Jeśli zamówienie jest otwarte i status zamówienia jest różny od pustej wartości
-        if (!$this->isOrderCompleted($order) && $payment_status != '') {
-            switch ($payment_status) {
-                // Jeśli transakcja została rozpoczęta
-                case self::PAYMENT_STATUS_PENDING:
-                        $this->changeOrdersStatus($order, $statusWaitingId);
-                    break;
-//                 Jeśli transakcja została zakończona poprawnie
+
+        if (!$this->isOrderCanceled($order)) {
+            switch ($paymentStatus) {
                 case self::PAYMENT_STATUS_SUCCESS:
-                    /// Send GA event
-                    if (
-                        Cfg::get('BLUEPAYMENT_GA_TRACKER_ID') ||
-                        (Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID') && Cfg::get('BLUEPAYMENT_GA4_SECRET'))
-                    ) {
-                        /// Get ga user session
-                        $query = new \DbQuery();
-                        $query->from('blue_transactions')
-                            ->where('order_id like "' . $this->pSQL($order_id) . '-%"')
-                            ->where('gtag_state IS NULL')
-                            ->select('gtag_uid');
-                        $ga_cid = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query, false);
-
-                        if (!empty($ga_cid)) {
-                            $args = [];
-                            $items = [];
-                            $order_ga = new \OrderCore($order_id);
-
-                            if ($order_ga->getProducts()) {
-                                $p_key = 0;
-                                foreach ($order_ga->getProducts() as $p) {
-                                    $brand = null;
-                                    $category_name = null;
-
-                                    if ($p['id_manufacturer']) {
-                                        $brand = Manufacturer::getNameById($p['id_manufacturer']);
-                                    }
-
-                                    $cat = new \Category(
-                                        $p['id_category_default'],
-                                        \Context::getContext()->language->id
-                                    );
-                                    if ($cat) {
-                                        $category_name = $cat->name;
-                                    }
-
-                                    $p_key++;
-
-                                    if (Cfg::get('BLUEPAYMENT_GA_TYPE') === '1') {
-                                        $args['pr' . $p_key . 'id'] = $p['product_id'];
-                                        $args['pr' . $p_key . 'nm'] = Product::getProductName($p['product_id']);
-                                        $args['pr' . $p_key . 'br'] = $brand;
-                                        $args['pr' . $p_key . 'ca'] = $category_name;
-                                        $args['pr' . $p_key . 'pr'] = $p['total_price_tax_incl'];
-                                        $args['pr' . $p_key . 'qt'] = $p['product_quantity'];
-                                    } elseif (Cfg::get('BLUEPAYMENT_GA_TYPE') === '2') {
-                                        $items[$p_key - 1] = [
-                                                'item_id' => $p['product_id'],
-                                                'item_name' => Product::getProductName($p['product_id']),
-                                                'item_brand' => $brand,
-                                                'item_category' => $category_name,
-                                                'price' => $p['total_price_tax_incl'],
-                                                'quantity' => $p['product_quantity'],
-                                        ];
-                                    }
-                                }
-                            }
-
-                            if (Cfg::get('BLUEPAYMENT_GA_TYPE') === '1') {
-                                /// GA Universal
-                                $analitics = new AnalyticsTracking(Cfg::get('BLUEPAYMENT_GA_TRACKER_ID'), $ga_cid);
-
-                                $args['cu'] = \Context::getContext()->currency->iso_code;
-                                $args['ti'] = $order_ga->id_cart . '-' . time();
-                                $args['tr'] = $order_ga->total_paid_tax_incl;
-                                $args['tt'] = $order_ga->total_paid - $order_ga->total_paid_tax_excl;
-                                $args['ts'] = $order_ga->total_shipping_tax_incl;
-                                $args['pa'] = 'purchase';
-                                $analitics->gaSendEvent('ecommerce', 'purchase', 'accepted', $args);
-                            } elseif (Cfg::get('BLUEPAYMENT_GA_TYPE') === '2') {
-                                $analitics = new AnalyticsTracking(
-                                    Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID'),
-                                    $ga_cid,
-                                    Cfg::get('BLUEPAYMENT_GA4_SECRET')
-                                );
-
-                                $args['events'][] = [
-                                    'name' => 'purchase',
-                                    'params' => [
-                                        'items' => $items,
-                                        'currency' => \Context::getContext()->currency->iso_code,
-                                        'transaction_id' => $order_ga->id_cart . '-' . time(),
-                                        'value' => $order_ga->total_paid_tax_incl,
-                                        'tax' => $order_ga->total_paid - $order_ga->total_paid_tax_excl,
-                                        'shipping' => $order_ga->total_shipping_tax_incl,
-                                    ],
-                                ];
-                                $args['user_id'] = $order_ga->id_customer;
-                                $analitics->ga4SendEvent($args);
-                            }
-
-                            /// Reset state
-                            $transactionData = [
-                                'gtag_state' => 1,
-                            ];
-                            $this->updateTransactionQuery($order_id, $transactionData);
-                        }
-
-                    }
-
+                    // Send GA event
+                    $this->sendOrderGaAnalitics($orderId);
                     $this->changeOrdersStatus($order, $statusAcceptId);
 
-                    if ((string)$transaction->gatewayID == (string)Config::GATEWAY_ID_BLIK) {
+                    // BLIK change state
+                    if ((int)$transaction->gatewayID === Config::GATEWAY_ID_BLIK) {
                         $transactionData['blik_status'] = (string)$transaction->paymentStatus;
                         $this->updateTransactionQuery($realOrderId, $transactionData);
                     }
 
-                    if (is_object($order_payment)) {
-                        $order_payment = $order->getOrderPayments()[0];
-                        $order_payment->amount = $amount;
-                        $order_payment->transaction_id = $remote_id;
-                        $order_payment->update();
-                    }
+                    $paymentParams = [
+                        'paymentName' => $this->module->displayName,
+                        'amount' => $amount,
+                        'currencyId' => $order->id_currency,
+                        'reference' => $order->reference,
+                        'remoteId' => $remoteId
+                    ];
 
+                    $this->updateOrderPayments($paymentParams);
+                    $this->sendAmplitudeEvent('true', $orderId);
                     break;
                 case self::PAYMENT_STATUS_FAILURE:
+                        $this->sendAmplitudeEvent('false', $orderId);
                         $this->changeOrdersStatus($order, $statusErrorId);
                     break;
                 default:
                     break;
             }
-
-            $this->returnConfirmation($realOrderId, $order_id, self::TRANSACTION_CONFIRMED);
+            $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_CONFIRMED);
         } else {
             $message = $this->module->name_upper . ' - Order status is cancel or payment status unknown';
-            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'OrderState', $order_id);
-            $this->returnConfirmation($realOrderId, $order_id, $message);
+            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 1, null, 'OrderState', $orderId);
+            $this->returnConfirmation($realOrderId, $orderId, $message);
         }
     }
 
+
+
+
+
+    /**
+     * @param $transaction
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function updateOrderPayments($transaction): void
+    {
+        $orderPayment = null;
+        $orderPaymentsArray = \OrderPayment::getByOrderReference($transaction['reference']);
+        if (!empty($orderPaymentsArray)) {
+            foreach ($orderPaymentsArray as $orderPaymentElm) {
+                if ($orderPaymentElm->transaction_id === $transaction['remoteId']) {
+                    $orderPayment = $orderPaymentElm;
+                }
+            }
+        }
+
+        if (empty($orderPayment)) {
+            $orderPayment = new \OrderPayment();
+            $orderPayment->order_reference = $transaction['reference'];
+        }
+        if (empty($orderPayment->payment_method)) {
+            $orderPayment->payment_method = $transaction['paymentName'];
+        }
+        if (empty($orderPayment->amount)) {
+            $orderPayment->amount = $transaction['amount'];
+        }
+        if (empty($orderPayment->transaction_id)) {
+            $orderPayment->transaction_id = $transaction['remoteId'];
+        }
+        if (empty($orderPayment->id_currency)) {
+            $orderPayment->id_currency = $transaction['currencyId'];
+        }
+
+        if (!$orderPayment->add()) {
+            PrestaShopLogger::addLog(
+                self::BM_PREFIX . 'Create orderPayment error',
+                3,
+                null,
+                'Transactions'
+            );
+        }
+    }
+
+    /**
+     * Get gateway id by transaction
+     * @param $orderId
+     * @return mixed
+     */
+    public function getPaymentGatewayId($orderId)
+    {
+        $query = new \DbQuery();
+        $query->from('blue_transactions')
+            ->where('order_id = \'' . $this->pSQL($orderId) . '\'')
+            ->select('gateway_id');
+        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query, false);
+    }
+
+    /**
+     * Send events Google Analitics
+     * @param $orderId
+     * @return void
+     */
+    public function sendOrderGaAnalitics($orderId): void
+    {
+        $gaTrackerId = Cfg::get('BLUEPAYMENT_GA_TRACKER_ID');
+        $ga4TrackerId = Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID');
+        $ga4Secret = Cfg::get('BLUEPAYMENT_GA4_SECRET');
+        $gaType = Cfg::get('BLUEPAYMENT_GA_TYPE');
+
+        if ($gaTrackerId || ($ga4TrackerId && $ga4Secret)) {
+            /// Get ga user session
+            $query = new \DbQuery();
+            $query->from('blue_transactions')
+                ->where('order_id like "' . $this->pSQL($orderId) . '-%"')
+                ->where('gtag_state IS NULL')
+                ->select('gtag_uid');
+            $gaUserId = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query, false);
+
+            if (!empty($gaUserId)) {
+                $args = [];
+                $items = [];
+                $orderGa = new \OrderCore($orderId);
+
+                if ($orderGa->getProducts()) {
+                    $p_key = 0;
+                    foreach ($orderGa->getProducts() as $p) {
+                        $brand = null;
+                        $category_name = null;
+
+                        if ($p['id_manufacturer']) {
+                            $brand = Manufacturer::getNameById($p['id_manufacturer']);
+                        }
+
+                        $cat = new \Category(
+                            $p['id_category_default'],
+                            \Context::getContext()->language->id
+                        );
+                        if ($cat) {
+                            $category_name = $cat->name;
+                        }
+
+                        $p_key++;
+
+                        if ($gaType === '1') {
+                            $args['pr' . $p_key . 'id'] = $p['product_id'];
+                            $args['pr' . $p_key . 'nm'] = Product::getProductName($p['product_id']);
+                            $args['pr' . $p_key . 'br'] = $brand;
+                            $args['pr' . $p_key . 'ca'] = $category_name;
+                            $args['pr' . $p_key . 'pr'] = $p['total_price_tax_incl'];
+                            $args['pr' . $p_key . 'qt'] = $p['product_quantity'];
+                        } elseif ($gaType === '2') {
+                            $items[$p_key - 1] = [
+                                'item_id' => $p['product_id'],
+                                'item_name' => Product::getProductName($p['product_id']),
+                                'item_brand' => $brand,
+                                'item_category' => $category_name,
+                                'price' => $p['total_price_tax_incl'],
+                                'quantity' => $p['product_quantity'],
+                            ];
+                        }
+                    }
+                }
+
+                if ($gaType === '1') {
+                    // GA Universal
+                    $analitics = new AnalyticsTracking($gaTrackerId, $gaUserId);
+
+                    $args['cu'] = \Context::getContext()->currency->iso_code;
+                    $args['ti'] = $orderGa->id_cart . '-' . time();
+                    $args['tr'] = $orderGa->total_paid_tax_incl;
+                    $args['tt'] = $orderGa->total_paid - $orderGa->total_paid_tax_excl;
+                    $args['ts'] = $orderGa->total_shipping_tax_incl;
+                    $args['pa'] = 'purchase';
+                    $analitics->gaSendEvent('ecommerce', 'purchase', 'accepted', $args);
+                } elseif ($gaType === '2') {
+                    // GA 4
+                    $analitics = new AnalyticsTracking($ga4TrackerId, $gaUserId, $ga4Secret);
+
+                    $args['events'][] = [
+                        'name' => 'purchase',
+                        'params' => [
+                            'items' => $items,
+                            'currency' => \Context::getContext()->currency->iso_code,
+                            'transaction_id' => $orderGa->id_cart . '-' . time(),
+                            'value' => $orderGa->total_paid_tax_incl,
+                            'tax' => $orderGa->total_paid - $orderGa->total_paid_tax_excl,
+                            'shipping' => $orderGa->total_shipping_tax_incl,
+                        ],
+                    ];
+                    $args['user_id'] = $orderGa->id_customer;
+                    $analitics->ga4SendEvent($args);
+                }
+
+                /// Reset state
+                $transactionData = [
+                    'gtag_state' => 1,
+                ];
+                $this->updateTransactionQuery($orderId, $transactionData);
+            }
+        }
+    }
+
+
+
+    public function sendAmplitudeEvent($PaymentStatus, $orderId): void
+    {
+//        $data = [
+//            'events' => [
+//                "event_type" => Config::PLUGIN_PAY_COMPLETED,
+//                "user_id" => Amplitude::getUserId(),
+//                "user_properties" => [
+//                    "payment_id" => $this->getPaymentGatewayId($orderId),
+//                    'successful' => $PaymentStatus,
+//                ],
+//            ],
+//        ];
+//        $amplitude = Amplitude::getInstance();
+//        $amplitude->sendEvent($data);
+    }
 
     public function updateTransactionQuery($orderId, $transactionData)
     {
@@ -311,33 +398,42 @@ class Transactions
      */
     public function changeOrderStatus($orders, $statusId): bool
     {
+        $statusWaitingId = (int)Cfg::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID');
+        $statusErrorId = (int)Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
+
         $i = 0;
         foreach ($orders as $orderId) {
             $order = new \OrderCore($orderId);
             $currentOrderStatus = (int) $order->getCurrentState();
             $existPayment = !$order->hasInvoice();
 
-            if ($currentOrderStatus === $statusId) {
-                return false;
-            }
-
-            $this->orderHistory->id_order = (int) $orderId;
-            $this->orderHistory->changeIdOrderState(
-                (int) $statusId,
-                $order,
-                $existPayment
-            );
-
-            if($i === 0) {
-                if (!$this->orderHistory->addWithemail(true, [])) {
-                    Helper::sendEmail(
-                        (int) $orderId,
-                        [],
-                        $currentOrderStatus
+            if ($currentOrderStatus === $statusWaitingId || $currentOrderStatus === $statusErrorId) {
+                try {
+                    $this->orderHistory->id_order = (int)$orderId;
+                    $this->orderHistory->changeIdOrderState(
+                        (int)$statusId,
+                        $order,
+                        $existPayment
                     );
+                } catch (\Exception $exception) {
+                    $this->module->debug($exception);
                 }
+
+                if ($i === 0) {
+                    try {
+                        if (!$this->orderHistory->addWithemail(true, [])) {
+                            Helper::sendEmail(
+                                (int)$orderId,
+                                [],
+                                $currentOrderStatus
+                            );
+                        }
+                    } catch (\Exception $exception) {
+                        $this->module->debug($exception);
+                    }
+                }
+                $i++;
             }
-            $i++;
         }
 
         return true;
@@ -352,6 +448,7 @@ class Transactions
     public function changeOrdersStatus($order, int $statusId): void
     {
         $ordersArray = [];
+
         foreach ($this->getBrother($order) as $subOrder) {
             $ordersArray[] = $subOrder['id_order'];
         }
@@ -370,8 +467,8 @@ class Transactions
         $sql = new \DbQuery();
         $sql->select('id_order');
         $sql->from('orders');
-        $sql->where('reference = "'. $order->reference. '"');
-        $sql->where('id_cart = "'. (int) $order->id_cart. '"');
+        $sql->where('reference = "' . $order->reference . '"');
+        $sql->where('id_cart = "' . (int) $order->id_cart . '"');
 
         return Db::getInstance()->executeS($sql);
     }
@@ -380,15 +477,17 @@ class Transactions
     /**
      * Checks if the order has been cancelled
      * @param object $order
+     * @return bool
      */
-    public function isOrderCompleted($order): bool
+    public function isOrderCanceled($order): bool
     {
         $status = $order->getCurrentState();
-        $stateOrderTab = [Cfg::get('PS_OS_CANCELED')];
+        $stateOrderTab = [
+            Cfg::get('PS_OS_CANCELED')
+        ];
 
         return in_array($status, $stateOrderTab);
     }
-
 
     /**
      * @param $realOrderId
@@ -397,6 +496,7 @@ class Transactions
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException|DOMException
+     * @throws \DOMException
      */
     public function returnConfirmation($realOrderId, $order_id, $confirmation)
     {
@@ -426,7 +526,6 @@ class Transactions
         $hash_confirmation = Helper::generateAndReturnHash($hash_data);
 
         $dom = new \DOMDocument('1.0', 'UTF-8');
-
         $confirmation_list = $dom->createElement('confirmationList');
 
         $dom_service_id = $dom->createElement('serviceID', $service_id);
@@ -448,17 +547,18 @@ class Transactions
         $confirmation_list->appendChild($dom_hash);
 
         $dom->appendChild($confirmation_list);
-        echo $dom->saveXML();
+        $xml = $dom->saveXML();
+        echo $xml;
     }
 
     /**
      * Validates the compliance of the received XML
      *
-     * @param \SimpleXMLElement $response
+     * @param $response
      *
      * @return bool
      */
-    public function validAllTransaction(\SimpleXMLElement $response): bool
+    public function validAllTransaction($response): bool
     {
         Config::getSdk();
 

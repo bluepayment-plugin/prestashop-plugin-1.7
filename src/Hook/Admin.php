@@ -111,9 +111,11 @@ class Admin extends AbstractHook
         curl_close($curl);
 
         try {
-            $apiResponse = json_decode($output);
-            $ver = $apiResponse->modules[0]->version ?? null;
-            $this->context->smarty->assign(['version' => $ver]);
+            if ($output) {
+                $apiResponse = json_decode($output);
+                $ver = $apiResponse->modules[0]->version ?? null;
+                $this->context->smarty->assign(['version' => $ver]);
+            }
 
             if ($ver && version_compare($ver, $version, '>')) {
                 \PrestaShopLogger::addLog('Blue Media - Dostępna aktualizacja', 2);

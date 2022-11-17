@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -37,7 +38,7 @@ class BluePaymentBlikModuleFrontController extends ModuleFrontController
         $customer = new Customer($order->id_customer);
 
         if (!Validate::isLoadedObject($customer)) {
-            Tools::redirect(__PS_BASE_URI__.'order.php?step=1');
+            Tools::redirect(__PS_BASE_URI__ . 'order.php?step=1');
         }
 
         if (empty($paymentStatus) || $paymentStatus == 'FAILURE') {
@@ -50,7 +51,9 @@ class BluePaymentBlikModuleFrontController extends ModuleFrontController
                 (int)$this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
             );
         } else {
-            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentFailed', [], true));
+            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [
+                'error' => 'Wrong status'
+            ], true));
         }
     }
 }

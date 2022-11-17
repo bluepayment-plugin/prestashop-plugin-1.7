@@ -29,6 +29,7 @@ class BluePaymentPaymentStatusModuleFrontController extends ModuleFrontControlle
             'bm_dir' => $this->module->getPathUrl(),
             'home_url'   => _PS_BASE_URL_,
             'urls'       => $this->getTemplateVarUrls(),
+            'error'  => Tools::getValue('error')
         ]);
 
         $this->setTemplate('module:bluepayment/views/templates/front/payment_status.tpl');

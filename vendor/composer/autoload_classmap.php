@@ -40,4 +40,9 @@ return array(
     'BluePayment\\Until\\AdminHelper' => $baseDir . '/src/Until/AdminHelper.php',
     'BluePayment\\Until\\Helper' => $baseDir . '/src/Until/Helper.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'Symfony\\Component\\Dotenv\\Dotenv' => $vendorDir . '/symfony/dotenv/Dotenv.php',
+    'Symfony\\Component\\Dotenv\\Exception\\ExceptionInterface' => $vendorDir . '/symfony/dotenv/Exception/ExceptionInterface.php',
+    'Symfony\\Component\\Dotenv\\Exception\\FormatException' => $vendorDir . '/symfony/dotenv/Exception/FormatException.php',
+    'Symfony\\Component\\Dotenv\\Exception\\FormatExceptionContext' => $vendorDir . '/symfony/dotenv/Exception/FormatExceptionContext.php',
+    'Symfony\\Component\\Dotenv\\Exception\\PathException' => $vendorDir . '/symfony/dotenv/Exception/PathException.php',
 );

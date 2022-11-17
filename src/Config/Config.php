@@ -46,6 +46,7 @@ class Config
     const PLUGIN_UNINSTALLED = 'plugin uninstalled';
     const PLUGIN_VERSION = 'plugin version';
     const PLUGIN_UPDATED = 'plugin updated';
+    const PLUGIN_PAY_COMPLETED = 'transaction completed';
 
     const PLUGIN_AUTH = 'plugin authorized';
     const API_AUTHENTICATION_SUCCESS = 'authorization completed';

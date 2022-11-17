@@ -50,7 +50,9 @@ class BluePaymentGpayModuleFrontController extends ModuleFrontController
                 (int)$this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
             );
         } else {
-            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentFailed', [], true));
+            Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [
+                'error' => 'Wrong status'
+            ], true));
         }
     }
 }

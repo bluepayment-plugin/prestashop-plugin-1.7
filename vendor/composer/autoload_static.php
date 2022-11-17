@@ -4,9 +4,13 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitefa014b3ab807ae21ffc659c723b694b
+class ComposerStaticInit3fa9d679bf4ac939dd683bf881103069
 {
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Symfony\\Component\\Dotenv\\' => 25,
+        ),
         'B' => 
         array (
             'BluePayment\\' => 12,
@@ -14,6 +18,10 @@ class ComposerStaticInitefa014b3ab807ae21ffc659c723b694b
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Component\\Dotenv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/dotenv',
+        ),
         'BluePayment\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
@@ -55,14 +63,19 @@ class ComposerStaticInitefa014b3ab807ae21ffc659c723b694b
         'BluePayment\\Until\\AdminHelper' => __DIR__ . '/../..' . '/src/Until/AdminHelper.php',
         'BluePayment\\Until\\Helper' => __DIR__ . '/../..' . '/src/Until/Helper.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Symfony\\Component\\Dotenv\\Dotenv' => __DIR__ . '/..' . '/symfony/dotenv/Dotenv.php',
+        'Symfony\\Component\\Dotenv\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/dotenv/Exception/ExceptionInterface.php',
+        'Symfony\\Component\\Dotenv\\Exception\\FormatException' => __DIR__ . '/..' . '/symfony/dotenv/Exception/FormatException.php',
+        'Symfony\\Component\\Dotenv\\Exception\\FormatExceptionContext' => __DIR__ . '/..' . '/symfony/dotenv/Exception/FormatExceptionContext.php',
+        'Symfony\\Component\\Dotenv\\Exception\\PathException' => __DIR__ . '/..' . '/symfony/dotenv/Exception/PathException.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit3fa9d679bf4ac939dd683bf881103069::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit3fa9d679bf4ac939dd683bf881103069::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit3fa9d679bf4ac939dd683bf881103069::$classMap;
 
         }, null, ClassLoader::class);
     }

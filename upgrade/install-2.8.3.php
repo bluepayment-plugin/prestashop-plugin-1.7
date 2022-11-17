@@ -20,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
 
-function upgrade_module_2_8_2($module)
+function upgrade_module_2_8_3($module)
 {
     $module->unregisterHook('header');
     $module->unregisterHook('displayHeader');

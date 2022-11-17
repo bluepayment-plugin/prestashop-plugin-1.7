@@ -20,7 +20,6 @@ use Context;
 
 class Amplitude
 {
-    private $api_key = '3df98a3ac8e0efd57fbe86f86c27b488';
     private static $instance;
 
     /**
@@ -64,7 +63,7 @@ class Amplitude
 
     public function sendEvent(array $data = [])
     {
-        $data['api_key'] = $this->api_key;
+        $data['api_key'] = $this->getAmplitudeId();
         $data['events']['time'] = time();
         $data['events']['user_id'] = self::getUserId();
         $data['events']['os_name'] = 'Prestashop';
@@ -82,5 +81,10 @@ class Amplitude
         curl_close($ch);
 
         return $result;
+    }
+
+    public function getAmplitudeId(): string
+    {
+        return getenv('AMPLITUDE_ID') ?? '';
     }
 }
