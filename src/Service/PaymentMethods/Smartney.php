@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -17,13 +16,12 @@ declare(strict_types=1);
 namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
-use BluePayment\Until\Helper;
 use BluePayment\Config\Config;
-use Context;
-use Module;
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use Tools;
+use BluePayment\Until\Helper;
 use Cart;
+use Configuration as Cfg;
+use Context;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class Smartney implements GatewayType
 {
@@ -93,14 +91,11 @@ class Smartney implements GatewayType
             $iso_code
         );
 
-        if (
-            $smartney
-            && (float)$cart_total >= (float) Config::SMARTNEY_MIN_AMOUNT
-            && (float)$cart_total <= (float) Config::SMARTNEY_MAX_AMOUNT
-        ) {
-            return true;
-        }
+        $activePromo = Cfg::get('BLUEPAYMENT_PROMO_INSTALMENTS');
 
-        return false;
+        return $smartney
+            && $activePromo
+            && (float) $cart_total >= (float) Config::SMARTNEY_MIN_AMOUNT
+            && (float) $cart_total <= (float) Config::SMARTNEY_MAX_AMOUNT;
     }
 }

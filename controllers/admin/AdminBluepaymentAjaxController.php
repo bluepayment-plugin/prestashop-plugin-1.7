@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -12,13 +11,12 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
 use BluePayment\Config\Config;
-use BluePayment\Until\Helper;
 use BluePayment\Until\AdminHelper;
+use BluePayment\Until\Helper;
 use Configuration as Cfg;
 
 class AdminBluepaymentAjaxController extends ModuleAdminController
@@ -91,8 +89,8 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                         );
                         $data = [
                             'events' => [
-                                "event_type" => Config::API_AUTHENTICATION_SUCCESS,
-                                "user_properties" => [
+                                'event_type' => Config::API_AUTHENTICATION_SUCCESS,
+                                'user_properties' => [
                                     Config::PLUGIN_AUTH => true,
                                 ],
                             ],
@@ -104,8 +102,8 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                         );
                         $data = [
                             'events' => [
-                                "event_type" => Config::API_AUTHENTICATION_FAILED,
-                                "user_properties" => [
+                                'event_type' => Config::API_AUTHENTICATION_FAILED,
+                                'user_properties' => [
                                     Config::PLUGIN_AUTH => false,
                                 ],
                             ],
@@ -122,8 +120,8 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
                     $data = [
                         'events' => [
-                            "event_type" => Config::API_AUTHENTICATION_FAILED,
-                            "user_properties" => [
+                            'event_type' => Config::API_AUTHENTICATION_FAILED,
+                            'user_properties' => [
                                 Config::PLUGIN_AUTH => false,
                             ],
                         ],

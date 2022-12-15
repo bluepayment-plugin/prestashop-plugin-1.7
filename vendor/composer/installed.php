@@ -3,7 +3,7 @@
         'name' => 'prestashop/bluepayment',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'b27c5c0d0e2ad10d782f31e9d2fbae38051801f4',
+        'reference' => '1771e542487299fa8628799ca6e47c0f8f6d2855',
         'type' => 'prestashop-module',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'prestashop/bluepayment' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'b27c5c0d0e2ad10d782f31e9d2fbae38051801f4',
+            'reference' => '1771e542487299fa8628799ca6e47c0f8f6d2855',
             'type' => 'prestashop-module',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

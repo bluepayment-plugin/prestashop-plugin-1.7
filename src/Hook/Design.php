@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -20,7 +19,7 @@ use Configuration as Cfg;
 
 class Design extends AbstractHook
 {
-    const AVAILABLE_HOOKS = [
+    public const AVAILABLE_HOOKS = [
         'actionFrontControllerSetMedia',
         'displayBeforeBodyClosingTag',
         'displayProductPriceBlock',
@@ -29,9 +28,8 @@ class Design extends AbstractHook
         'displayProductAdditionalInfo',
         'displayLeftColumn',
         'displayRightColumn',
-        'displayShoppingCartFooter'
+        'displayShoppingCartFooter',
     ];
-
 
     /**
      * @codeCoverageIgnore
@@ -39,16 +37,15 @@ class Design extends AbstractHook
      */
     public function actionFrontControllerSetMedia()
     {
-
         \Media::addJsDef([
-            'bluepayment_env' => (int)Cfg::get($this->module->name_upper . '_TEST_ENV') === 1 ? 'TEST' : 'PRODUCTION',
+            'bluepayment_env' => (int) Cfg::get($this->module->name_upper . '_TEST_ENV') === 1 ? 'TEST' : 'PRODUCTION',
             'asset_path' => $this->module->getPathUrl() . 'views/',
             'change_payment' => $this->module->l('change'),
             'read_more' => $this->module->l('read more'),
             'get_regulations_url' => $this->context->link->getModuleLink('bluepayment', 'regulationsGet', [], true),
         ]);
 
-        $path = 'modules/' . $this->module->name. '/views/';
+        $path = 'modules/' . $this->module->name . '/views/';
 
         $this->context->controller->registerStylesheet('bm-front-css', $path . 'css/front.css');
         $this->context->controller->registerJavascript('bm-front-js', $path . 'js/front.min.js');
@@ -58,7 +55,9 @@ class Design extends AbstractHook
 
     /**
      * Add analytics Gtag
+     *
      * @param $params
+     *
      * @return void|null
      */
     public function displayProductPriceBlock($params)
@@ -85,60 +84,69 @@ class Design extends AbstractHook
         return null;
     }
 
-
     /**
      * Adds promoted payments to the top of the page
+     *
      * @return string|null
      */
     public function displayBanner(): ?string
     {
         if ($this->configuration->get($this->module->name_upper . '_PROMO_HEADER')) {
             $this->getSmartyAssets();
+
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/header.tpl');
         }
+
         return null;
     }
 
     /**
      * Adds promoted payments above the footer
+     *
      * @return string|null
      */
     public function hookDisplayFooterBefore(): ?string
     {
         if ($this->configuration->get($this->module->name_upper . '_PROMO_FOOTER')) {
             $this->getSmartyAssets();
+
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/footer.tpl');
         }
+
         return null;
     }
 
-
     /**
      * Adds promoted payments under the buttons in the product page
+     *
      * @return string|null
      */
     public function displayProductAdditionalInfo(): ?string
     {
         if ($this->configuration->get($this->module->name_upper . '_PROMO_PRODUCT')) {
             $this->getSmartyAssets('product');
+
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/product.tpl');
         }
+
         return null;
     }
 
     /**
      * Adds promoted payments sidebar
+     *
      * @return string|null
      */
     public function getSidebarPromo(): ?string
     {
         if ($this->configuration->get($this->module->name_upper . '_PROMO_LISTING')) {
             $this->getSmartyAssets('sidebar');
+
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/labels.tpl');
         }
+
         return null;
     }
-
 
     /**
      * @codeCoverageIgnore
@@ -160,19 +168,23 @@ class Design extends AbstractHook
 
     /**
      * Adds promoted payments in the shopping cart under products
+     *
      * @return string|null
      */
     public function displayShoppingCartFooter(): ?string
     {
         if ($this->configuration->get($this->module->name_upper . '_PROMO_CART')) {
             $this->getSmartyAssets('cart');
+
             return $this->module->fetch('module:bluepayment/views/templates/hook/labels/labels.tpl');
         }
+
         return null;
     }
 
     /**
      * Gtag data
+     *
      * @return string
      */
     public function displayBeforeBodyClosingTag(): string
@@ -196,8 +208,8 @@ class Design extends AbstractHook
             'bm_ajax_controller' => $this->context->link->getModuleLink(
                 $this->module->name,
                 'ajax',
-                array('ajax' => 1)
-            )
+                ['ajax' => 1]
+            ),
         ]);
 
         if ($controller == 'cart') {
@@ -212,7 +224,7 @@ class Design extends AbstractHook
                 foreach ($this->context->cart->getCartRules() as $coupon) {
                     $coupons_array[] = $coupon['name'];
                 }
-                $coupons_list = implode(", ", $coupons_array);
+                $coupons_list = implode(', ', $coupons_array);
             }
 
             $this->context->smarty->assign([
@@ -229,12 +241,11 @@ class Design extends AbstractHook
         );
     }
 
-
-
     /**
      * Get smarty assets
      *
      * @param string $type
+     *
      * @return void
      * @codeCoverageIgnore
      */
@@ -252,7 +263,7 @@ class Design extends AbstractHook
                 'bm_pay_later' => $payLater,
                 'bm_matched_instalments' => $matchInstalments,
                 'bm_promo_checkout' => $promoCheckout,
-                'bm_promo_type' => $type
+                'bm_promo_type' => $type,
             ]
         );
     }

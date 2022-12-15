@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -11,7 +10,6 @@
  * @copyright  Since 2015 Blue Media S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -22,7 +20,7 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
-        require_once dirname(__FILE__) . '/../../sdk/index.php';
+        require_once dirname(__FILE__) . '/../../libs/index.php';
         header('Content-type: text/xml');
 
         try {
@@ -33,10 +31,9 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
             $transaction->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
         } catch (Exception $exception) {
             Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [
-                'error' => 'Payment error (' . print_r($exception) . ')'
+                'error' => 'Payment error (' . print_r($exception) . ')',
             ], true));
         }
-
         exit;
     }
 }

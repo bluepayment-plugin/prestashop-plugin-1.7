@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,31 +15,30 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
-use Configuration as Cfg;
-use DbQuery;
-use Db;
-use Shop;
-use BluePayment\Service\FactoryPaymentMethods;
 use BluePayment\Statuses\OrderStatusMessageDictionary;
-use BluePayment\Until\Helper;
+use Configuration as Cfg;
 
 class Payment extends AbstractHook
 {
-    const AVAILABLE_HOOKS = [
+    public const AVAILABLE_HOOKS = [
         'paymentReturn',
         'orderConfirmation',
     ];
 
     /**
      * Return payment/order confirmation step hook
+     *
      * @param $params
+     *
      * @return string|void
      */
     public function paymentReturn($params)
     {
-        if (!$this->module->active ||
+        if (
+            !$this->module->active ||
             !isset($params['order']) ||
-            ($params['order']->module != $this->module->name)) {
+            ($params['order']->module != $this->module->name)
+        ) {
             return null;
         }
 
@@ -51,7 +49,7 @@ class Payment extends AbstractHook
             $currency
         );
 
-        if(!$orderData) {
+        if (!$orderData) {
             return;
         }
 
@@ -98,7 +96,7 @@ class Payment extends AbstractHook
             return null;
         }
 
-        $id_default_lang = (int)Cfg::get('PS_LANG_DEFAULT');
+        $id_default_lang = (int) Cfg::get('PS_LANG_DEFAULT');
         $order = new \OrderCore($params['order']->id);
         $state = $order->getCurrentStateFull($id_default_lang);
 
@@ -110,5 +108,4 @@ class Payment extends AbstractHook
 
         return $this->module->fetch('module:bluepayment/views/templates/hook/order-confirmation.tpl');
     }
-
 }

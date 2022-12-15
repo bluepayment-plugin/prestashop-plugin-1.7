@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -18,16 +17,12 @@ namespace BluePayment\Until;
 
 use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Config\Config;
-use Currency;
-use Context;
-use DbQuery;
-use Db;
-use Shop;
-use HelperList;
-use AdminController;
-use Tools;
-use Module;
 use Configuration as Cfg;
+use Context;
+use Db;
+use DbQuery;
+use Shop;
+use Tools;
 
 class Helper
 {
@@ -95,14 +90,13 @@ class Helper
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
 
         if (Shop::isFeatureActive()) {
-            $query->where('gts.id_shop = ' . (int)$idShop);
+            $query->where('gts.id_shop = ' . (int) $idShop);
         }
 
         $query->select('gateway_logo_url, gateway_name');
 
         return Db::getInstance()->executeS($query);
     }
-
 
     public static function getGatewaysList(): string
     {
@@ -112,18 +106,17 @@ class Helper
             Config::GATEWAY_ID_CARD,
             Config::GATEWAY_ID_GOOGLE_PAY,
             Config::GATEWAY_ID_APPLE_PAY,
-            Config::GATEWAY_ID_SMARTNEY
+            Config::GATEWAY_ID_SMARTNEY,
         ];
 
         return implode(',', $gatewayArray);
     }
 
-
     public static function getWalletsList(): string
     {
         $walletArray = [
             Config::GATEWAY_ID_GOOGLE_PAY,
-            Config::GATEWAY_ID_APPLE_PAY
+            Config::GATEWAY_ID_APPLE_PAY,
         ];
 
         return implode(',', $walletArray);
@@ -132,11 +125,13 @@ class Helper
     public static function parseConfigByCurrency($key, $currencyIsoCode)
     {
         $data = Tools::unSerialize(Cfg::get($key));
+
         return is_array($data) && array_key_exists($currencyIsoCode, $data) ? $data[$currencyIsoCode] : '';
     }
 
     /**
      * Get logo
+     *
      * @return string
      */
     public static function getBrandLogo(): string
@@ -144,10 +139,10 @@ class Helper
         return Context::getContext()->shop->getBaseURL(true) . 'modules/bluepayment/views/img/blue-media.svg';
     }
 
-
     /**
      * @param $id_order
-     * @return bool | array
+     *
+     * @return bool|array
      */
     public static function getLastOrderPaymentByOrderId($id_order)
     {
@@ -158,10 +153,11 @@ class Helper
         return Db::getInstance()->getRow($sql, false);
     }
 
-
     /**
      * @param $id_order
+     *
      * @throws PrestaShopDatabaseException
+     *
      * @return array
      */
     public static function getOrdersByOrderId($id_order): array
@@ -173,11 +169,11 @@ class Helper
         return Db::getInstance()->executeS($sql, true, false);
     }
 
-
-
     /**
      * Generates and returns a hash key based on field values from an array
+     *
      * @param array $data
+     *
      * @return string
      */
     public static function generateAndReturnHash($data): string
@@ -203,17 +199,13 @@ class Helper
         if (empty($iso_code)) {
             $iso_code = 'PLN';
         }
+
         return $iso_code;
     }
 
+    // Prestashop < 1.7.5 fix states
 
-
-
-    ///// Prestashop < 1.7.5 fix states
-    ///
-
-
-    public static function sendEmail($order, $template_vars = false, $id)
+    public static function sendEmail($order, $template_vars = false, $id = 0)
     {
         $result = \Db::getInstance()->getRow('
             SELECT osl.`template`, c.`lastname`, c.`firstname`, osl.`name` AS osname, c.`email`, os.`module_name`, 
@@ -239,7 +231,7 @@ class Helper
                 '{id_order}' => (int) $order->id,
                 '{order_name}' => $order->getUniqReference(),
                 '{followup}' => str_replace('@', $order->getWsShippingNumber(), $carrierUrl),
-                '{shipping_number}' => $order->getWsShippingNumber()
+                '{shipping_number}' => $order->getWsShippingNumber(),
             ];
 
             if ($result['module_name']) {

@@ -13,8 +13,8 @@
 
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\TransactionStandard;
-use BluePayment\Until\Helper;
 use BluePayment\Config\Config;
+use BluePayment\Until\Helper;
 
 class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 {
@@ -27,7 +27,8 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
         $cart = $this->context->cart;
 
-        if ($cart->id_customer === 0 || $cart->id_address_delivery === 0
+        if (
+            $cart->id_customer === 0 || $cart->id_address_delivery === 0
             || $cart->id_address_invoice === 0 || !$this->module->active
         ) {
             Tools::redirect('index.php?controller=order&step=1');
@@ -45,7 +46,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         if (Validate::isLoadedObject($this->context->cart) && !$this->context->cart->OrderExists()) {
             $cartId = $cart->id;
 
-            $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
+            $totalPaid = (float) $cart->getOrderTotal(true, Cart::BOTH);
             $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
             $this->module->validateOrder(
@@ -72,18 +73,18 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 $order = Order::getByCartId($bluepaymentCartId);
                 $cart = Cart::getCartByOrderId($order->id); /// refractor
 
-                $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
+                $totalPaid = (float) $cart->getOrderTotal(true, Cart::BOTH);
                 $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
                 $orderId = $order->id . '-' . time();
             }
         }
 
-        $gateway_id = (int)Tools::getValue('bluepayment_gateway', 0);
+        $gateway_id = (int) Tools::getValue('bluepayment_gateway', 0);
 
         $this->context->smarty->assign([
             'bm_dir' => $this->module->getPathUrl(),
-            'form'       => $this->createTransaction($gateway_id, $orderId, $amount, $customer),
+            'form' => $this->createTransaction($gateway_id, $orderId, $amount, $customer),
         ]);
 
         $this->createTransactionQuery($orderId);
@@ -94,10 +95,10 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
     /**
      * Check if the payment option is still active in case the customer
      * makes a change of address before finalizing the order
+     *
      * @return bool
      */
-    private function moduleAuthorized()
-    :bool
+    private function moduleAuthorized(): bool
     {
         $authorized = false;
         foreach (Module::getPaymentModules() as $module) {
@@ -106,15 +107,15 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
                 break;
             }
         }
+
         return $authorized;
     }
-
 
     private function createTransaction($gateway_id, $orderId, $amount, $customer)
     {
         $isoCode = $this->context->currency->iso_code;
 
-        $service_id = (int)Helper::parseConfigByCurrency(
+        $service_id = (int) Helper::parseConfigByCurrency(
             $this->module->name_upper . Config::SERVICE_PARTNER_ID,
             $isoCode
         );
@@ -124,7 +125,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             $isoCode
         );
 
-        require_once dirname(__FILE__) . '/../../sdk/index.php';
+        require_once dirname(__FILE__) . '/../../libs/index.php';
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ? Gateway::MODE_SANDBOX : Gateway::MODE_LIVE;
@@ -132,13 +133,12 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         $gateway = new Gateway($service_id, $shared_key, $gateway_mode);
 
         $transactionStandard = new TransactionStandard();
-        $transactionStandard->setOrderId((string)$orderId)
+        $transactionStandard->setOrderId((string) $orderId)
             ->setAmount($amount)
             ->setCustomerEmail($customer->email)
             ->setCurrency($isoCode)
-            ->setHtmlFormLanguage($this->context->language->iso_code ? : Config::DEFAULT_PAYMENT_FORM_LANGUAGE)
-            ->setLanguage($this->context->language->iso_code ? : Config::DEFAULT_PAYMENT_FORM_LANGUAGE);
-
+            ->setHtmlFormLanguage($this->context->language->iso_code ?: Config::DEFAULT_PAYMENT_FORM_LANGUAGE)
+            ->setLanguage($this->context->language->iso_code ?: Config::DEFAULT_PAYMENT_FORM_LANGUAGE);
 
         $regulationId = Tools::getValue('bluepayment-hidden-psd2-regulation-id', null);
 
@@ -157,7 +157,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
         $form = '';
 
-        /** @var Gateway $gateway */
+        /* @var Gateway $gateway */
         try {
             $form = $gateway->doTransactionStandard($transactionStandard);
         } catch (Exception $exception) {
@@ -167,7 +167,6 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         return $form;
     }
 
-
     private function createTransactionQuery($orderId)
     {
         $ga = $_COOKIE['_ga'] ?? '';
@@ -175,11 +174,10 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         Db::getInstance()->insert(
             'blue_transactions',
             [
-                'order_id'   => $orderId,
+                'order_id' => $orderId,
                 'created_at' => date('Y-m-d H:i:s'),
                 'gtag_uid' => $ga,
             ]
         );
     }
-
 }

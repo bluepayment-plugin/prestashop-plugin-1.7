@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.8.4] 15.12.2022
+- Fixed duplicate statuses
+- Fixed refund order
+- Fixed promo settings
+- Added amplitude analytics events
+- Improved code standard
+- Changed directory sdk to libs
+
 ## [2.8.3] 17.11.2022
 - Added Env settings
 - Fixed error ITN

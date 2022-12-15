@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,13 +15,12 @@ declare(strict_types=1);
 
 namespace BluePayment\Api;
 
-use Context;
-use DbQuery;
-use Db;
-use Shop;
-use Tools;
-use PrestaShopLogger;
 use BluePayment;
+use Context;
+use Db;
+use DbQuery;
+use PrestaShopLogger;
+use Shop;
 
 class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
 {
@@ -53,7 +51,7 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
             'gateway_status' => [
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedId',
-                'required' => true
+                'required' => true,
             ],
             'bank_name' => [
                 'type' => self::TYPE_STRING,
@@ -64,14 +62,14 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
             'gateway_name' => [
                 'type' => self::TYPE_STRING,
                 'validate' => 'isGenericName',
-                'size' => 100
+                'size' => 100,
             ],
             'position' => [
                 'type' => self::TYPE_INT,
-                'validate' => 'isNullOrUnsignedId'
+                'validate' => 'isNullOrUnsignedId',
             ],
             'gateway_currency' => [
-                'type' => self::TYPE_STRING
+                'type' => self::TYPE_STRING,
             ],
             'gateway_type' => [
                 'type' => self::TYPE_STRING,
@@ -82,7 +80,7 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
             'gateway_logo_url' => [
                 'type' => self::TYPE_STRING,
                 'validate' => 'isGenericName',
-                'size' => 500
+                'size' => 500,
             ],
         ],
     ];
@@ -107,7 +105,6 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
                         $currency['iso_code']
                     );
 
-
                     if (!$this->isTransferActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
                         $payway->gateway_logo_url = $paymentGateway->getIconUrl();
                         $payway->bank_name = $paymentGateway->getBankName();
@@ -117,16 +114,18 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
                         $payway->gateway_currency = $currency['iso_code'];
                         $payway->force_id = true;
                         $payway->gateway_id = $paymentGateway->getGatewayId();
-                        $payway->position = (int)$position;
+                        $payway->position = (int) $position;
                         $payway->save();
-                        (int)$position++;
+                        (int) $position++;
                     }
                 }
             }
+
             return $payway;
         }
 
         PrestaShopLogger::addLog('BM - Error sync gateway transfers', 1);
+
         return null;
     }
 
@@ -138,11 +137,11 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
         $query->select('gt.id');
         $query->from('blue_gateway_transfers', 'gt');
         $query->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
-        $query->where('gt.gateway_id = ' . (int)$gatewayId);
+        $query->where('gt.gateway_id = ' . (int) $gatewayId);
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
         $query->where('gt.gateway_status = 1');
         if (Shop::isFeatureActive()) {
-            $query->where('gts.id_shop = ' . (int)$idShop);
+            $query->where('gts.id_shop = ' . (int) $idShop);
         }
 
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);

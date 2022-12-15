@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,9 +15,9 @@ namespace BluePayment\Statuses;
 
 abstract class OrderStatusMessageDictionary
 {
-    const PENDING = 1;
+    public const PENDING = 1;
 
-    const ORDER_STATUS_MESSAGE = [
+    public const ORDER_STATUS_MESSAGE = [
         self::PENDING => 'Payment in progress',
     ];
 

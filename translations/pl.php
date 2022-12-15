@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{bluepayment}prestashop>bluepayment_f2ef3cb9db8f7e55a9e122c2cebf3d4d'] = 'Płatności Blue Media';
 $_MODULE['<{bluepayment}prestashop>bluepayment_8c00d8812bd29a89eed5597a2a94ac91'] = 'Dodatek umożliwia korzystanie z płatności internetowych realizowanych za pomocą bramki płatniczej Blue Media.';
 $_MODULE['<{bluepayment}prestashop>bluepayment_876f23178c29dc2552c0b48bf23cd9bd'] = 'Czy na pewno chcesz usunąć moduł?';

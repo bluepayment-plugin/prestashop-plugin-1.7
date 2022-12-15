@@ -47,42 +47,42 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
         $price = $this->getTotalAmount();
 
         return [
-            "apiVersion"            => 2,
-            "apiVersionMinor"       => 0,
-            "merchantInfo"          => [
-                'authJwt'        => $merchantData['authJwt'],
-                'merchantName'   => $merchantData['merchantName'],
+            'apiVersion' => 2,
+            'apiVersionMinor' => 0,
+            'merchantInfo' => [
+                'authJwt' => $merchantData['authJwt'],
+                'merchantName' => $merchantData['merchantName'],
                 'merchantOrigin' => $merchantData['merchantOrigin'],
-                'merchantId'     => $merchantData['merchantId']
+                'merchantId' => $merchantData['merchantId'],
             ],
-            "allowedPaymentMethods" => [
+            'allowedPaymentMethods' => [
                 [
-                    "type"                      => 'CARD',
-                    "parameters"                => [
-                        "allowedAuthMethods"     => ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-                        "allowedCardNetworks"    => ["MASTERCARD", "VISA"],
-                        "billingAddressRequired" => false
+                    'type' => 'CARD',
+                    'parameters' => [
+                        'allowedAuthMethods' => ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                        'allowedCardNetworks' => ['MASTERCARD', 'VISA'],
+                        'billingAddressRequired' => false,
                     ],
-                    "tokenizationSpecification" => [
-                        "type"       => "PAYMENT_GATEWAY",
-                        "parameters" => [
-                            "gateway"           => "bluemedia",
-                            "gatewayMerchantId" => (string)$merchantData['acceptorId'],
-                        ]
-                    ]
+                    'tokenizationSpecification' => [
+                        'type' => 'PAYMENT_GATEWAY',
+                        'parameters' => [
+                            'gateway' => 'bluemedia',
+                            'gatewayMerchantId' => (string) $merchantData['acceptorId'],
+                        ],
+                    ],
                 ],
             ],
-            'transactionInfo'       => [
-                'currencyCode'     => $this->context->currency->iso_code,
+            'transactionInfo' => [
+                'currencyCode' => $this->context->currency->iso_code,
                 'totalPriceStatus' => 'FINAL',
-                'totalPrice'       => (string)$price,
-            ]
+                'totalPrice' => (string) $price,
+            ],
         ];
     }
 
     private function getTotalAmount()
     {
-        if (Validate::isLoadedObject($this->context->cart) && (bool)!$this->context->cart->OrderExists()) {
+        if (Validate::isLoadedObject($this->context->cart) && (bool) !$this->context->cart->OrderExists()) {
             $cart = $this->context->cart;
         } else {
             $postOrderId = pSQL(Tools::getValue('postOrderId'));
@@ -100,7 +100,8 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
             }
         }
 
-        $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
+        $totalPaid = (float) $cart->getOrderTotal(true, Cart::BOTH);
+
         return number_format(round($totalPaid, 2), 2, '.', '');
     }
 
@@ -109,7 +110,7 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
      */
     private function sendRequest()
     {
-        require_once dirname(__FILE__) . '/../../sdk/index.php';
+        require_once dirname(__FILE__) . '/../../libs/index.php';
 
         $currency = $this->context->currency->iso_code;
         $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
@@ -126,8 +127,8 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
          * string MerchantDomain for BM should be different localhost
          */
         $data = [
-            'ServiceID'      => $serviceId,
-            'MerchantDomain' => Tools::getHttpHost(false)
+            'ServiceID' => $serviceId,
+            'MerchantDomain' => Tools::getHttpHost(false),
         ];
 
         $hash = array_merge($data, [$sharedKey]);
@@ -156,11 +157,14 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
                     print_r($data, 1) .
                     "\nResponse:\n" . print_r($curlResponse, 1)
                 );
+
                 return false;
             }
+
             return $curlResponse;
         } catch (Exception $e) {
             Tools::error_log($e);
+
             return false;
         }
     }

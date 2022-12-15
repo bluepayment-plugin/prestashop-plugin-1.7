@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -11,7 +10,6 @@
  * @copyright  Since 2015 Blue Media S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -47,12 +45,12 @@ class BluePaymentBlikModuleFrontController extends ModuleFrontController
 
         if ($status) {
             Tools::redirect(
-                'index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' .
-                (int)$this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
+                'index.php?controller=order-confirmation&id_cart=' . (int) $cart->id . '&id_module=' .
+                (int) $this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
             );
         } else {
             Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [
-                'error' => 'Wrong status'
+                'error' => 'Wrong status',
             ], true));
         }
     }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -75,7 +74,7 @@ class AnalyticsTracking
 
         return [
             'statusCode' => $statusCode,
-            'resp' => $result
+            'resp' => $result,
         ];
     }
 
@@ -106,7 +105,7 @@ class AnalyticsTracking
 
         return [
             'statusCode' => $statusCode,
-            'resp' => $result
+            'resp' => $result,
         ];
 
 //        return $result;
@@ -135,9 +134,9 @@ class AnalyticsTracking
         ];
 
         $dataMerge = array_merge($data, $products);
+
         return $this->gaSendData($dataMerge);
     }
-
 
     /**
      * Tracking GA 4
@@ -149,11 +148,11 @@ class AnalyticsTracking
     public function ga4SendEvent(array $products = []): array
     {
         $data = [
-            'client_id' => $this->gaParseCookie()
+            'client_id' => $this->gaParseCookie(),
         ];
 
         $dataMerge = array_merge($data, $products);
 
-        return $this->ga4SendData((array)(json_encode($dataMerge, JSON_PRETTY_PRINT)));
+        return $this->ga4SendData((array) (json_encode($dataMerge, JSON_PRETTY_PRINT)));
     }
 }

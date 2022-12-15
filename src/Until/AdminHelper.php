@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,21 +15,20 @@ declare(strict_types=1);
 
 namespace BluePayment\Until;
 
-use BluePayment\Until\Helper;
-use Currency;
-use Context;
-use DbQuery;
-use Db;
-use Shop;
-use HelperList;
 use AdminController;
-use Tools;
-use Module;
 use BluePayment\Config\Config;
+use Context;
+use Currency;
+use Db;
+use DbQuery;
+use HelperList;
+use Shop;
+use Tools;
 
 class AdminHelper
 {
     protected $module;
+
     public function __construct(\BluePayment $module)
     {
         $this->module = $module;
@@ -38,6 +36,7 @@ class AdminHelper
 
     /**
      * Native prestashop function generate HelperList to admin
+     *
      * @codeCoverageIgnore
      */
     public function renderAdditionalOptionsList($module, $payments, $title)
@@ -62,7 +61,6 @@ class AdminHelper
         return $helper->generateList($content, $this->getGatewaysListFields($module));
     }
 
-
     public function displayGatewayLogo($gatewayLogo, $object)
     {
         $name = _MODULE_DIR_ . 'bluepayment/views/img/';
@@ -77,7 +75,7 @@ class AdminHelper
                     $context->shop->id
                 ),
                 'gateway_type' => 'transfers',
-                'currency' => $currency
+                'currency' => $currency,
             ]);
 
             $result = $this->module->fetch(
@@ -91,7 +89,7 @@ class AdminHelper
                     $context->shop->id
                 ),
                 'gateway_type' => 'transfers',
-                'currency' => $currency
+                'currency' => $currency,
             ]);
 
             $result = $this->module->fetch(
@@ -131,7 +129,7 @@ class AdminHelper
         $query->where('gc.gateway_currency = "' . pSql($currency) . '"');
 
         if (Shop::isFeatureActive()) {
-            $query->where('gcs.id_shop = ' . (int)$idShop);
+            $query->where('gcs.id_shop = ' . (int) $idShop);
         }
 
         $query->orderBy('gc.position ASC');
@@ -139,8 +137,6 @@ class AdminHelper
 
         return Db::getInstance()->ExecuteS($query);
     }
-
-
 
     public function getGatewaysListFields($module): array
     {
@@ -172,9 +168,6 @@ class AdminHelper
         ];
     }
 
-
-
-
     public function getListAllPayments($currency = 'PLN', $type = null)
     {
         $idShop = Context::getContext()->shop->id;
@@ -194,7 +187,7 @@ class AdminHelper
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
 
         if (Shop::isFeatureActive()) {
-            $query->where('gcs.id_shop = ' . (int)$idShop);
+            $query->where('gcs.id_shop = ' . (int) $idShop);
         }
 
         $query->orderBy('gt.position ASC');
@@ -218,8 +211,10 @@ class AdminHelper
             if ($a['id_currency'] == $b['id_currency']) {
                 return 0;
             }
+
             return $a['id_currency'] > $b['id_currency'] ? 1 : -1;
         });
-        return (array)$sortCurrencies;
+
+        return (array) $sortCurrencies;
     }
 }

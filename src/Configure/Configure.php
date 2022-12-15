@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,17 +15,13 @@ declare(strict_types=1);
 
 namespace BluePayment\Configure;
 
+use BluePayment\Adapter\ConfigurationAdapter;
 use BluePayment\Config\Config;
 use BluePayment\Statuses\CustomStatus;
-use Module;
-use Symfony\Component\Translation\TranslatorInterface;
-use Tab;
-use Shop;
-use Language;
-use PrestaShopLogger;
-use Configuration as Cfg;
 use BluePayment\Until\Helper;
-use BluePayment\Adapter\ConfigurationAdapter;
+use Language;
+use Shop;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class Configure
 {
@@ -36,7 +31,7 @@ class Configure
     protected $translator;
     protected $name;
 
-    const TRANSLATE_GROUP = 'Modules.Bluepayment';
+    public const TRANSLATE_GROUP = 'Modules.Bluepayment';
 
     public function __construct(
         \BluePayment $module,
@@ -62,15 +57,15 @@ class Configure
     {
         $fields = [
             'normal' => Helper::getFields(),
-            'lang' => Helper::getFieldsLang()
+            'lang' => Helper::getFieldsLang(),
         ];
 
         return $this->uninstallConfiguration($fields);
     }
 
-
     /**
      * Create configuration fields
+     *
      * @return bool
      */
     public function installConfiguration($isMultiStore = false): bool
@@ -237,7 +232,6 @@ class Configure
         return (bool) $res;
     }
 
-
     public function uninstallConfiguration($fields): bool
     {
         $res = true;
@@ -266,9 +260,6 @@ class Configure
         return (bool) $res;
     }
 
-
-
-
     public function addOrderStatuses($customStatus): bool
     {
         $res = false;
@@ -285,7 +276,6 @@ class Configure
         return $res;
     }
 
-
     public function removeOrderStatuses($customStatus): bool
     {
         $res = false;
@@ -300,9 +290,9 @@ class Configure
         return $res;
     }
 
-
     /**
      * Install default text translations for fields in the main configuration
+     *
      * @return bool
      */
     public function installConfigurationTranslations($isMultiStore = false): bool
@@ -313,7 +303,7 @@ class Configure
         $name_group_lang = [];
 
         foreach (Language::getLanguages() as $lang) {
-            if ($lang['locale'] === "pl-PL") {
+            if ($lang['locale'] === 'pl-PL') {
                 $name_lang[$lang['id_lang']] = $this->translator->trans(
                     'Szybka płatność',
                     [],

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,6 +15,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Analyse;
 
+use BluePayment\Config\Config;
 use Context;
 
 class Amplitude
@@ -53,6 +53,7 @@ class Amplitude
         if (self::$instance === null) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
 
@@ -86,5 +87,98 @@ class Amplitude
     public function getAmplitudeId(): string
     {
         return getenv('AMPLITUDE_ID') ?? '';
+    }
+
+    /**
+     * Get gateway id by transaction
+     *
+     * @param $paymentStatus
+     * @param $orderId
+     *
+     * @return void
+     */
+    public function sendOrderAmplitudeEvent($paymentStatus, $orderId): void
+    {
+        $gatewayId = $this->getPaymentGatewayId($orderId);
+        $data = [
+            'events' => [
+                'event_type' => Config::PLUGIN_PAY_COMPLETED,
+                'user_id' => self::getUserId(),
+                'event_properties' => [
+                    'payment type group' => $this->getPaymentGroupNameById($gatewayId),
+                    'payment type channel' => $this->getPaymentNameByGatewayId($gatewayId),
+                    'successful' => $paymentStatus,
+                ],
+            ],
+        ];
+
+        $this->sendEvent($data);
+    }
+
+    /**
+     * Get gateway id by transaction
+     *
+     * @param $orderId
+     *
+     * @return mixed
+     */
+    public function getPaymentGatewayId($orderId)
+    {
+        $query = new \DbQuery();
+        $query->select('gateway_id')->from('blue_transactions')->where('order_id = ' . (int) $orderId);
+
+        return \Db::getInstance()->getValue($query);
+    }
+
+    /**
+     * Get group name by order
+     *
+     * @param $gatewayId
+     *
+     * @return string
+     */
+    public function getPaymentGroupNameById($gatewayId): string
+    {
+        $module = \Module::getInstanceByName('bluepayment');
+        $module->debug($gatewayId);
+
+        switch ($gatewayId) {
+            case Config::GATEWAY_ID_BLIK:
+                $name = 'Blik';
+                break;
+            case Config::GATEWAY_ID_CARD:
+                $name = 'Karta kredytowa';
+                break;
+            case Config::GATEWAY_ID_ALIOR:
+                $name = 'Alior Raty';
+                break;
+            case Config::GATEWAY_ID_SMARTNEY:
+                $name = 'Kup teraz, zapłać później';
+                break;
+            case Config::GATEWAY_ID_APPLE_PAY:
+            case Config::GATEWAY_ID_GOOGLE_PAY:
+                $name = 'Wirtualny portfel';
+                break;
+            default:
+                $name = 'Przelew internetowy';
+        }
+        $module->debug($name);
+
+        return $name;
+    }
+
+    /**
+     * Get payment name by order
+     *
+     * @param $gatewayId
+     *
+     * @return mixed
+     */
+    public function getPaymentNameByGatewayId($gatewayId)
+    {
+        $query = new \DbQuery();
+        $query->select('gateway_name')->from('blue_gateway_transfers')->where('gateway_id = ' . (int) $gatewayId);
+
+        return \Db::getInstance()->getValue($query);
     }
 }

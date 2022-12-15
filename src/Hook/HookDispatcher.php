@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,11 +15,9 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
-use BluePayment\Adapter\ConfigurationAdapter;
-
 class HookDispatcher
 {
-    const CLASSES = [
+    public const CLASSES = [
         Design::class,
         Admin::class,
         Payment::class,
@@ -28,12 +25,14 @@ class HookDispatcher
 
     /**
      * List of available hooks
+     *
      * @var string[]
      */
     private $availableHooks = [];
 
     /**
      * Hook classes
+     *
      * @var Hook\AbstractHook[]
      */
     private $hooks = [];
@@ -44,7 +43,6 @@ class HookDispatcher
      * @var \BluePayment
      */
     private $module;
-
 
     private $configuration;
 

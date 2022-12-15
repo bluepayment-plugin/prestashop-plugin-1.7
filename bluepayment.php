@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -8,11 +7,11 @@
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  * Php version 7.1
  *
- * @category  Payment
- * @package   Blue_Media
  * @author    Blue Media S.A. <biuro@bluemedia.pl>
  * @copyright Since 2015 Blue Media S.A.
  * @license   https://www.gnu.org/licenses/lgpl-3.0.en.html GNU
+ * @category  Payment
+ * @package   Blue_Media
  */
 
 declare(strict_types=1);
@@ -127,7 +126,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.8.3';
+        $this->version = '2.8.4';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];

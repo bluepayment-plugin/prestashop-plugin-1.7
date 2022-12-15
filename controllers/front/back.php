@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -11,7 +10,6 @@
  * @copyright  Since 2015 Blue Media S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

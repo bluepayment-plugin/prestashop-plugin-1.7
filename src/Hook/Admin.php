@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,29 +15,28 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
-use Configuration as Cfg;
-use OrderHistory;
-use Order;
-use Tools;
 use BluePayment\Service\Refund;
 use BluePayment\Until\AdminHelper;
 use BluePayment\Until\Helper;
+use Configuration as Cfg;
+use Order;
+use OrderHistory;
+use Tools;
 
 class Admin extends AbstractHook
 {
-    const AVAILABLE_HOOKS = [
+    public const AVAILABLE_HOOKS = [
         'adminPayments',
         'adminOrder',
-        'displayAdminAfterHeader'
-
+        'displayAdminAfterHeader',
     ];
 
     /**
      * Payment statuses
      */
-    const PAYMENT_STATUS_PENDING = 'PENDING';
-    const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
-    const PAYMENT_STATUS_FAILURE = 'FAILURE';
+    public const PAYMENT_STATUS_PENDING = 'PENDING';
+    public const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
+    public const PAYMENT_STATUS_FAILURE = 'FAILURE';
 
     /**
      * Get the payment methods available in the administration
@@ -87,7 +85,6 @@ class Admin extends AbstractHook
         );
     }
 
-
     public function displayAdminAfterHeader(): string
     {
         $apiUrl = 'https://api-addons.prestashop.com/';
@@ -119,6 +116,7 @@ class Admin extends AbstractHook
 
             if ($ver && version_compare($ver, $version, '>')) {
                 \PrestaShopLogger::addLog('Blue Media - Dostępna aktualizacja', 2);
+
                 return $this->module->fetch('module:bluepayment/views/templates/admin/_partials/upgrade.tpl');
             }
         } catch (\Exception $e) {
@@ -146,7 +144,7 @@ class Admin extends AbstractHook
         $refund_type = Tools::getValue('bm_refund_type', 'full');
         $refund_amount = $refund_type === 'full'
             ? $order->total_paid
-            : (float)str_replace(',', '.', Tools::getValue('bm_refund_amount'));
+            : (float) str_replace(',', '.', Tools::getValue('bm_refund_amount'));
         $refund_errors = [];
         $refund_success = [];
 
@@ -170,9 +168,9 @@ class Admin extends AbstractHook
 
                 if (empty($refund_errors) && $refundOrder[0] === true) {
                     $history = new OrderHistory();
-                    $history->id_order = (int)$order->id;
-                    $history->id_employee = (int)$this->context->employee->id;
-                    $history->changeIdOrderState(Cfg::get('PS_OS_REFUND'), (int)$order->id);
+                    $history->id_order = (int) $order->id;
+                    $history->id_employee = (int) $this->context->employee->id;
+                    $history->changeIdOrderState(Cfg::get('PS_OS_REFUND'), (int) $order->id);
                     $history->addWithemail(true, []);
                     $refund_success[] = $this->module->l('Successful refund');
                 }

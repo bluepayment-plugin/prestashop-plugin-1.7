@@ -28,8 +28,8 @@ function upgrade_module_2_8_2($module)
 
     $data = [
         'events' => [
-            "event_type" => Config::PLUGIN_UPDATED,
-            "user_properties" => [
+            'event_type' => Config::PLUGIN_UPDATED,
+            'user_properties' => [
                 Config::PLUGIN_VERSION => $module->version,
             ],
         ],

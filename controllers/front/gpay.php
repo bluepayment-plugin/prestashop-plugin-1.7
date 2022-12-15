@@ -10,7 +10,6 @@
  * @copyright  Since 2015 Blue Media S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -37,7 +36,7 @@ class BluePaymentGpayModuleFrontController extends ModuleFrontController
         $customer = new Customer($order->id_customer);
 
         if (!Validate::isLoadedObject($customer)) {
-            Tools::redirect(__PS_BASE_URI__.'order.php?step=1');
+            Tools::redirect(__PS_BASE_URI__ . 'order.php?step=1');
         }
 
         if (empty($paymentStatus) || $paymentStatus == 'FAILURE') {
@@ -46,12 +45,12 @@ class BluePaymentGpayModuleFrontController extends ModuleFrontController
 
         if ($status) {
             Tools::redirect(
-                'index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' .
-                (int)$this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
+                'index.php?controller=order-confirmation&id_cart=' . (int) $cart->id . '&id_module=' .
+                (int) $this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
             );
         } else {
             Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [
-                'error' => 'Wrong status'
+                'error' => 'Wrong status',
             ], true));
         }
     }

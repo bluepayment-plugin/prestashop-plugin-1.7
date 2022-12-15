@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -18,6 +17,7 @@ namespace BluePayment\Service;
 
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use Configuration;
 
 class Refund
 {
@@ -53,9 +53,10 @@ class Refund
             '&Amount=' . $amount .
             '&Currency=' . $currency->iso_code .
             '&Hash=' . $hashConfirmation;
-
+        $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
+        $payUrl = $test_mode ? \BlueMedia\OnlinePayments\Gateway::PAYMENT_DOMAIN_SANDBOX : \BlueMedia\OnlinePayments\Gateway::PAYMENT_DOMAIN_LIVE;
         curl_setopt_array($curl, [
-            CURLOPT_URL => 'https://pay-accept.bm.pl/transactionRefund',
+            CURLOPT_URL => 'https://' . $payUrl . '/transactionRefund',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,

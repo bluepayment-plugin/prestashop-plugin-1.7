@@ -38,6 +38,7 @@ return array(
     'BluePayment\\Statuses\\CustomStatus' => $baseDir . '/src/Statuses/CustomStatus.php',
     'BluePayment\\Statuses\\OrderStatusMessageDictionary' => $baseDir . '/src/Statuses/OrderStatusMessageDictionary.php',
     'BluePayment\\Until\\AdminHelper' => $baseDir . '/src/Until/AdminHelper.php',
+    'BluePayment\\Until\\AnaliticsHelper' => $baseDir . '/src/Until/AnaliticsHelper.php',
     'BluePayment\\Until\\Helper' => $baseDir . '/src/Until/Helper.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Symfony\\Component\\Dotenv\\Dotenv' => $vendorDir . '/symfony/dotenv/Dotenv.php',

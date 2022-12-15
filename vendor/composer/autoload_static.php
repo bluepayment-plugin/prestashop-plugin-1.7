@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit3fa9d679bf4ac939dd683bf881103069
+class ComposerStaticInitb577592e2351f0a8bb2fe7a17a435dd7
 {
     public static $prefixLengthsPsr4 = array (
         'S' => 
@@ -61,6 +61,7 @@ class ComposerStaticInit3fa9d679bf4ac939dd683bf881103069
         'BluePayment\\Statuses\\CustomStatus' => __DIR__ . '/../..' . '/src/Statuses/CustomStatus.php',
         'BluePayment\\Statuses\\OrderStatusMessageDictionary' => __DIR__ . '/../..' . '/src/Statuses/OrderStatusMessageDictionary.php',
         'BluePayment\\Until\\AdminHelper' => __DIR__ . '/../..' . '/src/Until/AdminHelper.php',
+        'BluePayment\\Until\\AnaliticsHelper' => __DIR__ . '/../..' . '/src/Until/AnaliticsHelper.php',
         'BluePayment\\Until\\Helper' => __DIR__ . '/../..' . '/src/Until/Helper.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Symfony\\Component\\Dotenv\\Dotenv' => __DIR__ . '/..' . '/symfony/dotenv/Dotenv.php',
@@ -73,9 +74,9 @@ class ComposerStaticInit3fa9d679bf4ac939dd683bf881103069
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit3fa9d679bf4ac939dd683bf881103069::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit3fa9d679bf4ac939dd683bf881103069::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit3fa9d679bf4ac939dd683bf881103069::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb577592e2351f0a8bb2fe7a17a435dd7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb577592e2351f0a8bb2fe7a17a435dd7::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb577592e2351f0a8bb2fe7a17a435dd7::$classMap;
 
         }, null, ClassLoader::class);
     }

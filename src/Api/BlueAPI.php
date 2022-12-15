@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -18,10 +17,9 @@ namespace BluePayment\Api;
 
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\PaywayList;
-use BluePayment\Until\Helper;
 use BluePayment\Config\Config;
+use BluePayment\Until\Helper;
 use Configuration as Cfg;
-use Module;
 
 class BlueAPI
 {
@@ -46,10 +44,10 @@ class BlueAPI
         return null;
     }
 
-
     public function getApiMode(): string
     {
         $testMode = Cfg::get($this->module->name_upper . '_TEST_ENV');
+
         return $testMode ? 'sandbox' : 'live';
     }
 
@@ -99,6 +97,7 @@ class BlueAPI
         if ($gateway && $response && $currency) {
             return $gateway->syncGateway($response, $currency, $position);
         }
+
         return null;
     }
 
