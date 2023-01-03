@@ -34,6 +34,7 @@ class Config
     public const GATEWAY_ID_GOOGLE_PAY = 1512;
     public const GATEWAY_ID_APPLE_PAY = 1513;
     public const GATEWAY_ID_SMARTNEY = 700;
+    public const GATEWAY_ID_PAYPO = 705;
     public const GATEWAY_ID_BLIK = 509;
     public const GATEWAY_ID_WALLET = 999;
     public const GATEWAY_ID_TRANSFER = 9999;

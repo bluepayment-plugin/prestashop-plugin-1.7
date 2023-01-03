@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.8.5] 3.01.2022
+- Added amplitude analytics events
+- Added PayPo payment
+
 ## [2.8.4] 15.12.2022
 - Fixed duplicate statuses
 - Fixed refund order

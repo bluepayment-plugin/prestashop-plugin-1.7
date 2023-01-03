@@ -117,6 +117,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
             Config::GATEWAY_ID_ALIOR,
             Config::GATEWAY_ID_CARD,
             Config::GATEWAY_ID_SMARTNEY,
+            Config::GATEWAY_ID_PAYPO,
         ];
 
         return array_filter($group, function ($val) use ($gatewayArray) {

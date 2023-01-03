@@ -107,6 +107,7 @@ class Helper
             Config::GATEWAY_ID_GOOGLE_PAY,
             Config::GATEWAY_ID_APPLE_PAY,
             Config::GATEWAY_ID_SMARTNEY,
+            Config::GATEWAY_ID_PAYPO
         ];
 
         return implode(',', $gatewayArray);
