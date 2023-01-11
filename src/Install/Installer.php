@@ -218,12 +218,16 @@ class Installer
         $sqlStatements = Tools::file_get_contents($path);
         $sqlStatements = str_replace(['_DB_PREFIX_', '_MYSQL_ENGINE_'], [_DB_PREFIX_, _MYSQL_ENGINE_], $sqlStatements);
 
-        $status = $this->sqlExecute($db, $sqlStatements);
-
-        if (!$status) {
-            throw new \Exception();
+        $sqlStatementsArray = explode(";", $sqlStatements);
+        foreach($sqlStatementsArray as $sqlStatement){
+            $sqlStatement = trim($sqlStatement);
+            if(!empty($sqlStatement)){
+                $status = $this->sqlExecute($db, $sqlStatement.';');
+                if (!$status) {
+                    throw new \Exception();
+                }
+            }
         }
-
         return true;
     }
 
