@@ -118,6 +118,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
             Config::GATEWAY_ID_CARD,
             Config::GATEWAY_ID_SMARTNEY,
             Config::GATEWAY_ID_PAYPO,
+            Config::GATEWAY_ID_VISA_MOBILE,
         ];
 
         return array_filter($group, function ($val) use ($gatewayArray) {
@@ -152,7 +153,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public function syncGateway($apiGateways, $currency, $position = 1): ?BlueGatewayChannels
     {
         if ($apiGateways && $currency) {
-            /// Reset position by currency
+            // Reset position by currency
             $paymentsGroup = $apiGateways->getGateways();
             $paymentOptionsArray = $this->getOnlyGroups($paymentsGroup);
             $paymentOptionsArray[Config::GATEWAY_ID_TRANSFER] = $this->createTransferPaymentOption();
@@ -211,7 +212,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
         $q->select('gc.id_blue_gateway_channels, gc.position');
         $q->from(self::TABLE, 'gc');
         $q->leftJoin('blue_gateway_channels_shop', 'gcs', 'gcs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
-        $q->where('gc.id_blue_gateway_channels = "' . (int) ($id) . '"');
+        $q->where('gc.id_blue_gateway_channels = "' . (int) $id . '"');
         if (Shop::isFeatureActive()) {
             $q->where('gcs.id_shop = ' . (int) $shopId);
         }

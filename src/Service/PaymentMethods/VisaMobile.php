@@ -21,7 +21,7 @@ use BluePayment\Until\Helper;
 use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
-class PayPo implements GatewayType
+class VisaMobile implements GatewayType
 {
     public function getPaymentOption(
         \BluePayment $module,
@@ -34,24 +34,6 @@ class PayPo implements GatewayType
             true
         );
 
-        $smartneyMerchantInfo = Context::getContext()->link->getModuleLink(
-            'bluepayment',
-            'merchantInfo',
-            [],
-            true
-        );
-        $smartneyLinkCharge = Context::getContext()->link->getModuleLink(
-            'bluepayment',
-            'chargeSmartney',
-            [],
-            true
-        );
-
-        Context::getContext()->smarty->assign([
-            'smartney_merchantInfo' => $smartneyMerchantInfo,
-            'smartney_moduleLinkCharge' => $smartneyLinkCharge,
-        ]);
-
         $option = new PaymentOption();
         $option->setCallToActionText($module->l($data['gateway_name']))
             ->setAction($moduleLink)
@@ -59,17 +41,17 @@ class PayPo implements GatewayType
                 [
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway',
-                    'value' => Config::GATEWAY_ID_PAYPO,
+                    'value' => Config::GATEWAY_ID_VISA_MOBILE,
                 ],
                 [
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway_id',
-                    'value' => Config::GATEWAY_ID_PAYPO,
+                    'value' => Config::GATEWAY_ID_VISA_MOBILE,
                 ],
             ])
             ->setLogo($data['gateway_logo_url'])
             ->setAdditionalInformation(
-                $module->fetch('module:bluepayment/views/templates/hook/paymentRedirectPayPo.tpl')
+                $module->fetch('module:bluepayment/views/templates/hook/paymentRedirectVisaMobile.tpl')
             );
 
         return $option;
@@ -82,7 +64,7 @@ class PayPo implements GatewayType
     {
         $iso_code = Helper::getIsoFromContext(Context::getContext());
         return BlueGatewayTransfers::isTransferActive(
-            Config::GATEWAY_ID_PAYPO,
+            Config::GATEWAY_ID_VISA_MOBILE,
             $iso_code
         );
     }

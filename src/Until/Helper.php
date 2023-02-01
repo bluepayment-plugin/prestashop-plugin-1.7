@@ -107,7 +107,8 @@ class Helper
             Config::GATEWAY_ID_GOOGLE_PAY,
             Config::GATEWAY_ID_APPLE_PAY,
             Config::GATEWAY_ID_SMARTNEY,
-            Config::GATEWAY_ID_PAYPO
+            Config::GATEWAY_ID_PAYPO,
+            Config::GATEWAY_ID_VISA_MOBILE,
         ];
 
         return implode(',', $gatewayArray);
@@ -157,9 +158,8 @@ class Helper
     /**
      * @param $id_order
      *
-     * @throws PrestaShopDatabaseException
-     *
      * @return array
+     * @throws PrestaShopDatabaseException
      */
     public static function getOrdersByOrderId($id_order): array
     {
@@ -258,7 +258,7 @@ class Helper
 
             if (\Validate::isLoadedObject($order)) {
                 // Attach invoice and / or delivery-slip if they exists and status is set to attach them
-                if (($result['pdf_invoice'] || $result['pdf_delivery'])) {
+                if ($result['pdf_invoice'] || $result['pdf_delivery']) {
                     $invoice = $order->getInvoicesCollection();
                     $file_attachement = [];
 

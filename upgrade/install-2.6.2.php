@@ -16,7 +16,6 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_2_6_2($module)
 {
-
     $return = true;
 
     $return &= $module->uninstallTab();

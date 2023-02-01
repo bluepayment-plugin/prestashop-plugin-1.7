@@ -56,11 +56,11 @@ class CustomStatus
 
         $languages = \Language::getLanguages(false);
 
-        //common features for both statuses
+        // common features for both statuses
         $module_name = 'bluepayment';
         $unremovable = false;
 
-        //features for bluemedia pending status
+        // features for bluemedia pending status
         $pending_color = '#4997F5';
         $pending_template = 'bluemedia_pending';
         $pending_send_email = true;
@@ -68,7 +68,7 @@ class CustomStatus
         $pending_name_en = 'Blue Media: payment in progress';
         $pending_name_pl = 'Blue Media: płatność w trakcie realizacji';
 
-        //features for completed status
+        // features for completed status
         $completed_color = '#77CB1E';
         $completed_template = 'bluemedia_completed';
         $completed_send_email = true;
@@ -76,7 +76,7 @@ class CustomStatus
         $completed_name_en = 'Blue Media: payment accepted';
         $completed_name_pl = 'Blue Media: płatność zatwierdzona';
 
-        //features for bluemedia payment error status
+        // features for bluemedia payment error status
         $payment_error_color = '#cb1e77';
         $payment_error_template = 'bluemedia_payment_error';
         $payment_error_send_email = true;

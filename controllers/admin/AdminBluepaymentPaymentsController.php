@@ -82,8 +82,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
     public function ajaxProcessUpdatePositions()
     {
-        $idPosition = (int) (Tools::getValue('id'));
-        $way = (int) (Tools::getValue('way'));
+        $idPosition = (int) Tools::getValue('id');
+        $way = (int) Tools::getValue('way');
         $positions = Tools::getValue('blue_gateway_channels');
 
         if (is_array($positions)) {
@@ -99,12 +99,12 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             if (Validate::isLoadedObject($GatewayChannels)) {
                 if (isset($position) && $GatewayChannels->updatePosition($idPosition, $way, $position)) {
                     Hook::exec('actionBlueGatewayChannelsUpdate');
-                    die(true);
+                    exit(true);
                 } else {
-                    die('{"hasError" : true, errors : "Can not update position"}');
+                    exit('{"hasError" : true, errors : "Can not update position"}');
                 }
             } else {
-                die('{"hasError" : true, "errors" : "This can not be loaded"}');
+                exit('{"hasError" : true, "errors" : "This can not be loaded"}');
             }
         }
     }
@@ -412,16 +412,11 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                             ],
                         ],
                     ],
-
-                    /// kanaly
-
                     [
                         'type' => 'infoheading',
                         'name' => false,
                         'label' => $this->l('Show payment information on the site'),
                     ],
-
-                    /// Opis
                     [
                         'type' => 'switch',
                         'label' => $this->l('At the top of the page'),
@@ -773,7 +768,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             $data[$field] = Tools::getValue($field, Cfg::get($field));
         }
 
-        /// Languages
         foreach (Helper::getFieldsLang() as $field) {
             foreach (Language::getLanguages(true) as $lang) {
                 if (Cfg::get($field, $lang['id_lang'])) {
@@ -782,7 +776,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             }
         }
 
-        /// Currencies
         foreach (Helper::getFieldsService() as $field) {
             foreach (AdminHelper::getSortCurrencies() as $currency) {
                 $data[$field . '_' . $currency['iso_code']] =

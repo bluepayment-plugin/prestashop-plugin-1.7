@@ -136,6 +136,28 @@ class TransactionInit extends AbstractModel
     protected $screenType = '';
 
     /**
+     * @var string
+     */
+    protected $platformName = '';
+
+    /**
+     * @var string
+     */
+    protected $platformVersion = '';
+
+    /**
+     * @var string
+     */
+    protected $platformPluginVersion = '';
+
+    public function __construct()
+    {
+        $this->setPlatformName('PrestaShop');
+        $this->setPlatformVersion(_PS_VERSION_);
+        $bluepayment = \Module::getInstanceByName('bluepayment');
+        $this->setPlatformPluginVersion($bluepayment->version);
+    }
+    /**
      * @return string
      */
     public function getScreenType(): string
@@ -536,6 +558,57 @@ class TransactionInit extends AbstractModel
     }
 
     /**
+     * @return string
+     */
+    public function getPlatformName(): string
+    {
+        return $this->platformName;
+    }
+
+    /**
+     * @param string $platformName
+     */
+    public function setPlatformName(string $platformName): self
+    {
+        $this->platformName = $platformName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlatformVersion(): string
+    {
+        return $this->platformVersion;
+    }
+
+    /**
+     * @param string $platformVersion
+     */
+    public function setPlatformVersion(string $platformVersion): self
+    {
+        $this->platformVersion = $platformVersion;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlatformPluginVersion(): string
+    {
+        return $this->platformPluginVersion;
+    }
+
+    /**
+     * @param string $platformPluginVersion
+     */
+    public function setPlatformPluginVersion(string $platformPluginVersion): self
+    {
+        $this->platformPluginVersion = $platformPluginVersion;
+        return $this;
+    }
+
+    /**
      * Return object data as array.
      *
      * @return array
@@ -589,6 +662,18 @@ class TransactionInit extends AbstractModel
 
         if (!empty($this->getDefaultRegulationsAcceptanceTime())) {
             $result['DefaultRegulationAcceptanceTime'] = $this->getDefaultRegulationsAcceptanceTime();
+        }
+
+        if (!empty($this->getPlatformName())) {
+            $result['PlatformName'] = $this->getPlatformName();
+        }
+
+        if (!empty($this->getPlatformVersion())) {
+            $result['PlatformVersion'] = $this->getPlatformVersion();
+        }
+
+        if (!empty($this->getPlatformPluginVersion())) {
+            $result['PlatformPluginVersion'] = $this->getPlatformPluginVersion();
         }
 
         $result['Hash'] = $this->getHash();

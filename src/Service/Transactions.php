@@ -96,17 +96,17 @@ class Transactions
     {
         Config::getSdk();
 
-        /// Payment status identifiers
+        // Payment status identifiers
         $statusAcceptId = (int) Cfg::get($this->module->name_upper . '_STATUS_ACCEPT_PAY_ID');
         $statusErrorId = (int) Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
 
-        /// Payment status
+        // Payment status
         $paymentStatus = $this->pSql((string) $transaction->paymentStatus);
 
-        /// The transaction id assigned by the gateway
+        // The transaction id assigned by the gateway
         $remoteId = $this->pSql((string) $transaction->remoteID);
 
-        /// Order id
+        // Order id
         $realOrderId = $this->pSql((string) $transaction->orderID);
         $orderId = explode('-', (string) $realOrderId)[0];
 
@@ -185,8 +185,8 @@ class Transactions
 
                     break;
                 case self::PAYMENT_STATUS_FAILURE:
-                        $this->changeOrdersStatus($order, $statusErrorId);
-                        $amplitude->sendOrderAmplitudeEvent('false', $orderId);
+                    $this->changeOrdersStatus($order, $statusErrorId);
+                    $amplitude->sendOrderAmplitudeEvent('false', $orderId);
                     break;
                 default:
                     break;
@@ -360,16 +360,16 @@ class Transactions
             $currency->iso_code
         );
 
-        /// Shared key
+        // Shared key
         $shared_key = Helper::parseConfigByCurrency(
             $this->module->name_upper . Config::SHARED_KEY,
             $currency->iso_code
         );
 
-        /// An array of data from which to generate the hash
+        // An array of data from which to generate the hash
         $hash_data = [$service_id, $realOrderId, $confirmation, $shared_key];
 
-        /// hash key
+        // hash key
         $hash_confirmation = Helper::generateAndReturnHash($hash_data);
 
         $dom = new \DOMDocument('1.0', 'UTF-8');

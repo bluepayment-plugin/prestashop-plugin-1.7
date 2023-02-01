@@ -35,7 +35,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         }
 
         if (!$this->moduleAuthorized()) {
-            die($this->module->l('This payment method is not available.', 'bluepayment'));
+            exit($this->module->l('This payment method is not available.', 'bluepayment'));
         }
 
         $customer = new Customer($cart->id_customer);
@@ -65,13 +65,13 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             $bluepaymentCartId = Tools::getValue('bluepayment_cart_id', null);
 
             if (empty($bluepaymentCartId)) {
-                die($this->module->l('This cart is empty.', 'bluepayment'));
+                exit($this->module->l('This cart is empty.', 'bluepayment'));
             } else {
                 $bluepaymentCartId = explode('-', $bluepaymentCartId);
                 $bluepaymentCartId = empty($bluepaymentCartId[0]) ? 0 : $bluepaymentCartId[0];
 
                 $order = Order::getByCartId($bluepaymentCartId);
-                $cart = Cart::getCartByOrderId($order->id); /// refractor
+                $cart = Cart::getCartByOrderId($order->id);
 
                 $totalPaid = (float) $cart->getOrderTotal(true, Cart::BOTH);
                 $amount = number_format(round($totalPaid, 2), 2, '.', '');

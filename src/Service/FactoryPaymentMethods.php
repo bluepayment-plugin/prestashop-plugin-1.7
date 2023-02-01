@@ -80,6 +80,9 @@ class FactoryPaymentMethods
             case Config::GATEWAY_ID_PAYPO:
                 $gateway = 'PayPo';
                 break;
+            case Config::GATEWAY_ID_VISA_MOBILE:
+                $gateway = 'VisaMobile';
+                break;
             default:
                 $gateway = '';
         }

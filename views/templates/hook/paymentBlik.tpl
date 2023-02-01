@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2022
+ * @copyright      Copyright (c) 2015-2023
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <span class="bm-payment__elm" data-open-payment="blik"></span>

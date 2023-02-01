@@ -36,7 +36,7 @@ class AnaliticsHelper
         $gaType = Cfg::get('BLUEPAYMENT_GA_TYPE');
 
         if ($gaTrackerId || ($ga4TrackerId && $ga4Secret)) {
-            /// Get ga user session
+            // Get ga user session
             $query = new \DbQuery();
             $query->from('blue_transactions')
                 ->where('order_id like "' . (int) $orderId . '-%"')
@@ -117,7 +117,7 @@ class AnaliticsHelper
                     $analitics->ga4SendEvent($args);
                 }
 
-                /// Reset state
+                // Reset state
                 $transactionData = [
                     'gtag_state' => 1,
                 ];

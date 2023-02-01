@@ -128,7 +128,7 @@ class Admin extends AbstractHook
 
     public function adminOrder($params)
     {
-        $this->module->id_order = $params['id_order']; /// todo seter
+        $this->module->id_order = $params['id_order']; // todo seter
         $order = new Order($this->module->id_order);
 
         $output = '';

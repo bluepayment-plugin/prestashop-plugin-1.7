@@ -13,4 +13,13 @@
  * @copyright      Copyright (c) 2015-2023
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-{include file="module:bluepayment/views/templates/hook/labels/labels.tpl" type='cart'}
+<span class="bm-payment__elm" data-open-payment="blik" data-payment-redirect="false"></span>
+</span>
+<section>
+	<p>
+        {l s='Enter your phone number and confirm the payment in the application.' mod='bluepayment'}
+	</p>
+</section>
+
+
+

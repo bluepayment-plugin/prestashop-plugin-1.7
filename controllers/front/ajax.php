@@ -29,7 +29,7 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
         parent::init();
     }
 
-    /// Helper do analityki
+    // Helper do analityki
 
     public function initContent()
     {

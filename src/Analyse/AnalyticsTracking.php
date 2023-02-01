@@ -128,8 +128,8 @@ class AnalyticsTracking
             'tid' => $this->trackedId,
             'cid' => $this->gaParseCookie(),
             't' => 'event',
-            'ec' => $category, //(Required)
-            'ea' => $action, //(Required)
+            'ec' => $category, // (Required)
+            'ea' => $action, // (Required)
             'el' => $label,
         ];
 
@@ -153,6 +153,6 @@ class AnalyticsTracking
 
         $dataMerge = array_merge($data, $products);
 
-        return $this->ga4SendData((array) (json_encode($dataMerge, JSON_PRETTY_PRINT)));
+        return $this->ga4SendData((array) json_encode($dataMerge, JSON_PRETTY_PRINT));
     }
 }
