@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,10 +17,12 @@ declare(strict_types=1);
 namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
-use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 use Context;
+use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Tools;
+use BluePayment\Config\Config;
 
 class Card implements GatewayType
 {
@@ -27,6 +30,7 @@ class Card implements GatewayType
         \BluePayment $module,
         array $data = []
     ): PaymentOption {
+
         $moduleLink = Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
@@ -69,7 +73,6 @@ class Card implements GatewayType
     public function isActive(): bool
     {
         $isoCode = Helper::getIsoFromContext(Context::getContext());
-
         return BlueGatewayTransfers::isTransferActive(
             Config::GATEWAY_ID_CARD,
             $isoCode

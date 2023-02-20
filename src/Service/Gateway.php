@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -17,6 +18,7 @@ namespace BluePayment\Service;
 
 use BluePayment\Service\PaymentMethods\GatewayType;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class Gateway
 {

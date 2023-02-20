@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -10,6 +11,7 @@
  * @copyright  Since 2015 Blue Media S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -17,7 +19,6 @@ if (!defined('_PS_VERSION_')) {
 class BluepaymentAjaxModuleFrontController extends ModuleFrontController
 {
     public $ajax;
-
     public function __construct()
     {
         parent::__construct();
@@ -29,7 +30,7 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
         parent::init();
     }
 
-    // Helper do analityki
+    /// Helper do analityki
 
     public function initContent()
     {
@@ -61,8 +62,8 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
                             'brand' => $product->manufacturer_name,
                             'category' => $product->category,
                             'variant' => $product_id_attribute,
-                            'price' => $product->price,
-                        ],
+                            'price' => $product->price
+                        ]
                     ]
                 )
             );

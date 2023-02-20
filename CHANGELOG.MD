@@ -1,22 +1,5 @@
 # Changelog
 
-## [2.8.5] 3.01.2022
-- Added amplitude analytics events
-- Added PayPo payment
-
-## [2.8.4] 15.12.2022
-- Fixed duplicate statuses
-- Fixed refund order
-- Fixed promo settings
-- Added amplitude analytics events
-- Improved code standard
-- Changed directory sdk to libs
-
-## [2.8.3] 17.11.2022
-- Added Env settings
-- Fixed error ITN
-- Fixed a status change that occurred after a status change in some time after an order 
-
 ## [2.8.2] 02.11.2022
 - Change the display of information about an available module update
 - Change the behavior of statuses when the product is out of stock

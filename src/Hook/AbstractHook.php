@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -15,9 +16,12 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
+use Context;
+use BluePayment\Adapter\ConfigurationAdapter;
+
 abstract class AbstractHook
 {
-    public const AVAILABLE_HOOKS = [];
+    const AVAILABLE_HOOKS = [];
 
     /**
      * @var \BluePayment

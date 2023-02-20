@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2023
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <div class="row">
@@ -26,7 +26,7 @@
             <div class="card-body">
 
 
-                {if $SHOW_REFUND}
+                {if $SHOW_REFUND || 1==1}
                     <div class="row">
                         <div class="col-sm-6">
                             <form action="" method="post"

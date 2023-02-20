@@ -1,0 +1,63 @@
+.autopay-modal-container{
+  position: fixed;
+  background: fade_out(#000, .4);
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  display: none;
+  align-content: center;
+  justify-content: center;
+  .autopay-modal{
+    background: #fff;
+    padding: 15px;
+    width: 90%;
+    max-width: 500px;
+    height: 100px;
+    margin: auto;
+    position: relative;
+    display: flex;
+    align-content: center;
+    .content{
+      margin: 25px 0 auto;
+      p{
+        font-weight: bold;
+      }
+    }
+    .close{
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+  }
+}
+.apc__inner-wrapper{
+  display: none !important;
+}
+.autopay-container{
+  &.lock{
+    .apc__outer-wrapper{
+      position: relative;
+      &:after{
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: fade_out(#fff, .5);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 999;
+      }
+      .apc__inner-wrapper{
+        display: none;
+      }
+    }
+  }
+  &:not([data-apc_button_fullwidth="1"]) {
+    .apc__outer-wrapper {
+      display: flex;
+      justify-content: flex-start;
+    }
+  }
+}

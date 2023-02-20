@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,11 +17,15 @@ declare(strict_types=1);
 namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
-use BluePayment\Config\Config;
+use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Until\Helper;
-use Configuration as Cfg;
 use Context;
+use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Configuration as Cfg;
+use Db;
+use Shop;
+use BluePayment\Config\Config;
 
 class VirtualWallet implements GatewayType
 {
@@ -95,7 +100,6 @@ class VirtualWallet implements GatewayType
 
     /**
      * Function check if active Gpay or Apple Pay
-     *
      * @return bool
      */
     public function isActive(): bool
@@ -107,6 +111,7 @@ class VirtualWallet implements GatewayType
 
         return $googlePay || $applePay;
     }
+
 
     public function checkIfActiveSubChannel($gatewayId, $currency): bool
     {

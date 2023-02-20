@@ -22,10 +22,11 @@ use BluePayment\Config\Config;
 
 function upgrade_module_2_8_1($module)
 {
+
     $data = [
         'events' => [
-            'event_type' => Config::PLUGIN_UPDATED,
-            'user_properties' => [
+            "event_type" => Config::PLUGIN_UPDATED,
+            "user_properties" => [
                 Config::PLUGIN_VERSION => $module->version,
             ],
         ],

@@ -67,3 +67,18 @@ CREATE TABLE IF NOT EXISTS `_DB_PREFIX_blue_transactions`
     PRIMARY KEY (`id`)
 ) ENGINE = _MYSQL_ENGINE_
   DEFAULT CHARSET = UTF8;
+
+  CREATE TABLE `_DB_PREFIX_blue_apc` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `cartId` int(11) DEFAULT NULL,
+  `customerId` int(11) DEFAULT NULL,
+  `id_lang` int(11) DEFAULT NULL,
+  `id_currency` int(11) DEFAULT NULL,
+  `id_address_delivery` int(11) DEFAULT NULL,
+  `id_address_invoice` int(11) DEFAULT NULL,
+  `id_shop` int(11) DEFAULT NULL,
+  `id_shop_group` int(11) DEFAULT NULL,
+  `id_country` varchar(4) DEFAULT NULL,
+  `is_guest` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

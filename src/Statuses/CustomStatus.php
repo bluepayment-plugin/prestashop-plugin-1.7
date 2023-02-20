@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -15,11 +16,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Statuses;
 
-use Configuration as Cfg;
 use Db;
+use Configuration as Cfg;
 
 class CustomStatus
 {
+
+
+
     public function addOrderStates(int $language_id, $base_name): bool
     {
         $res = true;
@@ -56,33 +60,34 @@ class CustomStatus
 
         $languages = \Language::getLanguages(false);
 
-        // common features for both statuses
+        //common features for both statuses
         $module_name = 'bluepayment';
         $unremovable = false;
 
-        // features for bluemedia pending status
+        //features for bluemedia pending status
         $pending_color = '#4997F5';
         $pending_template = 'bluemedia_pending';
         $pending_send_email = true;
         $pending_paid = false;
-        $pending_name_en = 'Blue Media: payment in progress';
-        $pending_name_pl = 'Blue Media: płatność w trakcie realizacji';
+        $pending_name_en = "Blue Media: payment in progress";
+        $pending_name_pl = "Blue Media: płatność w trakcie realizacji";
 
-        // features for completed status
+        //features for completed status
         $completed_color = '#77CB1E';
         $completed_template = 'bluemedia_completed';
         $completed_send_email = true;
         $completed_paid = true;
-        $completed_name_en = 'Blue Media: payment accepted';
-        $completed_name_pl = 'Blue Media: płatność zatwierdzona';
+        $completed_name_en = "Blue Media: payment accepted";
+        $completed_name_pl = "Blue Media: płatność zatwierdzona";
 
-        // features for bluemedia payment error status
+        //features for bluemedia payment error status
         $payment_error_color = '#cb1e77';
         $payment_error_template = 'bluemedia_payment_error';
         $payment_error_send_email = true;
         $payment_error_paid = false;
-        $payment_error_name_en = 'Blue Media: payment error';
-        $payment_error_name_pl = 'Blue Media: błąd płatności';
+        $payment_error_name_en = "Blue Media: payment error";
+        $payment_error_name_pl = "Blue Media: błąd płatności";
+
 
         if (
             !CustomStatus::checkIfStateExists($pending_name_pl, $language_id) &&
@@ -98,14 +103,14 @@ class CustomStatus
             $pending->paid = $pending_paid;
 
             foreach ($languages as $language) {
-                if ($language['iso_code'] == 'pl') {
+                if ($language['iso_code'] == "pl") {
                     $pending->name[$language['id_lang']] = $pending_name_pl;
                 } else {
                     $pending->name[$language['id_lang']] = $pending_name_en;
                 }
             }
 
-            if (!$pending->add()) {
+            if(!$pending->add()) {
                 $res = false;
             }
 
@@ -127,14 +132,14 @@ class CustomStatus
             $completed->paid = $completed_paid;
 
             foreach ($languages as $language) {
-                if ($language['iso_code'] == 'pl') {
+                if ($language['iso_code'] == "pl") {
                     $completed->name[$language['id_lang']] = $completed_name_pl;
                 } else {
                     $completed->name[$language['id_lang']] = $completed_name_en;
                 }
             }
 
-            if (!$completed->add()) {
+            if(!$completed->add()) {
                 $res = false;
             }
 
@@ -155,14 +160,14 @@ class CustomStatus
             $payment_error->paid = $payment_error_paid;
 
             foreach ($languages as $language) {
-                if ($language['iso_code'] == 'pl') {
+                if ($language['iso_code'] == "pl") {
                     $payment_error->name[$language['id_lang']] = $payment_error_name_pl;
                 } else {
                     $payment_error->name[$language['id_lang']] = $payment_error_name_en;
                 }
             }
 
-            if (!$payment_error->add()) {
+            if(!$payment_error->add()) {
                 $res = false;
             }
 
@@ -200,10 +205,9 @@ class CustomStatus
         $states = \OrderState::getOrderStates($language_id);
         foreach ($states as $state) {
             if ($state['template'] == 'bluemedia_pending') {
-                return $state['id_order_state'];
+                return $state["id_order_state"];
             }
         }
-
         return 0;
     }
 
@@ -212,10 +216,9 @@ class CustomStatus
         $states = \OrderState::getOrderStates($language_id);
         foreach ($states as $state) {
             if ($state['template'] == 'bluemedia_completed') {
-                return $state['id_order_state'];
+                return $state["id_order_state"];
             }
         }
-
         return 0;
     }
 }

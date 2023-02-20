@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -15,10 +16,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
-use BluePayment\Until\Helper;
 use Configuration as Cfg;
 use Context;
+use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Tools;
+use BluePayment\Until\Helper;
+use Shop;
+use Db;
 
 class InternetTransfer implements GatewayType
 {
@@ -39,6 +44,7 @@ class InternetTransfer implements GatewayType
             [],
             true
         );
+
 
         $option = new PaymentOption();
         $option->setCallToActionText($paymentName)

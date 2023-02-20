@@ -10,12 +10,10 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2023
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <span class="bm-payment__elm" ></span>
 <section>
-	<p>
-		{l s='You will be redirected to our partner\'s website where you can make a fast and secure payment.' mod='bluepayment'}
-	</p>
+	<p>{l s='You will be redirected to our partner\'s website where you can make a fast and secure payment.' mod='bluepayment'}</p>
 </section>

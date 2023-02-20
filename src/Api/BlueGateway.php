@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,6 +17,8 @@ declare(strict_types=1);
 namespace BluePayment\Api;
 
 use BluePayment\Until\AdminHelper;
+use Module;
+use BluePayment\BlueAPI;
 
 class BlueGateway
 {

@@ -1,0 +1,69 @@
+/* line 1, apc.scss */
+.autopay-modal-container {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.6);
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  display: none;
+  align-content: center;
+  justify-content: center;
+}
+/* line 12, apc.scss */
+.autopay-modal-container .autopay-modal {
+  background: #fff;
+  padding: 15px;
+  width: 90%;
+  max-width: 500px;
+  height: 100px;
+  margin: auto;
+  position: relative;
+  display: flex;
+  align-content: center;
+}
+/* line 22, apc.scss */
+.autopay-modal-container .autopay-modal .content {
+  margin: 25px 0 auto;
+}
+/* line 24, apc.scss */
+.autopay-modal-container .autopay-modal .content p {
+  font-weight: bold;
+}
+/* line 28, apc.scss */
+.autopay-modal-container .autopay-modal .close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+/* line 35, apc.scss */
+.apc__inner-wrapper {
+  display: none !important;
+}
+
+/* line 40, apc.scss */
+.autopay-container.lock .apc__outer-wrapper {
+  position: relative;
+}
+/* line 42, apc.scss */
+.autopay-container.lock .apc__outer-wrapper:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
+/* line 52, apc.scss */
+.autopay-container.lock .apc__outer-wrapper .apc__inner-wrapper {
+  display: none;
+}
+/* line 58, apc.scss */
+.autopay-container:not([data-apc_button_fullwidth="1"]) .apc__outer-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}

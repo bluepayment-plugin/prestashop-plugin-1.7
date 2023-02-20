@@ -10,14 +10,13 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2023
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 {literal}
 <script type="text/javascript">
 	{/literal}
 	var aplitudeUserId = '{$amplitude_user_id}';
-    var aplitudeId = '{$amplitude_id}';
 	{literal}
 	(function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
     ;r.type="text/javascript"
@@ -47,8 +46,8 @@
     !Object.prototype.hasOwnProperty.call(n._iq,e)){n._iq[e]={_q:[]};v(n._iq[e])}
     return n._iq[e]};e.amplitude=n})(window,document);
 	amplitude.getInstance().init(
-        aplitudeId,
-		aplitudeUserId
+		"3df98a3ac8e0efd57fbe86f86c27b488"
+		,aplitudeUserId
 	)
 </script>
 {/literal}
@@ -77,7 +76,7 @@
 				</li>
             {/if}
 
-            {if $fkey === 6}
+            {if $fkey === 7}
 				<li class="nav-item">
 					<a href="tab_rule_{$tabk}" data-hash="analitics" class="nav-link tab " id="tab_rule_link_{$tabk}"
 					   href="javascript:displaythemeeditorTab('{$tabk}');">
@@ -86,7 +85,7 @@
 				</li>
             {/if}
 
-            {if $fkey === 8}
+            {if $fkey === 9}
 		        <li class="nav-item">
 			        <a href="tab_rule_{$tabk}" data-hash="help" class="nav-link tab " id="tab_rule_link_{$tabk}"
 			           href="javascript:displaythemeeditorTab('{$tabk}');">
@@ -144,7 +143,7 @@
                     {include file="./benefits.tpl"}
                     {include file="./benefits2.tpl"}
 
-                    {elseif $f == 2 || $f == 6 || $f == 8}
+                    {elseif $f == 2 || $f == 7 || $f == 9}
 					<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
 
 {*                        {elseif $f == 6}*}
@@ -253,7 +252,7 @@
 						</div>
                         {elseif $f == 2}
                         {hook h='adminPayments'}
-                        {elseif  $f == 5 || $f == 7 || $f == 9}
+                        {elseif  $f == 6 || $f == 8 || $f == 10}
 					</div>
                     {/if}
 

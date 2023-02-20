@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -7,11 +8,11 @@
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  * Php version 7.1
  *
+ * @category  Payment
+ * @package   Blue_Media
  * @author    Blue Media S.A. <biuro@bluemedia.pl>
  * @copyright Since 2015 Blue Media S.A.
  * @license   https://www.gnu.org/licenses/lgpl-3.0.en.html GNU
- *
- * @category  Payment
  */
 
 declare(strict_types=1);
@@ -22,16 +23,16 @@ if (!defined('_PS_VERSION_')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use BluePayment\Adapter\ConfigurationAdapter;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
+use BluePayment\Install\Installer;
 use BluePayment\Configure\Configure;
 use BluePayment\Hook\HookDispatcher;
-use BluePayment\Install\Installer;
 use BluePayment\Service\FactoryPaymentMethods;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
-use Symfony\Component\Dotenv\Dotenv;
+use BluePayment\Adapter\ConfigurationAdapter;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class BluePayment extends PaymentModule
 {
@@ -125,7 +126,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.8.5';
+        $this->version = '2.8.3';
         $this->author = 'Blue Media S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -144,12 +145,15 @@ class BluePayment extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
         $this->hookDispatcher = new HookDispatcher($this, new ConfigurationAdapter($this->context->shop->id));
-        $this->setEnv();
+
+        if (!$this->isRegisteredInHook('moduleRoutes')) $this->registerHook('moduleRoutes');
+
     }
 
     /**
-     * @return bool
+     * Install module
      * @throws Exception
+     * @return bool
      */
     public function install(): bool
     {
@@ -168,17 +172,65 @@ class BluePayment extends PaymentModule
         );
 
         $this->registerHook(
-            'paymentOptions'
-        );
+            'paymentOptions',
+            'moduleRoutes'
+            );
+
+        $this->apc_to_top();
 
         return $state;
     }
 
+    public function apc_to_top(){
+        //get module id
+        $module_id = 'select id_module from ' . _DB_PREFIX_ . 'module where name = "'.strtolower($this->name).'"';
+        $module_id = Db::getInstance()->ExecuteS($module_id);
+        $module_id = $module_id[0]['id_module'];
+
+        $pai_id = 'select id_hook from ' . _DB_PREFIX_ . 'hook where name = "displayProductAdditionalInfo"';
+        $pai_id = Db::getInstance()->ExecuteS($pai_id);
+        $pai_id = $pai_id[0]['id_hook'];
+
+        if($module_id && $pai_id){
+            $sql1 = 'update ' . _DB_PREFIX_ . 'hook_module set `position` = `position` + 1 where id_hook = '.$pai_id;
+            $increment_positions = Db::getInstance()->ExecuteS($sql1);
+            $sql2 = 'update ' . _DB_PREFIX_ . 'hook_module set `position` = 1 where id_module = '.$module_id.' and id_hook = '.$pai_id;
+            $blupayment_position = Db::getInstance()->ExecuteS($sql2);
+        }
+        return true;
+    }
+
+    public function hookModuleRoutes($params){
+        return [
+            'module-'.$this->name.'-chargeAPC' => [
+                'controller' => 'chargeAPC',
+                'rule' => 'apc/V1/autopay/{method}',
+                'keywords' => array(
+                    'method' =>   array('regexp' => '[_a-zA-Z0-9-\pL]*', 'param' => 'method'),
+                ),
+                'params' => [
+                    'fc' => 'module',
+                    'module' => $this->name,
+                    'controller' => 'chargeAPC'
+                ]
+            ],
+            'module-'.$this->name.'-countriesAPC' => [
+                'controller' => 'countriesAPC',
+                'rule' => 'apc/V1/directory/countries',
+                'keywords' => [],
+                'params' => [
+                    'fc' => 'module',
+                    'module' => $this->name,
+                    'controller' => 'countriesAPC'
+                ]
+            ]
+        ];
+    }
+
     /**
      * Uninstall module
-     *
-     * @return bool
      * @throws Exception
+     * @return bool
      */
     public function uninstall(): bool
     {
@@ -203,6 +255,7 @@ class BluePayment extends PaymentModule
         return $state;
     }
 
+
     public function enable($force_all = false)
     {
         if (
@@ -217,8 +270,8 @@ class BluePayment extends PaymentModule
 
         $data = [
             'events' => [
-                'event_type' => Config::PLUGIN_ACTIVATED,
-                'user_properties' => [
+                "event_type" => Config::PLUGIN_ACTIVATED,
+                "user_properties" => [
                     Config::PLUGIN_ACTIVATED => true,
                 ],
             ],
@@ -233,8 +286,8 @@ class BluePayment extends PaymentModule
     {
         $data = [
             'events' => [
-                'event_type' => Config::PLUGIN_DEACTIVATED,
-                'user_properties' => [
+                "event_type" => Config::PLUGIN_DEACTIVATED,
+                "user_properties" => [
                     Config::PLUGIN_ACTIVATED => false,
                 ],
             ],
@@ -256,7 +309,6 @@ class BluePayment extends PaymentModule
 
     /**
      * Return current context
-     *
      * @return Context
      */
     public function getContext(): Context
@@ -280,9 +332,9 @@ class BluePayment extends PaymentModule
         );
     }
 
+
     /**
      * Redirect to admin controller
-     *
      * @return void
      */
     public function getContent(): void
@@ -292,23 +344,13 @@ class BluePayment extends PaymentModule
         );
     }
 
-    public function setEnv(): void
-    {
-        $dotenv = new Dotenv();
-        $env = __DIR__ . '/.env';
-        $envDev = __DIR__ . '/.env.dev';
 
-        if (file_exists($envDev)) {
-            $dotenv->load($envDev);
-        } else {
-            $dotenv->load($env);
-        }
-    }
 
     public function hookTranslateElements()
     {
         $this->l('Payment by card');
         $this->l('Virtual wallet');
+        $this->l('Minimum order value: ');
         $this->l('Blue Media - Configuration');
     }
 
@@ -341,7 +383,9 @@ class BluePayment extends PaymentModule
 
         $moduleLink = $this->context->link->getModuleLink('bluepayment', 'payment', [], true);
 
-        // Get all transfers
+
+
+        /// Get all transfers
         $gatewayTransfer = new \DbQuery();
         $gatewayTransfer->from('blue_gateway_transfers', 'gt');
         $gatewayTransfer->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
@@ -350,13 +394,13 @@ class BluePayment extends PaymentModule
         $gatewayTransfer->where('gt.gateway_currency = "' . pSql($currency->iso_code) . '"');
 
         if (Shop::isFeatureActive()) {
-            $gatewayTransfer->where('gts.id_shop = ' . (int) $id_shop);
+            $gatewayTransfer->where('gts.id_shop = ' . (int)$id_shop);
         }
 
         $gatewayTransfer->select('*');
         $gatewayTransfer = Db::getInstance()->executeS($gatewayTransfer);
 
-        // Get all wallets
+        /// Get all wallets
         $gatewayWallet = new \DbQuery();
         $gatewayWallet->from('blue_gateway_transfers', 'gt');
         $gatewayWallet->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
@@ -365,7 +409,7 @@ class BluePayment extends PaymentModule
         $gatewayWallet->where('gt.gateway_currency = "' . pSql($currency->iso_code) . '"');
 
         if (Shop::isFeatureActive()) {
-            $gatewayWallet->where('gts.id_shop = ' . (int) $id_shop);
+            $gatewayWallet->where('gts.id_shop = ' . (int)$id_shop);
         }
 
         $gatewayWallet->select('*');
@@ -407,9 +451,9 @@ class BluePayment extends PaymentModule
         return $newOptions;
     }
 
+
     /**
      * Get module path
-     *
      * @return string
      */
     public function getPathUrl(): string
@@ -426,9 +470,9 @@ class BluePayment extends PaymentModule
     {
         $logDir = __DIR__;
 
-        $log = PHP_EOL . 'User: ' . $_SERVER['REMOTE_ADDR'] . ' - ' . date('F j, Y, g:i a') . PHP_EOL .
+        $log = PHP_EOL . "User: " . $_SERVER['REMOTE_ADDR'] . ' - ' . date("F j, Y, g:i a") . PHP_EOL .
             print_r($texto, true) . PHP_EOL .
-            '-------------------------';
-        file_put_contents($logDir . '/log_' . date('j.n.Y') . '.log', $log, FILE_APPEND);
+            "-------------------------";
+        file_put_contents($logDir . '/log_' . date("j.n.Y") . '.log', $log, FILE_APPEND);
     }
 }

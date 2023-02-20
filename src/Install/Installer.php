@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -17,18 +18,20 @@ namespace BluePayment\Install;
 
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
-use Context;
 use Db;
 use Exception;
+use Module;
+use Symfony\Component\Translation\TranslatorInterface;
+use Tools;
+use Tab;
+use PrestaShopLogger;
 use Language;
 use Shop;
-use Symfony\Component\Translation\TranslatorInterface;
-use Tab;
-use Tools;
+use Context;
 
 class Installer
 {
-    public const MODULE_ADMIN_CONTROLLERS = [
+    const MODULE_ADMIN_CONTROLLERS = [
         [
             'class_name' => 'AdminBluepaymentPayments',
             'visible' => false,
@@ -62,7 +65,8 @@ class Installer
      *
      * @throws Exception
      */
-    public function install(): bool
+    public function install()
+    :bool
     {
         $this->installDb();
         $this->installTabs();
@@ -77,7 +81,8 @@ class Installer
      *
      * @throws Exception
      */
-    public function uninstall(): bool
+    public function uninstall()
+    :bool
     {
         $this->uninstallDb();
         $this->uninstallTabs();
@@ -93,7 +98,7 @@ class Installer
      */
     public function installDb($custom_path = null)
     {
-        $sql_path = $this->module->getLocalPath() . 'src/Install/install.sql';
+        $sql_path = $this->module->getLocalPath().'src/Install/install.sql';
         if ($custom_path) {
             $sql_path = $custom_path;
         }
@@ -110,7 +115,7 @@ class Installer
      */
     public function uninstallDb($custom_path = null)
     {
-        $sql_path = $this->module->getLocalPath() . 'src/Install/uninstall.sql';
+        $sql_path = $this->module->getLocalPath().'src/Install/uninstall.sql';
         if ($custom_path) {
             $sql_path = $custom_path;
         }
@@ -123,7 +128,8 @@ class Installer
     /**
      * Install tab controller
      */
-    public function installTabs(): bool
+    public function installTabs()
+    :bool
     {
         $res = true;
 
@@ -142,7 +148,7 @@ class Installer
             }
 
             foreach (Language::getLanguages() as $lang) {
-                if ($lang['locale'] === 'pl-PL') {
+                if ($lang['locale'] === "pl-PL") {
                     $tab->name[$lang['id_lang']] = $this->translator->trans(
                         'Blue Media - Konfiguracja',
                         [],
@@ -168,27 +174,27 @@ class Installer
     /**
      * Remove all tabs controller
      */
-    public function uninstallTabs($tabId = 0): bool
+    public function uninstallTabs($tabId = 0)
+    :bool
     {
         foreach (static::MODULE_ADMIN_CONTROLLERS as $controller) {
-            $id_tab = (int) \Tab::getIdFromClassName($controller['class_name']);
+            $id_tab = (int)\Tab::getIdFromClassName($controller['class_name']);
             $tab = new \Tab($id_tab);
             if (\Validate::isLoadedObject($tab)) {
-                $parentTabID = $tabId ?: $tab->id_parent;
+                $parentTabID = $tabId ? : $tab->id_parent;
                 $tab->delete();
                 $tabCount = $this->getTabElements($parentTabID);
                 if ($tabCount == 0) {
-                    $this->deleteCurrentTab((int) $parentTabID);
+                    $this->deleteCurrentTab((int)$parentTabID);
                 }
             }
         }
-
         return true;
     }
 
     public function deleteCurrentTab($parentTabID)
     {
-        $parentTab = new \Tab((int) $parentTabID);
+        $parentTab = new \Tab((int)$parentTabID);
         $parentTab->delete();
     }
 
@@ -197,8 +203,7 @@ class Installer
         if ($parentTabID == '-1') {
             return 0;
         }
-
-        return \Tab::getNbTabs((int) $parentTabID);
+        return \Tab::getNbTabs((int)$parentTabID);
     }
 
     /**
@@ -218,13 +223,7 @@ class Installer
         $sqlStatements = Tools::file_get_contents($path);
         $sqlStatements = str_replace(['_DB_PREFIX_', '_MYSQL_ENGINE_'], [_DB_PREFIX_, _MYSQL_ENGINE_], $sqlStatements);
 
-        $status = true;
-
-        $sql = preg_split("/;\s*[\r\n]+/", trim($sqlStatements));
-
-        foreach ($sql as $query) {
-            $status &= $this->sqlExecute($db, $query);
-        }
+        $status = $this->sqlExecute($db, $sqlStatements);
 
         if (!$status) {
             throw new \Exception();
@@ -246,11 +245,11 @@ class Installer
     {
         $data = [
             'events' => [
-                'event_type' => Config::PLUGIN_INSTALLED,
-                'user_properties' => [
+                "event_type" => Config::PLUGIN_INSTALLED,
+                "user_properties" => [
                     Config::PLUGIN_VERSION => $this->module->version,
                     Config::PLUGIN_INSTALLED => true,
-                ],
+                ]
             ],
         ];
         $amplitude = Amplitude::getInstance();
@@ -261,11 +260,11 @@ class Installer
     {
         $data = [
             'events' => [
-                'event_type' => Config::PLUGIN_UNINSTALLED,
-                'user_properties' => [
+                "event_type" => Config::PLUGIN_UNINSTALLED,
+                "user_properties" => [
                     Config::PLUGIN_VERSION => $this->module->version,
                     Config::PLUGIN_INSTALLED => false,
-                ],
+                ]
             ],
         ];
 
@@ -278,7 +277,6 @@ class Installer
         if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_SHOP, Context::getContext()->shop->id);
         }
-
         return true;
     }
 }

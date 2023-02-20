@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -17,12 +18,16 @@ namespace BluePayment\Until;
 
 use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Config\Config;
-use Configuration as Cfg;
+use Currency;
 use Context;
-use Db;
 use DbQuery;
+use Db;
 use Shop;
+use HelperList;
+use AdminController;
 use Tools;
+use Module;
+use Configuration as Cfg;
 
 class Helper
 {
@@ -33,6 +38,14 @@ class Helper
             'BLUEPAYMENT_STATUS_ACCEPT_PAY_ID',
             'BLUEPAYMENT_STATUS_ERROR_PAY_ID',
             'BLUEPAYMENT_SHOW_PAYWAY',
+            'BLUEPAYMENT_APC_ENABLED',
+            'BLUEPAYMENT_APC_HIDDEN_MODE',
+            'BLUEPAYMENT_APC_MERCHANTID',
+            'BLUEPAYMENT_APC_BUTTON_THEME',
+            'BLUEPAYMENT_APC_BUTTON_FULLWIDTH',
+            'BLUEPAYMENT_APC_BUTTON_ROUNDED',
+            'BLUEPAYMENT_APC_BUTTON_MARGINTOP',
+            'BLUEPAYMENT_APC_BUTTON_MARGINBOTTOM',
             'BLUEPAYMENT_TEST_ENV',
 
             'BLUEPAYMENT_GA_TYPE',
@@ -90,13 +103,14 @@ class Helper
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
 
         if (Shop::isFeatureActive()) {
-            $query->where('gts.id_shop = ' . (int) $idShop);
+            $query->where('gts.id_shop = ' . (int)$idShop);
         }
 
         $query->select('gateway_logo_url, gateway_name');
 
         return Db::getInstance()->executeS($query);
     }
+
 
     public static function getGatewaysList(): string
     {
@@ -106,19 +120,18 @@ class Helper
             Config::GATEWAY_ID_CARD,
             Config::GATEWAY_ID_GOOGLE_PAY,
             Config::GATEWAY_ID_APPLE_PAY,
-            Config::GATEWAY_ID_SMARTNEY,
-            Config::GATEWAY_ID_PAYPO,
-            Config::GATEWAY_ID_VISA_MOBILE,
+            Config::GATEWAY_ID_SMARTNEY
         ];
 
         return implode(',', $gatewayArray);
     }
 
+
     public static function getWalletsList(): string
     {
         $walletArray = [
             Config::GATEWAY_ID_GOOGLE_PAY,
-            Config::GATEWAY_ID_APPLE_PAY,
+            Config::GATEWAY_ID_APPLE_PAY
         ];
 
         return implode(',', $walletArray);
@@ -127,13 +140,11 @@ class Helper
     public static function parseConfigByCurrency($key, $currencyIsoCode)
     {
         $data = Tools::unSerialize(Cfg::get($key));
-
         return is_array($data) && array_key_exists($currencyIsoCode, $data) ? $data[$currencyIsoCode] : '';
     }
 
     /**
      * Get logo
-     *
      * @return string
      */
     public static function getBrandLogo(): string
@@ -141,10 +152,10 @@ class Helper
         return Context::getContext()->shop->getBaseURL(true) . 'modules/bluepayment/views/img/blue-media.svg';
     }
 
+
     /**
      * @param $id_order
-     *
-     * @return bool|array
+     * @return bool | array
      */
     public static function getLastOrderPaymentByOrderId($id_order)
     {
@@ -155,11 +166,11 @@ class Helper
         return Db::getInstance()->getRow($sql, false);
     }
 
+
     /**
      * @param $id_order
-     *
-     * @return array
      * @throws PrestaShopDatabaseException
+     * @return array
      */
     public static function getOrdersByOrderId($id_order): array
     {
@@ -170,11 +181,11 @@ class Helper
         return Db::getInstance()->executeS($sql, true, false);
     }
 
+
+
     /**
      * Generates and returns a hash key based on field values from an array
-     *
      * @param array $data
-     *
      * @return string
      */
     public static function generateAndReturnHash($data): string
@@ -200,23 +211,34 @@ class Helper
         if (empty($iso_code)) {
             $iso_code = 'PLN';
         }
-
         return $iso_code;
     }
 
-    // Prestashop < 1.7.5 fix states
 
-    public static function sendEmail($order, $template_vars = false, $id = 0)
+
+
+    ///// Prestashop < 1.7.5 fix states
+    ///
+
+    public static function getLastOrderState($idOrder)
+    {
+        return \Db::getInstance()->getValue('
+        SELECT `id_order_state`
+        FROM `' . _DB_PREFIX_ . 'order_history`
+        WHERE `id_order` = ' . (int) $idOrder . '
+        ORDER BY `date_add` DESC, `id_order_history` DESC');
+    }
+
+
+    public static function sendEmail($order, $template_vars = false, $id)
     {
         $result = \Db::getInstance()->getRow('
-            SELECT osl.`template`, c.`lastname`, c.`firstname`, osl.`name` AS osname, c.`email`, os.`module_name`, 
-                   os.`id_order_state`, os.`pdf_invoice`, os.`pdf_delivery`
+            SELECT osl.`template`, c.`lastname`, c.`firstname`, osl.`name` AS osname, c.`email`, os.`module_name`, os.`id_order_state`, os.`pdf_invoice`, os.`pdf_delivery`
             FROM `' . _DB_PREFIX_ . 'order_history` oh
                 LEFT JOIN `' . _DB_PREFIX_ . 'orders` o ON oh.`id_order` = o.`id_order`
                 LEFT JOIN `' . _DB_PREFIX_ . 'customer` c ON o.`id_customer` = c.`id_customer`
                 LEFT JOIN `' . _DB_PREFIX_ . 'order_state` os ON oh.`id_order_state` = os.`id_order_state`
-                LEFT JOIN `' . _DB_PREFIX_ . 'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` 
-                AND osl.`id_lang` = o.`id_lang`)
+                LEFT JOIN `' . _DB_PREFIX_ . 'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` AND osl.`id_lang` = o.`id_lang`)
             WHERE oh.`id_order_history` = ' . (int) $id . ' AND os.`send_email` = 1');
         if (isset($result['template']) && \Validate::isEmail($result['email'])) {
             \ShopUrl::cacheMainDomainForShop($order->id_shop);
@@ -232,16 +254,12 @@ class Helper
                 '{id_order}' => (int) $order->id,
                 '{order_name}' => $order->getUniqReference(),
                 '{followup}' => str_replace('@', $order->getWsShippingNumber(), $carrierUrl),
-                '{shipping_number}' => $order->getWsShippingNumber(),
+                '{shipping_number}' => $order->getWsShippingNumber()
             ];
 
             if ($result['module_name']) {
                 $module = \Module::getInstanceByName('bluepayment');
-                if (
-                    \Validate::isLoadedObject($module)
-                    && isset($module->extra_mail_vars)
-                    && is_array($module->extra_mail_vars)
-                ) {
+                if (\Validate::isLoadedObject($module) && isset($module->extra_mail_vars) && is_array($module->extra_mail_vars)) {
                     $data = array_merge($data, $module->extra_mail_vars);
                 }
             }
@@ -258,7 +276,7 @@ class Helper
 
             if (\Validate::isLoadedObject($order)) {
                 // Attach invoice and / or delivery-slip if they exists and status is set to attach them
-                if ($result['pdf_invoice'] || $result['pdf_delivery']) {
+                if (($result['pdf_invoice'] || $result['pdf_delivery'])) {
                     $invoice = $order->getInvoicesCollection();
                     $file_attachement = [];
 
@@ -266,46 +284,34 @@ class Helper
                         Hook::exec('actionPDFInvoiceRender', ['order_invoice_list' => $invoice]);
                         $pdf = new \PDF($invoice, \PDF::TEMPLATE_INVOICE, $context->smarty);
                         $file_attachement['invoice']['content'] = $pdf->render(false);
-                        $file_attachement['invoice']['name'] = \Configuration::get(
-                            'PS_INVOICE_PREFIX',
-                            (int) $order->id_lang,
-                            null,
-                            $order->id_shop
-                        ) . sprintf('%06d', $order->invoice_number) . '.pdf';
+                        $file_attachement['invoice']['name'] = \Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop) . sprintf('%06d', $order->invoice_number) . '.pdf';
                         $file_attachement['invoice']['mime'] = 'application/pdf';
                     }
                     if ($result['pdf_delivery'] && $order->delivery_number) {
                         $pdf = new \PDF($invoice, PDF::TEMPLATE_DELIVERY_SLIP, $context->smarty);
                         $file_attachement['delivery']['content'] = $pdf->render(false);
-                        $file_attachement['delivery']['name'] = \Configuration::get(
-                            'PS_DELIVERY_PREFIX',
-                            \Context::getContext()->language->id,
-                            null,
-                            $order->id_shop
-                        ) . sprintf('%06d', $order->delivery_number) . '.pdf';
+                        $file_attachement['delivery']['name'] = \Configuration::get('PS_DELIVERY_PREFIX', \Context::getContext()->language->id, null, $order->id_shop) . sprintf('%06d', $order->delivery_number) . '.pdf';
                         $file_attachement['delivery']['mime'] = 'application/pdf';
                     }
                 } else {
                     $file_attachement = null;
                 }
 
-                if (
-                    !\Mail::Send(
-                        (int) $order->id_lang,
-                        $result['template'],
-                        $topic,
-                        $data,
-                        $result['email'],
-                        $result['firstname'] . ' ' . $result['lastname'],
-                        null,
-                        null,
-                        $file_attachement,
-                        null,
-                        _PS_MAIL_DIR_,
-                        false,
-                        (int) $order->id_shop
-                    )
-                ) {
+                if (!\Mail::Send(
+                    (int) $order->id_lang,
+                    $result['template'],
+                    $topic,
+                    $data,
+                    $result['email'],
+                    $result['firstname'] . ' ' . $result['lastname'],
+                    null,
+                    null,
+                    $file_attachement,
+                    null,
+                    _PS_MAIL_DIR_,
+                    false,
+                    (int) $order->id_shop
+                )) {
                     return false;
                 }
             }
@@ -315,4 +321,5 @@ class Helper
 
         return true;
     }
+
 }

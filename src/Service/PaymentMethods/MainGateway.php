@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -18,6 +19,7 @@ namespace BluePayment\Service\PaymentMethods;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 use Context;
+use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class MainGateway implements GatewayType

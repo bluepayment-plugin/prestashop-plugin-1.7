@@ -10,15 +10,16 @@
  * @copyright  Since 2015 Blue Media S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 function upgrade_module_2_7_2($module)
 {
-    Configuration::updateValue($module->name_upper . '_GA_TRACKER_ID', 0);
-    Configuration::updateValue($module->name_upper . '_BLIK_REDIRECT', 0);
-    Configuration::updateValue($module->name_upper . '_GPAY_REDIRECT', 0);
+    Configuration::updateValue($module->name_upper.'_GA_TRACKER_ID', 0);
+    Configuration::updateValue($module->name_upper.'_BLIK_REDIRECT', 0);
+    Configuration::updateValue($module->name_upper.'_GPAY_REDIRECT', 0);
 
     return true;
 }

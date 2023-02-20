@@ -11,17 +11,22 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-use BluePayment\Analyse\Amplitude;
-use BluePayment\Api\BlueAPI;
-use BluePayment\Api\BlueGateway;
-use BluePayment\Api\BlueGatewayChannels;
-use BluePayment\Config\Config;
-use BluePayment\Until\AdminHelper;
-use BluePayment\Until\Helper;
+use BlueMedia\OnlinePayments\Gateway;
+use BlueMedia\OnlinePayments\Model\Gateway as GatewayModel;
+
 use Configuration as Cfg;
+
+use BluePayment\Api\BlueGateway;
+use BluePayment\Api\BlueAPI;
+use BluePayment\Api\BlueGatewayChannels;
+use BluePayment\Analyse\Amplitude;
+use BluePayment\Until\Helper;
+use BluePayment\Until\AdminHelper;
+use BluePayment\Config\Config;
 
 class AdminBluepaymentPaymentsController extends ModuleAdminController
 {
+
     public function __construct()
     {
         $this->bootstrap = true;
@@ -56,9 +61,9 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
             $data = [
                 'events' => [
-                    'event_type' => 'payment methods order updated',
-                    'event_properties' => [
-                        'source' => 'Setup',
+                    "event_type" => "payment methods order updated",
+                    "event_properties" => [
+                        "source" => 'Setup'
                     ],
                 ],
             ];
@@ -67,7 +72,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             $amplitude->sendEvent($data);
         }
 
-        $this->context->controller->addCSS($this->module->getPathUrl() . 'views/css/admin.css');
+        $this->context->controller->addCSS($this->module->getPathUrl().'views/css/admin.css');
 
         $this->content .= $this->renderForm();
 
@@ -80,16 +85,17 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         ]);
     }
 
+
     public function ajaxProcessUpdatePositions()
     {
-        $idPosition = (int) Tools::getValue('id');
-        $way = (int) Tools::getValue('way');
+        $idPosition = (int)(Tools::getValue('id'));
+        $way = (int)(Tools::getValue('way'));
         $positions = Tools::getValue('blue_gateway_channels');
 
         if (is_array($positions)) {
             foreach ($positions as $key => $value) {
                 $pos = explode('_', $value);
-                if ((isset($pos[1], $pos[2])) && ($pos[2] == $idPosition)) {
+                if ((isset($pos[1]) && isset($pos[2])) && ($pos[2] == $idPosition)) {
                     $position = $key + 1;
                     break;
                 }
@@ -99,20 +105,24 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             if (Validate::isLoadedObject($GatewayChannels)) {
                 if (isset($position) && $GatewayChannels->updatePosition($idPosition, $way, $position)) {
                     Hook::exec('actionBlueGatewayChannelsUpdate');
-                    exit(true);
+                    die(true);
                 } else {
-                    exit('{"hasError" : true, errors : "Can not update position"}');
+                    die('{"hasError" : true, errors : "Can not update position"}');
                 }
             } else {
-                exit('{"hasError" : true, "errors" : "This can not be loaded"}');
+                die('{"hasError" : true, "errors" : "This can not be loaded"}');
             }
         }
     }
 
+
+
+
     public function renderForm()
     {
+
         $fields_form = [];
-        $id_default_lang = (int) Configuration::get('PS_LANG_DEFAULT');
+        $id_default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
         $statuses = OrderState::getOrderStates($id_default_lang, true);
         $currency = $this->context->currency;
 
@@ -121,7 +131,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $fields_form[0]['form'] = [
             'section' => [
-                'title' => $this->l('Authentication'),
+                'title' => $this->l('Authentication')
             ],
             'legend' => [
                 'title' => $this->l('TESTING ENVIRONMENT'),
@@ -130,7 +140,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'switch',
                     'label' => $this->l('Use a test environment'),
-                    'name' => $this->module->name_upper . '_TEST_ENV',
+                    'name' => $this->module->name_upper.'_TEST_ENV',
                     'values' => [
                         [
                             'id' => 'active_on',
@@ -147,13 +157,16 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         'It allows you to verify the operation of the module without the need to actually pay
                          for the order (in the test mode, no fees are charged for the order).'
                     ),
+
                 ],
 
                 [
                     'name' => '',
                     'type' => 'description',
-                    'content' => 'module:bluepayment/views/templates/admin/_configure/helpers/form/notification-info.tpl',
-                ],
+                    'content' =>
+                        'module:bluepayment/views/templates/admin/_configure/helpers/form/notification-info.tpl',
+                ]
+
             ],
             'submit' => [
                 'save_event' => 'ŚRODOWISKO TESTOWE',
@@ -164,7 +177,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $fields_form[1]['form'] = [
             'section' => [
-                'title' => $this->l('Authentication'),
+                'title' => $this->l('Authentication')
             ],
             'legend' => [
                 'title' => $this->l('Authentication'),
@@ -176,6 +189,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     'type' => 'description',
                     'content' => './auth-info.tpl',
                 ],
+
             ],
 
             'submit' => [
@@ -183,27 +197,30 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 'title' => $this->l('Save'),
                 'class' => 'btn btn-primary pull-right',
             ],
+
         ];
 
         foreach (AdminHelper::getSortCurrencies() as $currency) {
             $fields_form[1]['form']['form_group']['fields'][] = [
                 'form' => [
                     'legend' => [
-                        'title' => $currency['name'] . ' (' . $currency['iso_code'] . ')',
+                        'title' =>
+                            $currency['name'].' ('.$currency['iso_code'].')',
                     ],
                     'input' => [
                         [
                             'type' => 'text',
                             'label' => $this->l('Service partner ID'),
-                            'name' => $this->module->name_upper . '_SERVICE_PARTNER_ID_' . $currency['iso_code'],
+                            'name' => $this->module->name_upper.'_SERVICE_PARTNER_ID_'.$currency['iso_code'],
                             'help' => $this->l('It only contains numbers. It is different for each store'),
                         ],
                         [
                             'type' => 'text',
                             'label' => $this->l('Shared key'),
-                            'name' => $this->module->name_upper . '_SHARED_KEY_' . $currency['iso_code'],
+                            'name' => $this->module->name_upper.'_SHARED_KEY_'.$currency['iso_code'],
                             'help' => $this->l('Contains numbers and lowercase letters. It is used to verify 
                             communication with the payment gateway. It should not be made available to the public'),
+
                         ],
                     ],
                     'submit' => [
@@ -216,7 +233,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $fields_form[2]['form'] = [
             'section' => [
-                'title' => $this->l('Payment settings'),
+                'title' => $this->l('Payment settings')
             ],
             'legend' => [
                 'title' => $this->l('VISIBILITY OF PAYMENT METHODS'),
@@ -225,7 +242,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'switch',
                     'label' => $this->l('Show payment methods in the store'),
-                    'name' => $this->module->name_upper . '_SHOW_PAYWAY',
+                    'name' => $this->module->name_upper.'_SHOW_PAYWAY',
                     'modal' => 'bm-helper-visibility',
                     'values' => [
                         [
@@ -243,7 +260,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'text',
                     'label' => $this->l('The name of the payment module in the store'),
-                    'name' => $this->module->name_upper . '_PAYMENT_NAME',
+                    'name' => $this->module->name_upper.'_PAYMENT_NAME',
                     'size' => 40,
                     'lang' => true,
                     'help' => $this->l('We recommend that you keep the above name. Changing it may have a negative 
@@ -253,7 +270,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'text',
                     'label' => $this->l('The name of the payment module in the store'),
-                    'name' => $this->module->name_upper . '_PAYMENT_GROUP_NAME',
+                    'name' => $this->module->name_upper.'_PAYMENT_GROUP_NAME',
                     'size' => 40,
                     'lang' => true,
                     'help' => $this->l('We recommend that you keep the above name. Changing it may have a negative 
@@ -270,7 +287,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $fields_form[3]['form'] = [
             'section' => [
-                'title' => $this->l('Payment settings'),
+                'title' => $this->l('Payment settings')
             ],
             'legend' => [
                 'title' => $this->l('Payment redirection settings'),
@@ -285,7 +302,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'switch-choose',
                     'label' => $this->l('Entering BLIK in a store'),
-                    'name' => $this->module->name_upper . '_BLIK_REDIRECT',
+                    'name' => $this->module->name_upper.'_BLIK_REDIRECT',
                     'size' => 'full',
                     'modal' => 'bm-helper-blik',
                     'values' => [
@@ -304,7 +321,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'switch-choose',
                     'label' => $this->l('Google Pay'),
-                    'name' => $this->module->name_upper . '_GPAY_REDIRECT',
+                    'name' => $this->module->name_upper.'_GPAY_REDIRECT',
                     'size' => 'full',
                     'modal' => 'bm-helper-gpay',
                     'values' => [
@@ -328,10 +345,12 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        if ($alior || $smartney) {
+
+        if($alior || $smartney) {
+
             $fields_form[4]['form'] = [
                 'section' => [
-                    'title' => $this->l('Payment settings'),
+                    'title' => $this->l('Payment settings')
                 ],
                 'legend' => [
                     'title' => $this->l('PAYMENT PROMOTION'),
@@ -356,7 +375,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'type' => 'switch',
                         'label' => $this->l('Pay later'),
-                        'name' => $this->module->name_upper . '_PROMO_PAY_LATER',
+                        'name' => $this->module->name_upper.'_PROMO_PAY_LATER',
                         'image' => 'switcher1.png',
                         'size' => 'auto',
                         'values' => [
@@ -376,7 +395,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'type' => 'switch',
                         'label' => $this->l('Spread out in instalments'),
-                        'name' => $this->module->name_upper . '_PROMO_INSTALMENTS',
+                        'name' => $this->module->name_upper.'_PROMO_INSTALMENTS',
                         'image' => 'switcher2.png',
                         'size' => 'auto',
                         'values' => [
@@ -396,7 +415,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'type' => 'switch',
                         'label' => $this->l('Matching instalments'),
-                        'name' => $this->module->name_upper . '_PROMO_MATCHED_INSTALMENTS',
+                        'name' => $this->module->name_upper.'_PROMO_MATCHED_INSTALMENTS',
                         'image' => 'switcher3.png',
                         'size' => 'auto',
                         'values' => [
@@ -412,15 +431,21 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                             ],
                         ],
                     ],
+
+                    /// kanaly
+
                     [
                         'type' => 'infoheading',
                         'name' => false,
                         'label' => $this->l('Show payment information on the site'),
                     ],
+
+
+                    /// Opis
                     [
                         'type' => 'switch',
                         'label' => $this->l('At the top of the page'),
-                        'name' => $this->module->name_upper . '_PROMO_HEADER',
+                        'name' => $this->module->name_upper.'_PROMO_HEADER',
                         'size' => 'auto',
                         'values' => [
                             [
@@ -438,7 +463,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'type' => 'switch',
                         'label' => $this->l('Above the footer'),
-                        'name' => $this->module->name_upper . '_PROMO_FOOTER',
+                        'name' => $this->module->name_upper.'_PROMO_FOOTER',
                         'size' => 'auto',
                         'values' => [
                             [
@@ -456,7 +481,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'type' => 'switch',
                         'label' => $this->l('In the product list under filters'),
-                        'name' => $this->module->name_upper . '_PROMO_LISTING',
+                        'name' => $this->module->name_upper.'_PROMO_LISTING',
                         'size' => 'auto',
                         'values' => [
                             [
@@ -474,7 +499,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'type' => 'switch',
                         'label' => $this->l('On the product page under the buttons'),
-                        'name' => $this->module->name_upper . '_PROMO_PRODUCT',
+                        'name' => $this->module->name_upper.'_PROMO_PRODUCT',
                         'size' => 'auto',
                         'values' => [
                             [
@@ -492,7 +517,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'type' => 'switch',
                         'label' => $this->l('In the shopping cart under products'),
-                        'name' => $this->module->name_upper . '_PROMO_CART',
+                        'name' => $this->module->name_upper.'_PROMO_CART',
                         'size' => 'auto',
                         'values' => [
                             [
@@ -510,7 +535,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     [
                         'type' => 'switch',
                         'label' => $this->l('On the list of payment methods'),
-                        'name' => $this->module->name_upper . '_PROMO_CHECKOUT',
+                        'name' => $this->module->name_upper.'_PROMO_CHECKOUT',
                         'size' => 'auto',
                         'values' => [
                             [
@@ -535,7 +560,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         } else {
             $fields_form[4]['form'] = [
                 'section' => [
-                    'title' => $this->l('Payment settings'),
+                    'title' => $this->l('Payment settings')
                 ],
                 'legend' => [
                     'title' => $this->l('PAYMENT PROMOTION'),
@@ -560,9 +585,11 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ];
         }
 
+
+
         $fields_form[5]['form'] = [
             'section' => [
-                'title' => $this->l('Payment settings'),
+                'title' => $this->l('Payment settings')
             ],
             'legend' => [
                 'title' => $this->l('Statuses'),
@@ -570,7 +597,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'input' => [
                 [
                     'type' => 'select',
-                    'name' => $this->module->name_upper . '_STATUS_WAIT_PAY_ID',
+                    'name' => $this->module->name_upper.'_STATUS_WAIT_PAY_ID',
                     'label' => $this->l('Payment started'),
                     'options' => [
                         'query' => $statuses,
@@ -580,7 +607,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'select',
-                    'name' => $this->module->name_upper . '_STATUS_ACCEPT_PAY_ID',
+                    'name' => $this->module->name_upper.'_STATUS_ACCEPT_PAY_ID',
                     'label' => $this->l('Payment approved'),
                     'options' => [
                         'query' => $statuses,
@@ -590,7 +617,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
                 [
                     'type' => 'select',
-                    'name' => $this->module->name_upper . '_STATUS_ERROR_PAY_ID',
+                    'name' => $this->module->name_upper.'_STATUS_ERROR_PAY_ID',
                     'label' => $this->l('Payment failed'),
                     'options' => [
                         'query' => $statuses,
@@ -608,7 +635,188 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $fields_form[6]['form'] = [
             'section' => [
-                'title' => $this->l('Analitics'),
+                'title' => $this->l('Payment settings')
+            ],
+            'legend' => [
+                'title' => $this->l('Autopay settings'),
+            ],
+            'input' => [
+                [
+                    'type' => 'select',
+                    'name' => $this->module->name_upper.'_APC_ENABLED',
+                    'label' => $this->l('Enabled'),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => '0',
+                                'name' => $this->l('Disable'),
+                            ],
+                            [
+                                'id' => '1',
+                                'name' => $this->l('Enable'),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+                [
+                    'type' => 'select',
+                    'name' => $this->module->name_upper.'_APC_HIDDEN_MODE',
+                    'label' => $this->l('Autopay F&F'),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => '0',
+                                'name' => $this->l('Disable'),
+                            ],
+                            [
+                                'id' => '1',
+                                'name' => $this->l('Enable'),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+                [
+                    'type' => 'text',
+                    'label' => $this->l('Merchant Id'),
+                    'name' => $this->module->name_upper.'_APC_MERCHANTID',
+                    'help' => $this->l('Contains numbers, lowercase letters and dashes. It is used to verify 
+                            communication with the payment gateway.'),
+
+                ],
+                [
+                    'type' => 'select',
+                    'name' => $this->module->name_upper.'_APC_BUTTON_THEME',
+                    'label' => $this->l('Button theme'),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => 'dark',
+                                'name' => $this->l('Dark'),
+                            ],
+                            [
+                                'id' => 'light',
+                                'name' => $this->l('Light'),
+                            ],
+                            [
+                                'id' => 'orange',
+                                'name' => $this->l('Orange'),
+                            ],
+                            [
+                                'id' => 'gradient',
+                                'name' => $this->l('Gradient'),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+                [
+                    'type' => 'select',
+                    'name' => $this->module->name_upper.'_APC_BUTTON_FULLWIDTH',
+                    'label' => $this->l('Button full width'),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => '0',
+                                'name' => $this->l('No'),
+                            ],
+                            [
+                                'id' => '1',
+                                'name' => $this->l('Yes'),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+                [
+                    'type' => 'select',
+                    'name' => $this->module->name_upper.'_APC_BUTTON_ROUNDED',
+                    'label' => $this->l('Button rounded'),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => '0',
+                                'name' => $this->l('No'),
+                            ],
+                            [
+                                'id' => '1',
+                                'name' => $this->l('Yes'),
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+                [
+                    'type' => 'select',
+                    'name' => $this->module->name_upper.'_APC_BUTTON_MARGINTOP',
+                    'label' => $this->l('Button margin top'),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => '0',
+                                'name' => '0px',
+                            ],
+                            [
+                                'id' => '10',
+                                'name' => '10px',
+                            ],
+                            [
+                                'id' => '15',
+                                'name' => '15px',
+                            ],
+                            [
+                                'id' => '20',
+                                'name' => '20px',
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+                [
+                    'type' => 'select',
+                    'name' => $this->module->name_upper.'_APC_BUTTON_MARGINBOTTOM',
+                    'label' => $this->l('Button margin bottom'),
+                    'options' => [
+                        'query' => [
+                            [
+                                'id' => '0',
+                                'name' => '0px',
+                            ],
+                            [
+                                'id' => '10',
+                                'name' => '10px',
+                            ],
+                            [
+                                'id' => '15',
+                                'name' => '15px',
+                            ],
+                            [
+                                'id' => '20',
+                                'name' => '20px',
+                            ],
+                        ],
+                        'id' => 'id',
+                        'name' => 'name',
+                    ],
+                ],
+            ],
+            'submit' => [
+                'save_event' => 'APC USTAWIENIA',
+                'title' => $this->l('Save'),
+                'class' => 'btn btn-primary pull-right',
+            ],
+        ];
+
+        $fields_form[7]['form'] = [
+            'section' => [
+                'title' => $this->l('Analitics')
             ],
             'legend' => [
                 'title' => $this->l('Google Analitics'),
@@ -622,7 +830,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'switch-choose',
                     'label' => $this->l('Your version of Google Analytics'),
-                    'name' => $this->module->name_upper . '_GA_TYPE',
+                    'name' => $this->module->name_upper.'_GA_TYPE',
                     'size' => 'full',
                     'values' => [
                         [
@@ -641,7 +849,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'text',
                     'label' => $this->l('Google Account ID'),
-                    'name' => $this->module->name_upper . '_GA_TRACKER_ID',
+                    'name' => $this->module->name_upper.'_GA_TRACKER_ID',
                     'size' => 40,
                     'help' => $this->l('In Universal Analytics, this is the "Tracking ID" (e.g. UA-000000-2). ') .
                         ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga-id">'
@@ -650,7 +858,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'text',
                     'label' => $this->l('Google Analytics Measurement ID 4'),
-                    'name' => $this->module->name_upper . '_GA4_TRACKER_ID',
+                    'name' => $this->module->name_upper.'_GA4_TRACKER_ID',
                     'size' => 40,
                     'help' => $this->l('The identifier is in the format G-XXXXXXX. ')
                         . ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga4-id">'
@@ -659,7 +867,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 [
                     'type' => 'text',
                     'label' => $this->l('API secret '),
-                    'name' => $this->module->name_upper . '_GA4_SECRET',
+                    'name' => $this->module->name_upper.'_GA4_SECRET',
                     'size' => 40,
                     'help' => '<a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga4-key">'
                         . $this->l('How do I create an API secret?') . '</a>',
@@ -672,9 +880,10 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[7]['form'] = [
+
+        $fields_form[8]['form'] = [
             'section' => [
-                'title' => $this->l('Analitics'),
+                'title' => $this->l('Analitics')
             ],
             'legend' => [
                 'title' => $this->l('Events'),
@@ -688,9 +897,10 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[8]['form'] = [
+
+        $fields_form[9]['form'] = [
             'section' => [
-                'title' => $this->l('Help'),
+                'title' => $this->l('Help')
             ],
             'legend' => [
                 'title' => $this->l('HOW TO START?'),
@@ -704,9 +914,10 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[9]['form'] = [
+
+        $fields_form[10]['form'] = [
             'section' => [
-                'title' => $this->l('Help'),
+                'title' => $this->l('Help')
             ],
             'legend' => [
                 'title' => $this->l('Help'),
@@ -736,7 +947,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $helper->title = $this->module->displayName;
         $helper->show_toolbar = true;
         $helper->toolbar_scroll = true;
-        $helper->submit_action = 'submit' . $this->module->name;
+        $helper->submit_action = 'submit'.$this->module->name;
 
         $link = new Link();
         $ajax_controller = $link->getAdminLink('AdminBluepaymentAjax');
@@ -749,16 +960,15 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'ajax_token' => Tools::getAdminTokenLite('AdminBluepaymentAjax'),
             'ajax_payments_token' => Tools::getAdminTokenLite('AdminBluepaymentPayments'),
             'amplitude_user_id' => Amplitude::getUserId(),
-            'amplitude_id' => Amplitude::getAmplitudeId(),
             'bm_assets_images' => $this->module->getAssetImages(),
         ];
 
         return $helper->generateForm($fields_form);
     }
 
+
     /**
      * Get form values
-     *
      * @return array
      */
     private function getConfigFieldsValues()
@@ -768,21 +978,25 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             $data[$field] = Tools::getValue($field, Cfg::get($field));
         }
 
+        /// Languages
         foreach (Helper::getFieldsLang() as $field) {
             foreach (Language::getLanguages(true) as $lang) {
-                if (Cfg::get($field, $lang['id_lang'])) {
+                if(Cfg::get($field, $lang['id_lang'])) {
                     $data[$field][$lang['id_lang']] = Cfg::get($field, $lang['id_lang']);
                 }
             }
         }
 
+        /// Currencies
         foreach (Helper::getFieldsService() as $field) {
             foreach (AdminHelper::getSortCurrencies() as $currency) {
-                $data[$field . '_' . $currency['iso_code']] =
+                $data[$field.'_'.$currency['iso_code']] =
                     Helper::parseConfigByCurrency($field, $currency['iso_code']);
             }
         }
 
         return $data;
     }
+
+
 }

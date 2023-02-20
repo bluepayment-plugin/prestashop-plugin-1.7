@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2023
+ * @copyright      Copyright (c) 2015-2022
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 {extends file=$layout}
@@ -27,10 +27,10 @@
 			<p class="warning">
                 {l s='Transaction status unknown.' mod='bluepayment'}
 			</p>
-            {if isset($error)}
+            {if isset($errorReason|escape:'html':'UTF-8')}
 				<p>
 					<strong>
-                        {$error|escape:'html':'UTF-8'}
+                        {$errorReason|escape:'html':'UTF-8'}
 					</strong>
 				</p>
             {/if}

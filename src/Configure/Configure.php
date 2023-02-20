@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -15,13 +16,27 @@ declare(strict_types=1);
 
 namespace BluePayment\Configure;
 
-use BluePayment\Adapter\ConfigurationAdapter;
 use BluePayment\Config\Config;
 use BluePayment\Statuses\CustomStatus;
-use BluePayment\Until\Helper;
-use Language;
-use Shop;
+use Module;
 use Symfony\Component\Translation\TranslatorInterface;
+use Tab;
+use Shop;
+use Language;
+use PrestaShopLogger;
+use Configuration as Cfg;
+use BluePayment\Until\Helper;
+use BluePayment\Adapter\ConfigurationAdapter;
+use PrestaShop\PrestaShop\Core\Domain\Webservice\Command\AddWebserviceKeyCommand;
+use PrestaShop\PrestaShop\Core\Domain\Webservice\CommandHandler\AddWebserviceKeyHandlerInterface;
+use PrestaShop\PrestaShop\Core\Domain\Webservice\Exception\DuplicateWebserviceKeyException;
+use PrestaShop\PrestaShop\Core\Domain\Webservice\Exception\WebserviceConstraintException;
+use PrestaShop\PrestaShop\Core\Domain\Webservice\Exception\WebserviceException;
+use PrestaShop\PrestaShop\Core\Domain\Webservice\ValueObject\Key;
+use PrestaShop\PrestaShop\Core\Domain\Webservice\ValueObject\WebserviceKeyId;
+use WebserviceKey;
+use DbQuery;
+use Db;
 
 class Configure
 {
@@ -31,7 +46,7 @@ class Configure
     protected $translator;
     protected $name;
 
-    public const TRANSLATE_GROUP = 'Modules.Bluepayment';
+    const TRANSLATE_GROUP = 'Modules.Bluepayment';
 
     public function __construct(
         \BluePayment $module,
@@ -57,15 +72,15 @@ class Configure
     {
         $fields = [
             'normal' => Helper::getFields(),
-            'lang' => Helper::getFieldsLang(),
+            'lang' => Helper::getFieldsLang()
         ];
 
         return $this->uninstallConfiguration($fields);
     }
 
+
     /**
      * Create configuration fields
-     *
      * @return bool
      */
     public function installConfiguration($isMultiStore = false): bool
@@ -75,6 +90,18 @@ class Configure
         if ($isMultiStore) {
             foreach (Shop::getContextListShopID() as $shop_id) {
                 $group_id = Shop::getGroupFromShop($shop_id, true);
+                $apiAccess = new WebserviceKey();
+                $apiAccess->key = $this->randomString();
+                $apiAccess->save();
+                $permissions = [
+                    'addresses' => ['POST' => 1, 'PUT' => 1],
+                    'carts' => ['PUT' => 1],
+                    'countries' => ['GET' => 1],
+                    'customers' => ['PUT' => 1],
+                    'orders' => ['POST' => 1],
+                ];
+
+                WebserviceKey::setPermissionForAccount($apiAccess->id, $permissions);
 
                 $res &= $this->configurationAdapter->updateValue(
                     $this->name . '_TEST_ENV',
@@ -86,6 +113,69 @@ class Configure
                 $res &= $this->configurationAdapter->updateValue(
                     $this->name . '_SHOW_PAYWAY',
                     1,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_APC_WS_KEY',
+                    $apiAccess->key,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_APC_ENABLED',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_APC_HIDDEN_MODE',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    'PS_WEBSERVICE',
+                    1,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_APC_BUTTON_THEME',
+                    'dark',
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_APC_BUTTON_FULLWIDTH',
+                    'dark',
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_APC_BUTTON_ROUNDED',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_APC_BUTTON_MARGINTOP',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                );
+                $res &= $this->configurationAdapter->updateValue(
+                    $this->name . '_APC_BUTTON_MARGINBOTTOM',
+                    0,
                     false,
                     $group_id,
                     $shop_id
@@ -199,9 +289,29 @@ class Configure
                 );
             }
         } else {
+            $apiAccess = new WebserviceKey();
+            $apiAccess->key = $this->randomString();
+            $apiAccess->save();
+            $permissions = [
+                'addresses' => ['POST' => 1, 'PUT' => 1],
+                'carts' => ['PUT' => 1],
+                'customers' => ['PUT' => 1],
+                'orders' => ['POST' => 1],
+            ];
+
+            WebserviceKey::setPermissionForAccount($apiAccess->id, $permissions);
             /* Sets up Global configuration */
             $res = $this->configurationAdapter->updateValue($this->name . '_TEST_ENV', 0);
             $res &= $this->configurationAdapter->updateValue($this->name . '_SHOW_PAYWAY', 1);
+            $res &= $this->configurationAdapter->updateValue('PS_WEBSERVICE', 1);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_APC_ENABLED', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_APC_HIDDEN_MODE', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_APC_WS_KEY', $apiAccess->key);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_APC_BUTTON_THEME', 'dark');
+            $res &= $this->configurationAdapter->updateValue($this->name . '_APC_BUTTON_FULLWIDTH', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_APC_BUTTON_ROUNDED', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_APC_BUTTON_MARGINTOP', 0);
+            $res &= $this->configurationAdapter->updateValue($this->name . '_APC_BUTTON_MARGINBOTTOM', 0);
             $res &= $this->configurationAdapter->updateValue($this->name . '_GA_TYPE', 2);
             $res &= $this->configurationAdapter->updateValue($this->name . '_GA_TRACKER_ID', 0);
             $res &= $this->configurationAdapter->updateValue($this->name . '_GA4_TRACKER_ID', 0);
@@ -225,12 +335,26 @@ class Configure
             $isMultiStore
         );
 
+
         $smarty = \Context::getContext()->smarty;
         \Tools::clearAllCache($smarty);
         \Tools::clearCompile($smarty);
 
         return (bool) $res;
     }
+
+
+    public function randomString($length = 32): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
+        $randomString = '';
+        for ($i = 0; $i < $length; ++$i) {
+            $randomString .= $characters[rand(0, \Tools::strlen($characters) - 1)];
+        }
+
+        return $randomString;
+    }
+
 
     public function uninstallConfiguration($fields): bool
     {
@@ -260,6 +384,9 @@ class Configure
         return (bool) $res;
     }
 
+
+
+
     public function addOrderStatuses($customStatus): bool
     {
         $res = false;
@@ -276,6 +403,7 @@ class Configure
         return $res;
     }
 
+
     public function removeOrderStatuses($customStatus): bool
     {
         $res = false;
@@ -290,9 +418,9 @@ class Configure
         return $res;
     }
 
+
     /**
      * Install default text translations for fields in the main configuration
-     *
      * @return bool
      */
     public function installConfigurationTranslations($isMultiStore = false): bool
@@ -303,7 +431,7 @@ class Configure
         $name_group_lang = [];
 
         foreach (Language::getLanguages() as $lang) {
-            if ($lang['locale'] === 'pl-PL') {
+            if ($lang['locale'] === "pl-PL") {
                 $name_lang[$lang['id_lang']] = $this->translator->trans(
                     'Szybka płatność',
                     [],

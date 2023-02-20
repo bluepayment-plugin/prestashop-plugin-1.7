@@ -16,15 +16,16 @@ use BluePayment\Until\Helper;
 
 class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontController
 {
-    public const FAILURE_DURRING_MSG = 'An error occurred during the transaction.';
-    public const FAILURE_PAID_MSG = 'Your transaction has already been paid.';
-    public const FAILURE_EXPIRED = 'Pay Smartney token has expired. Try again.';
 
-    public const PAYMENT_SUCCESS = 'Payment has been successfully completed.';
-    public const PAYMENT_PROGRESS = 'Transaction in progress.';
-    public const PAYMENT_WAITING = 'We are waiting for payment confirmation';
-    public const PAYMENT_FAILED = 'Transaction failed.';
-    public const PAYMENT_EXPIRED = 'The code has expired. Try again.';
+    const FAILURE_DURRING_MSG = 'An error occurred during the transaction.';
+    const FAILURE_PAID_MSG = 'Your transaction has already been paid.';
+    const FAILURE_EXPIRED = 'Pay Smartney token has expired. Try again.';
+
+    const PAYMENT_SUCCESS = 'Payment has been successfully completed.';
+    const PAYMENT_PROGRESS = 'Transaction in progress.';
+    const PAYMENT_WAITING = 'We are waiting for payment confirmation';
+    const PAYMENT_FAILED = 'Transaction failed.';
+    const PAYMENT_EXPIRED = 'The code has expired. Try again.';
 
     /**
      * @throws PrestaShopDatabaseException
@@ -72,10 +73,10 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
 
         $currency = $this->context->currency->iso_code;
 
-        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
-        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . Config::SHARED_KEY, $currency);
+        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper.Config::SERVICE_PARTNER_ID, $currency);
+        $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper.Config::SHARED_KEY, $currency);
 
-        $totalPaid = (float) $cart->getOrderTotal(true, Cart::BOTH);
+        $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
         $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
         $customer = new Customer($cart->id_customer);
@@ -85,18 +86,18 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
             $this->moduleValidateOrder($cart->id, $amount, $customer);
         }
 
-        $orderId = $this->module->currentOrder . '-' . time();
+        $orderId = $this->module->currentOrder.'-'.time();
 
         if (!empty($postOrderId)) {
             $orderId = $postOrderId;
         }
 
         $token = Tools::getValue('token');
-        require_once dirname(__FILE__) . '/../../libs/index.php';
+        require_once dirname(__FILE__).'/../../sdk/index.php';
 
         $transaction = $this->getTransactionData(
             $orderId,
-            (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_SMARTNEY
+            (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_SMARTNEY
         );
 
         if (empty($transaction)) {
@@ -126,7 +127,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
 
     private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $token)
     {
-        $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
+        $test_mode = Configuration::get($this->module->name_upper.'_TEST_ENV');
         $gateway_mode = $test_mode ?
             \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX :
             \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
@@ -138,12 +139,12 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
             'OrderID' => $orderId,
             'Amount' => $amount,
             'Description' => 'Pay Smartney Payment',
-            'GatewayID' => (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_SMARTNEY,
+            'GatewayID' => (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_SMARTNEY,
             'Currency' => $currency,
             'CustomerEmail' => $customerEmail,
             'CustomerIP' => $_SERVER['REMOTE_ADDR'],
             'Title' => 'Pay Smartney Payment',
-            'PaymentToken' => base64_encode(json_encode($token)),
+            'PaymentToken' => base64_encode(json_encode($token))
         ];
 
         $hash = array_merge($data, [$sharedKey]);
@@ -183,7 +184,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
             $orderIdItem = empty($orderIdItem[0]) ? 0 : $orderIdItem[0];
             $cart = Cart::getCartByOrderId($orderIdItem);
 
-            if (!Validate::isLoadedObject($cart) || (int) $this->context->cart->id != $cart->id) {
+            if (!Validate::isLoadedObject($cart) || (int)$this->context->cart->id != $cart->id) {
                 throw new OrderException('Invalid cart provided.');
             }
         }
@@ -191,23 +192,24 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
         return $cart;
     }
 
-    private function validateTransaction($transaction, $orderId): array
+    private function validateTransaction($transaction, $orderId)
+    :array
     {
         $array = [];
-        $transaction = (object) $transaction;
+        $transaction = (object)$transaction;
 
         if (isset($transaction->payment_status) && $transaction->payment_status == 'SUCCESS') {
             $array = [
                 'status' => 'SUCCESS',
                 'message' => $this->module->l(self::PAYMENT_SUCCESS, 'chargesmartney'),
-                'transaction' => $transaction,
+                'transaction' => $transaction
             ];
         }
         if (isset($transaction->payment_status) && $transaction->payment_status == 'PENDING') {
             $array = [
                 'status' => 'PENDING',
                 'message' => $this->module->l(self::PAYMENT_WAITING, 'chargesmartney'),
-                'transaction' => $transaction,
+                'transaction' => $transaction
             ];
         }
         if (isset($transaction->created_at) &&
@@ -220,7 +222,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
             Db::getInstance()->update(
                 'blue_transactions',
                 ['created_at' => date('Y-m-d H:i:s')],
-                'order_id = ' . (int) $orderId
+                'order_id = '.(int)$orderId
             );
         }
 
@@ -236,18 +238,15 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
 
     /**
      * Get transaction by order id
-     *
      * @param $orderId
-     *
      * @return mixed
      */
     private function getTransactionByOrderId($orderId)
     {
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = ' . (int) $orderId)
+            ->where('order_id = '. (int)($orderId))
             ->select('*');
-
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
     }
 
@@ -275,7 +274,9 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
         return $array;
     }
 
-    private function emptyConfirmation($response, $orderId): array
+
+    private function emptyConfirmation($response, $orderId)
+    :array
     {
         if ($response->status == 'PENDING') {
             $array = [
@@ -288,7 +289,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
             $this->transactionQuery($orderId, $data);
 
             if ($response->redirecturl && isset($response->redirecturl[0])) {
-                $redirectUrl = (array) $response->redirecturl;
+                $redirectUrl = (array)$response->redirecturl;
                 $array['redirectUrl'] = $redirectUrl[0] ?? null;
             } elseif ($response->redirecturl) {
                 $array['redirectUrl'] = $response->redirecturl;
@@ -311,7 +312,8 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
         return $array;
     }
 
-    private function hasConfirmation($response, $orderId, $data): array
+    private function hasConfirmation($response, $orderId, $data)
+    :array
     {
         $array = [];
         if ($response->confirmation == 'NOTCONFIRMED' && $response->reason == 'WRONG_TICKET') {
@@ -336,19 +338,18 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
             $data['payment_status'] = 'START_AMOUNT_OUT_OF_RANGE';
             $this->transactionQuery($orderId, $data);
         }
-
         return $array;
     }
 
+
     /**
      * Create transaction and insert sql query
-     *
      * @param int $orderId
      * @param $data
      */
     private function transactionQuery(int $orderId, $data)
     {
-        $gateway_id = (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_SMARTNEY;
+        $gateway_id = (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_SMARTNEY;
         $transaction = $this->getTransactionByOrderId($orderId);
 
         if (empty($transaction)) {
@@ -356,24 +357,22 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
             Db::getInstance()->insert('blue_transactions', $data);
         } else {
             unset($data['order_id']);
-            Db::getInstance()->update('blue_transactions', $data, 'order_id = ' . $orderId);
+            Db::getInstance()->update('blue_transactions', $data, 'order_id = '.$orderId);
         }
     }
 
     /**
      * Get transaction
-     *
      * @param $orderId
      * @param $gateway_id
-     *
      * @return mixed
      */
     private function getTransactionData($orderId, $gateway_id)
     {
         $query = new DbQuery();
         $query->from('blue_transactions')
-            ->where('order_id = ' . (int) $orderId)
-            ->where('gateway_id = ' . pSQL($gateway_id))
+            ->where('order_id = '.(int)$orderId)
+            ->where('gateway_id = '.pSQL($gateway_id))
             ->select('*');
 
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
@@ -381,7 +380,6 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
 
     /**
      * Validate order
-     *
      * @param $cartId
      * @param $amount
      * @param $customer
@@ -390,7 +388,7 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
     {
         $this->module->validateOrder(
             $cartId,
-            Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
+            Configuration::get($this->module->name_upper.'_STATUS_WAIT_PAY_ID'),
             $amount,
             $this->module->displayName,
             null,

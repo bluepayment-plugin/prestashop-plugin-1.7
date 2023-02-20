@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = [];
+$_MODULE = array();
 $_MODULE['<{bluepayment}prestashop>bluepayment_f2ef3cb9db8f7e55a9e122c2cebf3d4d'] = 'Płatności Blue Media';
 $_MODULE['<{bluepayment}prestashop>bluepayment_8c00d8812bd29a89eed5597a2a94ac91'] = 'Dodatek umożliwia korzystanie z płatności internetowych realizowanych za pomocą bramki płatniczej Blue Media.';
 $_MODULE['<{bluepayment}prestashop>bluepayment_876f23178c29dc2552c0b48bf23cd9bd'] = 'Czy na pewno chcesz usunąć moduł?';
@@ -21,7 +21,7 @@ $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c7e981aa08
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Zapisz';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_cbfd62b68ae6b42b24e8eecef5739a81'] = 'Identyfikator serwisu';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_b064154e9bb9f881f0406574c4dea449'] = 'Zawiera tylko cyfry. Jest inny dla każdego sklepu.';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_54c1fd93507141249b572aa4e72a25de'] = 'Klucz konfiguracyjny (hash)';
+$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_54c1fd93507141249b572aa4e72a25de'] = 'Klucz współdzielony';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_28ea85312acd42a27ae89da36c41e597'] = 'Zawiera cyfry i małe litery. Służy do weryfikacji komunikacji z bramką płatności. Nie powinien być udostępniany publicznie.';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_f1a9672d88ab0cae23402867e2def274'] = 'Ustawienia płatności';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_01bb2e0e57efa69165581502fff79651'] = 'WIDOCZNOŚĆ METOD PŁATNOŚCI';
@@ -122,7 +122,7 @@ $_MODULE['<{bluepayment}prestashop>benefits2_9ddea5885a31ff234170c4db2af53e6d'] 
 $_MODULE['<{bluepayment}prestashop>benefits2_6c559d21dd59f7d3bcecd7d753c5b817'] = 'Skonfiguruj płatności w swoim sklepie.';
 $_MODULE['<{bluepayment}prestashop>benefits2_d59048f21fd887ad520398ce677be586'] = 'Dowiedz się więcej';
 $_MODULE['<{bluepayment}prestashop>benefits2_8d409a78343915d3629a929856070783'] = 'o wdrożeniu płatności w Twoim sklepie.';
-$_MODULE['<{bluepayment}prestashop>notification-info_7ae6e99bd015783094c5c8e9e6281764'] = 'Identyfikator serwisu i klucz konfiguracyjny (hash) dla środowiska testowego różnią się od danych produkcyjnych.';
+$_MODULE['<{bluepayment}prestashop>notification-info_7ae6e99bd015783094c5c8e9e6281764'] = 'Identyfikator serwisu i klucz współdzielony dla środowiska testowego różnią się od danych produkcyjnych.';
 $_MODULE['<{bluepayment}prestashop>notification-info_93336e0bc26854e89a291155e14f90ba'] = 'Żeby uzyskać dane do środowiska testowego,';
 $_MODULE['<{bluepayment}prestashop>notification-info_3aaa356390ac79bd43abad7e49ad70ee'] = 'skontaktuj się z nami.';
 $_MODULE['<{bluepayment}prestashop>ga-events_2359f8e0cba590a8d3742c52fe9f4139'] = 'Poniżej znajdziesz listę zdarzeń i przypisanych do nich akcji, które po połączeniu będą widoczne w Twoim panelu Google Analytics.';
@@ -203,6 +203,10 @@ $_MODULE['<{bluepayment}prestashop>list_header_4493e821e06072415518bd7ae4077996'
 $_MODULE['<{bluepayment}prestashop>list_header_5da618e8e4b89c66fe86e32cdafde142'] = 'Od';
 $_MODULE['<{bluepayment}prestashop>list_header_e12167aa0a7698e6ebc92b4ce3909b53'] = 'Do';
 $_MODULE['<{bluepayment}prestashop>list_header_526d688f37a86d3c3f27d0c5016eb71d'] = 'Resetuj';
+$_MODULE['<{bluepayment}prestashop>payment_failed_1305a2b0c6c0eaf556d3ac2b18e25155'] = 'Nie udało się zrealizować płatności';
+$_MODULE['<{bluepayment}prestashop>payment_failed_652a01747d4374cf6a78a15603b7fe48'] = 'Wystąpił problem z realizacją zamówienia. Skontaktuj się, żeby uzyskać więcej informacji';
+$_MODULE['<{bluepayment}prestashop>payment_failed_bc7aefdf54220f4a573a5349473ada58'] = 'Wróć do sklepu';
+$_MODULE['<{bluepayment}prestashop>payment_failed_5fb3b61786d8df816fd7d55d05f9b76b'] = 'Zobacz historię zamówień';
 $_MODULE['<{bluepayment}prestashop>payment_d1635757791fdf0fa90d3cee330df1d2'] = 'Blue Media przekierowanie...';
 $_MODULE['<{bluepayment}prestashop>payment_14d4455ec5e67cba5277e70d0c424b0e'] = 'Trwa przekierowanie do płatności.';
 $_MODULE['<{bluepayment}prestashop>payment_1edb9ccd79e4bfc1c64c941fbba32ff6'] = 'Proszę czekać...';
@@ -212,7 +216,6 @@ $_MODULE['<{bluepayment}prestashop>payment_status_bc7aefdf54220f4a573a5349473ada
 $_MODULE['<{bluepayment}prestashop>payment_status_5fb3b61786d8df816fd7d55d05f9b76b'] = 'Zobacz historię zamówień';
 $_MODULE['<{bluepayment}prestashop>paymentgpay_e69cb9ccb9cdc5856757c36ca65e379f'] = 'Zostaniesz przekierowany na stronę naszego partnera Blue Media, gdzie możesz wybrać szybką i bezpieczną metodę płatności.';
 $_MODULE['<{bluepayment}prestashop>paymentgpay_ae471635055c858f02c079f378a673fd'] = 'Zaakceptuj [1]Regulamin Transakcji[/1]';
-$_MODULE['<{bluepayment}prestashop>paymentredirectvisamobile_a8fc103e1bd235f0fabd4491fc6b7b0a'] = 'Podaj numer telefonu i potwierdz płatność w aplikacji.';
 $_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_cda8f32d49d5687a59e290cf2271aade'] = 'Kup teraz i zapłać w ciągu 30 dni.';
 $_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_d59048f21fd887ad520398ce677be586'] = 'Dowiedz się więcej';
 $_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_71e1d7e05610b49e57b250e92a834d16'] = 'Przekierujemy Cię na stronę partnera Smartney. Po złożeniu wniosku i pozytywnej weryfikacji, Smartney opłaci zakupy za Ciebie. ';
@@ -232,9 +235,6 @@ $_MODULE['<{bluepayment}prestashop>wallet_db0492617a97b3e15b4a5abb27ab5ce3'] = '
 $_MODULE['<{bluepayment}prestashop>wallet_d3d2e617335f08df83599665eef8a418'] = 'Zamknij';
 $_MODULE['<{bluepayment}prestashop>paymentredirectblik_7b0acd25de0e4f8d8ad1fa459bea407e'] = 'Przekierujemy Cię na stronę, na której podasz kod BLIK. Kod BLIK wygenerujesz w swojej aplikacji bankowej.';
 $_MODULE['<{bluepayment}prestashop>paymentredirectcard_2764f8dc5d2581b84b5a3d829a6db1c9'] = 'Przekierujemy Cię na stronę naszego partnera Blue Media, gdzie podasz dane swojej karty.';
-$_MODULE['<{bluepayment}prestashop>paymentredirectpaypo_55f4bcebc99aec29b594394037909203'] = 'Odbierz swoje zakupy, sprawdź je i zapłać później - w 30 dni lub w wygodnych ratach.';
-$_MODULE['<{bluepayment}prestashop>paymentredirectpaypo_d59048f21fd887ad520398ce677be586'] = 'Poznaj szczegóły';
-$_MODULE['<{bluepayment}prestashop>paymentredirectpaypo_d77105cc999e554de1f40618cbbf018b'] = 'Przekierujemy Cię na stronę partnera PayPo';
 $_MODULE['<{bluepayment}prestashop>payment_28560d0f16e4972a9ddad1a919aac1b0'] = 'Przekierujemy Cię na stronę wybranego banku.';
 $_MODULE['<{bluepayment}prestashop>payment_faf2d11dfc308b73f0662d5a78cabedd'] = 'Zlecenie płatnicze składane jest do Twojego banku za pośrednictwem Blue Media S.A. z siedzibą w Sopocie i zostanie zrealizowane zgodnie z warunkami określonymi przez Twój bank.';
 $_MODULE['<{bluepayment}prestashop>payment_b89b438c8b0cbf71cc33e6e6ff183336'] = 'Po wyborze banku dokonasz autoryzacji płatności.';
@@ -266,8 +266,6 @@ $_MODULE['<{bluepayment}prestashop>gpay_ae471635055c858f02c079f378a673fd'] = 'Pr
 $_MODULE['<{bluepayment}prestashop>applepay_e69cb9ccb9cdc5856757c36ca65e379f'] = 'Zostaniesz przekierowany na stronę naszego partnera Blue Media, gdzie możesz wybrać szybką i bezpieczną metodę płatności.';
 $_MODULE['<{bluepayment}prestashop>adminhelper_52f5e0bc3859bc5f5e25130b6c7e8881'] = 'Pozycja';
 $_MODULE['<{bluepayment}prestashop>adminhelper_f0aaaae189e9c7711931a65ffcd22543'] = 'Metoda płatności';
-$_MODULE['<{bluepayment}prestashop>card_1e4b9d2cc53ea6d007fef536fd4d73e8'] = 'Płatność kartą';
-$_MODULE['<{bluepayment}prestashop>virtualwallet_ea8d3b1525c9150a4b7709dc1cf8d5ea'] = 'Virtual wallet';
 $_MODULE['<{bluepayment}prestashop>design_eb399bcaca686f8609137153307eecf1'] = 'zmień';
 $_MODULE['<{bluepayment}prestashop>design_d959bbe25cc020e2db5276cb42927c7c'] = 'więcej';
 $_MODULE['<{bluepayment}prestashop>admin_2f8798acbb31ddfb6709697e67b6dcba'] = 'Wprowadzona kwota zwrotu jest większa niż kwota wypłacona.';

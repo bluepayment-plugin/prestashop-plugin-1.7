@@ -10,12 +10,14 @@
  * @copyright  Since 2015 Blue Media S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 function upgrade_module_2_6_2($module)
 {
+
     $return = true;
 
     $return &= $module->uninstallTab();

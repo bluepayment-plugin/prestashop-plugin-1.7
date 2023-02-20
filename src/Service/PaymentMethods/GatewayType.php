@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -23,6 +24,5 @@ interface GatewayType
         \BluePayment $module,
         array $data = []
     ): PaymentOption;
-
     public function isActive(): bool;
 }

@@ -4,13 +4,9 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit46fc95885f5cee2a862b4bb82a48bb6e
+class ComposerStaticInitefa014b3ab807ae21ffc659c723b694b
 {
     public static $prefixLengthsPsr4 = array (
-        'S' => 
-        array (
-            'Symfony\\Component\\Dotenv\\' => 25,
-        ),
         'B' => 
         array (
             'BluePayment\\' => 12,
@@ -18,10 +14,6 @@ class ComposerStaticInit46fc95885f5cee2a862b4bb82a48bb6e
     );
 
     public static $prefixDirsPsr4 = array (
-        'Symfony\\Component\\Dotenv\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/dotenv',
-        ),
         'BluePayment\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
@@ -61,22 +53,16 @@ class ComposerStaticInit46fc95885f5cee2a862b4bb82a48bb6e
         'BluePayment\\Statuses\\CustomStatus' => __DIR__ . '/../..' . '/src/Statuses/CustomStatus.php',
         'BluePayment\\Statuses\\OrderStatusMessageDictionary' => __DIR__ . '/../..' . '/src/Statuses/OrderStatusMessageDictionary.php',
         'BluePayment\\Until\\AdminHelper' => __DIR__ . '/../..' . '/src/Until/AdminHelper.php',
-        'BluePayment\\Until\\AnaliticsHelper' => __DIR__ . '/../..' . '/src/Until/AnaliticsHelper.php',
         'BluePayment\\Until\\Helper' => __DIR__ . '/../..' . '/src/Until/Helper.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Symfony\\Component\\Dotenv\\Dotenv' => __DIR__ . '/..' . '/symfony/dotenv/Dotenv.php',
-        'Symfony\\Component\\Dotenv\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/dotenv/Exception/ExceptionInterface.php',
-        'Symfony\\Component\\Dotenv\\Exception\\FormatException' => __DIR__ . '/..' . '/symfony/dotenv/Exception/FormatException.php',
-        'Symfony\\Component\\Dotenv\\Exception\\FormatExceptionContext' => __DIR__ . '/..' . '/symfony/dotenv/Exception/FormatExceptionContext.php',
-        'Symfony\\Component\\Dotenv\\Exception\\PathException' => __DIR__ . '/..' . '/symfony/dotenv/Exception/PathException.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit46fc95885f5cee2a862b4bb82a48bb6e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit46fc95885f5cee2a862b4bb82a48bb6e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit46fc95885f5cee2a862b4bb82a48bb6e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitefa014b3ab807ae21ffc659c723b694b::$classMap;
 
         }, null, ClassLoader::class);
     }

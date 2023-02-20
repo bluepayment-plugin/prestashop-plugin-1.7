@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -16,12 +17,13 @@ declare(strict_types=1);
 namespace BluePayment\Service\PaymentMethods;
 
 use BluePayment\Api\BlueGatewayTransfers;
-use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
-use Cart;
-use Configuration as Cfg;
+use BluePayment\Config\Config;
 use Context;
+use Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Tools;
+use Cart;
 
 class AliorInstallment implements GatewayType
 {
@@ -72,12 +74,14 @@ class AliorInstallment implements GatewayType
         if (!$cart_total) {
             $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
         }
+        if (
+            $alior
+            && (float)$cart_total >= (float) Config::ALIOR_MIN_AMOUNT
+            && (float)$cart_total <= (float) Config::ALIOR_MAX_AMOUNT
+        ) {
+            return true;
+        }
 
-        $activePromo = Cfg::get('BLUEPAYMENT_PROMO_PAY_LATER');
-
-        return $alior
-            && $activePromo
-            && (float) $cart_total >= (float) Config::ALIOR_MIN_AMOUNT
-            && (float) $cart_total <= (float) Config::ALIOR_MAX_AMOUNT;
+        return false;
     }
 }

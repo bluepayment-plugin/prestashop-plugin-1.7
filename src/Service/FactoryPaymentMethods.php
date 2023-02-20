@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE
  * This source file is subject to the GNU Lesser General Public License
@@ -15,12 +16,13 @@ declare(strict_types=1);
 
 namespace BluePayment\Service;
 
-use BluePayment\Config\Config;
 use BluePayment\Service\PaymentMethods\MainGateway;
-use Context;
+use BluePayment\Config\Config;
+use Symfony\Component\Translation\TranslatorInterface;
 use Db;
 use DbQuery;
 use Shop;
+use Context;
 
 class FactoryPaymentMethods
 {
@@ -35,9 +37,10 @@ class FactoryPaymentMethods
 
     public function getGroup()
     {
-        if (!is_object(Context::getContext()->currency)) {
+        if(!is_object(Context::getContext()->currency)){
             $currency = Context::getContext()->currency['iso_code'];
-        } else {
+        }
+        else{
             $currency = Context::getContext()->currency->iso_code;
         }
         $idShop = $this->context->shop->id;
@@ -76,12 +79,6 @@ class FactoryPaymentMethods
                 break;
             case Config::GATEWAY_ID_BLIK:
                 $gateway = 'Blik';
-                break;
-            case Config::GATEWAY_ID_PAYPO:
-                $gateway = 'PayPo';
-                break;
-            case Config::GATEWAY_ID_VISA_MOBILE:
-                $gateway = 'VisaMobile';
                 break;
             default:
                 $gateway = '';

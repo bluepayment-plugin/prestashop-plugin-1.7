@@ -45,11 +45,12 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
 
     private function regulationsGet()
     {
-        require_once dirname(__FILE__) . '/../../libs/index.php';
+        require_once dirname(__FILE__) . '/../../sdk/index.php';
 
         $currency = $this->context->currency->iso_code;
         $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
         $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . Config::SHARED_KEY, $currency);
+
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ?
@@ -63,7 +64,7 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
          */
         $data = [
             'ServiceID' => $serviceId,
-            'MessageID' => (string) md5(uniqid('', true)),
+            'MessageID' => (string)md5(uniqid('', true)),
         ];
 
         $data = array_merge($data, [$sharedKey]);
@@ -92,14 +93,12 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
                     print_r($data, 1) .
                     "\nResponse:\n" . print_r($curlResponse, 1)
                 );
-
                 return false;
             }
 
             return simplexml_load_string($curlResponse);
         } catch (Exception $e) {
             Tools::error_log($e);
-
             return false;
         }
     }

@@ -11,8 +11,8 @@
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use BluePayment\Config\Config;
 
 class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 {
@@ -55,7 +55,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
         if (!$status) {
             echo json_encode([
-                'status' => 'FAILURE',
+                'status'  => 'FAILURE',
                 'message' => $this->module->l('Client identificator not provided.', 'chargeblik'),
             ]);
             exit;
@@ -66,7 +66,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
         $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . Config::SHARED_KEY, $currency);
 
-        $totalPaid = (float) $cart->getOrderTotal(true, Cart::BOTH);
+        $totalPaid = (float)$cart->getOrderTotal(true, Cart::BOTH);
         $amount = number_format(round($totalPaid, 2), 2, '.', '');
 
         $customer = new Customer($cart->id_customer);
@@ -96,6 +96,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         exit;
     }
 
+
     private function getCartByOrderId($postOrderId)
     {
         if (empty($postOrderId)) {
@@ -109,6 +110,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         return $cart;
     }
 
+
     private function getTransactionData($orderId, $blikCode)
     {
         $query = new DbQuery();
@@ -120,7 +122,9 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
     }
 
-    private function initTransaction($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode): array
+
+    private function initTransaction($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode)
+    :array
     {
         $transaction = $this->getTransactionData($orderId, $blikCode);
 
@@ -147,19 +151,20 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 'bluepayment',
                 'blik',
                 [
-                    'OrderID' => $orderId,
+                    'OrderID'       => $orderId,
                     'PaymentStatus' => $result['status'],
                 ],
                 true
             );
         }
-
         return $result;
     }
 
+
+
     private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode)
     {
-        require_once dirname(__FILE__) . '/../../libs/index.php';
+        require_once dirname(__FILE__) . '/../../sdk/index.php';
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ?
@@ -169,17 +174,17 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         $gateway = new \BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
 
         $data = [
-            'ServiceID' => $serviceId,
-            'OrderID' => $orderId,
-            'Amount' => $amount,
-            'Description' => 'BLIK Payment',
-            'GatewayID' => (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_BLIK,
-            'Currency' => $currency,
-            'CustomerEmail' => $customerEmail,
-            'CustomerIP' => $_SERVER['REMOTE_ADDR'],
-            'Title' => 'BLIK Payment',
+            'ServiceID'         => $serviceId,
+            'OrderID'           => $orderId,
+            'Amount'            => $amount,
+            'Description'       => 'BLIK Payment',
+            'GatewayID'         => (string)\BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_BLIK,
+            'Currency'          => $currency,
+            'CustomerEmail'     => $customerEmail,
+            'CustomerIP'        => $_SERVER['REMOTE_ADDR'],
+            'Title'             => 'BLIK Payment',
             'AuthorizationCode' => $blikCode,
-            'ScreenType' => 'FULL',
+            'ScreenType'        => 'FULL',
         ];
 
         $hash = array_merge($data, [$sharedKey]);
@@ -209,12 +214,13 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         }
     }
 
-    private function validateRequest($response, $orderId, $blikCode): array
+    private function validateRequest($response, $orderId, $blikCode)
+    :array
     {
         $array = [];
         $data = [
-            'order_id' => pSQL($orderId),
-            'blik_code' => pSQL($blikCode),
+            'order_id'   => pSQL($orderId),
+            'blik_code'  => pSQL($blikCode),
             'created_at' => date('Y-m-d H:i:s'),
         ];
 
@@ -228,15 +234,16 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         if (isset($response->confirmation) && $response->confirmation == 'CONFIRMED') {
             if ($response->paymentStatus == 'PENDING') {
                 $array = [
-                    'status' => 'PENDING',
+                    'status'  => 'PENDING',
                     'message' => $this->module->l('Confirm the operation in your bank\'s application.', 'chargeblik'),
                 ];
 
                 $data['blik_status'] = 'PENDING';
                 $this->transactionQuery($transaction, $orderId, $data);
             } elseif ($response->paymentStatus == 'SUCCESS') {
+
                 $array = [
-                    'status' => 'SUCCESS',
+                    'status'  => 'SUCCESS',
                     'message' => $this->module->l('Payment has been successfully completed.', 'chargeblik'),
                 ];
 
@@ -244,7 +251,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 $this->transactionQuery($transaction, $orderId, $data);
             } else {
                 $array = [
-                    'status' => 'FAILURE',
+                    'status'  => 'FAILURE',
                     'message' => $this->module->l('The entered code is not valid.', 'chargeblik'),
                 ];
             }
@@ -253,7 +260,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             $response->reason == 'WRONG_TICKET'
         ) {
             $array = [
-                'status' => 'FAILURE',
+                'status'  => 'FAILURE',
                 'message' => $this->module->l('The entered code is not valid.', 'chargeblik'),
             ];
             $data['blik_status'] = 'WRONG_TICKET';
@@ -263,7 +270,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             $response->reason == 'MULTIPLY_PAID_TRANSACTION'
         ) {
             $array = [
-                'status' => 'FAILURE',
+                'status'  => 'FAILURE',
                 'message' => $this->module->l('Your BLIK transaction has already been paid for.', 'chargeblik'),
             ];
             $data['blik_status'] = 'MULTIPLY_PAID_TRANSACTION';
@@ -272,7 +279,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
         if (empty($array)) {
             $array = [
-                'status' => 'FAILURE',
+                'status'  => 'FAILURE',
                 'message' => $this->module->l('The code has expired. Try again.', 'chargeblik'),
             ];
         }
@@ -280,24 +287,28 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         return $array;
     }
 
+
+
     private function transactionQuery($transaction, $orderId, $data)
     {
         if (empty($transaction)) {
             Db::getInstance()->insert('blue_transactions', $data);
         } else {
             unset($data['order_id']);
-            Db::getInstance()->update('blue_transactions', $data, 'order_id = ' . (int) $orderId);
+            Db::getInstance()->update('blue_transactions', $data, 'order_id = ' . (int)$orderId);
         }
     }
 
-    private function validateTransaction($transaction, $orderId): array
+
+    private function validateTransaction($transaction, $orderId)
+    :array
     {
         $array = [];
-        $transaction = (object) $transaction;
+        $transaction = (object)$transaction;
 
         if (isset($transaction->blik_status) && $transaction->blik_status == 'SUCCESS') {
             $array = [
-                'status' => 'SUCCESS',
+                'status'  => 'SUCCESS',
                 'message' => $this->module->l('Payment has been successfully completed.', 'chargeblik'),
             ];
             $data['blik_status'] = 'SUCCESS';
@@ -305,23 +316,25 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         }
         if (isset($transaction->blik_status) && $transaction->blik_status == 'PENDING') {
             $array = [
-                'status' => 'PENDING',
+                'status'  => 'PENDING',
                 'message' => $this->module->l('Confirm the operation in your bank\'s application.', 'chargeblik'),
             ];
 
-            if ($transaction->payment_status == 'SUCCESS') {
+            if($transaction->payment_status == 'SUCCESS') {
+
                 $ga = $_COOKIE['_ga'] ?? '';
 
                 $data['blik_status'] = 'SUCCESS';
                 $data['gtag_uid'] = $ga;
                 $this->transactionQuery($transaction, $orderId, $data);
             }
+
         }
         if (isset($transaction->created_at) &&
             time() >= strtotime('+2 minutes', strtotime($transaction->created_at))
         ) {
             $array = [
-                'status' => 'FAILURE',
+                'status'  => 'FAILURE',
                 'message' => $this->module->l('The BLIK code has expired.', 'chargeblik'),
             ];
 
@@ -331,7 +344,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
         if (empty($array)) {
             $array = [
-                'status' => 'FAILURE',
+                'status'  => 'FAILURE',
                 'message' => $this->module->l('The code has expired. Try again.', 'chargeblik'),
             ];
         }

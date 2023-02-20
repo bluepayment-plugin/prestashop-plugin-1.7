@@ -1,5 +1,5 @@
 # Instrukcja modułu BluePayment dla platformy PrestaShop 1.7
-**Wersja wtyczki**: 2.8.5
+**Wersja wtyczki**: 2.8.2 (autopay)
 
 ## Podstawowe informacje
 BluePayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7.
@@ -34,7 +34,7 @@ Po pozytywnej weryfikacji przez Blue Media, płatności online zostaną aktywowa
 
 ## Instalacja wtyczki
 
-1) Pobierz najnowszą wersję wtyczki z rozszerzeniem .zip klikając [tutaj](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/releases).
+1) Pobierz najnowszą wersję wtyczki klikając [tutaj](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/releases).
 
 2) Wejdź na http(s)://domena_sklepu.pl/nazwa_katalogu_administratora i zaloguj się do swojego konta administratora używając loginu i hasła.
 
@@ -70,7 +70,7 @@ Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfigura
 
 1) Przejdź do zakładki **Moduły > Moduły i usługi** (lub **Menedżer modułów** – w zależności od wersji sklepu) i wybierz z listy modułów kategorię: **Płatność** (lub wyszukaj moduł za pomocą wyszukiwarki).
 2) Kliknij przycisk Konfiguruj w bloku o nazwie **Płatności Blue Media** i uzupełnij wszystkie dane (otrzymasz je od nas). Jeżeli przycisk **Konfiguruj** nie jest widoczny – należy ponownie zainstalować moduł.
-3) Żeby uzyskać od nas **Identyfikator serwisu partnera** oraz **Klucz konfiguracyjny (hash)** – prześlij do nas adresy do komunikacji między sklepem a bramką płatniczą:
+3) Żeby uzyskać od nas **Identyfikator serwisu partnera** oraz **Klucz współdzielony** – prześlij do nas adresy do komunikacji między sklepem a bramką płatniczą:
 - http(s)://domena_sklepu.pl/module/bluepayment/back
 - http(s)://domena_sklepu.pl/module/bluepayment/status
 
@@ -80,9 +80,9 @@ Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfigura
 
 1. Tryb testowy – zmiana trybu pracy bramki na testowy umożliwia weryfikację działania modułu bez konieczności rzeczywistego opłacania zamówienie (w trybie testowym nie pobierane są żadne opłaty za zamówienie).
 2. Identyfikator serwisu – składa się tylko z cyfr i jest inny dla każdego sklepu (uzyskasz go od Blue Media).
-3. Klucz konfiguracyjny (hash) – służy do weryfikacji komunikacji z bramką płatności. Zawiera cyfry i małe litery. Nie należy go udostępniać publicznie (uzyskasz go od Blue Media).
+3. Klucz współdzielony – służy do weryfikacji komunikacji z bramką płatności. Zawiera cyfry i małe litery. Nie należy go udostępniać publicznie (uzyskasz go od Blue Media).
 
-Jeśli masz więcej niż jedną walutę w sklepie, to pola Identyfikator i Klucz konfiguracyjny (hash) będą powielone, żeby można było je przypisać do każdej z walut.
+Jeśli masz więcej niż jedną walutę w sklepie, to pola Identyfikator i Klucz współdzielony będą powielone, żeby można było je przypisać do każdej z walut.
 
 ### Zakładka płatności
 1. Pokazuj metody płatności w sklepie – gdy opcja jest włączona, klient zobaczy wszystkie dostępne metody płatności (np. BLIK, przelew internetowy, itp.) już na stronie sklepu. Dzięki temu łatwiej i szybciej wybierze tę dogodną dla siebie.
