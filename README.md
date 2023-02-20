@@ -34,7 +34,7 @@ Po pozytywnej weryfikacji przez Blue Media, płatności online zostaną aktywowa
 
 ## Instalacja wtyczki
 
-1) Pobierz najnowszą wersję wtyczki klikając [tutaj](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/releases).
+1) Pobierz najnowszą wersję wtyczki klikając [tutaj](https://github.com/bluepayment-plugin/prestashop-plugin-1.7/blob/autopay/bm-bluepayment.zip?raw=true).
 
 2) Wejdź na http(s)://domena_sklepu.pl/nazwa_katalogu_administratora i zaloguj się do swojego konta administratora używając loginu i hasła.
 
