@@ -43,7 +43,7 @@ class Amplitude
      * @throws \Exception
      * @codeCoverageIgnore
      */
-    private function __wakeup()
+    public function __wakeup()
     {
         throw new \InvalidArgumentException('Not supported wakeup');
     }

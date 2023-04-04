@@ -749,7 +749,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'ajax_token' => Tools::getAdminTokenLite('AdminBluepaymentAjax'),
             'ajax_payments_token' => Tools::getAdminTokenLite('AdminBluepaymentPayments'),
             'amplitude_user_id' => Amplitude::getUserId(),
-            'amplitude_id' => Amplitude::getAmplitudeId(),
+            'amplitude_id' => Amplitude::getInstance()->getAmplitudeId(),
             'bm_assets_images' => $this->module->getAssetImages(),
         ];
 

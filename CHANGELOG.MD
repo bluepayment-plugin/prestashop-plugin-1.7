@@ -1,6 +1,9 @@
 # Changelog
 
-## [2.8.5] 3.01.2022
+## [2.8.6] 4.04.2023
+- Adaptation for PrestaShop 8
+
+## [2.8.5] 3.01.2023
 - Added amplitude analytics events
 - Added PayPo payment
 

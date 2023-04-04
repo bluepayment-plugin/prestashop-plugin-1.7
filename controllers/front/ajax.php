@@ -52,7 +52,7 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
             );
 
             $this->ajaxDie(
-                Tools::jsonEncode(
+                json_encode(
                     [
                         'success' => true,
                         'data' => [

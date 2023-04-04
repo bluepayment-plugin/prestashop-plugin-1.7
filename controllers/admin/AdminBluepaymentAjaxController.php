@@ -144,13 +144,13 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
             $gateway->getTransfers();
             $gateway->getChannels();
 
-            $this->ajaxDie(Tools::jsonEncode(['success' => true]));
+            $this->ajaxDie(json_encode(['success' => true]));
         } catch (Exception $exception) {
             PrestaShopLogger::addLog(
                 'Blue Media - Ajax Error',
                 4
             );
-            $this->ajaxDie(Tools::jsonEncode(['success' => false]));
+            $this->ajaxDie(json_encode(['success' => false]));
         }
     }
 }
