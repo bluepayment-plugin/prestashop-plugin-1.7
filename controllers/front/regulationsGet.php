@@ -45,8 +45,6 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
 
     private function regulationsGet()
     {
-        require_once dirname(__FILE__) . '/../../libs/index.php';
-
         $currency = $this->context->currency->iso_code;
         $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
         $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . Config::SHARED_KEY, $currency);

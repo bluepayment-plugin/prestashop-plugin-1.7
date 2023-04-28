@@ -60,6 +60,8 @@ _dev/node_modules/
 *.html
 /build/
 .php-cs-fixer.cache
+.php-cs-fixer.dist.php
+.prettyci.composer.json
 
 .nyc_output
 jscoverage

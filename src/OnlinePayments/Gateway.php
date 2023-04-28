@@ -317,11 +317,12 @@ class Gateway
      */
     public static function getItnInXml()
     {
-        if (empty($_POST['transactions'])) {
+        $transactions = \Tools::getValue('transactions');
+        if (empty($transactions)) {
             throw new \InvalidArgumentException('BM SDK: No "transactions" field in POST data' . json_encode($_POST));
         }
 
-        $transactionXml = $_POST['transactions'];
+        $transactionXml = $transactions;
         $transactionData = (string) base64_decode($transactionXml, true);
 
         return XMLParser::parse($transactionData);
@@ -344,7 +345,7 @@ class Gateway
             Logger::DEBUG,
             sprintf('Got "transactions" field in POST data'),
             [
-                'data-raw' => $_POST['transactions'],
+                'data-raw' => \Tools::getValue('transactions'),
                 'data-xml' => $transactionXml,
             ]
         );
@@ -540,7 +541,6 @@ class Gateway
                 $message = sprintf('Requested action "%s" not supported', $action);
                 Logger::log(Logger::EMERGENCY, $message);
                 throw new RuntimeException($message);
-                break;
         }
 
         return sprintf('https://%s%s', $domain, $action);

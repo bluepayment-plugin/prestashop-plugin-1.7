@@ -68,6 +68,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         }
 
         $this->context->controller->addCSS($this->module->getPathUrl() . 'views/css/admin.css');
+        $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/admin.js');
 
         $this->content .= $this->renderForm();
 
@@ -202,7 +203,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                             'type' => 'text',
                             'label' => $this->l('Shared key'),
                             'name' => $this->module->name_upper . '_SHARED_KEY_' . $currency['iso_code'],
-                            'help' => $this->l('Contains numbers and lowercase letters. It is used to verify 
+                            'help' => $this->l('Contains numbers and lowercase letters. It is used to verify
                             communication with the payment gateway. It should not be made available to the public'),
                         ],
                     ],
@@ -246,7 +247,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     'name' => $this->module->name_upper . '_PAYMENT_NAME',
                     'size' => 40,
                     'lang' => true,
-                    'help' => $this->l('We recommend that you keep the above name. Changing it may have a negative 
+                    'help' => $this->l('We recommend that you keep the above name. Changing it may have a negative
                     impact on the customers understanding of the payment methods.'),
                     'modal' => 'bm-helper-main-name',
                 ],
@@ -256,7 +257,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     'name' => $this->module->name_upper . '_PAYMENT_GROUP_NAME',
                     'size' => 40,
                     'lang' => true,
-                    'help' => $this->l('We recommend that you keep the above name. Changing it may have a negative 
+                    'help' => $this->l('We recommend that you keep the above name. Changing it may have a negative
                     impact on the customers understanding of the payment methods.'),
                     'modal' => 'bm-helper-main-name',
                 ],
@@ -359,6 +360,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         'name' => $this->module->name_upper . '_PROMO_PAY_LATER',
                         'image' => 'switcher1.png',
                         'size' => 'auto',
+                        'class' => $alior ? 'bm-active' : 'bm-no-active',
+                        'modal' => 'bm-helper-alior',
                         'values' => [
                             [
                                 'id' => 'active_on',
@@ -379,6 +382,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         'name' => $this->module->name_upper . '_PROMO_INSTALMENTS',
                         'image' => 'switcher2.png',
                         'size' => 'auto',
+                        'class' => $smartney ? 'bm-active' : 'bm-no-active',
+                        'modal' => 'bm-helper-smartney',
                         'values' => [
                             [
                                 'id' => 'active_on',
@@ -393,25 +398,25 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         ],
                     ],
 
-                    [
-                        'type' => 'switch',
-                        'label' => $this->l('Matching instalments'),
-                        'name' => $this->module->name_upper . '_PROMO_MATCHED_INSTALMENTS',
-                        'image' => 'switcher3.png',
-                        'size' => 'auto',
-                        'values' => [
-                            [
-                                'id' => 'active_on',
-                                'value' => 1,
-                                'label' => $this->l('Show'),
-                            ],
-                            [
-                                'id' => 'active_off',
-                                'value' => 0,
-                                'label' => $this->l('Hide'),
-                            ],
-                        ],
-                    ],
+//                    [
+//                        'type' => 'switch',
+//                        'label' => $this->l('Matching instalments'),
+//                        'name' => $this->module->name_upper . '_PROMO_MATCHED_INSTALMENTS',
+//                        'image' => 'switcher3.png',
+//                        'size' => 'auto',
+//                        'values' => [
+//                            [
+//                                'id' => 'active_on',
+//                                'value' => 1,
+//                                'label' => $this->l('Show'),
+//                            ],
+//                            [
+//                                'id' => 'active_off',
+//                                'value' => 0,
+//                                'label' => $this->l('Hide'),
+//                            ],
+//                        ],
+//                    ],
                     [
                         'type' => 'infoheading',
                         'name' => false,

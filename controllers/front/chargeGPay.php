@@ -95,7 +95,6 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
         }
 
         $token = Tools::getValue('token');
-        require_once dirname(__FILE__) . '/../../libs/index.php';
 
         $result = $this->createTransaction(
             $orderId,

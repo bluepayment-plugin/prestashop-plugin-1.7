@@ -103,8 +103,6 @@ class BlueAPI
 
     public function isConnectedAPI($serviceId, $hashKey, $gatewayMode): bool
     {
-        Config::getSdk();
-
         $gateway = new Gateway(
             $serviceId,
             $hashKey,
@@ -122,8 +120,6 @@ class BlueAPI
 
     public function connectFromAPI($serviceId, $hashKey, $mode): ?PaywayList
     {
-        Config::getSdk();
-
         $gateway = new Gateway(
             $serviceId,
             $hashKey,

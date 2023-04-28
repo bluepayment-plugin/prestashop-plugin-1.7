@@ -92,7 +92,6 @@ class BluePaymentChargeSmartneyModuleFrontController extends ModuleFrontControll
         }
 
         $token = Tools::getValue('token');
-        require_once dirname(__FILE__) . '/../../libs/index.php';
 
         $transaction = $this->getTransactionData(
             $orderId,

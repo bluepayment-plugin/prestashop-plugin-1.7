@@ -53,10 +53,4 @@ class Config
     public const API_AUTHENTICATION_SUCCESS = 'authorization completed';
     public const API_AUTHENTICATION_FAILED = 'authorization failed';
 
-    public static function getSdk(): void
-    {
-        if (file_exists(__DIR__ . '/../../libs/index.php')) {
-            require_once __DIR__ . '/../../libs/index.php';
-        }
-    }
 }

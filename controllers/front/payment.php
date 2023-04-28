@@ -125,8 +125,6 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             $isoCode
         );
 
-        require_once dirname(__FILE__) . '/../../libs/index.php';
-
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ? Gateway::MODE_SANDBOX : Gateway::MODE_LIVE;
 

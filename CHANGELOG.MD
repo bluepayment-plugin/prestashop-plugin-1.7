@@ -1,4 +1,8 @@
 # Changelog
+## [2.8.7] 28.04.2022
+- Fixed display null after change payment method
+- Fixed change order status when product out of stock
+- Remove directory libs, added dependencies from directory libs to composer
 
 ## [2.8.6] 4.04.2023
 - Adaptation for PrestaShop 8
@@ -18,7 +22,7 @@
 ## [2.8.3] 17.11.2022
 - Added Env settings
 - Fixed error ITN
-- Fixed a status change that occurred after a status change in some time after an order 
+- Fixed a status change that occurred after a status change in some time after an order
 
 ## [2.8.2] 02.11.2022
 - Change the display of information about an available module update
@@ -54,14 +58,14 @@
 - Fixed bugs main gateway redirect
 
 ## [2.7.7] 1.08.2022
-- Added Google Analytics tracking 
-- Added Amplitude tracking 
+- Added Google Analytics tracking
+- Added Amplitude tracking
 - Added promote channels
 - Added display of tags promoting installments
 - Modified sql queries
 - Added support for payment channels from the Czech and Slovak regions
 - Fixed bugs
-- Czech and Slovak language added 
+- Czech and Slovak language added
 - Added help tab in module administration
 
 ## [2.7.6] 9.06.2022
@@ -70,7 +74,7 @@
 ## [2.7.4] 2.05.2022
 - Fixed multistore
 - Changes backend options
-- Change frontend design 
+- Change frontend design
 - Refactoring the SDK connection
 - Refactoring javascript classes and libraries
 - Added backend helpers
@@ -80,7 +84,7 @@
 - Update vendors
 
 ## [2.7.3] 16.03.2022
-- Fixed multistore 
+- Fixed multistore
 - Improved google analytics by increasing analytics events
 - Refractorization of classes
 - Added backend helpers
@@ -102,7 +106,7 @@
 - Fixed popup payments in backend
 - Added ajax saved configuration
 - Changed the way to check for new version availability via API
-- Added ajax controller 
+- Added ajax controller
 - Changes in css file location
 
 ## [2.6.9] 21.01.2022
@@ -126,12 +130,12 @@
 
 ## [2.6.3] 25.08.2021
 - Fixed status installations when updating a module
-- Improved payment status 
+- Improved payment status
 
 ## [2.6.2] 19.08.2021
 - Using composer package manager for better organization
 - Add autoloader class
-- Fixed ITN problem  
+- Fixed ITN problem
 - Fixed payment buttons language
 - Creation of native transactional messages
 - Change of default settings of transaction statuses

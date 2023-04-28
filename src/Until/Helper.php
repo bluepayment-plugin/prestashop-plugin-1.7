@@ -179,8 +179,6 @@ class Helper
      */
     public static function generateAndReturnHash($data): string
     {
-        Config::getSdk();
-
         $values_array = array_values($data);
         $values_array_filter = array_filter($values_array);
 
@@ -209,13 +207,13 @@ class Helper
     public static function sendEmail($order, $template_vars = false, $id = 0)
     {
         $result = \Db::getInstance()->getRow('
-            SELECT osl.`template`, c.`lastname`, c.`firstname`, osl.`name` AS osname, c.`email`, os.`module_name`, 
+            SELECT osl.`template`, c.`lastname`, c.`firstname`, osl.`name` AS osname, c.`email`, os.`module_name`,
                    os.`id_order_state`, os.`pdf_invoice`, os.`pdf_delivery`
             FROM `' . _DB_PREFIX_ . 'order_history` oh
                 LEFT JOIN `' . _DB_PREFIX_ . 'orders` o ON oh.`id_order` = o.`id_order`
                 LEFT JOIN `' . _DB_PREFIX_ . 'customer` c ON o.`id_customer` = c.`id_customer`
                 LEFT JOIN `' . _DB_PREFIX_ . 'order_state` os ON oh.`id_order_state` = os.`id_order_state`
-                LEFT JOIN `' . _DB_PREFIX_ . 'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` 
+                LEFT JOIN `' . _DB_PREFIX_ . 'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state`
                 AND osl.`id_lang` = o.`id_lang`)
             WHERE oh.`id_order_history` = ' . (int) $id . ' AND os.`send_email` = 1');
         if (isset($result['template']) && \Validate::isEmail($result['email'])) {

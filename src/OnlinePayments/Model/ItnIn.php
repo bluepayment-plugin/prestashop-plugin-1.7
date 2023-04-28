@@ -1518,7 +1518,6 @@ class ItnIn extends AbstractModel
 
             default:
                 throw new DomainException(sprintf('PaymentStatus="%s" not supported', $this->paymentStatus));
-                break;
         }
         if (empty($this->hash)) {
             throw new DomainException('Hash cannot be empty');

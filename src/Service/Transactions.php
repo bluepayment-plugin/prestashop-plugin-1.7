@@ -94,8 +94,6 @@ class Transactions
      */
     public function updateStatusTransactionAndOrder($transaction)
     {
-        Config::getSdk();
-
         // Payment status identifiers
         $statusAcceptId = (int) Cfg::get($this->module->name_upper . '_STATUS_ACCEPT_PAY_ID');
         $statusErrorId = (int) Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
@@ -218,7 +216,7 @@ class Transactions
             );
         }
 
-        $orderPayment = new \OrderPayment($orderPaymentsArray[0]->id);
+        $orderPayment = new \OrderPayment(isset($orderPaymentsArray[0]) ? $orderPaymentsArray[0]->id : 0);
         $orderPayment->amount = $transaction['amount'];
         $orderPayment->order_reference = $transaction['reference'];
         $orderPayment->transaction_id = $transaction['remoteId'];
@@ -246,8 +244,7 @@ class Transactions
     {
         $statusWaitingId = (int) Cfg::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID');
         $statusErrorId = (int) Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
-
-        $i = 0;
+        $statusOutOfStockUnpaid = (int) Cfg::get('PS_OS_OUTOFSTOCK_UNPAID');
 
         $this->module->debug($orders);
 
@@ -256,7 +253,10 @@ class Transactions
             $currentOrderStatus = (int) $order->getCurrentState();
             $existPayment = !$order->hasInvoice();
 
-            if ($currentOrderStatus === $statusWaitingId || $currentOrderStatus === $statusErrorId) {
+            if ($currentOrderStatus === $statusWaitingId
+                || $currentOrderStatus === $statusErrorId
+                || $currentOrderStatus === $statusOutOfStockUnpaid
+            ) {
                 try {
                     $this->orderHistory->id_order = (int) $orderId;
                     $this->orderHistory->changeIdOrderState(
@@ -265,20 +265,13 @@ class Transactions
                         $existPayment
                     );
 
-                    if ($i === 0) {
-                        try {
-                            if (!$this->orderHistory->addWithemail(true, [])) {
-                                Helper::sendEmail(
-                                    (int) $orderId,
-                                    [],
-                                    $currentOrderStatus
-                                );
-                            }
-                        } catch (\Exception $exception) {
-                            $this->module->debug(print_r($exception));
-                        }
+                    if (!$this->orderHistory->addWithemail(true, [])) {
+                        Helper::sendEmail(
+                            (int) $orderId,
+                            [],
+                            $currentOrderStatus
+                        );
                     }
-                    ++$i;
                 } catch (\Exception $exception) {
                     $this->module->debug($exception);
                 }
@@ -407,8 +400,6 @@ class Transactions
      */
     public function validAllTransaction($response): bool
     {
-        Config::getSdk();
-
         $responseOrder = $response->transactions->transaction->orderID;
         if (!$responseOrder) {
             return false;

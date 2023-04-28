@@ -30,7 +30,7 @@
         {else}
             {block name="label"}
                 {if isset($_input.label)}
-					<label class="control-label text-left text-lg-right col-xs-12 col-lg-3{if isset($_input.required) && $_input.required} required{/if}">
+					<label class="control-label text-left text-lg-right col-xs-12 col-lg-3 {if isset($_input.class)}{$_input.class}{/if} {if isset($_input.required) && $_input.required} required{/if}">
                         {if isset($_input.hint)}
 						<span class="label-tooltip"
 						      data-toggle="tooltip" data-html="true"
@@ -55,12 +55,31 @@
                             {if isset($_input.hint)}
 										</span>
                         {/if}
+
 					</label>
+                  {if isset($_input.class)}
+                    <div class="col-lg-5 p-0">
+                        {if isset($_input.image)}
+                          <img width="80" class="img-fluid {if isset($_input.class)}{$_input.class}{/if} "
+                               src="{$src_img|escape:'html':'UTF-8'}/helpers/{$_input.image|escape:'html':'UTF-8'}"/>
+                            {if isset($_input.modal)}
+                              <a target="#" data-toggle="modal"
+                                 data-target="#{$_input.modal}" style="cursor:pointer">
+                                <img width="22" style="margin-left: 6px;"
+                                     class="bm-info--small__icon img-fluid"
+                                     src="{$src_img|escape:'html':'UTF-8'}/question.png"
+                                />
+                              </a>
+                            {/if}
+                        {/if}
+                    </div>
+                      {include file='./promo-modals.tpl'}
+                  {/if}
                 {/if}
             {/block}
 
             {block name="field"}
-				<div class="col-xs-12 col-lg-5 {if isset($_input.col)}{$_input.col|intval}{else}5{/if} {if !isset($_input.label)}col-lg-offset-3{/if}">
+				<div class="col-xs-12 col-lg-5 {if isset($_input.class)}js-bm-promo-payment{/if}  {if isset($_input.col)}{$_input.col|intval}{else}5{/if} {if !isset($_input.label)}col-lg-offset-3{/if}">
                     {block name="input"}
                         {if $_input.type == 'text'}
                             {if isset($_input.lang) AND $_input.lang}
@@ -139,7 +158,7 @@
                                                 {/foreach}
 											</ul>
 
-                                            {if isset($_input.modal)}
+                                            {if isset($_input.modal) && !isset($_input.class)}
 	                                            <a target="#" data-toggle="modal"
 	                                               data-target="#{$_input.modal}" style="cursor:pointer">
 													<img width="22" style="margin-left: 6px;"
@@ -297,11 +316,7 @@
                             {/foreach}
 
                         {elseif $_input.type == 'switch' || $_input.type == 'shop' || $_input.type == 'switch-choose' }
-	                        <div class="bm-flex">
-                            {if isset($_input.image)}
-		                        <img width="80" style="margin-right: 12px;" class="img-fluid"
-		                             src="{$src_img|escape:'html':'UTF-8'}/helpers/{$_input.image|escape:'html':'UTF-8'}"/>
-                            {/if}
+	                        <div class="bm-flex {if isset($_input.class)}bm-offset-3{/if}">
 							<span class="bm-switch fixed-width-lg {if $_input.type == 'switch-choose'}bm-switch--choose{/if}"
 
                                 {if isset($_input.size) && $_input.size == 'auto'}
@@ -329,12 +344,12 @@
 									{if $fields_value[$_input.name] == $value.value}
 										checked="checked"
                                     {/if}
-                                    {if isset($_input.disabled) && $_input.disabled}
+                                    {if isset($_input.disabled) && $_input.disabled || isset($_input.class) && $_input.class == 'bm-no-active'}
 										disabled="disabled"
                                     {/if}
 									/>
 									{strip}
-										<label {if $value.value == 1}
+										<label {if isset($_input.modal) && isset($_input.class) && $_input.class == 'bm-no-active'}data-modal="{$_input.modal}"{/if} {if $value.value == 1}
 										for="{$_input.name}_on"{else}for="{$_input.name}_off"{/if}>
 											{if $value.value == 1}{$value.label}{else}{$value.label}{/if}
 										</label>
@@ -342,7 +357,7 @@
                                 {/foreach}
 								<a class="slide-button btn"></a>
 								</span>
-	                            {if isset($_input.modal)}
+	                            {if isset($_input.modal) && !isset($_input.class)}
 			                        <a target="#" data-toggle="modal"
 			                           data-target="#{$_input.modal}" style="cursor:pointer">
 				                        <img width="22" style="margin-left: 6px;"

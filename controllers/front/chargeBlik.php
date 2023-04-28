@@ -159,8 +159,6 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
     private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode)
     {
-        require_once dirname(__FILE__) . '/../../libs/index.php';
-
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ?
             \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX :
