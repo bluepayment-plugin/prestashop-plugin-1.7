@@ -16,9 +16,9 @@
 <span class="bm-payment__elm" data-open-payment="blik" data-payment-redirect="false"></span>
 </span>
 <section>
-	<p>
+	<span class="bm-small-info">
         {l s='Enter your phone number and confirm the payment in the application.' mod='bluepayment'}
-	</p>
+	</span>
 </section>
 
 

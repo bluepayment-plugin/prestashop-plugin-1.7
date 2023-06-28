@@ -13,12 +13,12 @@
  * @copyright      Copyright (c) 2015-2023
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-<span class="bm-payment__elm bm-payment__promo" data-open-payment="paypo">
+<span class="bm-payment__elm bm-payment__promo" data-open-payment="spingo">
 	<span class="bm-promo-desc">
-		{l s='Pick up your purchases, check them out and pay later - in 30 days or in convenient installments.' mod='bluepayment'}
-		<a target="_blank" href="https://start.paypo.pl/">
-			{l s='Learn more' mod='bluepayment'}
-		</a>
+		{l s='Deferred payment for companies.' mod='bluepayment'}
+{*		<a target="_blank" href="https://spingo.pl/">*}
+{*			{l s='Learn more' mod='bluepayment'}*}
+{*		</a>*}
 	</span>
 </span>
 <section>

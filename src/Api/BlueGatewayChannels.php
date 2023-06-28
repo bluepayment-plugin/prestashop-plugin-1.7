@@ -119,6 +119,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
             Config::GATEWAY_ID_SMARTNEY,
             Config::GATEWAY_ID_PAYPO,
             Config::GATEWAY_ID_VISA_MOBILE,
+            Config::GATEWAY_ID_SPINGO,
         ];
 
         return array_filter($group, function ($val) use ($gatewayArray) {
@@ -243,13 +244,13 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                 return false;
             }
 
-            return Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'blue_gateway_channels` SET 
+            return Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'blue_gateway_channels` SET
             `position`= `position` ' . ($way ? '- 1' : '+ 1') .
                     ' WHERE `position`' . ($way ? '> ' . (int) $movedBlock['position'] . ' AND `position` <= '
-                        . (int) $position : '< ' . (int) $movedBlock['position'] . ' 
+                        . (int) $position : '< ' . (int) $movedBlock['position'] . '
                         AND `position` >= ' . (int) $position))
-                && Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'blue_gateway_channels` 
-                SET `position` = ' . (int) $position . ' 
+                && Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'blue_gateway_channels`
+                SET `position` = ' . (int) $position . '
                 WHERE `id_blue_gateway_channels`=' . (int) $movedBlock['id_blue_gateway_channels'])
             ;
         }

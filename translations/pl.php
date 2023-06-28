@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = [];
+$_MODULE = array();
 $_MODULE['<{bluepayment}prestashop>bluepayment_f2ef3cb9db8f7e55a9e122c2cebf3d4d'] = 'Płatności Blue Media';
 $_MODULE['<{bluepayment}prestashop>bluepayment_8c00d8812bd29a89eed5597a2a94ac91'] = 'Dodatek umożliwia korzystanie z płatności internetowych realizowanych za pomocą bramki płatniczej Blue Media.';
 $_MODULE['<{bluepayment}prestashop>bluepayment_876f23178c29dc2552c0b48bf23cd9bd'] = 'Czy na pewno chcesz usunąć moduł?';
@@ -22,12 +22,10 @@ $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c9cc8cce24
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_cbfd62b68ae6b42b24e8eecef5739a81'] = 'Identyfikator serwisu';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_b064154e9bb9f881f0406574c4dea449'] = 'Zawiera tylko cyfry. Jest inny dla każdego sklepu.';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_54c1fd93507141249b572aa4e72a25de'] = 'Klucz konfiguracyjny (hash)';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_28ea85312acd42a27ae89da36c41e597'] = 'Zawiera cyfry i małe litery. Służy do weryfikacji komunikacji z bramką płatności. Nie powinien być udostępniany publicznie.';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_f1a9672d88ab0cae23402867e2def274'] = 'Ustawienia płatności';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_01bb2e0e57efa69165581502fff79651'] = 'WIDOCZNOŚĆ METOD PŁATNOŚCI';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_84774a55216240bdf823e999fe0b2e4f'] = 'Pokazuj metody płatności w sklepie';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_3504c943c01b65249753ff6e7b75a80b'] = 'Nazwa modułu płatności w sklepie';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_032f91a8b09cd5cec98054f0b6af681c'] = 'Zalecamy zachowanie powyższej nazwy. Jej zmiana może mieć negatywny wpływ na zrozumienie metod płatności przez klientów';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_b7aa313f5f75520ad449c3aaf159c9f5'] = 'Ustawienia przekierowań płatności';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_79201cfba5198459b243a817c31be74f'] = 'Wpisywanie kodu BLIK w sklepie';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_9e6ea29d88dcaff2d6b34ec3bbe31581'] = 'Bez przekierownia';
@@ -242,6 +240,8 @@ $_MODULE['<{bluepayment}prestashop>payment_e69cb9ccb9cdc5856757c36ca65e379f'] = 
 $_MODULE['<{bluepayment}prestashop>payment_db0492617a97b3e15b4a5abb27ab5ce3'] = 'Wybierz bank';
 $_MODULE['<{bluepayment}prestashop>payment_d3d2e617335f08df83599665eef8a418'] = 'Zamknij';
 $_MODULE['<{bluepayment}prestashop>payment_d959bbe25cc020e2db5276cb42927c7c'] = 'czytaj więcej';
+$_MODULE['<{bluepayment}prestashop>paymentredirectspingo_dab5e52dccfa1dbaa27914bebe71c27f'] = 'Płatność odroczona dla firm';
+$_MODULE['<{bluepayment}prestashop>paymentredirectspingo_d77105cc999e554de1f40618cbbf018b'] = 'Przekierujemy Cię na stronę partnera';
 $_MODULE['<{bluepayment}prestashop>paymentredirectaliorbank_ba539278278142c2e5759b4e37938f54'] = 'Raty 0% lub nawet 48 rat';
 $_MODULE['<{bluepayment}prestashop>paymentredirectaliorbank_db1951e0fc9391acab3138319c7fd269'] = 'Sprawdź inne warianty rat';
 $_MODULE['<{bluepayment}prestashop>paymentredirectaliorbank_19bedcaa5d4fd527f9ae3efa2416c24f'] = 'Przekierujemy Cię na stronę banku. Po złożeniu wniosku i pozytywnej weryfikacji, bank wyśle Ci umowę kredytową mailowo. Możesz zaakceptować ją on-line. Średni czas całej transakcji - 15 minut.';

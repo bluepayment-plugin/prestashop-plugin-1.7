@@ -83,6 +83,9 @@ class FactoryPaymentMethods
             case Config::GATEWAY_ID_VISA_MOBILE:
                 $gateway = 'VisaMobile';
                 break;
+            case Config::GATEWAY_ID_SPINGO:
+                $gateway = 'Spingo';
+                break;
             default:
                 $gateway = '';
         }

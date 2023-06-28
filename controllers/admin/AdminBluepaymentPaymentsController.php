@@ -28,9 +28,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         parent::__construct();
         Context::getContext()->smarty->assign('src_img', $this->module->getAssetImages());
 
-        if (!$this->module->active) {
-            Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules', true));
-        }
     }
 
     public function renderView()
@@ -68,7 +65,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         }
 
         $this->context->controller->addCSS($this->module->getPathUrl() . 'views/css/admin.css');
-        $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/admin.js');
+        $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/admin.min.js');
 
         $this->content .= $this->renderForm();
 
@@ -88,24 +85,21 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $positions = Tools::getValue('blue_gateway_channels');
 
         if (is_array($positions)) {
-            foreach ($positions as $key => $value) {
+            foreach ($positions as $position => $value) {
                 $pos = explode('_', $value);
                 if ((isset($pos[1], $pos[2])) && ($pos[2] == $idPosition)) {
-                    $position = $key + 1;
-                    break;
+                    $GatewayChannels = new BlueGatewayChannels($idPosition);
+                    if (Validate::isLoadedObject($GatewayChannels)) {
+                        if (isset($position) && $GatewayChannels->updatePosition($idPosition, $way, $position)) {
+                            Hook::exec('actionBlueGatewayChannelsUpdate');
+                            exit(true);
+                        } else {
+                            exit('{"hasError" : true, errors : "Can not update position"}');
+                        }
+                    } else {
+                        exit('{"hasError" : true, "errors" : "This can not be loaded"}');
+                    }
                 }
-            }
-
-            $GatewayChannels = new BlueGatewayChannels($idPosition);
-            if (Validate::isLoadedObject($GatewayChannels)) {
-                if (isset($position) && $GatewayChannels->updatePosition($idPosition, $way, $position)) {
-                    Hook::exec('actionBlueGatewayChannelsUpdate');
-                    exit(true);
-                } else {
-                    exit('{"hasError" : true, errors : "Can not update position"}');
-                }
-            } else {
-                exit('{"hasError" : true, "errors" : "This can not be loaded"}');
             }
         }
     }

@@ -22,6 +22,9 @@ class Config
     public const SHARED_KEY = '_SHARED_KEY';
 
     public const HASH_SEPARATOR = '|';
+
+    public const SPINGO_MIN_AMOUNT = 500;
+    public const SPINGO_MAX_AMOUNT = 30000;
     public const ALIOR_MIN_AMOUNT = 50;
     public const ALIOR_MAX_AMOUNT = 7750;
     public const SMARTNEY_MIN_AMOUNT = 100;
@@ -35,6 +38,7 @@ class Config
     public const GATEWAY_ID_APPLE_PAY = 1513;
     public const GATEWAY_ID_SMARTNEY = 700;
     public const GATEWAY_ID_PAYPO = 705;
+    public const GATEWAY_ID_SPINGO = 706;
     public const GATEWAY_ID_VISA_MOBILE = 1523;
     public const GATEWAY_ID_BLIK = 509;
     public const GATEWAY_ID_WALLET = 999;

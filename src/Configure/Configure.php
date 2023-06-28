@@ -76,149 +76,285 @@ class Configure
             foreach (Shop::getContextListShopID() as $shop_id) {
                 $group_id = Shop::getGroupFromShop($shop_id, true);
 
-                $res &= $this->configurationAdapter->updateValue(
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_TEST_ENV',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_TEST_ENV',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_SHOW_PAYWAY',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_SHOW_PAYWAY',
                     1,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_GA_TYPE',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_GA_TYPE',
                     2,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_GA_TRACKER_ID',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_GA_TRACKER_ID',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_GA4_TRACKER_ID',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_GA4_TRACKER_ID',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_GA4_SECRET',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_GA4_SECRET',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_BLIK_REDIRECT',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_BLIK_REDIRECT',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_GPAY_REDIRECT',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_GPAY_REDIRECT',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
+                ) : true;
 
-                $res &= $this->configurationAdapter->updateValue(
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_PAY_LATER',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_PAY_LATER',
                     1,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_INSTALMENTS',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_INSTALMENTS',
                     1,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_MATCHED_INSTALMENTS',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_MATCHED_INSTALMENTS',
                     1,
                     false,
                     $group_id,
                     $shop_id
-                );
+                ) : true;
 
-                $res &= $this->configurationAdapter->updateValue(
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_HEADER',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_HEADER',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_FOOTER',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_FOOTER',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_LISTING',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_LISTING',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_PRODUCT',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_PRODUCT',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_CART',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_CART',
                     0,
                     false,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PROMO_CHECKOUT',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
                     $this->name . '_PROMO_CHECKOUT',
                     1,
                     false,
                     $group_id,
                     $shop_id
-                );
+                ) : true;
+
             }
         } else {
             /* Sets up Global configuration */
-            $res = $this->configurationAdapter->updateValue($this->name . '_TEST_ENV', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_SHOW_PAYWAY', 1);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_GA_TYPE', 2);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_GA_TRACKER_ID', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_GA4_TRACKER_ID', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_GA4_SECRET', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_BLIK_REDIRECT', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_GPAY_REDIRECT', 0);
+            $res = empty($this->configurationAdapter->get($this->name . '_TEST_ENV')) ? $this->configurationAdapter->updateValue($this->name . '_TEST_ENV', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_SHOW_PAYWAY')) ? $this->configurationAdapter->updateValue($this->name . '_SHOW_PAYWAY', 1) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_GA_TYPE')) ? $this->configurationAdapter->updateValue($this->name . '_GA_TYPE', 2) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_GA_TRACKER_ID')) ? $this->configurationAdapter->updateValue($this->name . '_GA_TRACKER_ID', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_GA4_TRACKER_ID')) ? $this->configurationAdapter->updateValue($this->name . '_GA4_TRACKER_ID', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_GA4_SECRET')) ? $this->configurationAdapter->updateValue($this->name . '_GA4_SECRET', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_BLIK_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_BLIK_REDIRECT', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_GPAY_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_GPAY_REDIRECT', 0) : true;
 
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_PAY_LATER', 1);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_INSTALMENTS', 1);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_MATCHED_INSTALMENTS', 1);
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_PAY_LATER')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_PAY_LATER', 1) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_INSTALMENTS')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_INSTALMENTS', 1) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_MATCHED_INSTALMENTS')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_MATCHED_INSTALMENTS', 1) : true;
 
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_HEADER', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_FOOTER', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_LISTING', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_PRODUCT', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_CART', 0);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PROMO_CHECKOUT', 1);
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_HEADER')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_HEADER', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_FOOTER')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_FOOTER', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_LISTING')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_LISTING', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_PRODUCT')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_PRODUCT', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_CART')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_CART', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_CHECKOUT')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_CHECKOUT', 1) : true;
         }
 
         $res &= $this->installConfigurationTranslations(
@@ -336,22 +472,38 @@ class Configure
             foreach (Shop::getContextListShopID() as $shop_id) {
                 $group_id = Shop::getGroupFromShop($shop_id, true);
 
-                $res &= $this->configurationAdapter->updateValue(
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PAYMENT_NAME',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ?
+                    $this->configurationAdapter->updateValue(
                     $this->name . '_PAYMENT_NAME',
                     $name_lang,
                     $group_id,
                     $shop_id
-                );
-                $res &= $this->configurationAdapter->updateValue(
+                ) : true;
+                $res &= empty(
+                    $this->configurationAdapter->get(
+                        $this->name . '_PAYMENT_GROUP_NAME',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ?
+                    $this->configurationAdapter->updateValue(
                     $this->name . '_PAYMENT_GROUP_NAME',
                     $name_group_lang,
                     $group_id,
                     $shop_id
-                );
+                ) : true;
             }
         } else {
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PAYMENT_NAME', $name_lang);
-            $res &= $this->configurationAdapter->updateValue($this->name . '_PAYMENT_GROUP_NAME', $name_group_lang);
+            $res &= empty($this->configurationAdapter->get($this->name . '_PAYMENT_NAME', \Context::getContext()->language->id)) ? $this->configurationAdapter->updateValue($this->name . '_PAYMENT_NAME', $name_lang) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_PAYMENT_GROUP_NAME', \Context::getContext()->language->id)) ? $this->configurationAdapter->updateValue($this->name . '_PAYMENT_GROUP_NAME', $name_group_lang) : true;
         }
 
         return (bool) $res;

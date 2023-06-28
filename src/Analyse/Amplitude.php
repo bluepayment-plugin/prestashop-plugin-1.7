@@ -155,6 +155,9 @@ class Amplitude
             case Config::GATEWAY_ID_PAYPO:
                 $name = 'PayPo';
                 break;
+            case Config::GATEWAY_ID_SPINGO:
+                $name = 'Spingo';
+                break;
             case Config::GATEWAY_ID_VISA_MOBILE:
                 $name = 'Visa Mobile';
                 break;

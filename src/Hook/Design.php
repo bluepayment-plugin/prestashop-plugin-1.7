@@ -201,6 +201,10 @@ class Design extends AbstractHook
             $secret_key = Cfg::get('BLUEPAYMENT_GA4_SECRET');
         }
 
+        if (empty($tracking_id)) {
+            return '';
+        }
+
         $this->context->smarty->assign([
             'tracking_id' => $tracking_id,
             'tracking_secret_key' => $secret_key,

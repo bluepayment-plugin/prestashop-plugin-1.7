@@ -1,4 +1,10 @@
 # Changelog
+## [2.8.8] 28.06.2023
+- Added PayPo payment
+- Adding the ability to configure the module without having to turn it on
+- Fixed adding ga script
+- Fixed blocked access to read logs
+
 ## [2.8.7] 28.04.2022
 - Fixed display null after change payment method
 - Fixed change order status when product out of stock

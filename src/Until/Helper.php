@@ -109,6 +109,7 @@ class Helper
             Config::GATEWAY_ID_SMARTNEY,
             Config::GATEWAY_ID_PAYPO,
             Config::GATEWAY_ID_VISA_MOBILE,
+            Config::GATEWAY_ID_SPINGO,
         ];
 
         return implode(',', $gatewayArray);
