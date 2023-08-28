@@ -7,8 +7,8 @@
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  * Php version 7.1
  *
- * @author    Blue Media S.A. <biuro@bluemedia.pl>
- * @copyright Since 2015 Blue Media S.A.
+ * @author    Autopay S.A. <biuro@bluemedia.pl>
+ * @copyright Since 2015 Autopay S.A.
  * @license   https://www.gnu.org/licenses/lgpl-3.0.en.html GNU
  *
  * @category  Payment
@@ -24,6 +24,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use BluePayment\Adapter\ConfigurationAdapter;
 use BluePayment\Analyse\Amplitude;
+use BluePayment\Api\BlueAPI;
+use BluePayment\Api\BlueGateway;
 use BluePayment\Config\Config;
 use BluePayment\Configure\Configure;
 use BluePayment\Hook\HookDispatcher;
@@ -125,8 +127,8 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.8.8';
-        $this->author = 'Blue Media S.A.';
+        $this->version = '2.8.9';
+        $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
         $this->currencies = true;
@@ -137,9 +139,9 @@ class BluePayment extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('Blue Media payments');
+        $this->displayName = $this->l('Autopay online payments');
         $this->description = $this->l(
-            'Plugin supports online payments implemented by payment gateway Blue Media company.'
+            'Plugin supports online payments implemented by payment gateway Autopay company.'
         );
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
@@ -309,7 +311,7 @@ class BluePayment extends PaymentModule
     {
         $this->l('Payment by card');
         $this->l('Virtual wallet');
-        $this->l('Blue Media - Configuration');
+        $this->l('Autopay - Configuration');
     }
 
     /**
@@ -397,6 +399,19 @@ class BluePayment extends PaymentModule
             'order_subject_to_payment_obligation_translation' => $this->l('Order with the obligation to pay'),
         ]);
 
+        $dateTimeUpdate = Cfg::get($this->name_upper.Config::UPDATE_GATEWAY_TIME_KEY);
+
+        $date = new \DateTime ();
+        $date->sub(new \DateInterval ("PT1H"));
+        $date->format('Y-m-d h:i:s');
+        if (is_null($dateTimeUpdate) || $dateTimeUpdate <=  $date->format('Y-m-d h:i:s')){
+            $gateway = new BlueGateway($this, new BlueAPI($this));
+            $gateway->getChannels();
+
+            $date = new \DateTime ();
+            Cfg::updateValue($this->name_upper.Config::UPDATE_GATEWAY_TIME_KEY, $date->format('Y-m-d h:i:s'));
+        }
+
         $paymentMethods = new FactoryPaymentMethods($this);
         if (Cfg::get($this->name_upper . '_SHOW_PAYWAY')) {
             $newOptions = $paymentMethods->create();
@@ -431,4 +446,14 @@ class BluePayment extends PaymentModule
             '-------------------------';
         file_put_contents($logDir . '/log_' . date('j.n.Y') . '.log', $log, FILE_APPEND);
     }
+
+    public function safeAddColumn($table, $column, $def)
+    {
+        $count = Db::getInstance()->getValue('SELECT count(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND COLUMN_NAME=\'' . $column . '\' AND TABLE_NAME=\'' . _DB_PREFIX_ . $table . '\'');
+        if (!$count)
+            return Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . $table . '` ADD `' . $column . '` ' . $def);
+
+        return true;
+    }
+
 }

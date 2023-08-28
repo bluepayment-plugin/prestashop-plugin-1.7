@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -65,24 +65,24 @@ class CustomStatus
         $pending_template = 'bluemedia_pending';
         $pending_send_email = true;
         $pending_paid = false;
-        $pending_name_en = 'Blue Media: payment in progress';
-        $pending_name_pl = 'Blue Media: płatność w trakcie realizacji';
+        $pending_name_en = 'Autopay: payment in progress';
+        $pending_name_pl = 'Autopay: płatność w trakcie realizacji';
 
         // features for completed status
         $completed_color = '#77CB1E';
         $completed_template = 'bluemedia_completed';
         $completed_send_email = true;
         $completed_paid = true;
-        $completed_name_en = 'Blue Media: payment accepted';
-        $completed_name_pl = 'Blue Media: płatność zatwierdzona';
+        $completed_name_en = 'Autopay: payment accepted';
+        $completed_name_pl = 'Autopay: płatność zatwierdzona';
 
         // features for bluemedia payment error status
         $payment_error_color = '#cb1e77';
         $payment_error_template = 'bluemedia_payment_error';
         $payment_error_send_email = true;
         $payment_error_paid = false;
-        $payment_error_name_en = 'Blue Media: payment error';
-        $payment_error_name_pl = 'Blue Media: błąd płatności';
+        $payment_error_name_en = 'Autopay: payment error';
+        $payment_error_name_pl = 'Autopay: błąd płatności';
 
         if (
             !CustomStatus::checkIfStateExists($pending_name_pl, $language_id) &&
@@ -190,7 +190,7 @@ class CustomStatus
         $res = true;
 
         $res &= Db::getInstance()->delete('order_state', 'module_name = "bluepayment"');
-        $res &= Db::getInstance()->delete('order_state_lang', 'name LIKE \'%Blue Media%\'');
+        $res &= Db::getInstance()->delete('order_state_lang', 'name LIKE \'%Autopay%\'');
 
         return (bool) $res;
     }

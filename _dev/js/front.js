@@ -75,8 +75,14 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 		} else {
       if (isBmTransfer && !conditions.length) {
         $('div[id=payment-confirmation] button').removeAttr('disabled');
-      } else if (isResetButton && !conditions.length) {
-        $('div[id=payment-confirmation] button').prop('disabled', true);
+      } else if (isResetButton) {
+        if (!conditions.length) {
+          $('div[id=payment-confirmation] button').prop('disabled', true);
+        } else {
+          changingClauseBehavior(1, 'back');
+          changingButtonBehavior(1, 'back');
+          conditions.trigger("change");
+        }
       } else {
         conditions.trigger("change");
       }
@@ -157,7 +163,7 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
       changingClauseBehavior(key, 'back');
       changingButtonBehavior(key, 'back');
     } else if (!paymentRedirect && paymentType === 'GooglePay') {
-      changingButtonBehavior(key, 'hide');
+      changingButtonBehavior(key, 'hideByClass');
       changingClauseBehavior(key, 'move');
     } else {
       changingClauseBehavior(key, 'back');
@@ -189,8 +195,8 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 		const content = getPaymentContent(key);
 		const btn = document.querySelector('#payment-confirmation');
 
-
 		let style;
+		let className = 'bm-d-none';
 
 		if (behavior === 'move') {
 			style = 'block';
@@ -207,7 +213,12 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 		}
 
 		setTimeout(function () {
-			btn.style.display = style;
+      if (behavior === 'hideByClass') {
+        btn.classList.add(className);
+      } else {
+        btn.style.display = style;
+        btn.classList.remove(className);
+      }
 		}, 150);
 	}
 
@@ -251,7 +262,9 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
               changingClauseBehavior(id, 'back');
               changingButtonBehavior(id, 'back');
             }
-
+          } else {
+            changingClauseBehavior(id, 'back');
+            changingButtonBehavior(id, 'back');
           }
           if (title != null) {
             title.classList.add('active');

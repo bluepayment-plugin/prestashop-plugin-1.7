@@ -19,7 +19,7 @@
 	<p>{l s='The service ID and shared key for the test environment are different from the production data.' mod='bluepayment'}
 		<br />
     {l s='To obtain data for the test environment,' mod='bluepayment'}
-	<a target="_blank" href="https://developers.bluemedia.pl/kontakt?mtm_campaign=presta_shop_developers_formularz&mtm_source=presta_shop_backoffice&mtm_medium=hiperlink">
+	<a target="_blank" href="https://developers.autopay.pl/kontakt?mtm_campaign=presta_shop_developers_formularz&mtm_source=presta_shop_backoffice&mtm_medium=hiperlink">
 		{l s='please contact us.' mod='bluepayment'}</a>
 	</p>
 </div>

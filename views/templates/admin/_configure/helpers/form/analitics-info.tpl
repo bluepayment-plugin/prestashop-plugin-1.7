@@ -20,7 +20,7 @@
 <ul class="bm-list-icon">
 	<li class="bm-list-icon__item">
 		<img class="bm-list-icon__icon" src="{$src_img|escape:'html':'UTF-8'}/analitics-connect.svg" alt="">
-		<span class="bm-list-icon__content">{l s='Combine Google Analytics with the Blue Media payment plugin and get more data about your customers at the payment stage.' mod='bluepayment'}</span>
+		<span class="bm-list-icon__content">{l s='Combine Google Analytics with the Autopay payment plugin and get more data about your customers at the payment stage.' mod='bluepayment'}</span>
 	</li>
 	<li class="bm-list-icon__item">
 		<img class="bm-list-icon__icon" src="{$src_img|escape:'html':'UTF-8'}/analytical-benefits.svg" alt="">

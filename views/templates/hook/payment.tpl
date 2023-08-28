@@ -20,14 +20,14 @@
 		    {l s='You will be redirected to the website of the bank of your choice.' mod='bluepayment'}
 	    </span>
 	<span class="bm-legals bm-small-info">
-			{l s='The payment order is submitted to your bank via Blue Media S.A. located in Sopot and will be executed according to the conditions set by your bank.' mod='bluepayment'}
+			{l s='The payment order is submitted to your bank via Autopay S.A. located in Sopot and will be executed according to the conditions set by your bank.' mod='bluepayment'}
         {l s='After selecting your bank, you will authorize the payment.' mod='bluepayment'}
 	</span>
     {else}
 	<span class="bm-payment__elm" data-open-payment="maingateway"></span>
 	<section>
 		<span class="bm-small-info">
-	        {l s='You will be redirected to the website of our partner Blue Media, where you can choose your fast and secure payment method.' mod='bluepayment'}
+	        {l s='You will be redirected to the website of our partner Autopay, where you can choose your fast and secure payment method.' mod='bluepayment'}
 		</span>
         {/if}
 

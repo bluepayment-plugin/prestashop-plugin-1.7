@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -176,6 +176,20 @@ class Gateway extends AbstractModel
     private $statusDate;
 
     /**
+     * Min amount.
+     *
+     * @var float
+     */
+    private $minAmount;
+
+    /**
+     * Max amount.
+     *
+     * @var float
+     */
+    private $maxAmount;
+
+    /**
      * Returns gateway id.
      *
      * @return int
@@ -340,6 +354,40 @@ class Gateway extends AbstractModel
     {
         $this->statusDate = $statusDate;
 
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMinAmount()
+    {
+        return $this->minAmount;
+    }
+
+    /**
+     * @param float $minAmount
+     */
+    public function setMinAmount(float $minAmount)
+    {
+        $this->minAmount = $minAmount;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMaxAmount()
+    {
+        return $this->maxAmount;
+    }
+
+    /**
+     * @param float $maxAmount
+     */
+    public function setMaxAmount(float $maxAmount)
+    {
+        $this->maxAmount = $maxAmount;
         return $this;
     }
 

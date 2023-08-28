@@ -2,7 +2,7 @@
 
 Hi {firstname} {lastname},
 
-Your Blue Media payment to {shop_name} is in process.
+Your Autopay payment to {shop_name} is in process.
 
 [{shop_name}]({shop_url})
 

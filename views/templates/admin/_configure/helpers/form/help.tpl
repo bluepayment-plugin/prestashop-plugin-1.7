@@ -23,17 +23,17 @@
 			</h4>
             <ul class="bm-list">
                 <li>
-	                <a target="_blank" href="https://developers.bluemedia.pl/online/wdrozenie-krok-po-kroku#wdrozenie-bramki-platnosci">
+	                <a target="_blank" href="https://developers.autopay.pl/online/wdrozenie-krok-po-kroku#wdrozenie-bramki-platnosci">
 		                {l s='Implementing online payments' mod='bluepayment'}
 	                </a> {l s='step by step' mod='bluepayment'}
                 </li>
                 <li>
-	                <a target="_blank" href="https://developers.bluemedia.pl/online/wtyczki/prestashop-1-7#konfiguracja">
+	                <a target="_blank" href="https://developers.autopay.pl/online/wtyczki/prestashop-1-7#konfiguracja">
 		                {l s='Module configuration' mod='bluepayment'}
 	                </a>
                 </li>
                 <li>
-	                <a target="_blank" href="https://developers.bluemedia.pl/online/wtyczki/prestashop-1-7#aktualizacja">
+	                <a target="_blank" href="https://developers.autopay.pl/online/wtyczki/prestashop-1-7#aktualizacja">
 		                {l s='Update the module' mod='bluepayment'}
 	                </a>
                 </li>
@@ -47,7 +47,7 @@
 			<h4 class="bm-list-icon__heading">
 				{l s='Contact us' mod='bluepayment'}
 			</h4>
-			<a target="_blank" href="https://developers.bluemedia.pl/kontakt/plugins/presta">
+			<a target="_blank" href="https://developers.autopay.pl/kontakt/plugins/presta">
 				{l s='Write to us' mod='bluepayment'}
 			</a>
 		</div>

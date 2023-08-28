@@ -23,7 +23,7 @@
 </span>
 <section>
 	<span class="bm-small-info">
-        {l s='You will be redirected to our partner Blue Media website.' mod='bluepayment'}
+        {l s='You will be redirected to our partner Autopay website.' mod='bluepayment'}
 	</span>
 </section>
 

@@ -16,7 +16,7 @@
 {*<span class="bm-payment__elm"></span>*}
 {if $gpayRedirect}
 	<div class="showGooglePay bm-wallet-content" data-show-bm-gateway-id="1512" style="display: none;">
-	<span class="bm-small-info">{l s='You will be redirected to the website of our partner Blue Media, where you can choose your fast and secure payment method.' mod='bluepayment'}</span>
+	<span class="bm-small-info">{l s='You will be redirected to the website of our partner Autopay, where you can choose your fast and secure payment method.' mod='bluepayment'}</span>
 	</div>
 {else}
 	<div class="showGooglePay bm-wallet-content" data-show-bm-gateway-id="1512" style="display: none;">

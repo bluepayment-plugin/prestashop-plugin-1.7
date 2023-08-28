@@ -20,8 +20,10 @@ if (!defined('_PS_VERSION_')) {
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
 
-function upgrade_module_2_8_1($module)
+function upgrade_module_2_8_9($module)
 {
+    $module->safeAddColumn('blue_gateway_channels', 'min_amount', 'DECIMAL(14,6) NOT NULL DEFAULT "0.000000"');
+    $module->safeAddColumn('blue_gateway_channels', 'max_amount', 'DECIMAL(14,6) NOT NULL DEFAULT "0.000000"');
     $data = [
         'events' => [
             'event_type' => Config::PLUGIN_UPDATED,

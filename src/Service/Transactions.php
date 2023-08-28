@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -108,7 +108,7 @@ class Transactions
         $realOrderId = $this->pSql((string) $transaction->orderID);
         $orderId = explode('-', (string) $realOrderId)[0];
 
-        $order = new \OrderCore($orderId);
+        $order = new \Order($orderId);
         $orderPayments = $order->getOrderPaymentCollection();
 
         if (is_object($orderPayments)) {
@@ -146,7 +146,7 @@ class Transactions
 
         $this->updateTransactionQuery($realOrderId, $transactionData);
 
-        $total_paid = $order->total_paid;
+        $total_paid = (float)$order->total_paid;
         $amount = number_format(round($total_paid, 2), 2, '.', '');
 
         if (!$this->isOrderCanceled($order)) {

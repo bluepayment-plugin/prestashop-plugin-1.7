@@ -40,7 +40,7 @@
             <p
               class="font-weight-bold">{l s='To be able to promote the Alior Installment payment, you must first activate it' mod='bluepayment'}</p>
           </div>
-          <a target="_blank" href="https://developers.bluemedia.pl/alior-raty#jak-uruchomic-alior-raty" class="btn btn-primary text-uppercase">{l s='Enable the service' mod='bluepayment'}</a>
+          <a target="_blank" href="https://developers.autopay.pl/alior-raty#jak-uruchomic-alior-raty" class="btn btn-primary text-uppercase">{l s='Enable the service' mod='bluepayment'}</a>
         </div>
 
       </div>
@@ -75,7 +75,7 @@
             <p
               class="font-weight-bold">{l s='To be able to promote Pay Smartney, you must first activate it' mod='bluepayment'}</p>
           </div>
-          <a target="_blank" href="https://developers.bluemedia.pl/pay-smartney#wlacz-usluge" class="btn btn-primary text-uppercase">{l s='Enable the service' mod='bluepayment'}</a>
+          <a target="_blank" href="https://developers.autopay.pl/pay-smartney#jak-to-dziala" class="btn btn-primary text-uppercase">{l s='Enable the service' mod='bluepayment'}</a>
         </div>
 
       </div>

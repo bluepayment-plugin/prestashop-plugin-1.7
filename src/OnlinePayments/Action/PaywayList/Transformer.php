@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -19,6 +19,7 @@ use BlueMedia\OnlinePayments\Model\PaywayList;
 use DateTime;
 use DateTimeZone;
 use SimpleXMLElement;
+use stdClass;
 
 class Transformer
 {
@@ -118,6 +119,81 @@ class Transformer
 
         if ($xml->hash) {
             $model->setHash((string) $xml->hash);
+        }
+
+        return $model;
+    }
+
+
+    /**
+     * Transforms JSON to model.
+     *
+     * @param stdClass $xml
+     *
+     * @return PaywayList
+     */
+    public static function JSONtoModel(stdClass $json): PaywayList
+    {
+        $model = new PaywayList();
+
+        if ($json->serviceID) {
+            $model->setServiceId((string) $json->serviceID);
+        }
+
+        if ($json->messageID) {
+            $model->setMessageId((string) $json->messageID);
+        }
+
+        if (isset($json->gatewayList)) {
+            if (is_array($json->gatewayList) || isset($json->gatewayList[0])) {
+                foreach ($json->gatewayList as $key => $gateway) {
+                    $gatewayModel = new GatewayModel();
+                    $gatewayModel->setGatewayId((string) $gateway->gatewayID)
+                        ->setGatewayName((string) $gateway->gatewayName);
+
+                    if (isset($gateway->gatewayType)) {
+                        $gatewayModel->setGatewayType((string) $gateway->gatewayType);
+                    }
+
+                    if (isset($gateway->bankName)) {
+                        $gatewayModel->setBankName((string) $gateway->bankName);
+                    }
+
+                    if (isset($gateway->gatewayPayment)) {
+                        $gatewayModel->setGatewayPayment((string) $gateway->gatewayPayment);
+                    }
+
+                    if (isset($gateway->iconURL)) {
+                        $gatewayModel->setIconUrl((string) $gateway->iconURL);
+                    }
+
+                    if (isset($gateway->statusDate)) {
+                        $gatewayModel->setStatusDate(
+                            DateTime::createFromFormat(
+                                Gateway::DATETIME_FORMAT_LONGER,
+                                (string) $gateway->statusDate,
+                                new DateTimeZone(Gateway::DATETIME_TIMEZONE)
+                            )
+                        );
+                    }
+
+                    if (isset($gateway->currencyList)
+                        && is_array($gateway->currencyList)
+                        && isset($gateway->currencyList[0]->minAmount)
+                        && isset($gateway->currencyList[0]->maxAmount)
+                    ){
+                        $gatewayModel->setMinAmount($gateway->currencyList[0]->minAmount);
+                        $gatewayModel->setMaxAmount($gateway->currencyList[0]->maxAmount);
+                    }
+
+                    $model->addGateway($gatewayModel);
+                    unset($gatewayModel, $gateway);
+                }
+            }
+        }
+
+        if ($json->hash) {
+            $model->setHash((string) $json->hash);
         }
 
         return $model;

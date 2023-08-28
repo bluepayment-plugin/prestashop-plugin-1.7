@@ -1,5 +1,5 @@
 # Instrukcja modułu BluePayment dla platformy PrestaShop 1.7
-**Wersja wtyczki**: 2.8.8
+**Wersja wtyczki**: 2.8.9
 
 ## Podstawowe informacje
 BluePayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7.
@@ -20,16 +20,16 @@ Do najważniejszych funkcji modułu zalicza się:
 
 ## Aktywacja płatności w panelu administracyjnym PrestaShop
 
-Dzięki integracji Płatności Online Blue Media i platformy PrestaShop – możesz aktywować naszą usługę bezpośrednio w swoim panelu administracyjnym lub [pobrać i zainstalować ją samodzielnie](https://github.com/bluepayment-plugin/prestashop-plugin-1.7#instalacja-wtyczki).
+Dzięki integracji Płatności Online Autopay i platformy PrestaShop – możesz aktywować naszą usługę bezpośrednio w swoim panelu administracyjnym lub [pobrać i zainstalować ją samodzielnie](https://github.com/bluepayment-plugin/prestashop-plugin-1.7#instalacja-wtyczki).
 
 Postępuj zgodnie z poniższą instrukcją:
 
 1. Zaloguj się do swojego panelu administracyjnego w PrestaShop.
-2. Kliknij Moduły > Płatności i wpisz w wyszukiwarkę "Blue Media"
+2. Kliknij Moduły > Płatności i wpisz w wyszukiwarkę "Autopay"
 3. Po wyszukaniu modułu płatności, kliknij Włącz
-4. Żeby zakończyć aktywację usługi i móc przejść do Konfiguracji – zarejestruj się w systemie Blue Media (PayBM) i przejdź proces [weryfikacyjny](https://developers.bluemedia.pl/online/wdrozenie-krok-po-kroku#system-paybm).
+4. Żeby zakończyć aktywację usługi i móc przejść do Konfiguracji – zarejestruj się w systemie Autopay (PayBM) i przejdź proces [weryfikacyjny](https://developers.autopay.pl/online/wdrozenie-krok-po-kroku#system-paybm).
 
-Po pozytywnej weryfikacji przez Blue Media, płatności online zostaną aktywowane w panelu PrestaShop i będziesz mógł je skonfigurować zgodnie ze swoimi potrzebami.
+Po pozytywnej weryfikacji przez Autopay, płatności online zostaną aktywowane w panelu PrestaShop i będziesz mógł je skonfigurować zgodnie ze swoimi potrzebami.
 
 
 ## Instalacja wtyczki
@@ -69,7 +69,7 @@ Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfigura
 ### Konfiguracja modułu
 
 1) Przejdź do zakładki **Moduły > Moduły i usługi** (lub **Menedżer modułów** – w zależności od wersji sklepu) i wybierz z listy modułów kategorię: **Płatność** (lub wyszukaj moduł za pomocą wyszukiwarki).
-2) Kliknij przycisk Konfiguruj w bloku o nazwie **Płatności Blue Media** i uzupełnij wszystkie dane (otrzymasz je od nas). Jeżeli przycisk **Konfiguruj** nie jest widoczny – należy ponownie zainstalować moduł.
+2) Kliknij przycisk Konfiguruj w bloku o nazwie **Płatności Autopay** i uzupełnij wszystkie dane (otrzymasz je od nas). Jeżeli przycisk **Konfiguruj** nie jest widoczny – należy ponownie zainstalować moduł.
 3) Żeby uzyskać od nas **Identyfikator serwisu partnera** oraz **Klucz konfiguracyjny (hash)** – prześlij do nas adresy do komunikacji między sklepem a bramką płatniczą:
 - http(s)://domena_sklepu.pl/module/bluepayment/back
 - http(s)://domena_sklepu.pl/module/bluepayment/status
@@ -79,8 +79,8 @@ Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfigura
 ### Zakładka uwierzytelnianie
 
 1. Tryb testowy – zmiana trybu pracy bramki na testowy umożliwia weryfikację działania modułu bez konieczności rzeczywistego opłacania zamówienie (w trybie testowym nie pobierane są żadne opłaty za zamówienie).
-2. Identyfikator serwisu – składa się tylko z cyfr i jest inny dla każdego sklepu (uzyskasz go od Blue Media).
-3. Klucz konfiguracyjny (hash) – służy do weryfikacji komunikacji z bramką płatności. Zawiera cyfry i małe litery. Nie należy go udostępniać publicznie (uzyskasz go od Blue Media).
+2. Identyfikator serwisu – składa się tylko z cyfr i jest inny dla każdego sklepu (uzyskasz go od Autopay).
+3. Klucz konfiguracyjny (hash) – służy do weryfikacji komunikacji z bramką płatności. Zawiera cyfry i małe litery. Nie należy go udostępniać publicznie (uzyskasz go od Autopay).
 
 Jeśli masz więcej niż jedną walutę w sklepie, to pola Identyfikator i Klucz konfiguracyjny (hash) będą powielone, żeby można było je przypisać do każdej z walut.
 
@@ -88,7 +88,7 @@ Jeśli masz więcej niż jedną walutę w sklepie, to pola Identyfikator i Klucz
 1. Pokazuj metody płatności w sklepie – gdy opcja jest włączona, klient zobaczy wszystkie dostępne metody płatności (np. BLIK, przelew internetowy, itp.) już na stronie sklepu. Dzięki temu łatwiej i szybciej wybierze tę dogodną dla siebie.
 2. Nazwa modułu płatności w sklepie – jak ma zostać nazwana płatność w której wybieramy bank, za pomocą którego płaci klient.
 3. Lista kanałów płatności – wyświetlona jest lista dostępnych bramek, pozwala na ustawianie kolejności banków metodą 'przeciągnij i upuść'.
-4. Ustawienia przekierowań płatności – pozwala na ustawienie czy płatność ma odbyć się bez opuszczania sklepu (ustawienie w pozycji włączony) lub z opuszczeniem sklepu do strony bramki płatności Blue Media (ustawienie w pozycji wyłączony).
+4. Ustawienia przekierowań płatności – pozwala na ustawienie czy płatność ma odbyć się bez opuszczania sklepu (ustawienie w pozycji włączony) lub z opuszczeniem sklepu do strony bramki płatności Autopay (ustawienie w pozycji wyłączony).
 5. Statusy płatności:
 - Płatność rozpoczęta – status zamówienia w sklepie – ustawiany natychmiast po rozpoczęciu płatności.
 - Płatność zatwierdzona – status zamówienia w sklepie – ustawiany po potwierdzeniu płatności.
@@ -123,7 +123,7 @@ Powiadomienia o zmianie statusu płatności wysyłane są w zależności od konf
 
 ## Wygląd kanałów płatności
 
-- Metody płatności obsługiwane Blue Media są zgrupowane i zaprezentowane w
+- Metody płatności obsługiwane Autopay są zgrupowane i zaprezentowane w
   estetyczny, nowoczesny sposób:
 
 ![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_front.png)

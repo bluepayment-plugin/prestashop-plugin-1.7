@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -20,15 +20,9 @@ class Config
     public const BM_IMAGES_PATH = _MODULE_DIR_ . 'bluepayment/views/img/';
     public const SERVICE_PARTNER_ID = '_SERVICE_PARTNER_ID';
     public const SHARED_KEY = '_SHARED_KEY';
+    public const UPDATE_GATEWAY_TIME_KEY = '_UPDATE_GATEWAY_TIME_KEY';
 
     public const HASH_SEPARATOR = '|';
-
-    public const SPINGO_MIN_AMOUNT = 500;
-    public const SPINGO_MAX_AMOUNT = 30000;
-    public const ALIOR_MIN_AMOUNT = 50;
-    public const ALIOR_MAX_AMOUNT = 7750;
-    public const SMARTNEY_MIN_AMOUNT = 100;
-    public const SMARTNEY_MAX_AMOUNT = 2500;
     public const BLIK_CODE_LENGTH = 6;
     public const DEFAULT_PAYMENT_FORM_LANGUAGE = 'pl';
 

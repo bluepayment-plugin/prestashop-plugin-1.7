@@ -16,6 +16,6 @@
 <span class="bm-payment__elm" data-open-payment="card"></span>
 <section>
 	<span class="bm-small-info">
-		{l s='You will be redirected to our partner Blue Media website where you will enter your card details.' mod='bluepayment'}
+		{l s='You will be redirected to our partner Autopay website where you will enter your card details.' mod='bluepayment'}
 	</span>
 </section>

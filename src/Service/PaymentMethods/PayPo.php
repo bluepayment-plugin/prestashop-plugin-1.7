@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -15,9 +15,10 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
-use BluePayment\Api\BlueGatewayTransfers;
+use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use Cart;
 use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -81,9 +82,17 @@ class PayPo implements GatewayType
     public function isActive($cart_total = null): bool
     {
         $iso_code = Helper::getIsoFromContext(Context::getContext());
-        return BlueGatewayTransfers::isTransferActive(
+        if (!$cart_total) {
+            $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
+        }
+
+        $paypo = BlueGatewayChannels::getByGatewayIdAndCurrency(
             Config::GATEWAY_ID_PAYPO,
             $iso_code
         );
+
+        return $paypo->id
+            && (float) $cart_total >= (float) $paypo->min_amount
+            && (float) $cart_total <= (float) $paypo->max_amount;
     }
 }

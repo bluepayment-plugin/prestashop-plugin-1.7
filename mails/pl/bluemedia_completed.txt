@@ -2,7 +2,7 @@
 
 Witaj {firstname} {lastname},
 
-Twoja płatność przez Blue Media w sklepie {shop_name} jest zatwierdzona.
+Twoja płatność przez Autopay w sklepie {shop_name} jest zatwierdzona.
 
 [{shop_name}]({shop_url})
 

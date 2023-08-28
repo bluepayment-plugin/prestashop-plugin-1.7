@@ -18,7 +18,7 @@
 		<span>1</span>
 		<p>
             {l s='Create a free account on the site.' mod='bluepayment'}<br/>
-			<a href="https://platnosci.bm.pl/?pk_campaign=presta_shop_panel&pk_source=presta_shop_panel&pk_medium=cta">
+			<a href="https://portal.autopay.eu/?pk_campaign=presta_shop_panel&pk_source=presta_shop_panel&pk_medium=cta">
                 {l s='Sign up' mod='bluepayment'}
 			</a>
 		</p>

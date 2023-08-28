@@ -2,7 +2,7 @@
 
 Hi {firstname} {lastname},
 
-Your Blue Media payment to {shop_name} is completed.
+Your Autopay payment to {shop_name} is completed.
 
 [{shop_name}]({shop_url})
 

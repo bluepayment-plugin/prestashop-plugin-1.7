@@ -1,11 +1,16 @@
 # Changelog
+## [2.8.9] 28.08.2023
+- Adaptation for PrestaShop 8.1
+- Fixed synchronization of payment gateways
+- Rebranding
+
 ## [2.8.8] 28.06.2023
-- Added PayPo payment
+- Added Spingo payment
 - Adding the ability to configure the module without having to turn it on
 - Fixed adding ga script
 - Fixed blocked access to read logs
 
-## [2.8.7] 28.04.2022
+## [2.8.7] 28.04.2023
 - Fixed display null after change payment method
 - Fixed change order status when product out of stock
 - Remove directory libs, added dependencies from directory libs to composer

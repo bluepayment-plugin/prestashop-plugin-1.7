@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
-use BluePayment\Api\BlueGatewayTransfers;
+use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 use Cart;
@@ -64,20 +64,22 @@ class AliorInstallment implements GatewayType
      */
     public function isActive($cart_total = null): bool
     {
-        $isoCode = Helper::getIsoFromContext(Context::getContext());
-        $alior = BlueGatewayTransfers::isTransferActive(
+        $iso_code = Helper::getIsoFromContext(Context::getContext());
+
+        $alior = BlueGatewayChannels::getByGatewayIdAndCurrency(
             Config::GATEWAY_ID_ALIOR,
-            $isoCode
+            $iso_code
         );
+
         if (!$cart_total) {
             $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
         }
 
         $activePromo = Cfg::get('BLUEPAYMENT_PROMO_PAY_LATER');
 
-        return $alior
+        return $alior->id
             && $activePromo
-            && (float) $cart_total >= (float) Config::ALIOR_MIN_AMOUNT
-            && (float) $cart_total <= (float) Config::ALIOR_MAX_AMOUNT;
+            && (float) $cart_total >= (float) $alior->min_amount
+            && (float) $cart_total <= (float) $alior->max_amount;
     }
 }

@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS `_DB_PREFIX_blue_gateway_channels`
     `gateway_type` varchar(50) NOT NULL,
     `gateway_payments` int(11) NOT NULL,
     `gateway_logo_url` varchar(500) DEFAULT NULL,
+    `min_amount` DECIMAL(14,6) NOT NULL DEFAULT "0.000000",
+    `max_amount` DECIMAL(14,6) NOT NULL DEFAULT "0.000000",
     PRIMARY KEY (`id_blue_gateway_channels`)
 ) ENGINE = _MYSQL_ENGINE_
   DEFAULT CHARSET = UTF8;

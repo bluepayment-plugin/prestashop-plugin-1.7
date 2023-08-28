@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -120,8 +120,6 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
                     }
                 }
             }
-
-            return $payway;
         }
 
         PrestaShopLogger::addLog('BM - Error sync gateway transfers', 1);
@@ -161,5 +159,10 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
     private static function getByGatewayIdAndCurrency($gatewayId, $currency): BlueGatewayTransfers
     {
         return new BlueGatewayTransfers(self::isTransferActive($gatewayId, $currency));
+    }
+
+    public function removeGatewayCurrency($currency): bool
+    {
+        return \Db::getInstance()->delete('blue_gateway_transfers', 'gateway_currency = "'. $currency['iso_code'].'"');
     }
 }

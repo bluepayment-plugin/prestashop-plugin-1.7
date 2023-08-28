@@ -16,7 +16,7 @@
 <span class="bm-payment__elm"></span>
 
 {if $gpayRedirect}
-	<p>{l s='You will be redirected to the website of our partner Blue Media, where you can choose your fast and secure payment method.' mod='bluepayment'}</p>
+	<p>{l s='You will be redirected to the website of our partner Autopay, where you can choose your fast and secure payment method.' mod='bluepayment'}</p>
 {else}
 	<section>
 		<div style="padding-bottom: 25px">

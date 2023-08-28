@@ -16,7 +16,7 @@
 <div class="alert alert-warning bm-update-info">
 	<button type="button" class="close" data-dismiss="alert">×</button>
 	<p>
-        {l s='New version of Blue Media Payments is available. Go to modules and click Upgrade to update the module.' mod='bluepayment'}
+        {l s='New version of Autopay Payments is available. Go to modules and click Upgrade to update the module.' mod='bluepayment'}
 		<span class="badge badge-warning">
 			{l s='new version' mod='bluepayment'} - {$version}
 		</span>

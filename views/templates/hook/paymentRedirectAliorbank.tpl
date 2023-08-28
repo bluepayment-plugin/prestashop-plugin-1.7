@@ -45,7 +45,7 @@
 			<div class="bm-modal__body">
 				<h3>{l s='Credit intermediary' mod='bluepayment'}</h3>
 				<p>
-					{l s='Blue Media S.A. as a credit intermediary cooperates with Alior Bank S.A. Scope of empowerment: presenting customers with a credit offer and redirecting them to the Alior Bank website S.A., including to the credit application.' mod='bluepayment'}
+					{l s='Autopay S.A. as a credit intermediary cooperates with Alior Bank S.A. Scope of empowerment: presenting customers with a credit offer and redirecting them to the Alior Bank website S.A., including to the credit application.' mod='bluepayment'}
 				</p>
 				<h3>{l s='Information about the cost of credit' mod='bluepayment'}</h3>
 				<p>

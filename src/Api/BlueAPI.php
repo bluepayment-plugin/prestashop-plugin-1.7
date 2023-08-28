@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html.
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -81,7 +81,7 @@ class BlueAPI
         if ($currencies && $mode) {
             foreach ($currencies as $currency) {
                 $getMerchantData = $this->getApiMerchantData($currency['iso_code']);
-                $apiResponse = $this->gatewayAccount($getMerchantData, $currency['iso_code'], $mode);
+                $apiResponse = $this->gatewayAccountByCurrency($getMerchantData, $currency['iso_code'], $mode);
 
                 $this->getApiResponseSyncGateway($gateway, $apiResponse, $currency);
             }
@@ -96,6 +96,8 @@ class BlueAPI
     {
         if ($gateway && $response && $currency) {
             return $gateway->syncGateway($response, $currency, $position);
+        }elseif(is_null($response)){
+            return $gateway->removeGatewayCurrency($currency);
         }
 
         return null;
@@ -146,6 +148,31 @@ class BlueAPI
     {
         if (is_array($merchantData) && $currencyCode && $mode) {
             return $this->gatewayAuthentication($merchantData, $mode);
+        }
+
+        return null;
+    }
+
+    public function gatewayAccountByCurrency($merchantData, $currencyCode, $mode)
+    {
+        if (is_array($merchantData)
+            && isset($merchantData[0])
+            && !empty($merchantData[0])
+            && isset($merchantData[1])
+            && !empty($merchantData[1])
+            && $currencyCode && $mode) {
+
+            $serviceId = $merchantData[0];
+            $hashKey = $merchantData[1];
+
+            $gateway = new Gateway(
+                $serviceId,
+                $hashKey,
+                $mode,
+                'sha256',
+                Config::HASH_SEPARATOR
+            );
+            return $gateway->doGatewayList($currencyCode);
         }
 
         return null;

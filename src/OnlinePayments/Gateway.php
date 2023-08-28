@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -25,6 +25,7 @@ use BlueMedia\OnlinePayments\Util\EnvironmentRequirements;
 use BlueMedia\OnlinePayments\Util\HttpClient;
 use BlueMedia\OnlinePayments\Util\Logger;
 use BlueMedia\OnlinePayments\Util\XMLParser;
+use DomainException;
 use Exception;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger as MonologLogger;
@@ -37,11 +38,13 @@ class Gateway
     public const MODE_SANDBOX = 'sandbox';
     public const MODE_LIVE = 'live';
 
-    public const PAYMENT_DOMAIN_SANDBOX = 'pay-accept.bm.pl';
-    public const PAYMENT_DOMAIN_LIVE = 'pay.bm.pl';
+    public const PAYMENT_DOMAIN_SANDBOX = 'testpay.autopay.eu';
+    public const PAYMENT_DOMAIN_LIVE = 'pay.autopay.eu';
 
     public const PAYMENT_ACTON_PAYMENT = '/payment';
     public const PAYMENT_ACTON_PAYWAY_LIST = '/paywayList';
+
+    public const PAYMENT_ACTON_GATEWAY_LIST = '/gatewayList/v2';
 
     public const GET_MERCHANT_INFO = '/webapi/googlePayMerchantInfo';
     public const GET_REGULATIONS = '/webapi/regulationsGet';
@@ -220,6 +223,25 @@ class Gateway
 
         if (preg_match_all(self::PATTERN_GENERAL_ERROR, $this->response, $data)) {
             throw new RuntimeException($this->response);
+        }
+    }
+    /**
+     * Is error response.
+     *
+     * @return void
+     */
+    private function validateJSONResponse()
+    {
+        $response = json_decode($this->response);
+        if ($response->result != "OK"){
+            Logger::log(
+                Logger::EMERGENCY,
+                sprintf('Got error: "%s", code: "%s"', $response->description, $response->errorStatus),
+                [
+                    'full-response' => $this->response,
+                ]
+            );
+            throw new RuntimeException((string) $response->description);
         }
     }
 
@@ -533,6 +555,7 @@ class Gateway
         switch ($action) {
             case self::PAYMENT_ACTON_PAYMENT:
             case self::PAYMENT_ACTON_PAYWAY_LIST:
+            case self::PAYMENT_ACTON_GATEWAY_LIST:
             case self::GET_MERCHANT_INFO:
             case self::GET_REGULATIONS:
                 break;
@@ -606,6 +629,37 @@ class Gateway
 
         $model = Transformer::toModel($responseParsed);
         $model->validate((int) $fields['ServiceID'], (string) $fields['MessageID']);
+
+        return $model;
+    }
+
+    final public function doGatewayList(string $currencies)
+    {
+        $fields = [
+            'ServiceID' => self::$serviceId,
+            'MessageID' => $this->generateMessageId(),
+            'Currencies' => $currencies,
+        ];
+        $fields['Hash'] = self::generateHash($fields);
+
+        $responseObject = self::$httpClient->postJson(
+            self::getActionUrl(self::PAYMENT_ACTON_GATEWAY_LIST),
+            ['Content-Type:application/json'],
+            $fields
+        );
+
+        $this->response = (string) $responseObject->getBody();
+        $this->validateJSONResponse();
+
+        $responseParsed = json_decode($this->response);
+
+        $model = Transformer::JSONtoModel($responseParsed);
+
+        try{
+            $model->validate((int) $fields['ServiceID'], (string) $fields['MessageID']);
+        }catch(DomainException $e){
+            return null;
+        }
 
         return $model;
     }

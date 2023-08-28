@@ -16,7 +16,7 @@
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="smartney">
 	<span class="bm-promo-desc">
 		{l s='Buy now and pay within 30 days.' mod='bluepayment'}
-		<a target="_blank" href="https://pomoc.bluemedia.pl/platnosci-online-w-e-commerce/pay-smartney">
+		<a target="_blank" href="https://pomoc.autopay.pl/platnosci-online-w-e-commerce/pay-smartney">
 			{l s='Learn more' mod='bluepayment'}
 		</a>
 	</span>
@@ -44,7 +44,7 @@
 
 			<div class="bm-modal__body">
 				<h3>{l s='Credit intermediary' mod='bluepayment'}</h3>
-				<p>{l s='Blue Media S.A. as a credit intermediary works with [name of OTP provider]. Scope of empowerment: presentation of credit offer to customers and redirection to [name of OTP provider], including to the credit application.' mod='bluepayment'}</p>
+				<p>{l s='Autopay S.A. as a credit intermediary works with [name of OTP provider]. Scope of empowerment: presentation of credit offer to customers and redirection to [name of OTP provider], including to the credit application.' mod='bluepayment'}</p>
 				<h3>{l s='Actual Annual Percentage Rate of Interest (APR).' mod='bluepayment'}</h3>
 				<p>
                     {l s='No-cost option: The Annual Percentage Rate of Interest (APR) is 0.00%.' mod='bluepayment'}

@@ -1,6 +1,6 @@
 {
   "name": "prestashop/bluepayment",
-  "description": "Blue Media payment module for Prestashop 1.7.x",
+  "description": "Autopay payment module for Prestashop 1.7.x",
   "license": "GNU Lesser General Public License",
   "minimum-stability": "stable",
   "autoload": {

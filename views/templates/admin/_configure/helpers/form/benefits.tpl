@@ -23,7 +23,7 @@
 
 	<div class="bm-info">
 
-		<img class="bm-info__img" src="{$src_img|escape:'html':'UTF-8'}/blue-media.svg" alt="Blue Media">
+		<img class="bm-info__img" src="{$src_img|escape:'html':'UTF-8'}/blue-media.svg" alt="Autopay">
 		<ul class="bm-info__list">
 			<li class="bm-info__item">
                 {l s='Commission only 1.19%' mod='bluepayment'}
@@ -34,7 +34,7 @@
 {*			</li>*}
 			<li class="bm-info__item">
                 {l s='Prepare shop regulations 10% cheaper.' mod='bluepayment'}
-				<a target="_blank" href="https://developers.bluemedia.pl/legal-geek?mtm_campaign=presta_shop_legalgeek&mtm_source=presta_shop_backoffice&mtm_medium=cta">{l s='Find out more' mod='bluepayment'}</a>
+				<a target="_blank" href="https://developers.autopay.pl/legal-geek?mtm_campaign=presta_shop_legalgeek&mtm_source=presta_shop_backoffice&mtm_medium=cta">{l s='Find out more' mod='bluepayment'}</a>
 			</li>
 		</ul>
 

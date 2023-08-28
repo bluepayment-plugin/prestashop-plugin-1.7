@@ -409,33 +409,29 @@ body#checkout section.checkout-step .payment-options .custom-radio {
   position: relative;
   overflow: hidden;
   padding-top: 22px;
-  padding-bottom: 8px
+  padding-bottom: 14px;
 }
 
-.bm-frame-start:before, .bm-frame-start:after {
+.bm-frame-start img {
+  margin-left: 3px;
+}
+
+.bm-frame-start:after {
   height: 2px;
   background-color: #006ec7;
   content: "";
   position: absolute;
-  top: 32px
+  top: 28px
 }
 
-.bm-frame-start:before {
-  width: 30px;
-  margin-right: 14px
-}
 
 .bm-frame-start:after {
   width: 100%;
-  right: -110px
-}
-
-.bm-frame-start img {
-  margin-left: 44px
+  right: -105px;
 }
 
 .bm-safe-brands {
-  top: 37px;
+  top: 33px;
   right: 0;
   position: absolute
 }
@@ -599,6 +595,10 @@ body#checkout section.checkout-step .payment-options > div .payment-option > lab
 
 .bm-hide {
   display: none
+}
+
+.bm-d-none {
+  display: none !important;
 }
 
 .bm-transition {

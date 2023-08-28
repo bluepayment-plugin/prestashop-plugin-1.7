@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -42,6 +42,8 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public $gateway_payments;
     public $gateway_type;
     public $gateway_logo_url;
+    public $min_amount;
+    public $max_amount;
 
     public static $definition = [
         'table' => self::TABLE,
@@ -96,6 +98,14 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                 'type' => self::TYPE_STRING,
                 'validate' => 'isGenericName',
                 'size' => 500,
+            ],
+            'min_amount' => [
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isFloat',
+            ],
+            'max_amount' => [
+                'type' => self::TYPE_FLOAT,
+                'validate' => 'isFloat',
             ],
         ],
     ];
@@ -165,7 +175,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                     $currency['iso_code']
                 );
 
-                if (!$this->isChannelActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
+//                if (!$this->isChannelActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
                     $payway->gateway_logo_url = $paymentGateway->getIconUrl();
                     $payway->bank_name = $paymentGateway->getBankName();
                     $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
@@ -179,10 +189,13 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                         $payway->gateway_payments = '1';
                     }
 
+                    $payway->min_amount = $paymentGateway->getMinAmount();
+                    $payway->max_amount = $paymentGateway->getMaxAmount();
+
                     $payway->position = (int) $position;
                     $payway->save();
                     ++$position;
-                }
+//                }
             }
 
             return $payway;
@@ -290,6 +303,11 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 
     public static function getByGatewayIdAndCurrency($gatewayId, $currency): BlueGatewayChannels
     {
-        return new BlueGatewayChannels(self::isChannelActive($gatewayId, $currency));
+        return new BlueGatewayChannels(self::getChannelId($gatewayId, $currency));
+    }
+
+    public function removeGatewayCurrency($currency): bool
+    {
+        return \Db::getInstance()->delete(self::TABLE, 'gateway_currency = "'. $currency['iso_code'].'"');
     }
 }

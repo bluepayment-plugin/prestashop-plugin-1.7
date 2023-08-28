@@ -16,7 +16,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="{$bm_dir}views/css/front.css" />
-    <title>{l s='Blue Media redirect...' mod='bluepayment'}</title>
+    <title>{l s='Autopay redirect...' mod='bluepayment'}</title>
 </head>
 <body class="blue-media-body">
 <div class="bm-redirect-page">

@@ -57,7 +57,7 @@ function BeginWrapPayments(elm, index) {
 
 		const img = document.createElement('img')
 		img.src = asset_path + 'img/blue-media.svg';
-		img.width = 52;
+		img.width = 80;
 
 		const brand = document.createElement('img')
 		brand.className = 'bm-safe-brands';

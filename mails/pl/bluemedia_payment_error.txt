@@ -2,7 +2,7 @@
 
 Witaj {firstname} {lastname},
 
-Twoja płatność przez Blue Media w sklepie {shop_name} nie powiodła się.
+Twoja płatność przez Autopay w sklepie {shop_name} nie powiodła się.
 
 [{shop_name}]({shop_url})
 

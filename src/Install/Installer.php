@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -33,13 +33,13 @@ class Installer
             'class_name' => 'AdminBluepaymentPayments',
             'visible' => false,
             'parent' => -1,
-            'name' => 'Blue Media - Configuration',
+            'name' => 'Autopay - Configuration',
         ],
         [
             'class_name' => 'AdminBluepaymentAjax',
             'visible' => false,
             'parent' => -1,
-            'name' => 'Blue Media - Ajax',
+            'name' => 'Autopay - Ajax',
         ],
     ];
 
@@ -144,14 +144,14 @@ class Installer
             foreach (Language::getLanguages() as $lang) {
                 if ($lang['locale'] === 'pl-PL') {
                     $tab->name[$lang['id_lang']] = $this->translator->trans(
-                        'Blue Media - Konfiguracja',
+                        'Autopay - Konfiguracja',
                         [],
                         'Modules.Bluepayment.Admin',
                         $lang['locale']
                     );
                 } else {
                     $tab->name[$lang['id_lang']] = $this->translator->trans(
-                        'Blue Media - Configuration',
+                        'Autopay - Configuration',
                         [],
                         'Modules.Bluepayment.Admin',
                         $lang['locale']

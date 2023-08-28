@@ -6,8 +6,8 @@
  * It is also available through the world-wide-web at this URL:
  * https://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * @author     Blue Media S.A.
- * @copyright  Since 2015 Blue Media S.A.
+ * @author     Autopay S.A.
+ * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -147,7 +147,7 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
             $this->ajaxDie(json_encode(['success' => true]));
         } catch (Exception $exception) {
             PrestaShopLogger::addLog(
-                'Blue Media - Ajax Error',
+                'Autopay - Ajax Error',
                 4
             );
             $this->ajaxDie(json_encode(['success' => false]));
