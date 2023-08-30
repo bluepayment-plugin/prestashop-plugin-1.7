@@ -1,8 +1,8 @@
-# Instrukcja modułu BluePayment dla platformy PrestaShop 1.7
+# Instrukcja modułu BluePayment dla platformy PrestaShop 1.7 oraz 8.1
 **Wersja wtyczki**: 2.8.9
 
 ## Podstawowe informacje
-BluePayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7.
+BluePayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7 oraz 8.1.
 
 ### Główne funkcje
 Do najważniejszych funkcji modułu zalicza się:
@@ -15,7 +15,7 @@ Do najważniejszych funkcji modułu zalicza się:
 - rozszerzoną analitykę danych, dzięki połączeniu z Google Analytics i dodaniu identyfikatora śledzenia
 
 ### Wymagania
-- Wersja PrestaShop: 1.7
+- Minimalna wersja PrestaShop: 1.7
 - Wersja PHP zgodna z wymaganiami względem danej wersji sklepu
 
 ## Aktywacja płatności w panelu administracyjnym PrestaShop
