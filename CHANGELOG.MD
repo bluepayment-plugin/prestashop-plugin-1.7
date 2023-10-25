@@ -1,4 +1,8 @@
 # Changelog
+## [2.9.0] 28.09.2023
+- Rebranding
+- Added Blik pay later
+
 ## [2.8.9] 28.08.2023
 - Adaptation for PrestaShop 8.1
 - Fixed synchronization of payment gateways

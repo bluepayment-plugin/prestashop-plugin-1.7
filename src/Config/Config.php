@@ -35,6 +35,7 @@ class Config
     public const GATEWAY_ID_SPINGO = 706;
     public const GATEWAY_ID_VISA_MOBILE = 1523;
     public const GATEWAY_ID_BLIK = 509;
+    public const GATEWAY_ID_BLIK_LATER = 523;
     public const GATEWAY_ID_WALLET = 999;
     public const GATEWAY_ID_TRANSFER = 9999;
 

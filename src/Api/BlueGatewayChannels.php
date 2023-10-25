@@ -124,6 +124,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     {
         $gatewayArray = [
             Config::GATEWAY_ID_BLIK,
+            Config::GATEWAY_ID_BLIK_LATER,
             Config::GATEWAY_ID_ALIOR,
             Config::GATEWAY_ID_CARD,
             Config::GATEWAY_ID_SMARTNEY,

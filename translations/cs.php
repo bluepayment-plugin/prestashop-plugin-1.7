@@ -129,7 +129,7 @@ $_MODULE['<{bluepayment}prestashop>container_list_3495add06290ddfe43b09e84fbf165
 $_MODULE['<{bluepayment}prestashop>container_list_89c496311905ecb848c5058532fd099e'] = 'Kód BLIK na stránce obchodu';
 $_MODULE['<{bluepayment}prestashop>container_list_d80da90ed7ec8769245b3a2aa1009037'] = 'Kód BLIK na stránce mimo obchod';
 $_MODULE['<{bluepayment}prestashop>container_list_41e555ccc8668da66e594f02df12723e'] = '(doporučeno, pokud používáte modul pokladny s jednou stránkou)';
-$_MODULE['<{bluepayment}prestashop>benefits_ace1359e0400e9839c40702ef9d498fc'] = 'Provize pouze 1,19 %';
+$_MODULE['<{bluepayment}prestashop>benefits_255fa08cdfcae56e8bebbfd99cf25603'] = 'Provize pouze 1,19% + 0,25 zł';
 $_MODULE['<{bluepayment}prestashop>benefits_4390485cfec1bc99a300debf17af6f49'] = 'SEO audit za akční cenu.';
 $_MODULE['<{bluepayment}prestashop>benefits_093ef2eaceae626b1d4dcb1a11bd70a2'] = 'Zjistěte více';
 $_MODULE['<{bluepayment}prestashop>benefits_ed560df2779c5d61d25816ab98c5baca'] = 'Připravte si předpisy obchodu 10% sleva.';

@@ -34,8 +34,7 @@
               <img width="80" class="img-fluid bm-modal-image"
                    src="/modules/bluepayment/views/img//helpers/switcher1.png">
             </div>
-            <p>{l s='Thanks to this payment method, your customers can pay for their purchases in convenient installments, and you will receive the full amount right away. Choosing Alior Installments
-                         Your client can decide in how many installments he wants to repay the amount due (from 3 to 48 months).' mod='bluepayment'}</p>
+            <p>{l s='Thanks to this payment method, your customers can pay for their purchases in convenient installments, and you will receive the full amount right away. Choosing Alior Installments Your client can decide in how many installments he wants to repay the amount due (from 3 to 48 months).' mod='bluepayment'}</p>
 
             <p
               class="font-weight-bold">{l s='To be able to promote the Alior Installment payment, you must first activate it' mod='bluepayment'}</p>
@@ -69,8 +68,7 @@
               <img width="80" class="img-fluid bm-modal-image"
                    src="/modules/bluepayment/views/img//helpers/switcher2.png">
             </div>
-            <p>{l s='Thanks to deferred payments, your customers have up to 30 days to pay, and you get the money right away! By choosing Pay Smartney, your customer can pay for their purchases up to 30
-  days - without incurring any additional costs.' mod='bluepayment'}</p>
+            <p>{l s='Thanks to deferred payments, your customers have up to 30 days to pay, and you get the money right away! By choosing Pay Smartney, your customer can pay for their purchases up to 30 days - without incurring any additional costs.' mod='bluepayment'}</p>
 
             <p
               class="font-weight-bold">{l s='To be able to promote Pay Smartney, you must first activate it' mod='bluepayment'}</p>

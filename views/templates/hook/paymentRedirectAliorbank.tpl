@@ -15,9 +15,9 @@
 *}
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="aliorbank">
 	<span class="bm-promo-desc">
-		{l s='0% or even 48 installments' mod='bluepayment'}.
+		{l s='Spread the payment into convenient installments and buy without any problems.' mod='bluepayment'}
 		<a target="_blank" href="https://kalkulator.raty.aliorbank.pl/init?supervisor=B776&promotionList=B">
-			{l s='Check out other installment options' mod='bluepayment'}
+			{l s='Find out more.' mod='bluepayment'}
 		</a>
 		<br />
 	</span>

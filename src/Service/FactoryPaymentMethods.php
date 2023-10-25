@@ -77,6 +77,9 @@ class FactoryPaymentMethods
             case Config::GATEWAY_ID_BLIK:
                 $gateway = 'Blik';
                 break;
+            case Config::GATEWAY_ID_BLIK_LATER:
+                $gateway = 'BlikLater';
+                break;
             case Config::GATEWAY_ID_PAYPO:
                 $gateway = 'PayPo';
                 break;

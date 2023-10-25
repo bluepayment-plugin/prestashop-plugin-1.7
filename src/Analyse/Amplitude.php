@@ -86,7 +86,7 @@ class Amplitude
 
     public function getAmplitudeId(): string
     {
-        return getenv('AMPLITUDE_ID') ?? '';
+        return getenv('AMPLITUDE_ID') ? getenv('AMPLITUDE_ID') : '';
     }
 
     /**
@@ -145,6 +145,9 @@ class Amplitude
         switch ($gatewayId) {
             case Config::GATEWAY_ID_BLIK:
                 $name = 'Blik';
+                break;
+            case Config::GATEWAY_ID_BLIK_LATER:
+                $name = 'Blik Płacę Później';
                 break;
             case Config::GATEWAY_ID_CARD:
                 $name = 'Karta kredytowa';
