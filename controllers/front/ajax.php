@@ -68,15 +68,4 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
             );
         }
     }
-
-//    private function hasProductInCart($productId) {
-//        $cart = Context::getContext()->cart;
-//        foreach($cart->getProducts() as $product) {
-//            if($product['id_product'] === $productId) {
-//                return $product['cart_quantity'];
-//            }
-//        }
-//
-//        return null;
-//    }
 }

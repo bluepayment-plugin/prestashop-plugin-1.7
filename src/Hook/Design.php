@@ -15,6 +15,10 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use Configuration as Cfg;
 
 class Design extends AbstractHook

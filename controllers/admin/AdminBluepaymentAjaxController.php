@@ -10,6 +10,9 @@
  * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
@@ -57,10 +60,10 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
             $paymentGroupName = [];
 
             foreach (Language::getLanguages(true) as $lang) {
-                $paymentName[$lang['id_lang']] =
-                    Tools::getValue($this->module->name_upper . '_PAYMENT_NAME_' . $lang['id_lang']);
-                $paymentGroupName[$lang['id_lang']] =
-                    Tools::getValue($this->module->name_upper . '_PAYMENT_GROUP_NAME_' . $lang['id_lang']);
+                $paymentName[$lang['id_lang']]
+                    = Tools::getValue($this->module->name_upper . '_PAYMENT_NAME_' . $lang['id_lang']);
+                $paymentGroupName[$lang['id_lang']]
+                    = Tools::getValue($this->module->name_upper . '_PAYMENT_GROUP_NAME_' . $lang['id_lang']);
             }
 
             $serviceId = [];
@@ -137,8 +140,8 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
             Configuration::updateValue($this->module->name_upper . '_PAYMENT_NAME', $paymentName);
             Configuration::updateValue($this->module->name_upper . '_PAYMENT_GROUP_NAME', $paymentGroupName);
-            Configuration::updateValue($this->module->name_upper . Config::SERVICE_PARTNER_ID, serialize($serviceId));
-            Configuration::updateValue($this->module->name_upper . Config::SHARED_KEY, serialize($sharedKey));
+            Configuration::updateValue($this->module->name_upper . Config::SERVICE_PARTNER_ID, json_encode($serviceId));
+            Configuration::updateValue($this->module->name_upper . Config::SHARED_KEY, json_encode($sharedKey));
 
             $gateway = new BlueGateway($this->module, new BlueAPI($this->module));
             $gateway->getTransfers();

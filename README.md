@@ -1,8 +1,8 @@
-# Instrukcja modułu BluePayment dla platformy PrestaShop 1.7 oraz 8.1
-**Wersja wtyczki**: 2.9.0
+Instrukcja modułu płatności online Autopay bluepayment dla platformy PrestaShop 1.7 oraz 8.1
+**Wersja wtyczki**: 3.0.0
 
 ## Podstawowe informacje
-BluePayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7 oraz 8.1.
+Płatności online Autopay bluepayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7 oraz 8.1.
 
 ### Główne funkcje
 Do najważniejszych funkcji modułu zalicza się:

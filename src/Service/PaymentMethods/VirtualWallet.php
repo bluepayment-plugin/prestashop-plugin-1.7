@@ -15,11 +15,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
-use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class VirtualWallet implements GatewayType
@@ -28,19 +31,19 @@ class VirtualWallet implements GatewayType
         \BluePayment $module,
         array $data = []
     ): PaymentOption {
-        $moduleLink = Context::getContext()->link->getModuleLink(
+        $moduleLink = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
             [],
             true
         );
-        $walletMerchantInfo = Context::getContext()->link->getModuleLink(
+        $walletMerchantInfo = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'merchantInfo',
             [],
             true
         );
-        $gpay_moduleLinkCharge = Context::getContext()->link->getModuleLink(
+        $gpay_moduleLinkCharge = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'chargeGPay',
             [],
@@ -52,16 +55,16 @@ class VirtualWallet implements GatewayType
             $gpayRedirect = true;
         }
 
-        if (!is_object(Context::getContext()->currency)) {
-            $currency = Context::getContext()->currency['iso_code'];
+        if (!is_object(\Context::getContext()->currency)) {
+            $currency = \Context::getContext()->currency['iso_code'];
         } else {
-            $currency = Context::getContext()->currency->iso_code;
+            $currency = \Context::getContext()->currency->iso_code;
         }
         $googlePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_GOOGLE_PAY, $currency);
         $applePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_APPLE_PAY, $currency);
-        $idShop = Context::getContext()->shop->id;
+        $idShop = \Context::getContext()->shop->id;
 
-        Context::getContext()->smarty->assign([
+        \Context::getContext()->smarty->assign([
             'wallet_merchantInfo' => $walletMerchantInfo,
             'gpayRedirect' => $gpayRedirect,
             'gpay_moduleLinkCharge' => $gpay_moduleLinkCharge,
@@ -100,7 +103,7 @@ class VirtualWallet implements GatewayType
      */
     public function isActive(): bool
     {
-        $isoCode = Helper::getIsoFromContext(Context::getContext());
+        $isoCode = Helper::getIsoFromContext(\Context::getContext());
 
         $googlePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_GOOGLE_PAY, $isoCode);
         $applePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_APPLE_PAY, $isoCode);

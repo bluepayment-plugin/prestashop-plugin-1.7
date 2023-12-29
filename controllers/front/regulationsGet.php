@@ -10,6 +10,9 @@
  * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
@@ -50,9 +53,9 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
         $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . Config::SHARED_KEY, $currency);
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
-        $gateway_mode = $test_mode ?
-            \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX :
-            \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
+        $gateway_mode = $test_mode
+            ? \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX
+            : \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
 
         $gateway = new \BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
 
@@ -86,9 +89,9 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
 
             if ($curlResponse === 'ERROR' || empty($curlResponse)) {
                 Tools::error_log(
-                    'Invalid response from BlueMedia API during get merchant info for G-pay. Dta: ' .
-                    print_r($data, 1) .
-                    "\nResponse:\n" . print_r($curlResponse, 1)
+                    'Invalid response from BlueMedia API during get merchant info for G-pay. Dta: '
+                    . print_r($data, 1)
+                    . "\nResponse:\n" . print_r($curlResponse, 1)
                 );
 
                 return false;

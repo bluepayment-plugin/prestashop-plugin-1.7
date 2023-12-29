@@ -13,6 +13,10 @@
 
 namespace BluePayment\Statuses;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 abstract class OrderStatusMessageDictionary
 {
     public const PENDING = 1;

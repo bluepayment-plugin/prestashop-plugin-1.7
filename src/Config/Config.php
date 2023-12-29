@@ -15,6 +15,9 @@ declare(strict_types=1);
 
 namespace BluePayment\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class Config
 {
     public const BM_IMAGES_PATH = _MODULE_DIR_ . 'bluepayment/views/img/';
@@ -51,5 +54,4 @@ class Config
     public const PLUGIN_AUTH = 'plugin authorized';
     public const API_AUTHENTICATION_SUCCESS = 'authorization completed';
     public const API_AUTHENTICATION_FAILED = 'authorization failed';
-
 }

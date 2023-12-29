@@ -10,6 +10,9 @@
  * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\TransactionStandard;

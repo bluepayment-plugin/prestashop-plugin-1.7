@@ -13,6 +13,9 @@
 
 namespace BlueMedia\OnlinePayments\Model;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 abstract class AbstractModel
 {
     abstract public function validate();

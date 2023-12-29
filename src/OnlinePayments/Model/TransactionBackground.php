@@ -13,8 +13,11 @@
 
 namespace BlueMedia\OnlinePayments\Model;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Util\Validator;
-use DomainException;
 
 class TransactionBackground extends TransactionInit
 {
@@ -190,19 +193,19 @@ class TransactionBackground extends TransactionInit
         parent::validate();
 
         if (empty($this->receiverNrb)) {
-            throw new DomainException('ReceiverNrb cannot be empty');
+            throw new \DomainException('ReceiverNrb cannot be empty');
         }
         if (empty($this->receiverName)) {
-            throw new DomainException('ReceiverName cannot be empty');
+            throw new \DomainException('ReceiverName cannot be empty');
         }
         if (empty($this->receiverAddress)) {
-            throw new DomainException('ReceiverAddress cannot be empty');
+            throw new \DomainException('ReceiverAddress cannot be empty');
         }
         if (empty($this->remoteId)) {
-            throw new DomainException('RemoteId cannot be empty');
+            throw new \DomainException('RemoteId cannot be empty');
         }
         if (empty($this->bankHref)) {
-            throw new DomainException('BankHref cannot be empty');
+            throw new \DomainException('BankHref cannot be empty');
         }
     }
 

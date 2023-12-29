@@ -15,14 +15,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
-use BluePayment\Api\BlueGatewayTransfers;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
-use Configuration as Cfg;
-use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use BluePayment\Api\BlueGatewayChannels;
-use Cart;
 
 class BlikLater implements GatewayType
 {
@@ -30,31 +30,30 @@ class BlikLater implements GatewayType
         \BluePayment $module,
         array $data = []
     ): PaymentOption {
-        $moduleLink = Context::getContext()->link->getModuleLink(
+        $moduleLink = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
             [],
             true
         );
 
-        $smartneyMerchantInfo = Context::getContext()->link->getModuleLink(
+        $smartneyMerchantInfo = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'merchantInfo',
             [],
             true
         );
-        $smartneyLinkCharge = Context::getContext()->link->getModuleLink(
+        $smartneyLinkCharge = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'chargeSmartney',
             [],
             true
         );
 
-        Context::getContext()->smarty->assign([
+        \Context::getContext()->smarty->assign([
             'smartney_merchantInfo' => $smartneyMerchantInfo,
             'smartney_moduleLinkCharge' => $smartneyLinkCharge,
         ]);
-
 
         $option = new PaymentOption();
         $option
@@ -85,7 +84,7 @@ class BlikLater implements GatewayType
      */
     public function isActive($cart_total = null): bool
     {
-        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
 
         $blikLater = BlueGatewayChannels::getByGatewayIdAndCurrency(
             Config::GATEWAY_ID_BLIK_LATER,
@@ -93,7 +92,7 @@ class BlikLater implements GatewayType
         );
 
         if (!$cart_total) {
-            $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
+            $cart_total = \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH);
         }
 
         return $blikLater->id

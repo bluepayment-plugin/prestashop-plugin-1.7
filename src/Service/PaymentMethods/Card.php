@@ -15,10 +15,13 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
-use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class Card implements GatewayType
@@ -27,13 +30,13 @@ class Card implements GatewayType
         \BluePayment $module,
         array $data = []
     ): PaymentOption {
-        $moduleLink = Context::getContext()->link->getModuleLink(
+        $moduleLink = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
             [],
             true
         );
-        $cardIdTime = Context::getContext()->cart->id . '-' . time();
+        $cardIdTime = \Context::getContext()->cart->id . '-' . time();
 
         $option = new PaymentOption();
         $option->setCallToActionText($module->l('Payment by card'))
@@ -68,7 +71,7 @@ class Card implements GatewayType
      */
     public function isActive(): bool
     {
-        $isoCode = Helper::getIsoFromContext(Context::getContext());
+        $isoCode = Helper::getIsoFromContext(\Context::getContext());
 
         return BlueGatewayTransfers::isTransferActive(
             Config::GATEWAY_ID_CARD,

@@ -15,15 +15,13 @@ declare(strict_types=1);
 
 namespace BluePayment\Until;
 
-use AdminController;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Config\Config;
-use Context;
 use Currency;
-use Db;
-use DbQuery;
 use HelperList;
-use Shop;
-use Tools;
 
 class AdminHelper
 {
@@ -41,7 +39,7 @@ class AdminHelper
      */
     public function renderAdditionalOptionsList($module, $payments, $title)
     {
-        $helper = new HelperList();
+        $helper = new \HelperList();
         $helper->table = 'blue_gateway_channels';
         $helper->name_controller = $module->name;
         $helper->module = $module;
@@ -50,9 +48,9 @@ class AdminHelper
         $helper->identifier = 'id_blue_gateway_channels';
         $helper->no_link = true;
         $helper->title = $title;
-        $helper->currentIndex = AdminController::$currentIndex;
+        $helper->currentIndex = \AdminController::$currentIndex;
         $content = $payments;
-        $helper->token = Tools::getAdminTokenLite('AdminBluepaymentPayments');
+        $helper->token = \Tools::getAdminTokenLite('AdminBluepaymentPayments');
         $helper->position_identifier = 'position';
         $helper->orderBy = 'position';
         $helper->orderWay = 'ASC';
@@ -118,9 +116,9 @@ class AdminHelper
 
     public function getListChannels($currency)
     {
-        $idShop = Context::getContext()->shop->id;
+        $idShop = \Context::getContext()->shop->id;
 
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('gc.*, gcs.id_shop');
         $query->from('blue_gateway_channels', 'gc');
         $query->leftJoin('blue_gateway_channels_shop', 'gcs', 'gc.id_blue_gateway_channels 
@@ -128,14 +126,14 @@ class AdminHelper
 
         $query->where('gc.gateway_currency = "' . pSql($currency) . '"');
 
-        if (Shop::isFeatureActive()) {
+        if (\Shop::isFeatureActive()) {
             $query->where('gcs.id_shop = ' . (int) $idShop);
         }
 
         $query->orderBy('gc.position ASC');
         $query->groupBy('gc.id_blue_gateway_channels');
 
-        return Db::getInstance()->ExecuteS($query);
+        return \Db::getInstance()->ExecuteS($query);
     }
 
     public function getGatewaysListFields($module): array
@@ -170,7 +168,7 @@ class AdminHelper
 
     public function getListAllPayments($currency = 'PLN', $type = null)
     {
-        $idShop = Context::getContext()->shop->id;
+        $idShop = \Context::getContext()->shop->id;
 
         $q = '';
         if ($type === 'wallet') {
@@ -179,21 +177,21 @@ class AdminHelper
             $q = 'NOT IN (' . Helper::getGatewaysList() . ')';
         }
 
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('gt.*');
         $query->from('blue_gateway_transfers', 'gt');
         $query->leftJoin('blue_gateway_transfers_shop', 'gcs', 'gcs.id = gt.id');
         $query->where('gt.gateway_id ' . $q);
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
 
-        if (Shop::isFeatureActive()) {
+        if (\Shop::isFeatureActive()) {
             $query->where('gcs.id_shop = ' . (int) $idShop);
         }
 
         $query->orderBy('gt.position ASC');
         $query->groupBy('gt.id');
 
-        return Db::getInstance()->ExecuteS($query);
+        return \Db::getInstance()->ExecuteS($query);
     }
 
     /**
@@ -205,7 +203,7 @@ class AdminHelper
      */
     public static function getSortCurrencies($currency = null): array
     {
-        $sortCurrencies = $currency ?: Currency::getCurrenciesByIdShop(Context::getContext()->shop->id);
+        $sortCurrencies = $currency ?: \Currency::getCurrenciesByIdShop(\Context::getContext()->shop->id);
 
         usort($sortCurrencies, function ($a, $b) {
             if ($a['id_currency'] == $b['id_currency']) {

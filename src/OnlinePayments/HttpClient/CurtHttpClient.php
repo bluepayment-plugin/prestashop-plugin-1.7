@@ -13,6 +13,9 @@
 
 namespace BlueMedia\OnlinePayments\HttpClient;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class CurtHttpClient
 {
     public function post($url, array $headers = [], $data = null)

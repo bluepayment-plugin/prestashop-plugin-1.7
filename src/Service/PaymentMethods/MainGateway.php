@@ -15,9 +15,12 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
-use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class MainGateway implements GatewayType
@@ -28,11 +31,11 @@ class MainGateway implements GatewayType
     ): PaymentOption {
         $paymentName = Cfg::get(
             $module->name_upper . '_PAYMENT_NAME',
-            Context::getContext()->language->id
+            \Context::getContext()->language->id
         );
 
-        $cardIdTime = Context::getContext()->cart->id . '-' . time();
-        $moduleLink = Context::getContext()->link->getModuleLink(
+        $cardIdTime = \Context::getContext()->cart->id . '-' . time();
+        $moduleLink = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
             [],

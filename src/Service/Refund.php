@@ -15,9 +15,12 @@ declare(strict_types=1);
 
 namespace BluePayment\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
-use Configuration;
 
 class Refund
 {
@@ -47,13 +50,13 @@ class Refund
         $hashConfirmation = Helper::generateAndReturnHash($hashData);
 
         $curl = curl_init();
-        $postfields = 'ServiceID=' . $serviceId .
-            '&MessageID=' . $messageId .
-            '&RemoteID=' . $remoteId .
-            '&Amount=' . $amount .
-            '&Currency=' . $currency->iso_code .
-            '&Hash=' . $hashConfirmation;
-        $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
+        $postfields = 'ServiceID=' . $serviceId
+            . '&MessageID=' . $messageId
+            . '&RemoteID=' . $remoteId
+            . '&Amount=' . $amount
+            . '&Currency=' . $currency->iso_code
+            . '&Hash=' . $hashConfirmation;
+        $test_mode = \Configuration::get($this->module->name_upper . '_TEST_ENV');
         $payUrl = $test_mode ? \BlueMedia\OnlinePayments\Gateway::PAYMENT_DOMAIN_SANDBOX : \BlueMedia\OnlinePayments\Gateway::PAYMENT_DOMAIN_LIVE;
         curl_setopt_array($curl, [
             CURLOPT_URL => 'https://' . $payUrl . '/transactionRefund',

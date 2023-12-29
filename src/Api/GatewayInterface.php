@@ -15,6 +15,9 @@ declare(strict_types=1);
 
 namespace BluePayment\Api;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 interface GatewayInterface
 {
     public function syncGateway($apiGateways, $currency, $position);

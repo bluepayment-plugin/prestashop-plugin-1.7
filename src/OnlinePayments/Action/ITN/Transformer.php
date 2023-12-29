@@ -13,23 +13,24 @@
 
 namespace BlueMedia\OnlinePayments\Action\ITN;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\ItnIn;
 use BlueMedia\OnlinePayments\Util\Logger;
-use DateTime;
-use DateTimeZone;
-use SimpleXMLElement;
 
 class Transformer
 {
     /**
      * Is it clearance transaction.
      *
-     * @param SimpleXMLElement $transaction
+     * @param \SimpleXMLElement $transaction
      *
      * @return bool
      */
-    private static function isArrayClearanceTransaction(SimpleXMLElement $transaction)
+    private static function isArrayClearanceTransaction(\SimpleXMLElement $transaction)
     {
         return
             isset($transaction->transferDate)
@@ -99,8 +100,8 @@ class Transformer
             $result['gatewayID'] = $model->getGatewayId();
         }
         if ($model->getPaymentDate()) {
-            $result['paymentDate'] = (($model->getPaymentDate() instanceof DateTime) ?
-                $model->getPaymentDate()->format(Gateway::DATETIME_FORMAT) : ''
+            $result['paymentDate'] = (($model->getPaymentDate() instanceof \DateTime)
+                ? $model->getPaymentDate()->format(Gateway::DATETIME_FORMAT) : ''
             );
         }
         if ($model->getPaymentStatus()) {
@@ -167,8 +168,8 @@ class Transformer
             $result['startAmount'] = $model->getStartAmount();
         }
         if ($model->getTransferDate()) {
-            $result['transferDate'] = (($model->getTransferDate() instanceof DateTime) ?
-                $model->getTransferDate()->format(Gateway::DATETIME_FORMAT) : ''
+            $result['transferDate'] = (($model->getTransferDate() instanceof \DateTime)
+                ? $model->getTransferDate()->format(Gateway::DATETIME_FORMAT) : ''
             );
         }
         if ($model->getTransferStatus()) {
@@ -232,13 +233,13 @@ class Transformer
     /**
      * Transforms ITN request into model.
      *
-     * @param SimpleXMLElement $xml
+     * @param \SimpleXMLElement $xml
      *
      * @return ItnIn
      *
      * @throws \Exception
      */
-    public static function toModel(SimpleXMLElement $xml)
+    public static function toModel(\SimpleXMLElement $xml)
     {
         $transaction = $xml->transactions->transaction;
         $customerData = $transaction->customerData;
@@ -271,13 +272,13 @@ class Transformer
             $model->setGatewayId((string) $transaction->gatewayID);
         }
         if (isset($transaction->paymentDate)) {
-            $paymentDate = DateTime::createFromFormat(
+            $paymentDate = \DateTime::createFromFormat(
                 Gateway::DATETIME_FORMAT,
                 (string) $transaction->paymentDate,
-                new DateTimeZone(Gateway::DATETIME_TIMEZONE)
+                new \DateTimeZone(Gateway::DATETIME_TIMEZONE)
             );
             $model->setPaymentDate($paymentDate);
-            if ($paymentDate > new DateTime('now', new DateTimeZone(Gateway::DATETIME_TIMEZONE))) {
+            if ($paymentDate > new \DateTime('now', new \DateTimeZone(Gateway::DATETIME_TIMEZONE))) {
                 Logger::log(
                     Logger::WARNING,
                     sprintf('paymentDate "%s" is in future', $paymentDate->format($paymentDate::ATOM)),
@@ -406,13 +407,13 @@ class Transformer
         }
 
         if (isset($transaction->transferDate)) {
-            $transferDate = DateTime::createFromFormat(
+            $transferDate = \DateTime::createFromFormat(
                 Gateway::DATETIME_FORMAT,
                 (string) $transaction->transferDate,
-                new DateTimeZone(Gateway::DATETIME_TIMEZONE)
+                new \DateTimeZone(Gateway::DATETIME_TIMEZONE)
             );
             $model->setTransferDate($transferDate);
-            if ($transferDate > new DateTime('now', new DateTimeZone(Gateway::DATETIME_TIMEZONE))) {
+            if ($transferDate > new \DateTime('now', new \DateTimeZone(Gateway::DATETIME_TIMEZONE))) {
                 Logger::log(
                     Logger::WARNING,
                     sprintf('transferDate "%s" is in future', $transferDate->format($transferDate::ATOM)),

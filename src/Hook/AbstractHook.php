@@ -15,6 +15,9 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 abstract class AbstractHook
 {
     public const AVAILABLE_HOOKS = [];

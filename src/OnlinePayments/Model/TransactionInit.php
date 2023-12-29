@@ -13,11 +13,13 @@
 
 namespace BlueMedia\OnlinePayments\Model;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Util\Formatter;
 use BlueMedia\OnlinePayments\Util\Sorter;
 use BlueMedia\OnlinePayments\Util\Validator;
-use DateTime;
-use DomainException;
 
 /**
  * Model for init transaction
@@ -112,14 +114,14 @@ class TransactionInit extends AbstractModel
     /**
      * Transaction validity time.
      *
-     * @var DateTime
+     * @var \DateTime
      */
     protected $validityTime;
 
     /**
      * Transaction link validity time.
      *
-     * @var DateTime
+     * @var \DateTime
      */
     protected $linkValidityTime;
 
@@ -157,6 +159,7 @@ class TransactionInit extends AbstractModel
         $bluepayment = \Module::getInstanceByName('bluepayment');
         $this->setPlatformPluginVersion($bluepayment->version);
     }
+
     /**
      * @return string
      */
@@ -491,11 +494,11 @@ class TransactionInit extends AbstractModel
     /**
      * Set linkValidityTime.
      *
-     * @param DateTime $linkValidityTime
+     * @param \DateTime $linkValidityTime
      *
      * @return $this
      */
-    public function setLinkValidityTime(DateTime $linkValidityTime): self
+    public function setLinkValidityTime(\DateTime $linkValidityTime): self
     {
         $this->linkValidityTime = $linkValidityTime;
 
@@ -505,7 +508,7 @@ class TransactionInit extends AbstractModel
     /**
      * Return linkValidityTime.
      *
-     * @return DateTime
+     * @return \DateTime
      */
     public function getLinkValidityTime()
     {
@@ -515,11 +518,11 @@ class TransactionInit extends AbstractModel
     /**
      * Set validityTime.
      *
-     * @param DateTime $validityTime
+     * @param \DateTime $validityTime
      *
      * @return $this
      */
-    public function setValidityTime(DateTime $validityTime): self
+    public function setValidityTime(\DateTime $validityTime): self
     {
         $this->validityTime = $validityTime;
 
@@ -529,7 +532,7 @@ class TransactionInit extends AbstractModel
     /**
      * Return validityTime.
      *
-     * @return DateTime
+     * @return \DateTime
      */
     public function getValidityTime()
     {
@@ -544,16 +547,16 @@ class TransactionInit extends AbstractModel
     public function validate()
     {
         if (empty($this->serviceId)) {
-            throw new DomainException('ServiceId cannot be empty');
+            throw new \DomainException('ServiceId cannot be empty');
         }
         if (empty($this->orderId)) {
-            throw new DomainException('OrderId cannot be empty');
+            throw new \DomainException('OrderId cannot be empty');
         }
         if (empty($this->amount)) {
-            throw new DomainException('Amount cannot be empty');
+            throw new \DomainException('Amount cannot be empty');
         }
         if (empty($this->hash)) {
-            throw new DomainException('Hash cannot be empty');
+            throw new \DomainException('Hash cannot be empty');
         }
     }
 
@@ -571,6 +574,7 @@ class TransactionInit extends AbstractModel
     public function setPlatformName(string $platformName): self
     {
         $this->platformName = $platformName;
+
         return $this;
     }
 
@@ -588,6 +592,7 @@ class TransactionInit extends AbstractModel
     public function setPlatformVersion(string $platformVersion): self
     {
         $this->platformVersion = $platformVersion;
+
         return $this;
     }
 
@@ -605,6 +610,7 @@ class TransactionInit extends AbstractModel
     public function setPlatformPluginVersion(string $platformPluginVersion): self
     {
         $this->platformPluginVersion = $platformPluginVersion;
+
         return $this;
     }
 

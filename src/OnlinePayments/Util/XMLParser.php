@@ -13,10 +13,9 @@
 
 namespace BlueMedia\OnlinePayments\Util;
 
-use Exception;
-use RuntimeException;
-use SimpleXMLElement;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * XMLParser.
  */
@@ -27,19 +26,19 @@ class XMLParser
      *
      * @param string $xml
      *
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      */
     public static function parse($xml)
     {
         try {
-            return new SimpleXMLElement($xml);
-        } catch (Exception $exception) {
+            return new \SimpleXMLElement($xml);
+        } catch (\Exception $exception) {
             Logger::log(
                 Logger::ERROR,
                 $exception->getMessage(),
                 ['exception' => $exception, 'xml' => $xml]
             );
-            throw new RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new \RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 }

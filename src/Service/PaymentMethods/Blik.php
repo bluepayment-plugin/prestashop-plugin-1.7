@@ -15,11 +15,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
-use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class Blik implements GatewayType
@@ -29,7 +32,7 @@ class Blik implements GatewayType
         array $data = []
     ): PaymentOption {
         if (Cfg::get($module->name_upper . '_BLIK_REDIRECT')) {
-            $moduleLink = Context::getContext()->link->getModuleLink(
+            $moduleLink = \Context::getContext()->link->getModuleLink(
                 'bluepayment',
                 'payment',
                 [],
@@ -57,14 +60,14 @@ class Blik implements GatewayType
                     $module->fetch('module:bluepayment/views/templates/hook/paymentRedirectBlik.tpl')
                 );
         } else {
-            $blikModuleLink = Context::getContext()->link->getModuleLink(
+            $blikModuleLink = \Context::getContext()->link->getModuleLink(
                 'bluepayment',
                 'chargeBlik',
                 [],
                 true
             );
 
-            Context::getContext()->smarty->assign([
+            \Context::getContext()->smarty->assign([
                 'blik_moduleLink' => $blikModuleLink,
             ]);
 
@@ -87,7 +90,7 @@ class Blik implements GatewayType
      */
     public function isActive(): bool
     {
-        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
 
         return BlueGatewayTransfers::isTransferActive(
             Config::GATEWAY_ID_BLIK,

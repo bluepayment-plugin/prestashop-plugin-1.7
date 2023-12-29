@@ -13,6 +13,9 @@
 
 namespace BlueMedia\OnlinePayments;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 use BlueMedia\OnlinePayments\Action\ITN;
 use BlueMedia\OnlinePayments\Action\PaywayList\Transformer;
 use BlueMedia\OnlinePayments\HttpClient\CurtHttpClient;
@@ -25,13 +28,6 @@ use BlueMedia\OnlinePayments\Util\EnvironmentRequirements;
 use BlueMedia\OnlinePayments\Util\HttpClient;
 use BlueMedia\OnlinePayments\Util\Logger;
 use BlueMedia\OnlinePayments\Util\XMLParser;
-use DomainException;
-use Exception;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Logger as MonologLogger;
-use RuntimeException;
-use SimpleXMLElement;
-use XMLWriter;
 
 class Gateway
 {
@@ -132,16 +128,16 @@ class Gateway
     /**
      * Parses init transfer response.
      *
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     private function parseInitTransferResponse()
     {
         $xmlData = XMLParser::parse($this->response);
 
         if (isset($xmlData->confirmation) && (string) $xmlData->confirmation === ItnIn::CONFIRMATION_NOT_CONFIRMED) {
-            throw new RuntimeException((string) $xmlData->reason);
+            throw new \RuntimeException((string) $xmlData->reason);
         }
 
         return $xmlData;
@@ -152,7 +148,7 @@ class Gateway
      *
      * @return TransactionBackground
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     private function parseTransferResponse()
     {
@@ -195,7 +191,7 @@ class Gateway
                     'full-response' => $this->response,
                 ]
             );
-            throw new RuntimeException('Received wrong hash!');
+            throw new \RuntimeException('Received wrong hash!');
         }
 
         return $transactionBackground;
@@ -218,13 +214,14 @@ class Gateway
                     'full-response' => $this->response,
                 ]
             );
-            throw new RuntimeException((string) $xmlData->name);
+            throw new \RuntimeException((string) $xmlData->name);
         }
 
         if (preg_match_all(self::PATTERN_GENERAL_ERROR, $this->response, $data)) {
-            throw new RuntimeException($this->response);
+            throw new \RuntimeException($this->response);
         }
     }
+
     /**
      * Is error response.
      *
@@ -233,7 +230,7 @@ class Gateway
     private function validateJSONResponse()
     {
         $response = json_decode($this->response);
-        if ($response->result != "OK"){
+        if ($response->result != 'OK') {
             Logger::log(
                 Logger::EMERGENCY,
                 sprintf('Got error: "%s", code: "%s"', $response->description, $response->errorStatus),
@@ -241,7 +238,7 @@ class Gateway
                     'full-response' => $this->response,
                 ]
             );
-            throw new RuntimeException((string) $response->description);
+            throw new \RuntimeException((string) $response->description);
         }
     }
 
@@ -262,27 +259,27 @@ class Gateway
      *
      * @return void
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     protected function checkPhpEnvironment()
     {
         if (EnvironmentRequirements::hasSupportedPhpVersion()) {
-            throw new RuntimeException(sprintf('Required at least PHP version 7.0, current version "%s"', PHP_VERSION));
+            throw new \RuntimeException(sprintf('Required at least PHP version 7.0, current version "%s"', PHP_VERSION));
         }
         if (!EnvironmentRequirements::hasPhpExtension('xmlwriter')) {
-            throw new RuntimeException('Extension "xmlwriter" is required');
+            throw new \RuntimeException('Extension "xmlwriter" is required');
         }
         if (!EnvironmentRequirements::hasPhpExtension('xmlreader')) {
-            throw new RuntimeException('Extension "xmlreader" is required');
+            throw new \RuntimeException('Extension "xmlreader" is required');
         }
         if (!EnvironmentRequirements::hasPhpExtension('iconv')) {
-            throw new RuntimeException('Extension "iconv" is required');
+            throw new \RuntimeException('Extension "iconv" is required');
         }
         if (!EnvironmentRequirements::hasPhpExtension('mbstring')) {
-            throw new RuntimeException('Extension "mbstring" is required');
+            throw new \RuntimeException('Extension "mbstring" is required');
         }
         if (!EnvironmentRequirements::hasPhpExtension('hash')) {
-            throw new RuntimeException('Extension "hash" is required');
+            throw new \RuntimeException('Extension "hash" is required');
         }
     }
 
@@ -295,7 +292,7 @@ class Gateway
      * @param string $hashingAlgorithm
      * @param string $hashingSeparator
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      *
      * @api
      */
@@ -309,16 +306,16 @@ class Gateway
         $this->checkPhpEnvironment();
 
         if ($mode !== self::MODE_LIVE && $mode !== self::MODE_SANDBOX) {
-            throw new RuntimeException(sprintf('Not supported mode "%s"', $mode));
+            throw new \RuntimeException(sprintf('Not supported mode "%s"', $mode));
         }
         if (!array_key_exists($hashingAlgorithm, $this->hashingAlgorithmSupported)) {
-            throw new RuntimeException(sprintf('Not supported hashingAlgorithm "%s"', $hashingAlgorithm));
+            throw new \RuntimeException(sprintf('Not supported hashingAlgorithm "%s"', $hashingAlgorithm));
         }
         if (empty($serviceId) || !is_numeric($serviceId)) {
-            throw new RuntimeException(sprintf('Not supported serviceId "%s" - must be integer, %s given', $serviceId, gettype($serviceId)));
+            throw new \RuntimeException(sprintf('Not supported serviceId "%s" - must be integer, %s given', $serviceId, gettype($serviceId)));
         }
         if (empty($hashingSalt) || !is_string($hashingSalt)) {
-            throw new RuntimeException(sprintf('Not supported hashingSalt "%s" - must be string, %s given', $hashingSalt, gettype($hashingSalt)));
+            throw new \RuntimeException(sprintf('Not supported hashingSalt "%s" - must be string, %s given', $hashingSalt, gettype($hashingSalt)));
         }
 
         self::$mode = $mode;
@@ -327,11 +324,6 @@ class Gateway
         self::$hashingSalt = $hashingSalt;
         self::$hashingSeparator = $hashingSeparator;
         self::$httpClient = new CurtHttpClient();
-
-//        $logger = new MonologLogger(self::LOGGER_NAME);
-//        $logger->pushHandler(new RotatingFileHandler(self::LOG_PATH, self::MAX_LOG_FILES, MonologLogger::INFO));
-
-//        Logger::setLogger($logger);
     }
 
     /**
@@ -355,7 +347,7 @@ class Gateway
      *
      * @return ItnIn|void|null
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @api
      */
@@ -406,7 +398,7 @@ class Gateway
 
         $confirmationList['hash'] = self::generateHash($confirmationList);
 
-        $xml = new XMLWriter();
+        $xml = new \XMLWriter();
         $xml->openMemory();
         $xml->startDocument('1.0', 'UTF-8');
         $xml->startElement('confirmationList');
@@ -478,7 +470,7 @@ class Gateway
      *
      * @param TransactionInit $transaction
      *
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      *
      * @api
      */
@@ -563,7 +555,7 @@ class Gateway
             default:
                 $message = sprintf('Requested action "%s" not supported', $action);
                 Logger::log(Logger::EMERGENCY, $message);
-                throw new RuntimeException($message);
+                throw new \RuntimeException($message);
         }
 
         return sprintf('https://%s%s', $domain, $action);
@@ -604,7 +596,7 @@ class Gateway
      *
      * @return PaywayList
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      *
      * @api
      */
@@ -655,9 +647,9 @@ class Gateway
 
         $model = Transformer::JSONtoModel($responseParsed);
 
-        try{
+        try {
             $model->validate((int) $fields['ServiceID'], (string) $fields['MessageID']);
-        }catch(DomainException $e){
+        } catch (\DomainException $e) {
             return null;
         }
 

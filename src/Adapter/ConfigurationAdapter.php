@@ -13,13 +13,16 @@
 
 namespace BluePayment\Adapter;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use Configuration as Cfg;
-use Shop;
 
 class ConfigurationAdapter
 {
     /**
-     * @var Shop
+     * @var \Shop
      */
     private $shopId;
 

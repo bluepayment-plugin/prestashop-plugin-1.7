@@ -13,11 +13,14 @@
 
 namespace BlueMedia\OnlinePayments\Model;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Util\Sorter;
 use BlueMedia\OnlinePayments\Util\Translations;
 use BlueMedia\OnlinePayments\Util\Validator;
-use DateTime;
 
 class TransactionStandard extends TransactionInit
 {
@@ -281,11 +284,11 @@ class TransactionStandard extends TransactionInit
             $result['BlikAMKey'] = $this->getBlikAMKey();
         }
 
-        if ($this->getValidityTime() instanceof DateTime) {
+        if ($this->getValidityTime() instanceof \DateTime) {
             $result['ValidityTime'] = $this->getValidityTime()->format('Y-m-d H:i:s');
         }
 
-        if ($this->getLinkValidityTime() instanceof DateTime) {
+        if ($this->getLinkValidityTime() instanceof \DateTime) {
             $result['LinkValidityTime'] = $this->getLinkValidityTime()->format('Y-m-d H:i:s');
         }
 

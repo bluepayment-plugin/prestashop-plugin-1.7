@@ -13,9 +13,9 @@
 
 namespace BlueMedia\OnlinePayments\Model;
 
-use DateTime;
-use DomainException;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class Gateway extends AbstractModel
 {
     public const GATEWAY_ID_CARD = 1500;
@@ -172,7 +172,7 @@ class Gateway extends AbstractModel
     /**
      * Status date.
      *
-     * @var DateTime
+     * @var \DateTime
      */
     private $statusDate;
 
@@ -337,7 +337,7 @@ class Gateway extends AbstractModel
     /**
      * Returns status date.
      *
-     * @return DateTime|null
+     * @return \DateTime|null
      */
     public function getStatusDate()
     {
@@ -347,11 +347,11 @@ class Gateway extends AbstractModel
     /**
      * Sets status date.
      *
-     * @param DateTime $statusDate
+     * @param \DateTime $statusDate
      *
      * @return $this
      */
-    public function setStatusDate(DateTime $statusDate)
+    public function setStatusDate(\DateTime $statusDate)
     {
         $this->statusDate = $statusDate;
 
@@ -372,6 +372,7 @@ class Gateway extends AbstractModel
     public function setMinAmount(float $minAmount)
     {
         $this->minAmount = $minAmount;
+
         return $this;
     }
 
@@ -389,6 +390,7 @@ class Gateway extends AbstractModel
     public function setMaxAmount(float $maxAmount)
     {
         $this->maxAmount = $maxAmount;
+
         return $this;
     }
 
@@ -437,15 +439,15 @@ class Gateway extends AbstractModel
     /**
      * Validates model.
      *
-     * @throws DomainException
+     * @throws \DomainException
      */
     public function validate()
     {
         if (empty($this->gatewayId)) {
-            throw new DomainException('GatewayId cannot be empty');
+            throw new \DomainException('GatewayId cannot be empty');
         }
         if (empty($this->gatewayName)) {
-            throw new DomainException('GatewayName cannot be empty');
+            throw new \DomainException('GatewayName cannot be empty');
         }
     }
 }

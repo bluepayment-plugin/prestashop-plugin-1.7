@@ -15,14 +15,12 @@ declare(strict_types=1);
 
 namespace BluePayment\Api;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Model\Gateway as GatewayModel;
-use BluePayment;
 use BluePayment\Config\Config;
-use Context;
-use Db;
-use DbQuery;
-use PrestaShopLogger;
-use Shop;
 
 class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 {
@@ -113,10 +111,10 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public function __construct($id_blue_gateway_channels = null, $id_lang = null, $id_shop = null)
     {
         parent::__construct($id_blue_gateway_channels, $id_lang, $id_shop);
-        $this->module = new BluePayment();
+        $this->module = new \BluePayment();
 
-        if (Shop::isFeatureActive()) {
-            Shop::addTableAssociation($this->table, ['type' => 'shop']);
+        if (\Shop::isFeatureActive()) {
+            \Shop::addTableAssociation($this->table, ['type' => 'shop']);
         }
     }
 
@@ -176,33 +174,31 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                     $currency['iso_code']
                 );
 
-//                if (!$this->isChannelActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
-                    $payway->gateway_logo_url = $paymentGateway->getIconUrl();
-                    $payway->bank_name = $paymentGateway->getBankName();
-                    $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
-                    $payway->gateway_name = $paymentGateway->getGatewayName();
-                    $payway->gateway_type = 1;
-                    $payway->gateway_currency = $currency['iso_code'];
-                    $payway->force_id = true;
-                    $payway->gateway_id = $paymentGateway->getGatewayId();
+                $payway->gateway_logo_url = $paymentGateway->getIconUrl();
+                $payway->bank_name = $paymentGateway->getBankName();
+                $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
+                $payway->gateway_name = $paymentGateway->getGatewayName();
+                $payway->gateway_type = 1;
+                $payway->gateway_currency = $currency['iso_code'];
+                $payway->force_id = true;
+                $payway->gateway_id = $paymentGateway->getGatewayId();
 
-                    if ($paymentGateway->getGatewayId() == '9999' || $paymentGateway->getGatewayId() == '999') {
-                        $payway->gateway_payments = '1';
-                    }
+                if ($paymentGateway->getGatewayId() == '9999' || $paymentGateway->getGatewayId() == '999') {
+                    $payway->gateway_payments = '1';
+                }
 
-                    $payway->min_amount = $paymentGateway->getMinAmount();
-                    $payway->max_amount = $paymentGateway->getMaxAmount();
+                $payway->min_amount = $paymentGateway->getMinAmount();
+                $payway->max_amount = $paymentGateway->getMaxAmount();
 
-                    $payway->position = (int) $position;
-                    $payway->save();
-                    ++$position;
-//                }
+                $payway->position = (int) $position;
+                $payway->save();
+                ++$position;
             }
 
             return $payway;
         }
 
-        PrestaShopLogger::addLog('BM - Error sync gateway channels', 3);
+        \PrestaShopLogger::addLog('BM - Error sync gateway channels', 3);
 
         return null;
     }
@@ -228,12 +224,12 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
         $q->from(self::TABLE, 'gc');
         $q->leftJoin('blue_gateway_channels_shop', 'gcs', 'gcs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
         $q->where('gc.id_blue_gateway_channels = "' . (int) $id . '"');
-        if (Shop::isFeatureActive()) {
+        if (\Shop::isFeatureActive()) {
             $q->where('gcs.id_shop = ' . (int) $shopId);
         }
         $q->orderBy('gc.position ASC');
 
-        return Db::getInstance()->executeS($q);
+        return \Db::getInstance()->executeS($q);
     }
 
     /**
@@ -242,7 +238,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
      */
     public function updatePosition($id, $way, $position): bool
     {
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = \Context::getContext()->shop->id;
         $result = $this->getChannelsPositions($id, $id_shop);
 
         if ($result) {
@@ -258,12 +254,12 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                 return false;
             }
 
-            return Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'blue_gateway_channels` SET
-            `position`= `position` ' . ($way ? '- 1' : '+ 1') .
-                    ' WHERE `position`' . ($way ? '> ' . (int) $movedBlock['position'] . ' AND `position` <= '
+            return \Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'blue_gateway_channels` SET
+            `position`= `position` ' . ($way ? '- 1' : '+ 1')
+                    . ' WHERE `position`' . ($way ? '> ' . (int) $movedBlock['position'] . ' AND `position` <= '
                         . (int) $position : '< ' . (int) $movedBlock['position'] . '
                         AND `position` >= ' . (int) $position))
-                && Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'blue_gateway_channels`
+                && \Db::getInstance()->execute('UPDATE `' . _DB_PREFIX_ . 'blue_gateway_channels`
                 SET `position` = ' . (int) $position . '
                 WHERE `id_blue_gateway_channels`=' . (int) $movedBlock['id_blue_gateway_channels'])
             ;
@@ -274,9 +270,9 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 
     public static function getChannelId($gatewayId, $currency)
     {
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = \Context::getContext()->shop->id;
 
-        $q = new DbQuery();
+        $q = new \DbQuery();
         $q->select('gc.id_blue_gateway_channels');
         $q->from(self::TABLE, 'gc');
         $q->leftJoin('blue_gateway_channels_shop', 'gs', 'gs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
@@ -284,11 +280,11 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
         $q->where('gc.gateway_currency = "' . pSql($currency) . '"');
         $q->where('gc.gateway_status = 1');
 
-        if (Shop::isFeatureActive()) {
+        if (\Shop::isFeatureActive()) {
             $q->where('gs.id_shop = ' . (int) $id_shop);
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($q);
+        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($q);
     }
 
     /**
@@ -309,6 +305,6 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 
     public function removeGatewayCurrency($currency): bool
     {
-        return \Db::getInstance()->delete(self::TABLE, 'gateway_currency = "'. $currency['iso_code'].'"');
+        return \Db::getInstance()->delete(self::TABLE, 'gateway_currency = "' . $currency['iso_code'] . '"');
     }
 }

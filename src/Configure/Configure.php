@@ -15,12 +15,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Configure;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Adapter\ConfigurationAdapter;
 use BluePayment\Config\Config;
 use BluePayment\Statuses\CustomStatus;
 use BluePayment\Until\Helper;
-use Language;
-use Shop;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Configure
@@ -47,8 +49,8 @@ class Configure
 
     public function install(): bool
     {
-        return $this->installConfiguration(Shop::isFeatureActive()) &&
-            $this->addOrderStatuses(
+        return $this->installConfiguration(\Shop::isFeatureActive())
+            && $this->addOrderStatuses(
                 new CustomStatus()
             );
     }
@@ -73,8 +75,8 @@ class Configure
         $res = true;
 
         if ($isMultiStore) {
-            foreach (Shop::getContextListShopID() as $shop_id) {
-                $group_id = Shop::getGroupFromShop($shop_id, true);
+            foreach (\Shop::getContextListShopID() as $shop_id) {
+                $group_id = \Shop::getGroupFromShop($shop_id, true);
 
                 $res &= empty(
                     $this->configurationAdapter->get(
@@ -196,7 +198,6 @@ class Configure
                     $shop_id
                 ) : true;
 
-
                 $res &= empty(
                     $this->configurationAdapter->get(
                         $this->name . '_PROMO_PAY_LATER',
@@ -241,7 +242,6 @@ class Configure
                     $group_id,
                     $shop_id
                 ) : true;
-
 
                 $res &= empty(
                     $this->configurationAdapter->get(
@@ -332,7 +332,6 @@ class Configure
                     $group_id,
                     $shop_id
                 ) : true;
-
             }
         } else {
             /* Sets up Global configuration */
@@ -438,7 +437,7 @@ class Configure
         $name_lang = [];
         $name_group_lang = [];
 
-        foreach (Language::getLanguages() as $lang) {
+        foreach (\Language::getLanguages() as $lang) {
             if ($lang['locale'] === 'pl-PL') {
                 $name_lang[$lang['id_lang']] = $this->translator->trans(
                     'Szybka płatność',
@@ -469,37 +468,36 @@ class Configure
         }
 
         if ($isMultiStore) {
-            foreach (Shop::getContextListShopID() as $shop_id) {
-                $group_id = Shop::getGroupFromShop($shop_id, true);
+            foreach (\Shop::getContextListShopID() as $shop_id) {
+                $group_id = \Shop::getGroupFromShop($shop_id, true);
 
-                $res &= empty(
+                $res &= !empty(
                     $this->configurationAdapter->get(
                         $this->name . '_PAYMENT_NAME',
                         null,
                         $group_id,
                         $shop_id
-                    )
-                ) ?
-                    $this->configurationAdapter->updateValue(
-                    $this->name . '_PAYMENT_NAME',
-                    $name_lang,
-                    $group_id,
-                    $shop_id
-                ) : true;
-                $res &= empty(
+                    ))
+                    || $this->configurationAdapter->updateValue(
+                        $this->name . '_PAYMENT_NAME',
+                        $name_lang,
+                        $group_id,
+                        $shop_id
+                    );
+
+                $res &= !empty(
                     $this->configurationAdapter->get(
                         $this->name . '_PAYMENT_GROUP_NAME',
                         null,
                         $group_id,
                         $shop_id
-                    )
-                ) ?
-                    $this->configurationAdapter->updateValue(
-                    $this->name . '_PAYMENT_GROUP_NAME',
-                    $name_group_lang,
-                    $group_id,
-                    $shop_id
-                ) : true;
+                    ))
+                    || $this->configurationAdapter->updateValue(
+                        $this->name . '_PAYMENT_GROUP_NAME',
+                        $name_group_lang,
+                        $group_id,
+                        $shop_id
+                    );
             }
         } else {
             $res &= empty($this->configurationAdapter->get($this->name . '_PAYMENT_NAME', \Context::getContext()->language->id)) ? $this->configurationAdapter->updateValue($this->name . '_PAYMENT_NAME', $name_lang) : true;

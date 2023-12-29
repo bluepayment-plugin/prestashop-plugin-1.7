@@ -1,4 +1,8 @@
 # Changelog
+## [3.0.0] 29.12.2023
+- Rebranding
+- Improved code standard
+
 ## [2.9.0] 28.09.2023
 - Rebranding
 - Added Blik pay later

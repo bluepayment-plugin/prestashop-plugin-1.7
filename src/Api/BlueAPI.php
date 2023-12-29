@@ -15,6 +15,10 @@ declare(strict_types=1);
 
 namespace BluePayment\Api;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\PaywayList;
 use BluePayment\Config\Config;
@@ -33,10 +37,10 @@ class BlueAPI
     public function gatewayAuthentication($merchantData, $mode)
     {
         if (
-            isset($merchantData[0]) &&
-            !empty($merchantData[0]) &&
-            isset($merchantData[1]) &&
-            !empty($merchantData[1])
+            isset($merchantData[0])
+            && !empty($merchantData[0])
+            && isset($merchantData[1])
+            && !empty($merchantData[1])
         ) {
             return $this->connectFromAPI($merchantData[0], $merchantData[1], $mode);
         }
@@ -96,7 +100,7 @@ class BlueAPI
     {
         if ($gateway && $response && $currency) {
             return $gateway->syncGateway($response, $currency, $position);
-        }elseif(is_null($response)){
+        } elseif (is_null($response)) {
             return $gateway->removeGatewayCurrency($currency);
         }
 
@@ -161,7 +165,6 @@ class BlueAPI
             && isset($merchantData[1])
             && !empty($merchantData[1])
             && $currencyCode && $mode) {
-
             $serviceId = $merchantData[0];
             $hashKey = $merchantData[1];
 
@@ -172,6 +175,7 @@ class BlueAPI
                 'sha256',
                 Config::HASH_SEPARATOR
             );
+
             return $gateway->doGatewayList($currencyCode);
         }
 

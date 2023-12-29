@@ -13,13 +13,13 @@
 
 namespace BlueMedia\OnlinePayments\Action\PaywayList;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\Gateway as GatewayModel;
 use BlueMedia\OnlinePayments\Model\PaywayList;
-use DateTime;
-use DateTimeZone;
-use SimpleXMLElement;
-use stdClass;
 
 class Transformer
 {
@@ -47,8 +47,8 @@ class Transformer
                         'bankName' => $gateway->getBankName(),
                         'gatewayPayments' => $gateway->getGatewayPayment(),
                         'iconURL' => $gateway->getIconUrl(),
-                        'statusDate' => ($gateway->getStatusDate() instanceof DateTime) ?
-                            $gateway->getStatusDate()->format(Gateway::DATETIME_FORMAT_LONGER) : '',
+                        'statusDate' => ($gateway->getStatusDate() instanceof \DateTime)
+                            ? $gateway->getStatusDate()->format(Gateway::DATETIME_FORMAT_LONGER) : '',
                     ];
                 }
             }
@@ -62,11 +62,11 @@ class Transformer
     /**
      * Transforms XML to model.
      *
-     * @param SimpleXMLElement $xml
+     * @param \SimpleXMLElement $xml
      *
      * @return PaywayList
      */
-    public static function toModel(SimpleXMLElement $xml)
+    public static function toModel(\SimpleXMLElement $xml)
     {
         $model = new PaywayList();
 
@@ -103,10 +103,10 @@ class Transformer
 
                     if (isset($gateway->statusDate)) {
                         $gatewayModel->setStatusDate(
-                            DateTime::createFromFormat(
+                            \DateTime::createFromFormat(
                                 Gateway::DATETIME_FORMAT_LONGER,
                                 (string) $gateway->statusDate,
-                                new DateTimeZone(Gateway::DATETIME_TIMEZONE)
+                                new \DateTimeZone(Gateway::DATETIME_TIMEZONE)
                             )
                         );
                     }
@@ -124,15 +124,14 @@ class Transformer
         return $model;
     }
 
-
     /**
      * Transforms JSON to model.
      *
-     * @param stdClass $xml
+     * @param \stdClass $xml
      *
      * @return PaywayList
      */
-    public static function JSONtoModel(stdClass $json): PaywayList
+    public static function JSONtoModel(\stdClass $json): PaywayList
     {
         $model = new PaywayList();
 
@@ -169,19 +168,18 @@ class Transformer
 
                     if (isset($gateway->statusDate)) {
                         $gatewayModel->setStatusDate(
-                            DateTime::createFromFormat(
+                            \DateTime::createFromFormat(
                                 Gateway::DATETIME_FORMAT_LONGER,
                                 (string) $gateway->statusDate,
-                                new DateTimeZone(Gateway::DATETIME_TIMEZONE)
+                                new \DateTimeZone(Gateway::DATETIME_TIMEZONE)
                             )
                         );
                     }
 
                     if (isset($gateway->currencyList)
                         && is_array($gateway->currencyList)
-                        && isset($gateway->currencyList[0]->minAmount)
-                        && isset($gateway->currencyList[0]->maxAmount)
-                    ){
+                        && isset($gateway->currencyList[0]->minAmount, $gateway->currencyList[0]->maxAmount)
+                    ) {
                         $gatewayModel->setMinAmount($gateway->currencyList[0]->minAmount);
                         $gatewayModel->setMaxAmount($gateway->currencyList[0]->maxAmount);
                     }

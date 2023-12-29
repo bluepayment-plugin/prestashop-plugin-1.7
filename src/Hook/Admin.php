@@ -15,13 +15,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Service\Refund;
 use BluePayment\Until\AdminHelper;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
-use Order;
-use OrderHistory;
-use Tools;
 
 class Admin extends AbstractHook
 {
@@ -129,7 +130,7 @@ class Admin extends AbstractHook
     public function adminOrder($params)
     {
         $this->module->id_order = $params['id_order']; // todo seter
-        $order = new Order($this->module->id_order);
+        $order = new \Order($this->module->id_order);
 
         $output = '';
 
@@ -141,14 +142,14 @@ class Admin extends AbstractHook
         $order_payment = Helper::getLastOrderPaymentByOrderId($params['id_order']);
 
         $refundable = $order_payment['payment_status'] === self::PAYMENT_STATUS_SUCCESS;
-        $refund_type = Tools::getValue('bm_refund_type', 'full');
+        $refund_type = \Tools::getValue('bm_refund_type', 'full');
         $refund_amount = $refund_type === 'full'
             ? $order->total_paid
-            : (float) str_replace(',', '.', Tools::getValue('bm_refund_amount'));
+            : (float) str_replace(',', '.', \Tools::getValue('bm_refund_amount'));
         $refund_errors = [];
         $refund_success = [];
 
-        if ($refundable && Tools::getValue('go-to-refund-bm')) {
+        if ($refundable && \Tools::getValue('go-to-refund-bm')) {
             if ($refund_amount > $order->total_paid) {
                 $refund_errors[] = $this->module->l('The refund amount you entered is greater than paid amount.');
             } else {
@@ -167,7 +168,7 @@ class Admin extends AbstractHook
                 }
 
                 if (empty($refund_errors) && $refundOrder[0] === true) {
-                    $history = new OrderHistory();
+                    $history = new \OrderHistory();
                     $history->id_order = (int) $order->id;
                     $history->id_employee = (int) $this->context->employee->id;
                     $history->changeIdOrderState(Cfg::get('PS_OS_REFUND'), (int) $order->id);

@@ -15,6 +15,10 @@ declare(strict_types=1);
 
 namespace BluePayment\Hook;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Statuses\OrderStatusMessageDictionary;
 use Configuration as Cfg;
 
@@ -35,9 +39,9 @@ class Payment extends AbstractHook
     public function paymentReturn($params)
     {
         if (
-            !$this->module->active ||
-            !isset($params['order']) ||
-            ($params['order']->module != $this->module->name)
+            !$this->module->active
+            || !isset($params['order'])
+            || ($params['order']->module != $this->module->name)
         ) {
             return null;
         }

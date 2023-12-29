@@ -15,6 +15,10 @@ declare(strict_types=1);
 
 namespace BluePayment\Analyse;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AnalyticsTracking
 {
     private $trackedId;
@@ -35,10 +39,6 @@ class AnalyticsTracking
      */
     public function gaParseCookie()
     {
-//        if (!$this->sessionGa) {
-//            return false;
-//        }
-
         $ver = false;
         $domain = false;
         $cid1 = false;
@@ -107,8 +107,6 @@ class AnalyticsTracking
             'statusCode' => $statusCode,
             'resp' => $result,
         ];
-
-//        return $result;
     }
 
     /**

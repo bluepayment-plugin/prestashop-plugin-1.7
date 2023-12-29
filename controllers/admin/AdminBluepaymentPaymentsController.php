@@ -10,6 +10,9 @@
  * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
@@ -27,7 +30,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $this->bootstrap = true;
         parent::__construct();
         Context::getContext()->smarty->assign('src_img', $this->module->getAssetImages());
-
     }
 
     public function renderView()
@@ -392,25 +394,25 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         ],
                     ],
 
-//                    [
-//                        'type' => 'switch',
-//                        'label' => $this->l('Matching instalments'),
-//                        'name' => $this->module->name_upper . '_PROMO_MATCHED_INSTALMENTS',
-//                        'image' => 'switcher3.png',
-//                        'size' => 'auto',
-//                        'values' => [
-//                            [
-//                                'id' => 'active_on',
-//                                'value' => 1,
-//                                'label' => $this->l('Show'),
-//                            ],
-//                            [
-//                                'id' => 'active_off',
-//                                'value' => 0,
-//                                'label' => $this->l('Hide'),
-//                            ],
-//                        ],
-//                    ],
+                    //                    [
+                    //                        'type' => 'switch',
+                    //                        'label' => $this->l('Matching instalments'),
+                    //                        'name' => $this->module->name_upper . '_PROMO_MATCHED_INSTALMENTS',
+                    //                        'image' => 'switcher3.png',
+                    //                        'size' => 'auto',
+                    //                        'values' => [
+                    //                            [
+                    //                                'id' => 'active_on',
+                    //                                'value' => 1,
+                    //                                'label' => $this->l('Show'),
+                    //                            ],
+                    //                            [
+                    //                                'id' => 'active_off',
+                    //                                'value' => 0,
+                    //                                'label' => $this->l('Hide'),
+                    //                            ],
+                    //                        ],
+                    //                    ],
                     [
                         'type' => 'infoheading',
                         'name' => false,
@@ -642,8 +644,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     'label' => $this->l('Google Account ID'),
                     'name' => $this->module->name_upper . '_GA_TRACKER_ID',
                     'size' => 40,
-                    'help' => $this->l('In Universal Analytics, this is the "Tracking ID" (e.g. UA-000000-2). ') .
-                        ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga-id">'
+                    'help' => $this->l('In Universal Analytics, this is the "Tracking ID" (e.g. UA-000000-2). ')
+                        . ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga-id">'
                         . $this->l('Where can I find the identifier?') . '</a>',
                 ],
                 [
@@ -777,8 +779,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         foreach (Helper::getFieldsService() as $field) {
             foreach (AdminHelper::getSortCurrencies() as $currency) {
-                $data[$field . '_' . $currency['iso_code']] =
-                    Helper::parseConfigByCurrency($field, $currency['iso_code']);
+                $data[$field . '_' . $currency['iso_code']]
+                    = Helper::parseConfigByCurrency($field, $currency['iso_code']);
             }
         }
 

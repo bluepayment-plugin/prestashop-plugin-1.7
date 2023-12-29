@@ -33,7 +33,7 @@ import {
 
 import {initSlideshows} from './_partials/slideshow';
 
-import {openModal} from './_partials/modal';
+import {Modal, openModal} from './_partials/modal';
 
 import {createMainFrame, createPaymentGroup, getAllPaymentsMethodBM} from "./_partials/frame";
 
@@ -45,6 +45,7 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 
 	$(document).ready(function () {
 		bindPsdCheckboxValidator();
+    bmModalSimple();
 	});
 
 
@@ -287,6 +288,29 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 
 
 
+
+	function bmModalSimple() {
+		const getAllModalSimpleHandlers = document.querySelectorAll('[data-bm-modal-siimple]');
+
+		for (const item of getAllModalSimpleHandlers) {
+			item.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        document.querySelector('[data-payment-desc="' + item.dataset.openModalId +'"]').style.display = "block";
+
+        let myModal = new Modal('#' + item.dataset.openModalId, {
+          keyboard: false,
+          backdrop: true
+        });
+
+        myModal.show();
+
+			}, false)
+		}
+	}
+
+
+
 	function openDescription() {
 		document.querySelectorAll('[data-payment-bm="true"][data-toggle=modal]').forEach((element) => {
 			element.addEventListener('click', () => {
@@ -299,7 +323,6 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 				const paymentDesc = document.querySelector('[data-payment-desc='+ elm +']');
 
 				document.querySelectorAll('.js-additional-information').forEach((element1) => {
-					console.log(element1);
 					element1.classList.remove('active');
 					element1.style.display = 'none';
 				});

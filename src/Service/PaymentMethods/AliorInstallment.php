@@ -15,12 +15,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
-use Cart;
 use Configuration as Cfg;
-use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class AliorInstallment implements GatewayType
@@ -29,7 +31,7 @@ class AliorInstallment implements GatewayType
         \BluePayment $module,
         array $data = []
     ): PaymentOption {
-        $moduleLink = Context::getContext()->link->getModuleLink(
+        $moduleLink = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
             [],
@@ -64,7 +66,7 @@ class AliorInstallment implements GatewayType
      */
     public function isActive($cart_total = null): bool
     {
-        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
 
         $alior = BlueGatewayChannels::getByGatewayIdAndCurrency(
             Config::GATEWAY_ID_ALIOR,
@@ -72,7 +74,7 @@ class AliorInstallment implements GatewayType
         );
 
         if (!$cart_total) {
-            $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
+            $cart_total = \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH);
         }
 
         $activePromo = Cfg::get('BLUEPAYMENT_PROMO_PAY_LATER');

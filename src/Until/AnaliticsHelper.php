@@ -15,9 +15,12 @@ declare(strict_types=1);
 
 namespace BluePayment\Until;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Analyse\AnalyticsTracking;
 use Configuration as Cfg;
-use Db;
 
 class AnaliticsHelper
 {
@@ -42,7 +45,7 @@ class AnaliticsHelper
                 ->where('order_id like "' . (int) $orderId . '-%"')
                 ->where('gtag_state IS NULL')
                 ->select('gtag_uid');
-            $gaUserId = Db::getInstance()->getValue($query, false);
+            $gaUserId = \Db::getInstance()->getValue($query, false);
 
             if (!empty($gaUserId)) {
                 $args = [];

@@ -15,8 +15,11 @@ declare(strict_types=1);
 
 namespace BluePayment\Statuses;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use Configuration as Cfg;
-use Db;
 
 class CustomStatus
 {
@@ -85,8 +88,8 @@ class CustomStatus
         $payment_error_name_pl = 'Autopay: błąd płatności';
 
         if (
-            !CustomStatus::checkIfStateExists($pending_name_pl, $language_id) &&
-            !CustomStatus::checkIfStateExists($pending_name_en, $language_id)
+            !CustomStatus::checkIfStateExists($pending_name_pl, $language_id)
+            && !CustomStatus::checkIfStateExists($pending_name_en, $language_id)
         ) {
             // create new pending state
             $pending = new \OrderState();
@@ -113,8 +116,8 @@ class CustomStatus
         }
 
         if (
-            !CustomStatus::checkIfStateExists($completed_name_pl, $language_id) &&
-            !CustomStatus::checkIfStateExists($completed_name_en, $language_id)
+            !CustomStatus::checkIfStateExists($completed_name_pl, $language_id)
+            && !CustomStatus::checkIfStateExists($completed_name_en, $language_id)
         ) {
             // create new completed state
             $completed = new \OrderState();
@@ -142,8 +145,8 @@ class CustomStatus
         }
 
         if (
-            !CustomStatus::checkIfStateExists($payment_error_name_pl, $language_id) &&
-            !CustomStatus::checkIfStateExists($payment_error_name_en, $language_id)
+            !CustomStatus::checkIfStateExists($payment_error_name_pl, $language_id)
+            && !CustomStatus::checkIfStateExists($payment_error_name_en, $language_id)
         ) {
             // create new pending state
             $payment_error = new \OrderState();
@@ -189,8 +192,8 @@ class CustomStatus
     {
         $res = true;
 
-        $res &= Db::getInstance()->delete('order_state', 'module_name = "bluepayment"');
-        $res &= Db::getInstance()->delete('order_state_lang', 'name LIKE \'%Autopay%\'');
+        $res &= \Db::getInstance()->delete('order_state', 'module_name = "bluepayment"');
+        $res &= \Db::getInstance()->delete('order_state_lang', 'name LIKE \'%Autopay%\'');
 
         return (bool) $res;
     }

@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 global $_MODULE;
 $_MODULE = [];
 $_MODULE['<{bluepayment}prestashop>bluepayment_f2ef3cb9db8f7e55a9e122c2cebf3d4d'] = 'Platby Autopay';

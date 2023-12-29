@@ -13,6 +13,9 @@
 
 namespace BlueMedia\OnlinePayments\Util;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * Class EnvironmentRequirements.
  */

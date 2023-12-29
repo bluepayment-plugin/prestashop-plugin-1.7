@@ -15,6 +15,10 @@ declare(strict_types=1);
 
 namespace BluePayment\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Service\PaymentMethods\GatewayType;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 

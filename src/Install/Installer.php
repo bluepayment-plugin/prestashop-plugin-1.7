@@ -15,16 +15,14 @@ declare(strict_types=1);
 
 namespace BluePayment\Install;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
-use Context;
-use Db;
-use Exception;
-use Language;
-use Shop;
 use Symfony\Component\Translation\TranslatorInterface;
 use Tab;
-use Tools;
 
 class Installer
 {
@@ -54,13 +52,13 @@ class Installer
     {
         $this->module = $module;
         $this->translator = $translator;
-        $this->db = Db::getInstance();
+        $this->db = \Db::getInstance();
     }
 
     /**
      * Installer
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function install(): bool
     {
@@ -75,7 +73,7 @@ class Installer
     /**
      * Uninstall
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function uninstall(): bool
     {
@@ -89,7 +87,7 @@ class Installer
     /**
      * Sql data installation
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function installDb($custom_path = null)
     {
@@ -106,7 +104,7 @@ class Installer
     /**
      * Deleting sql data
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function uninstallDb($custom_path = null)
     {
@@ -128,11 +126,11 @@ class Installer
         $res = true;
 
         foreach (self::MODULE_ADMIN_CONTROLLERS as $controller) {
-            if (Tab::getIdFromClassName($controller['class_name'])) {
+            if (\Tab::getIdFromClassName($controller['class_name'])) {
                 continue;
             }
 
-            $tab = new Tab();
+            $tab = new \Tab();
             $tab->class_name = $controller['class_name'];
             $tab->id_parent = $controller['parent'];
             $tab->active = $controller['visible'];
@@ -141,7 +139,7 @@ class Installer
                 $tab->icon = $controller['icon'];
             }
 
-            foreach (Language::getLanguages() as $lang) {
+            foreach (\Language::getLanguages() as $lang) {
                 if ($lang['locale'] === 'pl-PL') {
                     $tab->name[$lang['id_lang']] = $this->translator->trans(
                         'Autopay - Konfiguracja',
@@ -206,7 +204,7 @@ class Installer
      *
      * @param string $path
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function executeSqlFromFile(string $path, $dba = null)
     {
@@ -215,7 +213,7 @@ class Installer
         if (!file_exists($path)) {
             return false;
         }
-        $sqlStatements = Tools::file_get_contents($path);
+        $sqlStatements = \Tools::file_get_contents($path);
         $sqlStatements = str_replace(['_DB_PREFIX_', '_MYSQL_ENGINE_'], [_DB_PREFIX_, _MYSQL_ENGINE_], $sqlStatements);
 
         $status = true;
@@ -275,8 +273,8 @@ class Installer
 
     public function installContext(): bool
     {
-        if (Shop::isFeatureActive()) {
-            Shop::setContext(Shop::CONTEXT_SHOP, Context::getContext()->shop->id);
+        if (\Shop::isFeatureActive()) {
+            \Shop::setContext(\Shop::CONTEXT_SHOP, \Context::getContext()->shop->id);
         }
 
         return true;

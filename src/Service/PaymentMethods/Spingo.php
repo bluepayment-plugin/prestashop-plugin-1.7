@@ -15,11 +15,13 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
-use Cart;
-use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class Spingo implements GatewayType
@@ -28,27 +30,27 @@ class Spingo implements GatewayType
         \BluePayment $module,
         array $data = []
     ): PaymentOption {
-        $moduleLink = Context::getContext()->link->getModuleLink(
+        $moduleLink = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
             [],
             true
         );
 
-        $smartneyMerchantInfo = Context::getContext()->link->getModuleLink(
+        $smartneyMerchantInfo = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'merchantInfo',
             [],
             true
         );
-        $smartneyLinkCharge = Context::getContext()->link->getModuleLink(
+        $smartneyLinkCharge = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'chargeSmartney',
             [],
             true
         );
 
-        Context::getContext()->smarty->assign([
+        \Context::getContext()->smarty->assign([
             'smartney_merchantInfo' => $smartneyMerchantInfo,
             'smartney_moduleLinkCharge' => $smartneyLinkCharge,
         ]);
@@ -81,7 +83,7 @@ class Spingo implements GatewayType
      */
     public function isActive($cart_total = null): bool
     {
-        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
 
         $spingo = BlueGatewayChannels::getByGatewayIdAndCurrency(
             Config::GATEWAY_ID_SPINGO,
@@ -89,7 +91,7 @@ class Spingo implements GatewayType
         );
 
         if (!$cart_total) {
-            $cart_total = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
+            $cart_total = \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH);
         }
 
         return $spingo->id

@@ -13,8 +13,11 @@
 
 namespace BlueMedia\OnlinePayments\Model;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Util\Validator;
-use DomainException;
 
 class PaywayList extends AbstractModel
 {
@@ -138,24 +141,24 @@ class PaywayList extends AbstractModel
      * @param string $serviceId
      * @param string $messageId
      *
-     * @throws DomainException
+     * @throws \DomainException
      */
     public function validate($serviceId = '', $messageId = '')
     {
         if (empty($this->serviceId)) {
-            throw new DomainException('ServiceId cannot be empty');
+            throw new \DomainException('ServiceId cannot be empty');
         }
         if (empty($this->messageId)) {
-            throw new DomainException('MessageId cannot be empty');
+            throw new \DomainException('MessageId cannot be empty');
         }
         if (empty($this->hash)) {
-            throw new DomainException('Hash cannot be empty');
+            throw new \DomainException('Hash cannot be empty');
         }
         if ($this->serviceId !== $serviceId) {
-            throw new DomainException(sprintf('Not equal ServiceId, $this->serviceId: "%s", $serviceId: "%s"', $this->serviceId, $serviceId));
+            throw new \DomainException(sprintf('Not equal ServiceId, $this->serviceId: "%s", $serviceId: "%s"', $this->serviceId, $serviceId));
         }
         if ($this->messageId !== $messageId) {
-            throw new DomainException(sprintf('Not equal MessageId, $this->messageId: "%s", $messageId: "%s"', $this->messageId, $messageId));
+            throw new \DomainException(sprintf('Not equal MessageId, $this->messageId: "%s", $messageId: "%s"', $this->messageId, $messageId));
         }
     }
 }

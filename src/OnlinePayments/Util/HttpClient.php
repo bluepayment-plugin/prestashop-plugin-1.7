@@ -13,6 +13,10 @@
 
 namespace BlueMedia\OnlinePayments\Util;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use GuzzleHttp;
 use Psr\Http\Message\ResponseInterface;
 

@@ -13,11 +13,13 @@
 
 namespace BlueMedia\OnlinePayments\Model;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Action\ITN\Transformer;
 use BlueMedia\OnlinePayments\Util\Formatter;
 use BlueMedia\OnlinePayments\Util\Validator;
-use DateTime;
-use DomainException;
 
 class ItnIn extends AbstractModel
 {
@@ -122,7 +124,7 @@ class ItnIn extends AbstractModel
     /**
      * Payment date.
      *
-     * @var DateTime|null
+     * @var \DateTime|null
      */
     protected $paymentDate;
 
@@ -220,7 +222,7 @@ class ItnIn extends AbstractModel
     /**
      * Transaction authorisation date.
      *
-     * @var DateTime|null
+     * @var \DateTime|null
      */
     protected $transferDate;
 
@@ -776,11 +778,11 @@ class ItnIn extends AbstractModel
     /**
      * Sets paymentDate.
      *
-     * @param DateTime $paymentDate
+     * @param \DateTime $paymentDate
      *
      * @return $this
      */
-    public function setPaymentDate(DateTime $paymentDate)
+    public function setPaymentDate(\DateTime $paymentDate)
     {
         $this->paymentDate = $paymentDate;
 
@@ -790,7 +792,7 @@ class ItnIn extends AbstractModel
     /**
      * Returns paymentDate.
      *
-     * @return DateTime|null
+     * @return \DateTime|null
      */
     public function getPaymentDate()
     {
@@ -1066,11 +1068,11 @@ class ItnIn extends AbstractModel
     /**
      * Sets transferDate.
      *
-     * @param DateTime $transferDate
+     * @param \DateTime $transferDate
      *
      * @return $this
      */
-    public function setTransferDate(DateTime $transferDate)
+    public function setTransferDate(\DateTime $transferDate)
     {
         $this->transferDate = $transferDate;
 
@@ -1080,7 +1082,7 @@ class ItnIn extends AbstractModel
     /**
      * Returns transferDate.
      *
-     * @return DateTime|null
+     * @return \DateTime|null
      */
     public function getTransferDate()
     {
@@ -1487,28 +1489,28 @@ class ItnIn extends AbstractModel
     public function validate()
     {
         if (empty($this->serviceId)) {
-            throw new DomainException('ServiceId cannot be empty');
+            throw new \DomainException('ServiceId cannot be empty');
         }
         if (empty($this->orderId)) {
-            throw new DomainException('OrderId cannot be empty');
+            throw new \DomainException('OrderId cannot be empty');
         }
         if (empty($this->remoteId)) {
-            throw new DomainException('RemoteId cannot be empty');
+            throw new \DomainException('RemoteId cannot be empty');
         }
         if (empty($this->amount)) {
-            throw new DomainException('Amount cannot be empty');
+            throw new \DomainException('Amount cannot be empty');
         }
         if (!($this->amount === $this->getAmount())) {
-            throw new DomainException('Amount in wrong format');
+            throw new \DomainException('Amount in wrong format');
         }
         if (empty($this->currency)) {
-            throw new DomainException('Currency cannot be empty');
+            throw new \DomainException('Currency cannot be empty');
         }
         if (empty($this->paymentDate)) {
-            throw new DomainException('PaymentDate cannot be empty');
+            throw new \DomainException('PaymentDate cannot be empty');
         }
         if (empty($this->paymentStatus)) {
-            throw new DomainException('PaymentStatus cannot be empty');
+            throw new \DomainException('PaymentStatus cannot be empty');
         }
         switch ($this->paymentStatus) {
             case self::PAYMENT_STATUS_PENDING:
@@ -1517,10 +1519,10 @@ class ItnIn extends AbstractModel
                 break;
 
             default:
-                throw new DomainException(sprintf('PaymentStatus="%s" not supported', $this->paymentStatus));
+                throw new \DomainException(sprintf('PaymentStatus="%s" not supported', $this->paymentStatus));
         }
         if (empty($this->hash)) {
-            throw new DomainException('Hash cannot be empty');
+            throw new \DomainException('Hash cannot be empty');
         }
     }
 

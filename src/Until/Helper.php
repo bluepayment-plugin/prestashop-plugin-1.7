@@ -15,14 +15,13 @@ declare(strict_types=1);
 
 namespace BluePayment\Until;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Config\Config;
 use Configuration as Cfg;
-use Context;
-use Db;
-use DbQuery;
-use Shop;
-use Tools;
 
 class Helper
 {
@@ -76,7 +75,7 @@ class Helper
             return false;
         }
 
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->from('blue_gateway_transfers', 'gt');
         $query->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
 
@@ -89,13 +88,13 @@ class Helper
         $query->where('gt.gateway_status = 1');
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
 
-        if (Shop::isFeatureActive()) {
+        if (\Shop::isFeatureActive()) {
             $query->where('gts.id_shop = ' . (int) $idShop);
         }
 
         $query->select('gateway_logo_url, gateway_name');
 
-        return Db::getInstance()->executeS($query);
+        return \Db::getInstance()->executeS($query);
     }
 
     public static function getGatewaysList(): string
@@ -128,7 +127,7 @@ class Helper
 
     public static function parseConfigByCurrency($key, $currencyIsoCode)
     {
-        $data = Tools::unSerialize(Cfg::get($key));
+        $data = json_decode(Cfg::get($key), true);
 
         return is_array($data) && array_key_exists($currencyIsoCode, $data) ? $data[$currencyIsoCode] : '';
     }
@@ -140,7 +139,7 @@ class Helper
      */
     public static function getBrandLogo(): string
     {
-        return Context::getContext()->shop->getBaseURL(true) . 'modules/bluepayment/views/img/blue-media.svg';
+        return \Context::getContext()->shop->getBaseURL(true) . 'modules/bluepayment/views/img/blue-media.svg';
     }
 
     /**
@@ -154,13 +153,14 @@ class Helper
 			WHERE order_id like "' . pSQL($id_order) . '-%"
 			ORDER BY created_at DESC';
 
-        return Db::getInstance()->getRow($sql, false);
+        return \Db::getInstance()->getRow($sql, false);
     }
 
     /**
      * @param $id_order
      *
      * @return array
+     *
      * @throws PrestaShopDatabaseException
      */
     public static function getOrdersByOrderId($id_order): array
@@ -169,7 +169,7 @@ class Helper
 			WHERE order_id like "' . pSQL($id_order) . '-%"
 			ORDER BY created_at DESC';
 
-        return Db::getInstance()->executeS($sql, true, false);
+        return \Db::getInstance()->executeS($sql, true, false);
     }
 
     /**

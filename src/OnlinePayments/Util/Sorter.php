@@ -13,9 +13,9 @@
 
 namespace BlueMedia\OnlinePayments\Util;
 
-use function array_key_exists;
-use function strtolower;
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class Sorter
 {
     /**
@@ -64,9 +64,9 @@ class Sorter
         $lowercaseKeysParams = array_change_key_case($params, CASE_LOWER);
 
         foreach ($transactionParamsInOrder as $paramName) {
-            $lowercaseParamName = strtolower($paramName);
+            $lowercaseParamName = \strtolower($paramName);
 
-            if (array_key_exists($lowercaseParamName, $lowercaseKeysParams)) {
+            if (\array_key_exists($lowercaseParamName, $lowercaseKeysParams)) {
                 $result[$paramName] = $lowercaseKeysParams[$lowercaseParamName];
             }
         }

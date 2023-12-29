@@ -135,7 +135,7 @@ if (process.env.NODE_ENV === 'production') {
             booleans: true,
             if_return: true,
             join_vars: true,
-            drop_console: false,
+            drop_console: true,
           },
           output: {
             // beautify: false,
@@ -164,7 +164,7 @@ if (process.env.NODE_ENV === 'production') {
             booleans: true,
             if_return: true,
             join_vars: true,
-            drop_console: true,
+            drop_console: false,
           },
           output: {
             beautify: false,

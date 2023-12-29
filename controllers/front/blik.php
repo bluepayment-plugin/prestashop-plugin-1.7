@@ -45,8 +45,8 @@ class BluePaymentBlikModuleFrontController extends ModuleFrontController
 
         if ($status) {
             Tools::redirect(
-                'index.php?controller=order-confirmation&id_cart=' . (int) $cart->id . '&id_module=' .
-                (int) $this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
+                'index.php?controller=order-confirmation&id_cart=' . (int) $cart->id . '&id_module='
+                . (int) $this->module->id . '&id_order=' . $order->id . '&key=' . $customer->secure_key
             );
         } else {
             Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [

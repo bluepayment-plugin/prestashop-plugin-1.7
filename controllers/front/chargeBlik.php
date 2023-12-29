@@ -10,6 +10,9 @@
  * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
@@ -39,10 +42,10 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             $cart = $this->getCartByOrderId($postOrderId);
         }
 
-        if ($cart->id_customer === 0 ||
-            $cart->id_address_delivery === 0 ||
-            $cart->id_address_invoice === 0 ||
-            !$this->module->active
+        if ($cart->id_customer === 0
+            || $cart->id_address_delivery === 0
+            || $cart->id_address_invoice === 0
+            || !$this->module->active
         ) {
             $status = false;
         }
@@ -160,9 +163,9 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
     private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode)
     {
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
-        $gateway_mode = $test_mode ?
-            \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX :
-            \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
+        $gateway_mode = $test_mode
+            ? \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX
+            : \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
 
         $gateway = new \BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
 
@@ -246,9 +249,9 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                     'message' => $this->module->l('The entered code is not valid.', 'chargeblik'),
                 ];
             }
-        } elseif (isset($response->confirmation) &&
-            $response->confirmation == 'NOTCONFIRMED' &&
-            $response->reason == 'WRONG_TICKET'
+        } elseif (isset($response->confirmation)
+            && $response->confirmation == 'NOTCONFIRMED'
+            && $response->reason == 'WRONG_TICKET'
         ) {
             $array = [
                 'status' => 'FAILURE',
@@ -256,9 +259,9 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             ];
             $data['blik_status'] = 'WRONG_TICKET';
             $this->transactionQuery($transaction, $orderId, $data);
-        } elseif (isset($response->confirmation) &&
-            $response->confirmation == 'NOTCONFIRMED' &&
-            $response->reason == 'MULTIPLY_PAID_TRANSACTION'
+        } elseif (isset($response->confirmation)
+            && $response->confirmation == 'NOTCONFIRMED'
+            && $response->reason == 'MULTIPLY_PAID_TRANSACTION'
         ) {
             $array = [
                 'status' => 'FAILURE',
@@ -315,8 +318,8 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 $this->transactionQuery($transaction, $orderId, $data);
             }
         }
-        if (isset($transaction->created_at) &&
-            time() >= strtotime('+2 minutes', strtotime($transaction->created_at))
+        if (isset($transaction->created_at)
+            && time() >= strtotime('+2 minutes', strtotime($transaction->created_at))
         ) {
             $array = [
                 'status' => 'FAILURE',

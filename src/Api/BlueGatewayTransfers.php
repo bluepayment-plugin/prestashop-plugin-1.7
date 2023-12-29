@@ -15,12 +15,9 @@ declare(strict_types=1);
 
 namespace BluePayment\Api;
 
-use BluePayment;
-use Context;
-use Db;
-use DbQuery;
-use PrestaShopLogger;
-use Shop;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
 {
@@ -88,10 +85,10 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
     public function __construct($id = null, $idLang = null, $idShop = null)
     {
         parent::__construct($id, $idLang, $idShop);
-        $this->module = new BluePayment();
+        $this->module = new \BluePayment();
 
-        if (Shop::isFeatureActive()) {
-            Shop::addTableAssociation($this->table, ['type' => 'shop']);
+        if (\Shop::isFeatureActive()) {
+            \Shop::addTableAssociation($this->table, ['type' => 'shop']);
         }
     }
 
@@ -122,27 +119,27 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
             }
         }
 
-        PrestaShopLogger::addLog('BM - Error sync gateway transfers', 1);
+        \PrestaShopLogger::addLog('BM - Error sync gateway transfers', 1);
 
         return null;
     }
 
     public static function getTransferId($gatewayId, $currency)
     {
-        $idShop = Context::getContext()->shop->id;
+        $idShop = \Context::getContext()->shop->id;
 
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('gt.id');
         $query->from('blue_gateway_transfers', 'gt');
         $query->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
         $query->where('gt.gateway_id = ' . (int) $gatewayId);
         $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
         $query->where('gt.gateway_status = 1');
-        if (Shop::isFeatureActive()) {
+        if (\Shop::isFeatureActive()) {
             $query->where('gts.id_shop = ' . (int) $idShop);
         }
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
     }
 
     /**
@@ -163,6 +160,6 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
 
     public function removeGatewayCurrency($currency): bool
     {
-        return \Db::getInstance()->delete('blue_gateway_transfers', 'gateway_currency = "'. $currency['iso_code'].'"');
+        return \Db::getInstance()->delete('blue_gateway_transfers', 'gateway_currency = "' . $currency['iso_code'] . '"');
     }
 }

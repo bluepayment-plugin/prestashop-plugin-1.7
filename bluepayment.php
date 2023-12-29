@@ -119,7 +119,7 @@ class BluePayment extends PaymentModule
      */
     private $hookDispatcher;
 
-    public $id_order = null;
+    public $id_order;
 
     public function __construct()
     {
@@ -127,7 +127,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '2.9.0';
+        $this->version = '3.0.0';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -151,6 +151,7 @@ class BluePayment extends PaymentModule
 
     /**
      * @return bool
+     *
      * @throws Exception
      */
     public function install(): bool
@@ -180,6 +181,7 @@ class BluePayment extends PaymentModule
      * Uninstall module
      *
      * @return bool
+     *
      * @throws Exception
      */
     public function uninstall(): bool
@@ -399,17 +401,17 @@ class BluePayment extends PaymentModule
             'order_subject_to_payment_obligation_translation' => $this->l('Order with the obligation to pay'),
         ]);
 
-        $dateTimeUpdate = Cfg::get($this->name_upper.Config::UPDATE_GATEWAY_TIME_KEY);
+        $dateTimeUpdate = Cfg::get($this->name_upper . Config::UPDATE_GATEWAY_TIME_KEY);
 
-        $date = new \DateTime ();
-        $date->sub(new \DateInterval ("PT1H"));
+        $date = new \DateTime();
+        $date->sub(new \DateInterval('PT1H'));
         $date->format('Y-m-d h:i:s');
-        if (is_null($dateTimeUpdate) || $dateTimeUpdate <=  $date->format('Y-m-d h:i:s')){
+        if (is_null($dateTimeUpdate) || $dateTimeUpdate <= $date->format('Y-m-d h:i:s')) {
             $gateway = new BlueGateway($this, new BlueAPI($this));
             $gateway->getChannels();
 
-            $date = new \DateTime ();
-            Cfg::updateValue($this->name_upper.Config::UPDATE_GATEWAY_TIME_KEY, $date->format('Y-m-d h:i:s'));
+            $date = new \DateTime();
+            Cfg::updateValue($this->name_upper . Config::UPDATE_GATEWAY_TIME_KEY, $date->format('Y-m-d h:i:s'));
         }
 
         $paymentMethods = new FactoryPaymentMethods($this);
@@ -441,19 +443,19 @@ class BluePayment extends PaymentModule
     {
         $logDir = __DIR__;
 
-        $log = PHP_EOL . 'User: ' . $_SERVER['REMOTE_ADDR'] . ' - ' . date('F j, Y, g:i a') . PHP_EOL .
-            print_r($texto, true) . PHP_EOL .
-            '-------------------------';
+        $log = PHP_EOL . 'User: ' . $_SERVER['REMOTE_ADDR'] . ' - ' . date('F j, Y, g:i a') . PHP_EOL
+            . print_r($texto, true) . PHP_EOL
+            . '-------------------------';
         file_put_contents($logDir . '/log_' . date('j.n.Y') . '.log', $log, FILE_APPEND);
     }
 
     public function safeAddColumn($table, $column, $def)
     {
         $count = Db::getInstance()->getValue('SELECT count(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND COLUMN_NAME=\'' . $column . '\' AND TABLE_NAME=\'' . _DB_PREFIX_ . $table . '\'');
-        if (!$count)
+        if (!$count) {
             return Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . $table . '` ADD `' . $column . '` ' . $def);
+        }
 
         return true;
     }
-
 }

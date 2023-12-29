@@ -15,10 +15,13 @@ declare(strict_types=1);
 
 namespace BluePayment\Service\PaymentMethods;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
-use Context;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class VisaMobile implements GatewayType
@@ -27,7 +30,7 @@ class VisaMobile implements GatewayType
         \BluePayment $module,
         array $data = []
     ): PaymentOption {
-        $moduleLink = Context::getContext()->link->getModuleLink(
+        $moduleLink = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'payment',
             [],
@@ -62,7 +65,8 @@ class VisaMobile implements GatewayType
      */
     public function isActive($cart_total = null): bool
     {
-        $iso_code = Helper::getIsoFromContext(Context::getContext());
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
+
         return BlueGatewayTransfers::isTransferActive(
             Config::GATEWAY_ID_VISA_MOBILE,
             $iso_code

@@ -13,6 +13,9 @@
 
 namespace BlueMedia\OnlinePayments\HttpClient;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class CurtHttpResponse
 {
     private $code;

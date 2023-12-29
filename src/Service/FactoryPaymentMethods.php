@@ -15,12 +15,12 @@ declare(strict_types=1);
 
 namespace BluePayment\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Config\Config;
 use BluePayment\Service\PaymentMethods\MainGateway;
-use Context;
-use Db;
-use DbQuery;
-use Shop;
 
 class FactoryPaymentMethods
 {
@@ -35,25 +35,25 @@ class FactoryPaymentMethods
 
     public function getGroup()
     {
-        if (!is_object(Context::getContext()->currency)) {
-            $currency = Context::getContext()->currency['iso_code'];
+        if (!is_object(\Context::getContext()->currency)) {
+            $currency = \Context::getContext()->currency['iso_code'];
         } else {
-            $currency = Context::getContext()->currency->iso_code;
+            $currency = \Context::getContext()->currency->iso_code;
         }
         $idShop = $this->context->shop->id;
 
-        $q = new DbQuery();
+        $q = new \DbQuery();
         $q->select('*');
         $q->from('blue_gateway_channels', 'gt');
         $q->leftJoin('blue_gateway_channels_shop', 'gts', 'gts.id_blue_gateway_channels = gt.id_blue_gateway_channels');
         $q->where('gt.gateway_status = 1');
         $q->where('gt.gateway_currency = "' . pSql($currency) . '"');
-        if (Shop::isFeatureActive()) {
+        if (\Shop::isFeatureActive()) {
             $q->where('gts.id_shop = ' . (int) $idShop);
         }
         $q->orderBy('gt.position');
 
-        return Db::getInstance()->executeS($q);
+        return \Db::getInstance()->executeS($q);
     }
 
     public function getPaymentMethodName($gatewayId): string

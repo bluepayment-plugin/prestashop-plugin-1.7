@@ -10,6 +10,9 @@
  * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
@@ -56,10 +59,10 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             }
         }
 
-        if ($cart->id_customer === 0 ||
-            $cart->id_address_delivery === 0 ||
-            $cart->id_address_invoice === 0 ||
-            !$this->module->active
+        if ($cart->id_customer === 0
+            || $cart->id_address_delivery === 0
+            || $cart->id_address_invoice === 0
+            || !$this->module->active
         ) {
             $status = false;
         }
@@ -124,9 +127,9 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
     private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $token)
     {
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
-        $gateway_mode = $test_mode ?
-            \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX :
-            \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
+        $gateway_mode = $test_mode
+            ? \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX
+            : \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
 
         $gateway = new \BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
 
@@ -190,8 +193,8 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
                 'transaction' => $transaction,
             ];
         }
-        if (isset($transaction->created_at) &&
-            time() >= strtotime('+7 minutes', strtotime($transaction->created_at))
+        if (isset($transaction->created_at)
+            && time() >= strtotime('+7 minutes', strtotime($transaction->created_at))
         ) {
             $array = [
                 'status' => 'FAILURE',
@@ -286,7 +289,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             ];
 
             $data['payment_status'] = 'PENDING';
-            $this->transactionQuery((int)$orderId, $data);
+            $this->transactionQuery((int) $orderId, $data);
 
             if ($response->redirecturl && isset($response->redirecturl[0])) {
                 $redirectUrl = (array) $response->redirecturl;

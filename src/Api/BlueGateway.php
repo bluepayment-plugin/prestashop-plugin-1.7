@@ -15,6 +15,10 @@ declare(strict_types=1);
 
 namespace BluePayment\Api;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Until\AdminHelper;
 
 class BlueGateway

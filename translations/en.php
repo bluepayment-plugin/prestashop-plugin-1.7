@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 global $_MODULE;
 $_MODULE = [];
 $_MODULE['<{bluepayment}prestashop>bluepayment_3bbf739cedbf82f9f3790f9a351cd363'] = 'BM online payments';

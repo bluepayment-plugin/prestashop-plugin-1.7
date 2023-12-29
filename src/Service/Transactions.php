@@ -15,15 +15,16 @@ declare(strict_types=1);
 
 namespace BluePayment\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BlueMedia\OnlinePayments\Gateway;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
 use BluePayment\Until\AnaliticsHelper;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
-use Db;
-use PrestaShopLogger;
-use Validate;
 
 class Transactions
 {
@@ -75,7 +76,7 @@ class Transactions
         } else {
             $message = $this->module->name_upper . ' - Invalid hash: ' . $response->hash;
             // Feedback confirmation about non-authentic transaction
-            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', $transactionXml->orderID);
+            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', $transactionXml->orderID);
             $this->returnConfirmation(
                 $transactionXml->orderID,
                 null,
@@ -117,9 +118,9 @@ class Transactions
             $orderPayment = new \OrderPaymentCore();
         }
 
-        if (!Validate::isLoadedObject($order)) {
+        if (!\Validate::isLoadedObject($order)) {
             $message = $this->module->name_upper . ' - Order not found';
-            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', $orderId);
+            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', $orderId);
             $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_NOTCONFIRMED);
 
             return;
@@ -127,7 +128,7 @@ class Transactions
 
         if (!is_object($orderPayment)) {
             $message = $this->module->name_upper . ' - Order payment not found';
-            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'OrderPayment', $orderId);
+            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'OrderPayment', $orderId);
             $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_NOTCONFIRMED);
 
             return;
@@ -146,7 +147,7 @@ class Transactions
 
         $this->updateTransactionQuery($realOrderId, $transactionData);
 
-        $total_paid = (float)$order->total_paid;
+        $total_paid = (float) $order->total_paid;
         $amount = number_format(round($total_paid, 2), 2, '.', '');
 
         if (!$this->isOrderCanceled($order)) {
@@ -192,7 +193,7 @@ class Transactions
             $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_CONFIRMED);
         } else {
             $message = $this->module->name_upper . ' - Order status is cancel or payment status unknown';
-            PrestaShopLogger::addLog(self::BM_PREFIX . $message, 1, null, 'OrderState', $orderId);
+            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 1, null, 'OrderState', $orderId);
             $this->returnConfirmation($realOrderId, $orderId, $message);
         }
     }
@@ -208,7 +209,7 @@ class Transactions
         $orderPaymentsArray = \OrderPayment::getByOrderReference($transaction['reference']);
 
         if (!isset($orderPaymentsArray[0])) {
-            PrestaShopLogger::addLog(
+            \PrestaShopLogger::addLog(
                 self::BM_PREFIX . 'Save orderPayment error -- no OrderPayment',
                 3,
                 null,
@@ -223,13 +224,13 @@ class Transactions
         $orderPayment->id_currency = $transaction['currencyId'];
 
         if (!$orderPayment->save()) {
-            PrestaShopLogger::addLog(self::BM_PREFIX . 'Save orderPayment error', 3, null, 'Transactions');
+            \PrestaShopLogger::addLog(self::BM_PREFIX . 'Save orderPayment error', 3, null, 'Transactions');
         }
     }
 
     public function updateTransactionQuery($orderId, $transactionData)
     {
-        return Db::getInstance()->update('blue_transactions', $transactionData, 'order_id = ' . (int) $orderId);
+        return \Db::getInstance()->update('blue_transactions', $transactionData, 'order_id = ' . (int) $orderId);
     }
 
     /**
@@ -309,7 +310,7 @@ class Transactions
         $sql->where('reference = "' . $order->reference . '"');
         $sql->where('id_cart = "' . (int) $order->id_cart . '"');
 
-        return Db::getInstance()->executeS($sql);
+        return \Db::getInstance()->executeS($sql);
     }
 
     /**
@@ -451,6 +452,6 @@ class Transactions
 
     public function pSQL($string, $htmlOK = false)
     {
-        return Db::getInstance()->escape($string, $htmlOK);
+        return \Db::getInstance()->escape($string, $htmlOK);
     }
 }

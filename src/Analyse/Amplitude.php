@@ -15,8 +15,11 @@ declare(strict_types=1);
 
 namespace BluePayment\Analyse;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use BluePayment\Config\Config;
-use Context;
 
 class Amplitude
 {
@@ -59,7 +62,7 @@ class Amplitude
 
     public static function getUserId(): string
     {
-        return md5(Context::getContext()->shop->getBaseURL(true));
+        return md5(\Context::getContext()->shop->getBaseURL(true));
     }
 
     public function sendEvent(array $data = [])
