@@ -1,4 +1,7 @@
 # Changelog
+## [3.0.1] 12.01.2024
+- Fixed configuration page
+
 ## [3.0.0] 29.12.2023
 - Rebranding
 - Improved code standard

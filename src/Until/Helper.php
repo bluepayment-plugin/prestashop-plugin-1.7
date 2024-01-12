@@ -127,7 +127,11 @@ class Helper
 
     public static function parseConfigByCurrency($key, $currencyIsoCode)
     {
-        $data = json_decode(Cfg::get($key), true);
+        $value = Cfg::get($key);
+        if ($value == false){
+            return '';
+        }
+        $data = json_decode($value, true);
 
         return is_array($data) && array_key_exists($currencyIsoCode, $data) ? $data[$currencyIsoCode] : '';
     }
