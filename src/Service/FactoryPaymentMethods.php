@@ -71,9 +71,6 @@ class FactoryPaymentMethods
             case Config::GATEWAY_ID_ALIOR:
                 $gateway = 'AliorInstallment';
                 break;
-            case Config::GATEWAY_ID_SMARTNEY:
-                $gateway = 'Smartney';
-                break;
             case Config::GATEWAY_ID_BLIK:
                 $gateway = 'Blik';
                 break;

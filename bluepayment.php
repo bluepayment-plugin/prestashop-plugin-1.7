@@ -127,7 +127,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.1';
+        $this->version = '3.0.2';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -350,6 +350,7 @@ class BluePayment extends PaymentModule
         $gatewayTransfer->from('blue_gateway_transfers', 'gt');
         $gatewayTransfer->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
         $gatewayTransfer->where('gt.gateway_id NOT IN (' . Helper::getGatewaysList() . ')');
+        $gatewayTransfer->where('gt.gateway_id NOT IN (' . Helper::getDeletedGatewaysList() . ')');
         $gatewayTransfer->where('gt.gateway_status = 1');
         $gatewayTransfer->where('gt.gateway_currency = "' . pSql($currency->iso_code) . '"');
 

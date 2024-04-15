@@ -146,7 +146,7 @@ class Design extends AbstractHook
         if ($this->configuration->get($this->module->name_upper . '_PROMO_LISTING')) {
             $this->getSmartyAssets('sidebar');
 
-            return $this->module->fetch('module:bluepayment/views/templates/hook/labels/labels.tpl');
+            return $this->module->fetch('module:bluepayment/views/templates/hook/labels/sidebar.tpl');
         }
 
         return null;
@@ -158,7 +158,7 @@ class Design extends AbstractHook
      */
     public function displayLeftColumn()
     {
-        $this->getSidebarPromo();
+        return $this->getSidebarPromo();
     }
 
     /**
@@ -167,7 +167,7 @@ class Design extends AbstractHook
      */
     public function displayRightColumn()
     {
-        $this->getSidebarPromo();
+        return $this->getSidebarPromo();
     }
 
     /**
@@ -260,14 +260,12 @@ class Design extends AbstractHook
     public function getSmartyAssets(string $type = 'main')
     {
         $payLater = Cfg::get($this->module->name_upper . '_PROMO_PAY_LATER');
-        $instalment = Cfg::get($this->module->name_upper . '_PROMO_INSTALMENTS');
         $matchInstalments = Cfg::get($this->module->name_upper . '_PROMO_MATCHED_INSTALMENTS');
         $promoCheckout = Cfg::get($this->module->name_upper . '_PROMO_CHECKOUT');
 
         $this->context->smarty->assign(
             [
                 'bm_assets_images' => $this->module->getAssetImages(),
-                'bm_instalment' => $instalment,
                 'bm_pay_later' => $payLater,
                 'bm_matched_instalments' => $matchInstalments,
                 'bm_promo_checkout' => $promoCheckout,

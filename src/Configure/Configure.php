@@ -215,21 +215,6 @@ class Configure
 
                 $res &= empty(
                     $this->configurationAdapter->get(
-                        $this->name . '_PROMO_INSTALMENTS',
-                        null,
-                        $group_id,
-                        $shop_id
-                    )
-                ) ? $this->configurationAdapter->updateValue(
-                    $this->name . '_PROMO_INSTALMENTS',
-                    1,
-                    false,
-                    $group_id,
-                    $shop_id
-                ) : true;
-
-                $res &= empty(
-                    $this->configurationAdapter->get(
                         $this->name . '_PROMO_MATCHED_INSTALMENTS',
                         null,
                         $group_id,
@@ -345,7 +330,6 @@ class Configure
             $res &= empty($this->configurationAdapter->get($this->name . '_GPAY_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_GPAY_REDIRECT', 0) : true;
 
             $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_PAY_LATER')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_PAY_LATER', 1) : true;
-            $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_INSTALMENTS')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_INSTALMENTS', 1) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_MATCHED_INSTALMENTS')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_MATCHED_INSTALMENTS', 1) : true;
 
             $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_HEADER')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_HEADER', 0) : true;

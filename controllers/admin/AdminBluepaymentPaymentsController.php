@@ -71,9 +71,13 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $this->content .= $this->renderForm();
 
-        $gateway = new BlueGateway($this->module, new BlueAPI($this->module));
-        $gateway->getChannels();
-        $gateway->getTransfers();
+        try {
+            $gateway = new BlueGateway($this->module, new BlueAPI($this->module));
+            $gateway->getChannels();
+            $gateway->getTransfers();
+        } catch (RuntimeException $e) {
+            $this->errors[] = $e->getMessage();
+        }
 
         $this->context->smarty->assign([
             'content' => $this->content,
@@ -113,7 +117,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $statuses = OrderState::getOrderStates($id_default_lang, true);
         $currency = $this->context->currency;
 
-        $smartney = BlueGatewayChannels::isChannelActive(Config::GATEWAY_ID_SMARTNEY, $currency->iso_code);
         $alior = BlueGatewayChannels::isChannelActive(Config::GATEWAY_ID_ALIOR, $currency->iso_code);
 
         $fields_form[0]['form'] = [
@@ -325,7 +328,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        if ($alior || $smartney) {
+        if ($alior) {
             $fields_form[4]['form'] = [
                 'section' => [
                     'title' => $this->l('Payment settings'),
@@ -358,28 +361,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         'size' => 'auto',
                         'class' => $alior ? 'bm-active' : 'bm-no-active',
                         'modal' => 'bm-helper-alior',
-                        'values' => [
-                            [
-                                'id' => 'active_on',
-                                'value' => 1,
-                                'label' => $this->l('Show'),
-                            ],
-                            [
-                                'id' => 'active_off',
-                                'value' => 0,
-                                'label' => $this->l('Hide'),
-                            ],
-                        ],
-                    ],
-
-                    [
-                        'type' => 'switch',
-                        'label' => $this->l('Spread out in instalments'),
-                        'name' => $this->module->name_upper . '_PROMO_INSTALMENTS',
-                        'image' => 'switcher2.png',
-                        'size' => 'auto',
-                        'class' => $smartney ? 'bm-active' : 'bm-no-active',
-                        'modal' => 'bm-helper-smartney',
                         'values' => [
                             [
                                 'id' => 'active_on',

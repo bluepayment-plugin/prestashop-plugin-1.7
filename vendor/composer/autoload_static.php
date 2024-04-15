@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit39ecea6f28a22b15e581bc9e60c59ee5
+class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
 {
     public static $prefixLengthsPsr4 = array (
         'S' => 
@@ -75,12 +75,13 @@ class ComposerStaticInit39ecea6f28a22b15e581bc9e60c59ee5
         'BluePayment\\Service\\Gateway' => __DIR__ . '/../..' . '/src/Service/Gateway.php',
         'BluePayment\\Service\\PaymentMethods\\AliorInstallment' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/AliorInstallment.php',
         'BluePayment\\Service\\PaymentMethods\\Blik' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/Blik.php',
+        'BluePayment\\Service\\PaymentMethods\\BlikLater' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/BlikLater.php',
         'BluePayment\\Service\\PaymentMethods\\Card' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/Card.php',
         'BluePayment\\Service\\PaymentMethods\\GatewayType' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/GatewayType.php',
         'BluePayment\\Service\\PaymentMethods\\InternetTransfer' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/InternetTransfer.php',
         'BluePayment\\Service\\PaymentMethods\\MainGateway' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/MainGateway.php',
         'BluePayment\\Service\\PaymentMethods\\PayPo' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/PayPo.php',
-        'BluePayment\\Service\\PaymentMethods\\Smartney' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/Smartney.php',
+        'BluePayment\\Service\\PaymentMethods\\Spingo' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/Spingo.php',
         'BluePayment\\Service\\PaymentMethods\\VirtualWallet' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/VirtualWallet.php',
         'BluePayment\\Service\\PaymentMethods\\VisaMobile' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/VisaMobile.php',
         'BluePayment\\Service\\Refund' => __DIR__ . '/../..' . '/src/Service/Refund.php',
@@ -100,9 +101,9 @@ class ComposerStaticInit39ecea6f28a22b15e581bc9e60c59ee5
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit39ecea6f28a22b15e581bc9e60c59ee5::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit39ecea6f28a22b15e581bc9e60c59ee5::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit39ecea6f28a22b15e581bc9e60c59ee5::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -37,22 +37,15 @@ class PayPo implements GatewayType
             true
         );
 
-        $smartneyMerchantInfo = \Context::getContext()->link->getModuleLink(
+        $payPoMerchantInfo = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'merchantInfo',
             [],
             true
         );
-        $smartneyLinkCharge = \Context::getContext()->link->getModuleLink(
-            'bluepayment',
-            'chargeSmartney',
-            [],
-            true
-        );
 
         \Context::getContext()->smarty->assign([
-            'smartney_merchantInfo' => $smartneyMerchantInfo,
-            'smartney_moduleLinkCharge' => $smartneyLinkCharge,
+            'payPo_merchantInfo' => $payPoMerchantInfo,
         ]);
 
         $option = new PaymentOption();

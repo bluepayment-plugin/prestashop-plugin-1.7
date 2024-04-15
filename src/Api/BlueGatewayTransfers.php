@@ -94,6 +94,11 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
 
     public function syncGateway($apiGateways, $currency, $position = 0): ?BlueGatewayTransfers
     {
+        $gatewayTransfersToRemove = $this->getGatewayTransfers($currency['iso_code']);
+        if (isset($gatewayTransfersToRemove) && !empty($gatewayTransfersToRemove)) {
+            $gatewayTransfersToRemove = array_column($gatewayTransfersToRemove, 'gateway_id');
+            $gatewayTransfersToRemove = array_flip($gatewayTransfersToRemove);
+        }
         if ($apiGateways && $currency) {
             foreach ($apiGateways->getGateways() as $paymentGateway) {
                 if ($paymentGateway->getGatewayName() !== 'Kartowa płatność automatyczna') {
@@ -101,6 +106,10 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
                         $paymentGateway->getGatewayId(),
                         $currency['iso_code']
                     );
+
+                    if (isset($gatewayTransfersToRemove[$paymentGateway->getGatewayId()])) {
+                        unset($gatewayTransfersToRemove[$paymentGateway->getGatewayId()]);
+                    }
 
                     if (!$this->isTransferActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
                         $payway->gateway_logo_url = $paymentGateway->getIconUrl();
@@ -111,12 +120,22 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
                         $payway->gateway_currency = $currency['iso_code'];
                         $payway->force_id = true;
                         $payway->gateway_id = $paymentGateway->getGatewayId();
-                        $payway->position = (int) $position;
+
+                        if (!$payway->id) {
+                            $maxPosition = $this->getMaxTransfersPositionsByCurrency($currency);
+                            $payway->position = $maxPosition ? $maxPosition + 1 : 0;
+                        }
+
                         $payway->save();
                         (int) $position++;
                     }
                 }
             }
+
+            foreach ($gatewayTransfersToRemove as $idGateway => $gatewayTransferToRemove) {
+                $this->removeGatewayByCurency($idGateway, $currency);
+            }
+            $this->autoUpdatePosition($currency);
         }
 
         \PrestaShopLogger::addLog('BM - Error sync gateway transfers', 1);
@@ -161,5 +180,63 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
     public function removeGatewayCurrency($currency): bool
     {
         return \Db::getInstance()->delete('blue_gateway_transfers', 'gateway_currency = "' . $currency['iso_code'] . '"');
+    }
+
+    public function removeGatewayByCurency($idGatewayTransfers, $currency): bool
+    {
+        return \Db::getInstance()->delete('blue_gateway_transfers', 'gateway_id = ' . (int) $idGatewayTransfers . ' AND gateway_currency = "' . pSQL($currency['iso_code']) . '"');
+    }
+
+    public function getGatewayTransfers($isoCodeCurrency)
+    {
+        $idShop = \Context::getContext()->shop->id;
+
+        $query = new \DbQuery();
+        $query->select('gt.gateway_id');
+        $query->from('blue_gateway_transfers', 'gt');
+        $query->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+        $query->where('gt.gateway_currency = "' . pSql($isoCodeCurrency) . '"');
+        $query->where('gt.gateway_status = 1');
+        if (\Shop::isFeatureActive()) {
+            $query->where('gts.id_shop = ' . (int) $idShop);
+        }
+
+        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+    }
+
+    public function autoUpdatePosition($currency)
+    {
+        $channelsPosition = $this->getTransfersPositionsByCurrency($currency);
+        $i = 0;
+        foreach ($channelsPosition as $chanelPosition) {
+            if ($chanelPosition['position'] != $i) {
+                \Db::getInstance()->update(
+                    'blue_gateway_transfers',
+                    ['position' => $i],
+                    'id = ' . (int) $chanelPosition['id'] . ' AND gateway_currency = "' . pSQL($currency['iso_code']) . '"');
+            }
+            ++$i;
+        }
+    }
+
+    public function getTransfersPositionsByCurrency($currency)
+    {
+        $q = new \DbQuery();
+        $q->select('gt.id, gt.position');
+        $q->from('blue_gateway_transfers', 'gt');
+        $q->where('gt.gateway_currency = "' . pSQL($currency['iso_code']) . '"');
+        $q->orderBy('gt.position ASC');
+
+        return \Db::getInstance()->executeS($q);
+    }
+
+    public function getMaxTransfersPositionsByCurrency($currency)
+    {
+        $q = new \DbQuery();
+        $q->select('MAX(gt.position)');
+        $q->from('blue_gateway_transfers', 'gt');
+        $q->where('gt.gateway_currency = "' . pSQL($currency['iso_code']) . '"');
+
+        return \Db::getInstance()->getValue($q);
     }
 }

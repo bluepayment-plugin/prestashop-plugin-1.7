@@ -149,53 +149,46 @@ class Transactions
 
         $total_paid = (float) $order->total_paid;
         $amount = number_format(round($total_paid, 2), 2, '.', '');
+        // Amplitude
+        $amplitude = Amplitude::getInstance();
 
-        if (!$this->isOrderCanceled($order)) {
-            // Amplitude
-            $amplitude = Amplitude::getInstance();
+        switch ($paymentStatus) {
+            case self::PAYMENT_STATUS_SUCCESS:
+                // Send GA event
+                $analitics = new AnaliticsHelper();
+                $analiticsData = $analitics->sendOrderGaAnalitics($orderId);
+                if (!empty($analiticsData)) {
+                    $this->updateTransactionQuery($analiticsData['order_id'], $analiticsData['transaction_data']);
+                }
 
-            switch ($paymentStatus) {
-                case self::PAYMENT_STATUS_SUCCESS:
-                    // Send GA event
-                    $analitics = new AnaliticsHelper();
-                    $analiticsData = $analitics->sendOrderGaAnalitics($orderId);
-                    if (!empty($analiticsData)) {
-                        $this->updateTransactionQuery($analiticsData['order_id'], $analiticsData['transaction_data']);
-                    }
+                $this->changeOrdersStatus($order, $statusAcceptId);
 
-                    $this->changeOrdersStatus($order, $statusAcceptId);
+                // BLIK change state
+                if ((int) $transaction->gatewayID === Config::GATEWAY_ID_BLIK) {
+                    $transactionData['blik_status'] = (string) $transaction->paymentStatus;
+                    $this->updateTransactionQuery($realOrderId, $transactionData);
+                }
 
-                    // BLIK change state
-                    if ((int) $transaction->gatewayID === Config::GATEWAY_ID_BLIK) {
-                        $transactionData['blik_status'] = (string) $transaction->paymentStatus;
-                        $this->updateTransactionQuery($realOrderId, $transactionData);
-                    }
+                $paymentParams = [
+                    'paymentName' => $this->module->displayName,
+                    'amount' => $amount,
+                    'currencyId' => $order->id_currency,
+                    'reference' => $order->reference,
+                    'remoteId' => $remoteId,
+                ];
 
-                    $paymentParams = [
-                        'paymentName' => $this->module->displayName,
-                        'amount' => $amount,
-                        'currencyId' => $order->id_currency,
-                        'reference' => $order->reference,
-                        'remoteId' => $remoteId,
-                    ];
+                $this->updateOrderPayments($paymentParams);
+                $amplitude->sendOrderAmplitudeEvent('true', $orderId);
 
-                    $this->updateOrderPayments($paymentParams);
-                    $amplitude->sendOrderAmplitudeEvent('true', $orderId);
-
-                    break;
-                case self::PAYMENT_STATUS_FAILURE:
-                    $this->changeOrdersStatus($order, $statusErrorId);
-                    $amplitude->sendOrderAmplitudeEvent('false', $orderId);
-                    break;
-                default:
-                    break;
-            }
-            $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_CONFIRMED);
-        } else {
-            $message = $this->module->name_upper . ' - Order status is cancel or payment status unknown';
-            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 1, null, 'OrderState', $orderId);
-            $this->returnConfirmation($realOrderId, $orderId, $message);
+                break;
+            case self::PAYMENT_STATUS_FAILURE:
+                $this->changeOrdersStatus($order, $statusErrorId);
+                $amplitude->sendOrderAmplitudeEvent('false', $orderId);
+                break;
+            default:
+                break;
         }
+        $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_CONFIRMED);
     }
 
     /**
@@ -246,6 +239,7 @@ class Transactions
         $statusWaitingId = (int) Cfg::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID');
         $statusErrorId = (int) Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
         $statusOutOfStockUnpaid = (int) Cfg::get('PS_OS_OUTOFSTOCK_UNPAID');
+        $statusCanceled = (int) Cfg::get('PS_OS_CANCELED');
 
         $this->module->debug($orders);
 
@@ -257,6 +251,7 @@ class Transactions
             if ($currentOrderStatus === $statusWaitingId
                 || $currentOrderStatus === $statusErrorId
                 || $currentOrderStatus === $statusOutOfStockUnpaid
+                || $currentOrderStatus === $statusCanceled
             ) {
                 try {
                     $this->orderHistory->id_order = (int) $orderId;
@@ -268,9 +263,9 @@ class Transactions
 
                     if (!$this->orderHistory->addWithemail(true, [])) {
                         Helper::sendEmail(
-                            (int) $orderId,
+                            $order,
                             [],
-                            $currentOrderStatus
+                            $this->orderHistory->id
                         );
                     }
                 } catch (\Exception $exception) {

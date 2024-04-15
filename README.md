@@ -1,5 +1,5 @@
 Instrukcja modułu płatności online Autopay bluepayment dla platformy PrestaShop 1.7 oraz 8.1
-**Wersja wtyczki**: 3.0.0
+**Wersja wtyczki**: 3.0.2
 
 ## Podstawowe informacje
 Płatności online Autopay bluepayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7 oraz 8.1.

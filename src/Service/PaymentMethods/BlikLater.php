@@ -37,22 +37,15 @@ class BlikLater implements GatewayType
             true
         );
 
-        $smartneyMerchantInfo = \Context::getContext()->link->getModuleLink(
+        $blikLaterMerchantInfo = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'merchantInfo',
             [],
             true
         );
-        $smartneyLinkCharge = \Context::getContext()->link->getModuleLink(
-            'bluepayment',
-            'chargeSmartney',
-            [],
-            true
-        );
 
         \Context::getContext()->smarty->assign([
-            'smartney_merchantInfo' => $smartneyMerchantInfo,
-            'smartney_moduleLinkCharge' => $smartneyLinkCharge,
+            'blikLater_merchantInfo' => $blikLaterMerchantInfo,
         ]);
 
         $option = new PaymentOption();

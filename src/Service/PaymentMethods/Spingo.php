@@ -37,22 +37,15 @@ class Spingo implements GatewayType
             true
         );
 
-        $smartneyMerchantInfo = \Context::getContext()->link->getModuleLink(
+        $spingoMerchantInfo = \Context::getContext()->link->getModuleLink(
             'bluepayment',
             'merchantInfo',
             [],
             true
         );
-        $smartneyLinkCharge = \Context::getContext()->link->getModuleLink(
-            'bluepayment',
-            'chargeSmartney',
-            [],
-            true
-        );
 
         \Context::getContext()->smarty->assign([
-            'smartney_merchantInfo' => $smartneyMerchantInfo,
-            'smartney_moduleLinkCharge' => $smartneyLinkCharge,
+            'spingo_merchantInfo' => $spingoMerchantInfo,
         ]);
 
         $option = new PaymentOption();

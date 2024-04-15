@@ -351,7 +351,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
      */
     private function transactionQuery(int $orderId, $data)
     {
-        $gateway_id = (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_SMARTNEY;
+        $gateway_id = (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_GOOGLE_PAY;
         $transaction = $this->getTransactionByOrderId($orderId);
 
         if (empty($transaction)) {

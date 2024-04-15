@@ -125,7 +125,6 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
             Config::GATEWAY_ID_BLIK_LATER,
             Config::GATEWAY_ID_ALIOR,
             Config::GATEWAY_ID_CARD,
-            Config::GATEWAY_ID_SMARTNEY,
             Config::GATEWAY_ID_PAYPO,
             Config::GATEWAY_ID_VISA_MOBILE,
             Config::GATEWAY_ID_SPINGO,
@@ -162,6 +161,12 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 
     public function syncGateway($apiGateways, $currency, $position = 1): ?BlueGatewayChannels
     {
+        $gatewayChannelsToRemove = $this->getGatewayChannels($currency['iso_code']);
+        if (isset($gatewayChannelsToRemove) && !empty($gatewayChannelsToRemove)) {
+            $gatewayChannelsToRemove = array_column($gatewayChannelsToRemove, 'gateway_id');
+            $gatewayChannelsToRemove = array_flip($gatewayChannelsToRemove);
+        }
+
         if ($apiGateways && $currency) {
             // Reset position by currency
             $paymentsGroup = $apiGateways->getGateways();
@@ -173,6 +178,10 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                     $paymentGateway->getGatewayId(),
                     $currency['iso_code']
                 );
+
+                if (isset($gatewayChannelsToRemove[$paymentGateway->getGatewayId()])) {
+                    unset($gatewayChannelsToRemove[$paymentGateway->getGatewayId()]);
+                }
 
                 $payway->gateway_logo_url = $paymentGateway->getIconUrl();
                 $payway->bank_name = $paymentGateway->getBankName();
@@ -190,10 +199,19 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                 $payway->min_amount = $paymentGateway->getMinAmount();
                 $payway->max_amount = $paymentGateway->getMaxAmount();
 
-                $payway->position = (int) $position;
+                if (!$payway->id) {
+                    $maxPosition = $this->getMaxChannelsPositionsByCurrency($currency);
+                    $payway->position = $maxPosition ? $maxPosition + 1 : 0;
+                }
+
                 $payway->save();
                 ++$position;
             }
+
+            foreach ($gatewayChannelsToRemove as $idGateway => $gatewayChannelToRemove) {
+                $this->removeGatewayChannelByCurrency($idGateway, $currency);
+            }
+            $this->autoUpdatePosition($currency);
 
             return $payway;
         }
@@ -306,5 +324,63 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public function removeGatewayCurrency($currency): bool
     {
         return \Db::getInstance()->delete(self::TABLE, 'gateway_currency = "' . $currency['iso_code'] . '"');
+    }
+
+    public function getGatewayChannels($isoCodeCurrency)
+    {
+        $idShop = \Context::getContext()->shop->id;
+
+        $query = new \DbQuery();
+        $query->select('gc.gateway_id');
+        $query->from('blue_gateway_channels', 'gc');
+        $query->leftJoin('blue_gateway_channels_shop', 'gcs', 'gcs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
+        $query->where('gc.gateway_currency = "' . pSql($isoCodeCurrency) . '"');
+        $query->where('gc.gateway_status = 1');
+        if (\Shop::isFeatureActive()) {
+            $query->where('gcs.id_shop = ' . (int) $idShop);
+        }
+
+        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+    }
+
+    public function removeGatewayChannelByCurrency($idGatewayChannel, $currency): bool
+    {
+        return \Db::getInstance()->delete('blue_gateway_channels', 'gateway_id = ' . (int) $idGatewayChannel . ' AND gateway_currency = "' . pSQL($currency['iso_code']) . '"');
+    }
+
+    public function autoUpdatePosition($currency)
+    {
+        $channelsPosition = $this->getChannelsPositionsByCurrency($currency);
+        $i = 0;
+        foreach ($channelsPosition as $chanelPosition) {
+            if ($chanelPosition['position'] != $i) {
+                \Db::getInstance()->update(
+                    self::TABLE,
+                    ['position' => $i],
+                    'id_blue_gateway_channels = ' . (int) $chanelPosition['id_blue_gateway_channels'] . ' AND gateway_currency = "' . pSQL($currency['iso_code']) . '"');
+            }
+            ++$i;
+        }
+    }
+
+    public function getChannelsPositionsByCurrency($currency)
+    {
+        $q = new \DbQuery();
+        $q->select('gc.id_blue_gateway_channels, gc.position');
+        $q->from(self::TABLE, 'gc');
+        $q->where('gc.gateway_currency = "' . pSQL($currency['iso_code']) . '"');
+        $q->orderBy('gc.position ASC');
+
+        return \Db::getInstance()->executeS($q);
+    }
+
+    public function getMaxChannelsPositionsByCurrency($currency)
+    {
+        $q = new \DbQuery();
+        $q->select('MAX(gc.position)');
+        $q->from(self::TABLE, 'gc');
+        $q->where('gc.gateway_currency = "' . pSQL($currency['iso_code']) . '"');
+
+        return \Db::getInstance()->getValue($q);
     }
 }

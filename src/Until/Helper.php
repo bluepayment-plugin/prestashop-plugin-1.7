@@ -42,7 +42,6 @@ class Helper
             'BLUEPAYMENT_BLIK_REDIRECT',
             'BLUEPAYMENT_GPAY_REDIRECT',
             'BLUEPAYMENT_PROMO_PAY_LATER',
-            'BLUEPAYMENT_PROMO_INSTALMENTS',
             'BLUEPAYMENT_PROMO_MATCHED_INSTALMENTS',
             'BLUEPAYMENT_PROMO_HEADER',
             'BLUEPAYMENT_PROMO_FOOTER',
@@ -106,10 +105,18 @@ class Helper
             Config::GATEWAY_ID_CARD,
             Config::GATEWAY_ID_GOOGLE_PAY,
             Config::GATEWAY_ID_APPLE_PAY,
-            Config::GATEWAY_ID_SMARTNEY,
             Config::GATEWAY_ID_PAYPO,
             Config::GATEWAY_ID_VISA_MOBILE,
             Config::GATEWAY_ID_SPINGO,
+        ];
+
+        return implode(',', $gatewayArray);
+    }
+
+    public static function getDeletedGatewaysList(): string
+    {
+        $gatewayArray = [
+            Config::GATEWAY_ID_SMARTNEY,
         ];
 
         return implode(',', $gatewayArray);
@@ -128,7 +135,7 @@ class Helper
     public static function parseConfigByCurrency($key, $currencyIsoCode)
     {
         $value = Cfg::get($key);
-        if ($value == false){
+        if ($value == false) {
             return '';
         }
         $data = json_decode($value, true);

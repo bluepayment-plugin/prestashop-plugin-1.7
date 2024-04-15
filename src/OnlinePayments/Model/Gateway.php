@@ -56,7 +56,6 @@ class Gateway extends AbstractModel
     public const GATEWAY_ID_APPLE_PAY = 1513;
 
     public const GATEWAY_ID_IFRAME = 1506;
-    public const GATEWAY_ID_SMARTNEY = 700;
 
     public const GATEWAY_TYPE_PBL = 'PBL';
     public const GATEWAY_TYPE_FAST_TRANSFER = 'Szybki przelew';

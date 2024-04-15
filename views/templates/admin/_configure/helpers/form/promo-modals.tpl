@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2023
+ * @copyright      Copyright (c) 2015-2024
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <div class="modal fade" id="bm-helper-alior" tabindex="-1" role="dialog"
@@ -40,40 +40,6 @@
               class="font-weight-bold">{l s='To be able to promote the Alior Installment payment, you must first activate it' mod='bluepayment'}</p>
           </div>
           <a target="_blank" href="https://developers.autopay.pl/alior-raty#jak-uruchomic-alior-raty" class="btn btn-primary text-uppercase">{l s='Enable the service' mod='bluepayment'}</a>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="bm-helper-smartney" tabindex="-1" role="dialog"
-     aria-labelledby="" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>
-            {l s='Pay Smartney' mod='bluepayment'}
-        </h2>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body bm-modal-body">
-
-        <div id="blue_payway" class="bluepayment-gateways">
-          <div>
-            <div class="bm-flex bm-modal-spacing">
-                {l s='Matching installments' mod='bluepayment'}
-              <img width="80" class="img-fluid bm-modal-image"
-                   src="/modules/bluepayment/views/img//helpers/switcher2.png">
-            </div>
-            <p>{l s='Thanks to deferred payments, your customers have up to 30 days to pay, and you get the money right away! By choosing Pay Smartney, your customer can pay for their purchases up to 30 days - without incurring any additional costs.' mod='bluepayment'}</p>
-
-            <p
-              class="font-weight-bold">{l s='To be able to promote Pay Smartney, you must first activate it' mod='bluepayment'}</p>
-          </div>
-          <a target="_blank" href="https://developers.autopay.pl/pay-smartney#jak-to-dziala" class="btn btn-primary text-uppercase">{l s='Enable the service' mod='bluepayment'}</a>
         </div>
 
       </div>

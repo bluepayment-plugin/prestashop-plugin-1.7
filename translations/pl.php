@@ -144,10 +144,7 @@ $_MODULE['<{bluepayment}prestashop>promo-modals_57244cabdfb29fd0983891b6f0381af1
 $_MODULE['<{bluepayment}prestashop>promo-modals_5aadf65826fdac90936e0cc225f79356'] = 'Dzięki tej metodzie płatności Twoi klienci mogą zapłacić za swoje zakupy w dogodnych ratach, a Ty otrzymasz od razu pełną kwotę. Wybierając Raty Alior Twój klient może sam zdecydować w ilu ratach chce spłacić należność (od 3 do 48 miesięcy).';
 $_MODULE['<{bluepayment}prestashop>promo-modals_3d62533855016711cff73cef05c102bf'] = 'Aby móc promować płatność Alior Raty, należy ją najpierw aktywować';
 $_MODULE['<{bluepayment}prestashop>promo-modals_d6342a7dc9bbdaa5a0a828eb9b283188'] = 'Włącz usługę';
-$_MODULE['<{bluepayment}prestashop>promo-modals_66690c47881f3f72b422970fa6be99fa'] = 'Zapłać Smartney';
 $_MODULE['<{bluepayment}prestashop>promo-modals_fe206eb4469c2c1efcebfab83c9828fd'] = 'Dopasowane raty';
-$_MODULE['<{bluepayment}prestashop>promo-modals_68f6084e6f2e7d5abf096b618aebf7aa'] = 'Dzięki odroczeniu płatności Twoi klienci mają aż do 30 dni na dokonanie płatności, a Ty otrzymujesz pieniądze od razu! Wybierając Pay Smartney, Twój klient może zapłacić za swoje zakupy aż do 30 dni – bez ponoszenia żadnych dodatkowych kosztów.';
-$_MODULE['<{bluepayment}prestashop>promo-modals_7cec2801d42eced494973dd944dd5b11'] = 'Aby móc promować Pay Smartney, musisz go najpierw aktywować';
 $_MODULE['<{bluepayment}prestashop>payment_status_59758c8f7f9cbef6939ca9991aaa8939'] = 'Status płatności';
 $_MODULE['<{bluepayment}prestashop>payment_status_ae3965e8c45d9d66df740c7854fead18'] = 'Nie udało się ustalić statusu płatności\'';
 $_MODULE['<{bluepayment}prestashop>payment_status_bc7aefdf54220f4a573a5349473ada58'] = 'Wróć do sklepu';
@@ -209,16 +206,6 @@ $_MODULE['<{bluepayment}prestashop>paymentredirectaliorbank_5bb6989b1de03776dda3
 $_MODULE['<{bluepayment}prestashop>paymentredirectaliorbank_3541825ff265677e96813bd054e46dd2'] = 'Informacja o kosztach kredytu';
 $_MODULE['<{bluepayment}prestashop>paymentredirectaliorbank_dae5e8d76984686d19b756ded5e670ee'] = 'Oferta kredytowa – pożyczka 0% za miesiąc: Rzeczywista Roczna Stopa Oprocentowania (RRSO) wynosi 0%, kwota pożyczki netto (bez kredytowanych kosztów) 1000 zł, całkowita kwota do zapłaty 1000 zł, oprocentowanie stałe 0%, całkowity koszt pożyczki 0 zł (w tym: prowizja 0 zł odsetki 0 zł), 10 miesięcznych równych rat w wysokości 100 zł. Kalkulacja została dokonana na dzień 29.03.2022 r. na reprezentatywnym przykładzie.';
 $_MODULE['<{bluepayment}prestashop>paymentredirectcard_852fcbbdb5a458e1e15bfa22d5739576'] = 'Przekierujemy Cię na stronę naszego partnera Autopay, gdzie podasz dane swojej karty.';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_cda8f32d49d5687a59e290cf2271aade'] = 'Kup teraz i zapłać w ciągu 30 dni.';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_d59048f21fd887ad520398ce677be586'] = 'Dowiedz się więcej';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_71e1d7e05610b49e57b250e92a834d16'] = 'Przekierujemy Cię na stronę partnera Smartney. Po złożeniu wniosku i pozytywnej weryfikacji, Smartney opłaci zakupy za Ciebie. ';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_ff3be5d352afbc6f1c102ec6478a0029'] = 'Information about the credit intermediary and RRSO';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_d3d2e617335f08df83599665eef8a418'] = 'Zamknij';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_2c0fe3cb1d8cecbc28fb3fe0a170065c'] = 'Pośrednik kredytowy';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_9d995bd8ded3ff15a29e857a40d6dc50'] = 'Autopay S.A. jako pośrednik kredytowy współpracuje z [nazwa dostawcy OTP]. Zakres umocowania: prezentowanie klientom oferty kredytowej oraz przekierowanie do serwisu internetowego [nazwa dostawcy OTP], w tym do wniosku kredytowego.';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_50542f6f46d7118247de428d67cfe157'] = 'Rzeczywista Roczna Stopa Oprocentowania (RRSO)';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_5550863325e95460e101545fbcd53212'] = 'Wariant bez kosztów: Rzeczywista Roczna Stopa Oprocentowania (RRSO) wynosi 0,00 %.';
-$_MODULE['<{bluepayment}prestashop>paymentredirectsmartney_1ac8af89672f9d7c67cd2c274abe5a2c'] = 'Wariant Płatny: Rzeczywista Roczna Stopa Oprocentowania (RRSO) wynosi 74,70%.';
 $_MODULE['<{bluepayment}prestashop>applepay_2906d5855cc658b0744e4d5c5ec10d6d'] = 'Zostaniesz przekierowany na stronę naszego partnera Autopay, gdzie możesz wybrać szybką i bezpieczną metodę płatności.';
 $_MODULE['<{bluepayment}prestashop>gpay_2906d5855cc658b0744e4d5c5ec10d6d'] = 'Zostaniesz przekierowany na stronę naszego partnera Autopay, gdzie możesz wybrać szybką i bezpieczną metodę płatności.';
 $_MODULE['<{bluepayment}prestashop>gpay_ad7608ada46c853f7d02a30cddde3c8a'] = 'Zapłać przez Google Pay';
@@ -298,7 +285,6 @@ $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_cbd117d597
 $_MODULE['<{bluepayment}prestashop>chargegpay_e3c2a4b7674434194f201a1f99eabb7b'] = 'Brak identyfikatora klienta';
 $_MODULE['<{bluepayment}prestashop>payment_e2b7dec8fa4b498156dfee6e4c84b156'] = 'Wybrana forma płatności jest niedostępna.';
 $_MODULE['<{bluepayment}prestashop>payment_638e3e69e028995b3fa7b0e02c11ad55'] = 'Koszyk jest pusty.';
-$_MODULE['<{bluepayment}prestashop>chargesmartney_e3c2a4b7674434194f201a1f99eabb7b'] = 'Brak identyfikatora klienta.';
 $_MODULE['<{bluepayment}prestashop>chargeblik_e3c2a4b7674434194f201a1f99eabb7b'] = 'Brak identyfikatora klienta.';
 $_MODULE['<{bluepayment}prestashop>chargeblik_e21d5f8b53b6d84f4c49033a8cc59d23'] = 'Potwierdź operację w aplikacji swojego banku.';
 $_MODULE['<{bluepayment}prestashop>chargeblik_b7e4e02d4b35be29705ccaef1634b50a'] = 'Płatność została zakończona.';

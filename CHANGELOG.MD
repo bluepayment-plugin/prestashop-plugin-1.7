@@ -1,4 +1,11 @@
 # Changelog
+## [3.0.2] 26.03.2024
+- Fixed payment reset when changing mode
+- Removed Smartney payment
+- Fixed payment sorting
+- Fixed errors when saving configuration
+- Promoting Alior payments
+
 ## [3.0.1] 12.01.2024
 - Fixed configuration page
 
