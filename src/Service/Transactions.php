@@ -240,6 +240,7 @@ class Transactions
         $statusErrorId = (int) Cfg::get($this->module->name_upper . '_STATUS_ERROR_PAY_ID');
         $statusOutOfStockUnpaid = (int) Cfg::get('PS_OS_OUTOFSTOCK_UNPAID');
         $statusCanceled = (int) Cfg::get('PS_OS_CANCELED');
+        $statusChangePayment = explode(',', Cfg::get($this->module->name_upper . '_STATUS_CHANGE_PAY_ID'));
 
         $this->module->debug($orders);
 
@@ -252,6 +253,7 @@ class Transactions
                 || $currentOrderStatus === $statusErrorId
                 || $currentOrderStatus === $statusOutOfStockUnpaid
                 || $currentOrderStatus === $statusCanceled
+                || in_array($currentOrderStatus, $statusChangePayment)
             ) {
                 try {
                     $this->orderHistory->id_order = (int) $orderId;

@@ -580,6 +580,17 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         'name' => 'name',
                     ],
                 ],
+                [
+                    'type' => 'select',
+                    'name' => $this->module->name_upper . '_STATUS_CHANGE_PAY_ID',
+                    'label' => $this->l('Order statuses for which the payment status is to be changed'),
+                    'multiple' => true,
+                    'options' => [
+                        'query' => $statuses,
+                        'id' => 'id_order_state',
+                        'name' => 'name',
+                    ],
+                ],
             ],
             'submit' => [
                 'save_event' => 'STATUSY PŁATNOŚCI',
@@ -748,6 +759,11 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $data = [];
         foreach (Helper::getFields() as $field) {
             $data[$field] = Tools::getValue($field, Cfg::get($field));
+        }
+
+        foreach (Helper::getFieldsMultiple() as $field) {
+            $fieldReplace = str_replace('[]', '', $field);
+            $data[$field] = Tools::getValue($fieldReplace, explode(',', Cfg::get($fieldReplace)));
         }
 
         foreach (Helper::getFieldsLang() as $field) {

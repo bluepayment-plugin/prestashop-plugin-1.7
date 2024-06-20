@@ -15,7 +15,7 @@
 *}
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="bliklater">
 	<span class="bm-promo-desc">
-		{l s='Buy now and pay within 30 days. The service is available to VeloBank customers.' mod='bluepayment'}
+		{l s='Buy now and pay within 30 days. The service is available to Bank Millennium and VeloBank customers.' mod='bluepayment'}
     <a href="#" class="bm-payment__elm bm-transfer" data-bm-modal-siimple data-open-modal-id="bliklater">
       {l s='Learn more.' mod='bluepayment'}
     </a>

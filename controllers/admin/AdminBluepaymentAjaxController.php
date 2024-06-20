@@ -56,6 +56,12 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                 Configuration::updateValue($configField, $value);
             }
 
+            foreach (Helper::getFieldsMultiple() as $configField) {
+                $fieldReplace = str_replace('[]', '', $configField);
+                $value = Tools::getValue($fieldReplace, Configuration::get($fieldReplace));
+                Configuration::updateValue($fieldReplace, implode(',', array_map('intval', $value)));
+            }
+
             $paymentName = [];
             $paymentGroupName = [];
 

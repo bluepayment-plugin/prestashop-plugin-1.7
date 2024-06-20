@@ -175,6 +175,7 @@ $_MODULE['<{bluepayment}prestashop>payment_d959bbe25cc020e2db5276cb42927c7c'] = 
 $_MODULE['<{bluepayment}prestashop>paymentredirectspingo_dab5e52dccfa1dbaa27914bebe71c27f'] = 'Płatność odroczona dla firm';
 $_MODULE['<{bluepayment}prestashop>paymentredirectspingo_d59048f21fd887ad520398ce677be586'] = 'Czytaj więcej';
 $_MODULE['<{bluepayment}prestashop>paymentredirectspingo_bddf4abb1afcba5e2336738e70a867d8'] = 'Przekierujemy Cię na stronę partnera';
+$_MODULE['<{bluepayment}prestashop>paymentbliklater_f5bc4c72ea05a6cb8147a89881cd75a1'] = 'Kup teraz i zapłać w ciągu 30 dni. Usługa dostępna dla klientów Banku Millennium i VeloBanku.';
 $_MODULE['<{bluepayment}prestashop>paymentbliklater_d3a5e930e1c4cd47fee3a81486fd44c2'] = 'Kup teraz i zapłać w ciągu 30 dni. Usługa dostępna dla klientów VeloBanku.';
 $_MODULE['<{bluepayment}prestashop>paymentbliklater_f990e553cdc4c29c2efffba33e08a8c7'] = 'Dowiedz się więcej.';
 $_MODULE['<{bluepayment}prestashop>paymentbliklater_7b0acd25de0e4f8d8ad1fa459bea407e'] = 'Zostaniesz przekierowany na stronę, na której wpisujesz swój kod BLIK. Kod BLIK generujesz w aplikacji bankowej.';

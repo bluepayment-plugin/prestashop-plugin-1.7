@@ -1,4 +1,8 @@
 # Changelog
+## [3.0.3] 20.06.2024
+- Fixed translated
+- Added status selection
+
 ## [3.0.2] 26.03.2024
 - Fixed payment reset when changing mode
 - Removed Smartney payment

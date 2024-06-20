@@ -52,6 +52,13 @@ class Helper
         ];
     }
 
+    public static function getFieldsMultiple(): array
+    {
+        return [
+            'BLUEPAYMENT_STATUS_CHANGE_PAY_ID[]',
+        ];
+    }
+
     public static function getFieldsLang(): array
     {
         return [
