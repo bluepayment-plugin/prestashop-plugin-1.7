@@ -1,4 +1,7 @@
 # Changelog
+## [3.0.4] 26.06.2024
+- Fixed added status selection
+
 ## [3.0.3] 20.06.2024
 - Fixed translated
 - Added status selection
