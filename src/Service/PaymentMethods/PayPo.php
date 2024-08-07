@@ -78,7 +78,7 @@ class PayPo implements GatewayType
     {
         $iso_code = Helper::getIsoFromContext(\Context::getContext());
         if (!$cart_total) {
-            $cart_total = \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH);
+            $cart_total = isset(\Context::getContext()->cart) ? \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH) : 0;
         }
 
         $paypo = BlueGatewayChannels::getByGatewayIdAndCurrency(
@@ -89,5 +89,20 @@ class PayPo implements GatewayType
         return $paypo->id
             && (float) $cart_total >= (float) $paypo->min_amount
             && (float) $cart_total <= (float) $paypo->max_amount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActiveBo(): bool
+    {
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
+
+        $paypo = BlueGatewayChannels::getByGatewayIdAndCurrency(
+            Config::GATEWAY_ID_PAYPO,
+            $iso_code
+        );
+
+        return (bool) $paypo->id;
     }
 }

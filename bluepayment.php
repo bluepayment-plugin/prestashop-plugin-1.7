@@ -127,7 +127,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.4';
+        $this->version = '3.0.5';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -291,7 +291,7 @@ class BluePayment extends PaymentModule
      */
     public function getContent(): void
     {
-        \Tools::redirectAdmin(
+        Tools::redirectAdmin(
             $this->getContext()->link->getAdminLink('AdminBluepaymentPayments')
         );
     }
@@ -346,7 +346,7 @@ class BluePayment extends PaymentModule
         $moduleLink = $this->context->link->getModuleLink('bluepayment', 'payment', [], true);
 
         // Get all transfers
-        $gatewayTransfer = new \DbQuery();
+        $gatewayTransfer = new DbQuery();
         $gatewayTransfer->from('blue_gateway_transfers', 'gt');
         $gatewayTransfer->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
         $gatewayTransfer->where('gt.gateway_id NOT IN (' . Helper::getGatewaysList() . ')');
@@ -362,7 +362,7 @@ class BluePayment extends PaymentModule
         $gatewayTransfer = Db::getInstance()->executeS($gatewayTransfer);
 
         // Get all wallets
-        $gatewayWallet = new \DbQuery();
+        $gatewayWallet = new DbQuery();
         $gatewayWallet->from('blue_gateway_transfers', 'gt');
         $gatewayWallet->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
         $gatewayWallet->where('gt.gateway_id IN (' . Helper::getWalletsList() . ')');
@@ -404,14 +404,14 @@ class BluePayment extends PaymentModule
 
         $dateTimeUpdate = Cfg::get($this->name_upper . Config::UPDATE_GATEWAY_TIME_KEY);
 
-        $date = new \DateTime();
-        $date->sub(new \DateInterval('PT1H'));
+        $date = new DateTime();
+        $date->sub(new DateInterval('PT1H'));
         $date->format('Y-m-d h:i:s');
         if (is_null($dateTimeUpdate) || $dateTimeUpdate <= $date->format('Y-m-d h:i:s')) {
             $gateway = new BlueGateway($this, new BlueAPI($this));
             $gateway->getChannels();
 
-            $date = new \DateTime();
+            $date = new DateTime();
             Cfg::updateValue($this->name_upper . Config::UPDATE_GATEWAY_TIME_KEY, $date->format('Y-m-d h:i:s'));
         }
 

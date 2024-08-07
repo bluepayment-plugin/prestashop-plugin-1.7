@@ -10,25 +10,13 @@
  * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
-
-declare(strict_types=1);
-
-namespace BluePayment\Service\PaymentMethods;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-
-interface GatewayType
+function upgrade_module_2_7_2($module)
 {
-    public function getPaymentOption(
-        \BluePayment $module,
-        array $data = []
-    ): PaymentOption;
+    Configuration::updateValue($module->name_upper . '_STATUS_CHANGE_PAY_ID', '');
 
-    public function isActive(): bool;
-
-    public function isActiveBo(): bool;
+    return true;
 }

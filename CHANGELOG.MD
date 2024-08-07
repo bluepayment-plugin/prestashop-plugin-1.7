@@ -1,4 +1,12 @@
 # Changelog
+## [3.0.5] 07.08.2024
+- Added a new section: Services for You, aimed at supporting merchants in running an efficient store
+- Redesigned the informational banner
+- Fixed error GA4 on new version prestashop
+- Added missing parameters to BLIK and GPay
+- Fixed a bug that caused the incorrect payment method to be displayed in the module configuration
+- Fixed error 500 occurring during payment synchronization and communication with Presta
+
 ## [3.0.4] 26.06.2024
 - Fixed added status selection
 

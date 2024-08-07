@@ -84,11 +84,26 @@ class Spingo implements GatewayType
         );
 
         if (!$cart_total) {
-            $cart_total = \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH);
+            $cart_total = isset(\Context::getContext()->cart) ? \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH) : 0;
         }
 
         return $spingo->id
             && (float) $cart_total >= (float) $spingo->min_amount
             && (float) $cart_total <= (float) $spingo->max_amount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActiveBo(): bool
+    {
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
+
+        $spingo = BlueGatewayChannels::getByGatewayIdAndCurrency(
+            Config::GATEWAY_ID_SPINGO,
+            $iso_code
+        );
+
+        return (bool) $spingo->id;
     }
 }

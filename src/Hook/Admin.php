@@ -19,6 +19,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BluePayment\Service\FactoryPaymentMethods;
+use BluePayment\Service\Gateway;
 use BluePayment\Service\Refund;
 use BluePayment\Until\AdminHelper;
 use BluePayment\Until\Helper;
@@ -51,6 +53,23 @@ class Admin extends AbstractHook
         foreach (AdminHelper::getSortCurrencies() as $currency) {
             $paymentList = $adminHelper->getListChannels($currency['iso_code']);
             $title = $currency['name'] . ' (' . $currency['iso_code'] . ')';
+            $factoryPaymentMethods = new FactoryPaymentMethods($this->module);
+            $namespace = 'BluePayment\\Service\\PaymentMethods';
+            foreach ($paymentList as $key => $payment) {
+                $className = $factoryPaymentMethods->getPaymentMethodName($payment['gateway_id']);
+                $class = "$namespace\\$className";
+
+                if (class_exists($class)) {
+                    $gateway = new Gateway(
+                        $this->module,
+                        new $class()
+                    );
+
+                    if (!$gateway->isActiveBo()) {
+                        unset($paymentList[$key]);
+                    }
+                }
+            }
 
             if (!empty($paymentList)) {
                 $list[] = $adminHelper->renderAdditionalOptionsList($this->module, $paymentList, $title);

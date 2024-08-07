@@ -78,4 +78,12 @@ class InternetTransfer implements GatewayType
     {
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function isActiveBo(): bool
+    {
+        return true;
+    }
 }

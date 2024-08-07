@@ -14,6 +14,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BlueMedia\OnlinePayments\Model\Gateway;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 
@@ -174,13 +175,16 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             'OrderID' => $orderId,
             'Amount' => $amount,
             'Description' => 'BLIK Payment',
-            'GatewayID' => (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_BLIK,
+            'GatewayID' => (string) Gateway::GATEWAY_ID_BLIK,
             'Currency' => $currency,
             'CustomerEmail' => $customerEmail,
             'CustomerIP' => $_SERVER['REMOTE_ADDR'],
             'Title' => 'BLIK Payment',
             'AuthorizationCode' => $blikCode,
             'ScreenType' => 'FULL',
+            'PlatformName' => 'PrestaShop',
+            'PlatformVersion' => _PS_VERSION_,
+            'PlatformPluginVersion' => $this->module->version,
         ];
 
         $hash = array_merge($data, [$sharedKey]);

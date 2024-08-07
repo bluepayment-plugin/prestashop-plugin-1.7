@@ -44,4 +44,9 @@ class Gateway
     {
         return $this->gateway->isActive();
     }
+
+    public function isActiveBo(): bool
+    {
+        return $this->gateway->isActiveBo();
+    }
 }

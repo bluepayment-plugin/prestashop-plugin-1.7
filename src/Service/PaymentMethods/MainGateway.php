@@ -73,4 +73,9 @@ class MainGateway implements GatewayType
     {
         return true;
     }
+
+    public function isActiveBo(): bool
+    {
+        return true;
+    }
 }

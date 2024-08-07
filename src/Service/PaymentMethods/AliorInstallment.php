@@ -74,7 +74,7 @@ class AliorInstallment implements GatewayType
         );
 
         if (!$cart_total) {
-            $cart_total = \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH);
+            $cart_total = isset(\Context::getContext()->cart) ? \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH) : 0;
         }
 
         $activePromo = Cfg::get('BLUEPAYMENT_PROMO_PAY_LATER');
@@ -83,5 +83,20 @@ class AliorInstallment implements GatewayType
             && $activePromo
             && (float) $cart_total >= (float) $alior->min_amount
             && (float) $cart_total <= (float) $alior->max_amount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActiveBo(): bool
+    {
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
+
+        $alior = BlueGatewayChannels::getByGatewayIdAndCurrency(
+            Config::GATEWAY_ID_ALIOR,
+            $iso_code
+        );
+
+        return (bool) $alior->id;
     }
 }

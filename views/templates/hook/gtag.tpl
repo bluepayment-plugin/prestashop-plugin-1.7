@@ -33,7 +33,6 @@
 		var bm_ajax_controller = "{$bm_ajax_controller}";
 	</script>
 {/if}
-
 {if isset($controller) && $controller == 'cart'}
 	<script type="text/javascript">
 		$(document).ready(function () {
@@ -76,9 +75,11 @@
                     {{/literal}
                         "id": "{$product['id_product']|escape:'htmlall':'UTF-8'}",
                         "name": "{$product['name']|cleanHtml nofilter}",
-                        {if isset($product['manufacturer_name'])}
-                        "brand": "{$product['manufacturer_name']|implode:','|escape:'html':'UTF-8'}",
-                        {/if}
+						{if isset($product['manufacturer_name']) && is_array($product['manufacturer_name'])}
+							"brand": "{$product['manufacturer_name']|implode:','|escape:'html':'UTF-8'}",
+						{elseif isset($product['manufacturer_name']) && !is_array($product['manufacturer_name'])}
+							"brand": "{$product['category']|cleanHtml nofilter}",
+						{/if}
                         "category": "{$product['category']|cleanHtml nofilter}",
                         "variant": "{$product['id_product_attribute']|escape:'htmlall':'UTF-8'}",
                         "price": "{$product['price']|escape:'htmlall':'UTF-8'}",
@@ -96,8 +97,10 @@
 				{{/literal}
 					"id": "{$product['id_product']|escape:'htmlall':'UTF-8'}",
 					"name": "{$product['name']|cleanHtml nofilter}",
-                    {if isset($product['manufacturer_name'])}
-					"brand": "{$product['manufacturer_name']|implode:','|escape:'html':'UTF-8'}",
+					{if isset($product['manufacturer_name']) && is_array($product['manufacturer_name'])}
+						"brand": "{$product['manufacturer_name']|implode:','|escape:'html':'UTF-8'}",
+					{elseif isset($product['manufacturer_name']) && !is_array($product['manufacturer_name'])}
+						"brand": "{$product['category']|cleanHtml nofilter}",
                     {/if}
 					"category": "{$product['category']|cleanHtml nofilter}",
 					"variant": "{$product['id_product_attribute']|escape:'htmlall':'UTF-8'}",

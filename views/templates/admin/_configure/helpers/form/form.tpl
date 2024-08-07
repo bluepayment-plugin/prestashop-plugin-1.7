@@ -95,6 +95,15 @@
 		        </li>
             {/if}
 
+			{if $fkey === 10}
+				<li class="nav-item">
+					<a href="tab_rule_{$tabk}" data-hash="services-for-you" class="nav-link tab " id="tab_rule_link_{$tabk}"
+					   href="javascript:displaythemeeditorTab('{$tabk}');">
+						{$fvalue.form.section.title}
+					</a>
+				</li>
+			{/if}
+
             {$tabk = $tabk+1}
         {/foreach}
 	</ul>
@@ -142,9 +151,9 @@
 				<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
 
                     {include file="./benefits.tpl"}
-                    {include file="./benefits2.tpl"}
+{*                    {include file="./benefits2.tpl"}*}
 
-                    {elseif $f == 2 || $f == 6 || $f == 8}
+                    {elseif $f == 2 || $f == 6 || $f == 8 || $f == 10}
 					<div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
 
 {*                        {elseif $f == 6}*}
@@ -370,7 +379,7 @@
 		<script type="text/javascript">
 			var module_dir = '{$smarty.const._MODULE_DIR_}';
 			var id_language = {$defaultFormLanguage|intval};
-			var languages = new Array();
+			var languages = [];
 
             {foreach $languages as $k => $language}
 			languages[{$k}] = {

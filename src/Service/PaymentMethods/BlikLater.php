@@ -85,11 +85,26 @@ class BlikLater implements GatewayType
         );
 
         if (!$cart_total) {
-            $cart_total = \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH);
+            $cart_total = isset(\Context::getContext()->cart) ? \Context::getContext()->cart->getOrderTotal(true, \Cart::BOTH) : 0;
         }
 
         return $blikLater->id
             && (float) $cart_total >= (float) $blikLater->min_amount
             && (float) $cart_total <= (float) $blikLater->max_amount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActiveBo(): bool
+    {
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
+
+        $blikLater = BlueGatewayChannels::getByGatewayIdAndCurrency(
+            Config::GATEWAY_ID_BLIK_LATER,
+            $iso_code
+        );
+
+        return (bool) $blikLater->id;
     }
 }

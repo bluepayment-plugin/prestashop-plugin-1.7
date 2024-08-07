@@ -33,7 +33,7 @@
 
 <span>
     {l s='Customers are more likely to buy products, even at a higher price, if they can pay later or spreadtherepayment over installments.' mod='bluepayment'}
-	<a target="_blank" href="https://developers.autopay.pl/platnosci-ratalne-i-odroczone">
+	<a target="_blank" href="https://developers.autopay.pl/platnosci-ratalne-i-odroczone?utm_campaign=help&utm_source=prestashop_panel&mtm_medium=text_link">
 		{l s='Learn more.' mod='bluepayment'}
 	</a>
 </span>

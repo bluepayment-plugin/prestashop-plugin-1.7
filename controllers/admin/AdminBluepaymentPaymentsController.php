@@ -19,17 +19,24 @@ use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
 use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
+use BluePayment\Config\ConfigBanner;
+use BluePayment\Config\ConfigServices;
 use BluePayment\Until\AdminHelper;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 
 class AdminBluepaymentPaymentsController extends ModuleAdminController
 {
+    private $configIframe;
+    private $configIframeServices;
+
     public function __construct()
     {
         $this->bootstrap = true;
         parent::__construct();
         Context::getContext()->smarty->assign('src_img', $this->module->getAssetImages());
+        $this->configIframe = new ConfigBanner();
+        $this->configIframeServices = new ConfigServices();
     }
 
     public function renderView()
@@ -685,9 +692,6 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'section' => [
                 'title' => $this->l('Help'),
             ],
-            'legend' => [
-                'title' => $this->l('HOW TO START?'),
-            ],
             'input' => [
                 [
                     'name' => '',
@@ -709,6 +713,22 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     'name' => '',
                     'type' => 'description',
                     'content' => './help.tpl',
+                ],
+            ],
+        ];
+
+        $fields_form[10]['form'] = [
+            'section' => [
+                'title' => $this->l('Services for you'),
+            ],
+            'legend' => [
+                'title' => $this->l('Services for you'),
+            ],
+            'input' => [
+                [
+                    'name' => '',
+                    'type' => 'description',
+                    'content' => './services-for-you.tpl',
                 ],
             ],
         ];
@@ -744,6 +764,8 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'amplitude_user_id' => Amplitude::getUserId(),
             'amplitude_id' => Amplitude::getInstance()->getAmplitudeId(),
             'bm_assets_images' => $this->module->getAssetImages(),
+            'url_iframe_banner' => $this->configIframe->getLinkIframeByIsoCode($this->context->language->iso_code, $this->context->currency->iso_code),
+            'url_iframe_services' => $this->configIframeServices->getLinkIframeByIsoCode($this->context->language->iso_code),
         ];
 
         return $helper->generateForm($fields_form);

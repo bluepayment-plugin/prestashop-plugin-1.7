@@ -14,6 +14,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BlueMedia\OnlinePayments\Model\Gateway;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 
@@ -138,12 +139,15 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             'OrderID' => (int) $orderId,
             'Amount' => $amount,
             'Description' => 'Google Pay Payment',
-            'GatewayID' => (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_GOOGLE_PAY,
+            'GatewayID' => (string) Gateway::GATEWAY_ID_GOOGLE_PAY,
             'Currency' => pSQL($currency),
             'CustomerEmail' => $customerEmail,
             'CustomerIP' => $_SERVER['REMOTE_ADDR'],
             'Title' => 'Google Pay Payment',
             'PaymentToken' => base64_encode(json_encode($token)),
+            'PlatformName' => 'PrestaShop',
+            'PlatformVersion' => _PS_VERSION_,
+            'PlatformPluginVersion' => $this->module->version,
         ];
 
         $hash = array_merge($data, [$sharedKey]);
@@ -243,7 +247,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
 
         $transaction = $this->getTransactionData(
             $orderId,
-            (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_GOOGLE_PAY
+            (string) Gateway::GATEWAY_ID_GOOGLE_PAY
         );
 
         if (empty($transaction)) {
@@ -351,7 +355,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
      */
     private function transactionQuery(int $orderId, $data)
     {
-        $gateway_id = (string) \BlueMedia\OnlinePayments\Model\Gateway::GATEWAY_ID_GOOGLE_PAY;
+        $gateway_id = (string) Gateway::GATEWAY_ID_GOOGLE_PAY;
         $transaction = $this->getTransactionByOrderId($orderId);
 
         if (empty($transaction)) {

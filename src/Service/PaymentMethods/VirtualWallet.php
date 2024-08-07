@@ -111,6 +111,21 @@ class VirtualWallet implements GatewayType
         return $googlePay || $applePay;
     }
 
+    /**
+     * Function check if active Gpay or Apple Pay
+     *
+     * @return bool
+     */
+    public function isActiveBo(): bool
+    {
+        $isoCode = Helper::getIsoFromContext(\Context::getContext());
+
+        $googlePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_GOOGLE_PAY, $isoCode);
+        $applePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_APPLE_PAY, $isoCode);
+
+        return $googlePay || $applePay;
+    }
+
     public function checkIfActiveSubChannel($gatewayId, $currency): bool
     {
         return BlueGatewayTransfers::isTransferActive(
