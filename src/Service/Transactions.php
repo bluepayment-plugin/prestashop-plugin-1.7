@@ -161,7 +161,9 @@ class Transactions
                     $this->updateTransactionQuery($analiticsData['order_id'], $analiticsData['transaction_data']);
                 }
 
-                $this->changeOrdersStatus($order, $statusAcceptId);
+                if ($order->current_state != $statusAcceptId) {
+                    $this->changeOrdersStatus($order, $statusAcceptId);
+                }
 
                 // BLIK change state
                 if ((int) $transaction->gatewayID === Config::GATEWAY_ID_BLIK) {
@@ -182,7 +184,10 @@ class Transactions
 
                 break;
             case self::PAYMENT_STATUS_FAILURE:
-                $this->changeOrdersStatus($order, $statusErrorId);
+                if ($order->current_state != $statusErrorId) {
+                    $this->changeOrdersStatus($order, $statusErrorId);
+                }
+
                 $amplitude->sendOrderAmplitudeEvent('false', $orderId);
                 break;
             default:

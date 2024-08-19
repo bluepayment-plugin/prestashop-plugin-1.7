@@ -1,5 +1,8 @@
 # Changelog
-## [3.0.5] 07.08.2024
+## [3.0.6] 19.08.2024
+- Fixed a bug with changing order statuses
+
+## [3.0.5] 02.08.2024
 - Added a new section: Services for You, aimed at supporting merchants in running an efficient store
 - Redesigned the informational banner
 - Fixed error GA4 on new version prestashop
