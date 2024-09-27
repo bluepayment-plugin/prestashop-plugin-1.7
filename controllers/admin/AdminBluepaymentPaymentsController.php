@@ -37,6 +37,15 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         Context::getContext()->smarty->assign('src_img', $this->module->getAssetImages());
         $this->configIframe = new ConfigBanner();
         $this->configIframeServices = new ConfigServices();
+        $this->chceckConfigurationService();
+    }
+
+    private function chceckConfigurationService(){
+        foreach (Helper::checkConfigurationServices() as $isocode => $configurationCurrency){
+            if (!$configurationCurrency){
+                $this->warnings [] = $this->l('Service configuration for currency: ').$isocode.$this->l(' is not complete');
+            }
+        }
     }
 
     public function renderView()

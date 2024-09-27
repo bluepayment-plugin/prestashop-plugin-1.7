@@ -49,8 +49,14 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
     private function regulationsGet()
     {
         $currency = $this->context->currency->iso_code;
-        $serviceId = Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
+        $serviceId = (int)Helper::parseConfigByCurrency($this->module->name_upper . Config::SERVICE_PARTNER_ID, $currency);
         $sharedKey = Helper::parseConfigByCurrency($this->module->name_upper . Config::SHARED_KEY, $currency);
+
+        $paymentDataCompleted = !empty($serviceId) && !empty($sharedKey);
+
+        if ($paymentDataCompleted === false) {
+            return false;
+        }
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode

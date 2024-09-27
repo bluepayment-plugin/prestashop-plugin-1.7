@@ -285,6 +285,8 @@ $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_6a26f54883
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_cbd117d597d081dd492e049769f8c802'] = 'JAK ZACZĄĆ';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_6103aa4aab591891292fa91e6044a6bf'] = 'Usługi dla Ciebie';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c1211c7117dc3890214439b340a57a51'] = 'Statusy zamówień, dla których ma zostać zmieniony status płatności';
+$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_b681ae188858f89df49e963362c06a00'] = 'Konfiguracja usługi dla waluty ';
+$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_6d197ab4dbb1cd28558a6f43fa24e620'] = ' jest niedokończona.';
 $_MODULE['<{bluepayment}prestashop>chargegpay_e3c2a4b7674434194f201a1f99eabb7b'] = 'Brak identyfikatora klienta';
 $_MODULE['<{bluepayment}prestashop>payment_e2b7dec8fa4b498156dfee6e4c84b156'] = 'Wybrana forma płatności jest niedostępna.';
 $_MODULE['<{bluepayment}prestashop>payment_638e3e69e028995b3fa7b0e02c11ad55'] = 'Koszyk jest pusty.';

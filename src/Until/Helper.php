@@ -333,4 +333,17 @@ class Helper
 
         return true;
     }
+
+    public static function checkConfigurationServices(){
+
+        $data = [];
+
+        foreach (AdminHelper::getSortCurrencies() as $currency) {
+            $data[$currency['iso_code']] =
+                Helper::parseConfigByCurrency('BLUEPAYMENT_SERVICE_PARTNER_ID', $currency['iso_code']) == '' ||
+                Helper::parseConfigByCurrency('BLUEPAYMENT_SHARED_KEY', $currency['iso_code']) == '' ? false : true;
+        }
+
+        return $data;
+    }
 }

@@ -296,7 +296,7 @@ class Transactions
         foreach ($this->getBrother($order) as $subOrder) {
             $ordersArray[] = $subOrder['id_order'];
         }
-        $orders = array_merge($ordersArray, [$order->id]);
+        $orders = array_unique(array_merge($ordersArray, [$order->id]));
 
         $this->changeOrderStatus($orders, $statusId);
     }
