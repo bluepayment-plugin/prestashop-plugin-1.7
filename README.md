@@ -1,19 +1,28 @@
-Instrukcja modułu płatności online Autopay bluepayment dla platformy PrestaShop 1.7 oraz 8.1
+Instrukcja modułu płatności online Autopay dla platformy PrestaShop 1.7 oraz 8.1
 **Wersja wtyczki**: 3.0.7
 
 ## Podstawowe informacje
-Płatności online Autopay bluepayment to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7 oraz 8.1.
+Płatności online Autopay to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7 oraz 8.1.
 
 ### Główne funkcje
 Do najważniejszych funkcji modułu zalicza się:
-- realizację płatności online poprzez odpowiednie zbudowanie startu transakcji
-- obsługę powiadomień o statusie transakcji (notyfikacje XML)
-- obsługę wielu sklepów jednocześnie z użyciem jednego modułu
-- obsługę zakupów bez rejestracji w serwisie
-- obsługę dwóch trybów działania – testowego i produkcyjnego (dla każdego z nich wymagane są osobne dane kont, po które zwróć się do nas)
-- wybór banku po stronie sklepu i bezpośrednie przekierowanie do płatności w wybranym banku
-- rozszerzoną analitykę danych, dzięki połączeniu z Google Analytics i dodaniu identyfikatora śledzenia
-
+- obsługa 99% dostępnych na rynku metod płatności;
+- prosta aktywacja w zaledwie 15 minut;
+- płatności zaszyte w ścieżce zakupowej sklepu;
+- możliwość zmiany kolejności wyświetlania kanałów płatności;
+- możliwość decydowania o tym, które metody płatności będą widoczne i dostępne dla klienta – w każdej chwili można włączyć i wyłączyć dany kanał;
+- dostępność [Pay by link (PBL)](https://autopay.pl/baza-wiedzy/blog/ecommerce/platnosc-pay-by-link-na-czym-polega-i-co-mozesz-dzieki-niej-zyskac) – dane do przelewu generują się automatycznie, a klient nie ma możliwości ich edycji, dzięki czemu znika ryzyko wystąpienia błędów podczas zlecania transakcji;
+- dostępność [Google Pay](https://autopay.pl/rozwiazania/google-pay) i [Apple Pay](https://autopay.pl/rozwiazania/apple-pay) – prostych i szybkich płatności z użyciem zapisanej karty;
+- płatność kartą – klient uzupełnia niezbędne dane kartowe;
+- płatność [BLIK 0](https://autopay.pl/rozwiazania/blik) – klient pozostaje w widoku koszyka sklepu internetowego i tam wpisuje 6-cyfrowy kod wygenerowany wcześniej w aplikacji mobilnej banku;
+- możliwość integracji z systemem ratalnym Alior – szczególnie przydatne w przypadku sklepów sprzedających droższy asortyment;
+- możliwość uruchomienia płatności odroczonych;
+- płatności w wielu walutach: EUR, GBP, USD;
+- możliwość realizacji zakupów bez rejestracji (jako gość);
+- system notyfikacji e-mail informujących o zmieniającym się statusie transakcji;
+- dwa tryby działania: testowy i produkcyjny;
+- informacje o statusie płatności przekazywane niezwłocznie również do sprzedawcy;
+- możliwość obsługi wielu sklepów.
 ### Wymagania
 - Minimalna wersja PrestaShop: 1.7
 - Wersja PHP zgodna z wymaganiami względem danej wersji sklepu
@@ -27,7 +36,7 @@ Postępuj zgodnie z poniższą instrukcją:
 1. Zaloguj się do swojego panelu administracyjnego w PrestaShop.
 2. Kliknij Moduły > Płatności i wpisz w wyszukiwarkę "Autopay"
 3. Po wyszukaniu modułu płatności, kliknij Włącz
-4. Żeby zakończyć aktywację usługi i móc przejść do Konfiguracji – zarejestruj się w systemie Autopay (PayBM) i przejdź proces [weryfikacyjny](https://developers.autopay.pl/online/wdrozenie-krok-po-kroku#system-paybm).
+4. Żeby zakończyć aktywację usługi i móc przejść do Konfiguracji – zarejestruj się w systemie Autopay i przejdź proces [weryfikacyjny](https://developers.autopay.pl/online/wdrozenie-krok-po-kroku).
 
 Po pozytywnej weryfikacji przez Autopay, płatności online zostaną aktywowane w panelu PrestaShop i będziesz mógł je skonfigurować zgodnie ze swoimi potrzebami.
 
