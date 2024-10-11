@@ -1,5 +1,4 @@
-# Instruction for Autopay Online Payment Module for PrestaShop 1.7 and 8.1
-**Plugin Version**: 3.0.4
+# Instructions for PrestaShop 1.7 and 8.x module: "Autopay online payments"
 
 ## Basic Information
 Autopay online payments is a payment module that enables cashless transactions in a store based on the PrestaShop 1.7 and 8.1 platform.
