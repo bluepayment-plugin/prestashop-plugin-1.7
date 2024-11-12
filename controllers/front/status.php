@@ -23,11 +23,13 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
         header('Content-type: text/xml');
 
         try {
+            Db::getInstance()->execute('START TRANSACTION;');
             $transaction = new Transactions(
                 $this->module,
                 new OrderHistory()
             );
             $transaction->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
+            Db::getInstance()->execute('COMMIT;');
         } catch (Exception $exception) {
             Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [
                 'error' => 'Payment error (' . print_r($exception) . ')',

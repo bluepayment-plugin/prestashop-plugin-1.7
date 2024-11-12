@@ -109,7 +109,12 @@ class Transactions
         $realOrderId = $this->pSql((string) $transaction->orderID);
         $orderId = explode('-', (string) $realOrderId)[0];
 
-        $order = new \Order($orderId);
+        $order = new \Order();
+        $orderTmp = \Db::getInstance()->executeS('SELECT * FROM ps_orders WHERE id_order = ' . (int) $orderId . ' FOR UPDATE;');
+        if (isset($orderTmp[0])) {
+            $order->hydrate($orderTmp[0]);
+        }
+
         $orderPayments = $order->getOrderPaymentCollection();
 
         if (is_object($orderPayments)) {
@@ -121,7 +126,7 @@ class Transactions
         if (!\Validate::isLoadedObject($order)) {
             $message = $this->module->name_upper . ' - Order not found';
             \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', $orderId);
-            $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_NOTCONFIRMED);
+            $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_CONFIRMED);
 
             return;
         }
@@ -184,7 +189,10 @@ class Transactions
 
                 break;
             case self::PAYMENT_STATUS_FAILURE:
-                if ($order->current_state != $statusErrorId) {
+                if (
+                    $order->current_state != $statusErrorId
+                    && $order->current_state != $statusAcceptId
+                ) {
                     $this->changeOrdersStatus($order, $statusErrorId);
                 }
 

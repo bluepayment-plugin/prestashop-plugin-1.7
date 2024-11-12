@@ -1,7 +1,10 @@
 # Changelog
+## [3.0.8] 12.11.2024
+- Fixed a bug with changing order statuses
+
 ## [3.0.7] 27.09.2024
 - Fixed a bug with changing order statuses
-- Added message about unconfigured service
+- Added message about unconfigured service 
 
 ## [3.0.6] 19.08.2024
 - Fixed a bug with changing order statuses
