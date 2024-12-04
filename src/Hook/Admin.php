@@ -65,7 +65,7 @@ class Admin extends AbstractHook
                         new $class()
                     );
 
-                    if (!$gateway->isActiveBo()) {
+                    if (!$gateway->isActiveBo($currency['iso_code'])) {
                         unset($paymentList[$key]);
                     }
                 }

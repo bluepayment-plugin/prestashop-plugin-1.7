@@ -116,10 +116,8 @@ class VirtualWallet implements GatewayType
      *
      * @return bool
      */
-    public function isActiveBo(): bool
+    public function isActiveBo($isoCode): bool
     {
-        $isoCode = Helper::getIsoFromContext(\Context::getContext());
-
         $googlePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_GOOGLE_PAY, $isoCode);
         $applePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_APPLE_PAY, $isoCode);
 

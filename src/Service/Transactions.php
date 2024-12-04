@@ -110,7 +110,7 @@ class Transactions
         $orderId = explode('-', (string) $realOrderId)[0];
 
         $order = new \Order();
-        $orderTmp = \Db::getInstance()->executeS('SELECT * FROM ps_orders WHERE id_order = ' . (int) $orderId . ' FOR UPDATE;');
+        $orderTmp = \Db::getInstance()->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'orders WHERE id_order = ' . (int) $orderId . ' FOR UPDATE;');
         if (isset($orderTmp[0])) {
             $order->hydrate($orderTmp[0]);
         }
@@ -260,6 +260,7 @@ class Transactions
         foreach ($orders as $orderId) {
             $order = new \Order($orderId);
             $currentOrderStatus = (int) $order->getCurrentState();
+//            $currentOrderStatus = (int) $order->getCurrentState();
             $existPayment = !$order->hasInvoice();
 
             if ($currentOrderStatus === $statusWaitingId

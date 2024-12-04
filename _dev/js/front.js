@@ -17,10 +17,10 @@
 /* eslint-enable */
 
 import {
-  getIdElement,
-  getPaymentContainer,
-  getPaymentContent, getPaymentTitle,
-  hideApplePayOtherBrowser
+	getIdElement,
+	getPaymentContainer,
+	getPaymentContent, getPaymentTitle,
+	hideApplePayOtherBrowser
 } from './_partials/helpers';
 
 import {
@@ -31,21 +31,21 @@ import {
 	setWalletTypeSelected
 } from './_partials/wallet';
 
-import {initSlideshows} from './_partials/slideshow';
+import { initSlideshows } from './_partials/slideshow';
 
-import {Modal, openModal} from './_partials/modal';
+import { Modal, openModal } from './_partials/modal';
 
-import {createMainFrame, createPaymentGroup, getAllPaymentsMethodBM} from "./_partials/frame";
+import { createMainFrame, createPaymentGroup, getAllPaymentsMethodBM } from "./_partials/frame";
 
-import {getClauses, getTransferClauses} from "./_partials/regulations"
+import { getClauses, getTransferClauses } from "./_partials/regulations"
 
-import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, ClickResetState} from "./_partials/state"
+import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, ClickResetState } from "./_partials/state"
 
 (function () {
 
 	$(document).ready(function () {
 		bindPsdCheckboxValidator();
-    bmModalSimple();
+		bmModalSimple();
 	});
 
 
@@ -74,28 +74,28 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 		if (!validateBmSubmit()) {
 			$('div[id=payment-confirmation] button').prop('disabled', true);
 		} else {
-      if (isBmTransfer && !conditions.length) {
-        $('div[id=payment-confirmation] button').removeAttr('disabled');
-      } else if (isResetButton) {
-        if (!conditions.length) {
-          $('div[id=payment-confirmation] button').prop('disabled', true);
-        } else {
-          changingClauseBehavior(1, 'back');
-          changingButtonBehavior(1, 'back');
-          conditions.trigger("change");
-        }
-      } else {
-        conditions.trigger("change");
-      }
+			if (isBmTransfer && !conditions.length) {
+				$('div[id=payment-confirmation] button').removeAttr('disabled');
+			} else if (isResetButton) {
+				if (!conditions.length) {
+					$('div[id=payment-confirmation] button').prop('disabled', true);
+				} else {
+					changingClauseBehavior(1, 'back');
+					changingButtonBehavior(1, 'back');
+					conditions.trigger("change");
+				}
+			} else {
+				conditions.trigger("change");
+			}
 		}
 
-    return false;
+		return false;
 	}
 
 	function bindPsdCheckboxValidator() {
 		$('div.content div.payment-options input, section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]')
 			.on('click', function () {
-        const triggerName = this.getAttribute('name');
+				const triggerName = this.getAttribute('name');
 				setTimeout(function () {
 					actionValidate(triggerName === "bm-transfer-id");
 				}, 55);
@@ -110,11 +110,11 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 
 	function BmAHR() {
 		function interceptNetworkRequests(ee) {
-			const {open} = XMLHttpRequest.prototype;
+			const { open } = XMLHttpRequest.prototype;
 			const isRegularXHR = open.toString().indexOf('native code') !== -1;
 
 			if (isRegularXHR) {
-				XMLHttpRequest.prototype.open = function() {
+				XMLHttpRequest.prototype.open = function () {
 					ee.onOpen && ee.onOpen(this, arguments);
 					if (ee.onLoad) {
 						this.addEventListener('load', ee.onLoad.bind(ee, arguments));
@@ -144,32 +144,32 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 
 	initBM();
 
-  getClauses();
+	getClauses();
 
 
 
 	function initBM() {
-    createPaymentGroup();
-    createMainFrame(getAllPaymentsMethodBM());
-    radioPayments();
-    initSlideshows();
-    refreshBM();
+		createPaymentGroup();
+		createMainFrame(getAllPaymentsMethodBM());
+		radioPayments();
+		initSlideshows();
+		refreshBM();
 	}
 
 	function changingBehavior(key, content) {
-    const paymentRedirect = content.querySelector('.bm-payment__elm').getAttribute('data-payment-redirect');
-    const paymentType = content.getAttribute('data-payment-wallet-type');
+		const paymentRedirect = content.querySelector('.bm-payment__elm').getAttribute('data-payment-redirect');
+		const paymentType = content.getAttribute('data-payment-wallet-type');
 
-    if (paymentRedirect) {
-      changingClauseBehavior(key, 'back');
-      changingButtonBehavior(key, 'back');
-    } else if (!paymentRedirect && paymentType === 'GooglePay') {
-      changingButtonBehavior(key, 'hideByClass');
-      changingClauseBehavior(key, 'move');
-    } else {
-      changingClauseBehavior(key, 'back');
-      changingButtonBehavior(key, 'back');
-    }
+		if (paymentRedirect) {
+			changingClauseBehavior(key, 'back');
+			changingButtonBehavior(key, 'back');
+		} else if (!paymentRedirect && paymentType === 'GooglePay') {
+			changingButtonBehavior(key, 'hideByClass');
+			changingClauseBehavior(key, 'move');
+		} else {
+			changingClauseBehavior(key, 'back');
+			changingButtonBehavior(key, 'back');
+		}
 	}
 
 	function changingClauseBehavior(key, behavior) {
@@ -189,7 +189,7 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 
 	function changingButtonBehavior(key, behavior) {
 
-		if(document.querySelector('#tc-payment-confirmation')) {
+		if (document.querySelector('#tc-payment-confirmation')) {
 			return;
 		}
 
@@ -204,22 +204,22 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 			content.append(btn);
 		} else if (behavior === 'back') {
 			style = 'block';
-      if (document.querySelector('#conditions-to-approve') !== null) {
-        document.querySelector('#conditions-to-approve').after(btn);
-      } else {
-        document.querySelector('.payment-options').after(btn);
-      }
+			if (document.querySelector('#conditions-to-approve') !== null) {
+				document.querySelector('#conditions-to-approve').after(btn);
+			} else {
+				document.querySelector('.payment-options').after(btn);
+			}
 		} else if (behavior === 'hide') {
 			style = 'none';
 		}
 
 		setTimeout(function () {
-      if (behavior === 'hideByClass') {
-        btn.classList.add(className);
-      } else {
-        btn.style.display = style;
-        btn.classList.remove(className);
-      }
+			if (behavior === 'hideByClass') {
+				btn.classList.add(className);
+			} else {
+				btn.style.display = style;
+				btn.classList.remove(className);
+			}
 		}, 150);
 	}
 
@@ -238,50 +238,50 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 		for (const item of getAllPaymentOptions) {
 			item.addEventListener('click', (e) => {
 
-        AllResetState();
-        removeGatewayState();
+				AllResetState();
+				removeGatewayState();
 
-        if (item.id === e.target.id) {
-          const id = getIdElement(item);
-          const container = getPaymentContainer(id);
-          const content = getPaymentContent(id);
-          const title = getPaymentTitle(id);
+				if (item.id === e.target.id) {
+					const id = getIdElement(item);
+					const container = getPaymentContainer(id);
+					const content = getPaymentContent(id);
+					const title = getPaymentTitle(id);
 
-          const paymentElm = content.querySelector('.bm-payment__elm');
+					const paymentElm = content.querySelector('.bm-payment__elm');
 
-          if(paymentElm) {
-            const paymentName = paymentElm.getAttribute('data-open-payment');
-            const paymentRedirect = paymentElm.getAttribute('data-payment-redirect');
+					if (paymentElm) {
+						const paymentName = paymentElm.getAttribute('data-open-payment');
+						const paymentRedirect = paymentElm.getAttribute('data-payment-redirect');
 
-            if (paymentName === 'blik' && !paymentRedirect) {
-              changingClauseBehavior(id, 'move');
-              changingButtonBehavior(id, 'hide');
+						if (paymentName === 'blik' && !paymentRedirect) {
+							changingClauseBehavior(id, 'move');
+							changingButtonBehavior(id, 'hide');
 
-            } else if (paymentName === 'wallet') {
+						} else if (paymentName === 'wallet') {
 
-            } else {
-              changingClauseBehavior(id, 'back');
-              changingButtonBehavior(id, 'back');
-            }
-          } else {
-            changingClauseBehavior(id, 'back');
-            changingButtonBehavior(id, 'back');
-          }
-          if (title != null) {
-            title.classList.add('active');
-          }
+						} else {
+							changingClauseBehavior(id, 'back');
+							changingButtonBehavior(id, 'back');
+						}
+					} else {
+						changingClauseBehavior(id, 'back');
+						changingButtonBehavior(id, 'back');
+					}
+					if (title != null) {
+						title.classList.add('active');
+					}
+				
 
-          /// Opening modal
-          if (checkHasModal(id) && modalType(id)) {
-            openModal(modalType(id));
-            ModalSelectPayment(id, modalType(id));
-          } else {
-            item.classList.add('active');
-            container.classList.add('active');
-            content.classList.add('active');
-          }
-        }
-
+					/// Opening modal
+					if (checkHasModal(id) && modalType(id)) {
+						openModal(modalType(id));
+						ModalSelectPayment(id, modalType(id));
+					} else {
+						item.classList.add('active');
+						container.classList.add('active');
+						content.classList.add('active');
+					}
+				}
 			}, false)
 		}
 	}
@@ -294,16 +294,16 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 
 		for (const item of getAllModalSimpleHandlers) {
 			item.addEventListener('click', (e) => {
-        e.preventDefault();
+				e.preventDefault();
 
-        document.querySelector('[data-payment-desc="' + item.dataset.openModalId +'"]').style.display = "block";
+				document.querySelector('[data-payment-desc="' + item.dataset.openModalId + '"]').style.display = "block";
 
-        let myModal = new Modal('#' + item.dataset.openModalId, {
-          keyboard: false,
-          backdrop: true
-        });
+				let myModal = new Modal('#' + item.dataset.openModalId, {
+					keyboard: false,
+					backdrop: true
+				});
 
-        myModal.show();
+				myModal.show();
 
 			}, false)
 		}
@@ -319,8 +319,8 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 
 				const elm = element.getAttribute('data-name');
 
-				const paymentName = document.querySelector('[data-payment-name='+ elm +']');
-				const paymentDesc = document.querySelector('[data-payment-desc='+ elm +']');
+				const paymentName = document.querySelector('[data-payment-name=' + elm + ']');
+				const paymentDesc = document.querySelector('[data-payment-desc=' + elm + ']');
 
 				document.querySelectorAll('.js-additional-information').forEach((element1) => {
 					element1.classList.remove('active');
@@ -336,9 +336,9 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 		document.querySelectorAll('[data-dismiss=modal]').forEach((element) => {
 			element.addEventListener('click', () => {
 				const elm = element.getAttribute('data-name');
-				document.querySelector('[data-payment-name='+ elm +']').classList.remove('active');
-				document.querySelector('[data-payment-desc='+ elm +']').classList.remove('active');
-				document.querySelector('[data-payment-desc='+ elm +']').style.display = 'none';
+				document.querySelector('[data-payment-name=' + elm + ']').classList.remove('active');
+				document.querySelector('[data-payment-desc=' + elm + ']').classList.remove('active');
+				document.querySelector('[data-payment-desc=' + elm + ']').style.display = 'none';
 			});
 		});
 
@@ -348,7 +348,7 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 		const name = item.querySelector('.bluepayment-gateways__name').innerText;
 
 		let createSpan = document.createElement("span")
-    createSpan.className = 'h6';
+		createSpan.className = 'h6';
 		createSpan.innerHTML = name;
 
 		let createPaymentWrap = document.createElement("div")
@@ -377,60 +377,60 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 		return createImg;
 	}
 
-  function buttonResetPaymentState(key) {
-    document.querySelector('.bm-reset').addEventListener('click', e => {
-      e.stopPropagation();
-      e.preventDefault();
+	function buttonResetPaymentState(key) {
+		document.querySelector('.bm-reset').addEventListener('click', e => {
+			e.stopPropagation();
+			e.preventDefault();
 
-      ClickResetState(key);
-      actionValidate(false, true);
-    }, false);
-  }
+			ClickResetState(key);
+			actionValidate(false, true);
+		}, false);
+	}
 
-  function refreshBM() {
-    if ("undefined" != typeof checkoutPaymentParser) {
-      checkoutPaymentParser.bluepayment = {
-        container : function(a) {
-          setTimeout(function() {
-            var paymentName;
-            var element;
-            var n = localStorage.getItem("bm-form-id");
-            var r = getPaymentContainer(n);
-            var o = getPaymentContent(n);
-            if (r && r.id === a[0].id) {
-              if (null != (n = getPaymentTitle(n))) {
-                n.classList.add("active");
-              }
-              n = r.querySelector(".bm-selected-payment");
-              paymentName = r.getAttribute("data-payment-name");
-              r.querySelector("label").style.display = "none";
-              r.querySelector("label").classList.add("bm-payment-hide");
-              if (n) {
-                n.innerHTML = "";
-                element = n;
-              } else {
-                (element = document.createElement("label")).className = "bm-selected-payment";
-              }
-              n = document.querySelector('[data-bm-gateway-id="' + localStorage.getItem("bm-gateway") + '"]');
-              o.style.display = "flex";
-              element.append(createSelectedPaymentImgElement(n));
-              element.append(createSelectedPaymentWrapElement(n));
-              r.appendChild(element);
-              if (n) {
-                n.style.display = "flex";
-              }
-              document.querySelector('[data-show-bm-gateway-id="' + localStorage.getItem("bm-gateway") + '"]').style.display = "block";
-              if ("transfer" === paymentName) {
-                getTransferClauses(n);
-              }
-              getGatewayState();
-              buttonResetPaymentState(5);
-            }
-          }, 40);
-        }
-      };
-    }
-  }
+	function refreshBM() {
+		if ("undefined" != typeof checkoutPaymentParser) {
+			checkoutPaymentParser.bluepayment = {
+				container: function (a) {
+					setTimeout(function () {
+						var paymentName;
+						var element;
+						var n = localStorage.getItem("bm-form-id");
+						var r = getPaymentContainer(n);
+						var o = getPaymentContent(n);
+						if (r && r.id === a[0].id) {
+							if (null != (n = getPaymentTitle(n))) {
+								n.classList.add("active");
+							}
+							n = r.querySelector(".bm-selected-payment");
+							paymentName = r.getAttribute("data-payment-name");
+							r.querySelector("label").style.display = "none";
+							r.querySelector("label").classList.add("bm-payment-hide");
+							if (n) {
+								n.innerHTML = "";
+								element = n;
+							} else {
+								(element = document.createElement("label")).className = "bm-selected-payment";
+							}
+							n = document.querySelector('[data-bm-gateway-id="' + localStorage.getItem("bm-gateway") + '"]');
+							o.style.display = "flex";
+							element.append(createSelectedPaymentImgElement(n));
+							element.append(createSelectedPaymentWrapElement(n));
+							r.appendChild(element);
+							if (n) {
+								n.style.display = "flex";
+							}
+							document.querySelector('[data-show-bm-gateway-id="' + localStorage.getItem("bm-gateway") + '"]').style.display = "block";
+							if ("transfer" === paymentName) {
+								getTransferClauses(n);
+							}
+							getGatewayState();
+							buttonResetPaymentState(5);
+						}
+					}, 40);
+				}
+			};
+		}
+	}
 
 	function ModalSelectPayment(key, item) {
 
@@ -455,9 +455,9 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 				if (!selectedPayment) {
 					createLabel = document.createElement("label");
 					createLabel.className = "bm-selected-payment";
-          container.classList.add("bm-selected-payment-test");
-          container.classList.add("active");
-          content.classList.add("active");
+					container.classList.add("bm-selected-payment-test");
+					container.classList.add("active");
+					content.classList.add("active");
 				} else {
 					selectedPayment.innerHTML = '';
 					createLabel = selectedPayment;
@@ -489,8 +489,8 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 					);
 
 					const walletName = backWallet.replace(/\s+/g, '');
-          const showWallet = document.querySelector('.show' + walletName);
-          const walletElement = document.querySelector('[data-payment-desc=wallet]');
+					const showWallet = document.querySelector('.show' + walletName);
+					const walletElement = document.querySelector('[data-payment-desc=wallet]');
 
 					extendWalletName(
 						setWalletTypeSelected,
@@ -498,7 +498,7 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 						walletName
 					)
 
-          changingBehavior(key, content)
+					changingBehavior(key, content)
 
 					showWallet.style.display = 'block';
 
@@ -507,9 +507,9 @@ import {AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cli
 				container.appendChild(createLabel);
 
 				document.querySelector('.bm-modal .bm-modal__close').click();
-        if (selectedPayment) {
-          selectedPayment.style.display = 'flex';
-        }
+				if (selectedPayment) {
+					selectedPayment.style.display = 'flex';
+				}
 
 				/// Set regulations
 				if (paymentName === 'transfer') {

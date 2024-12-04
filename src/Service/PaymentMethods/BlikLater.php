@@ -96,13 +96,11 @@ class BlikLater implements GatewayType
     /**
      * @return bool
      */
-    public function isActiveBo(): bool
+    public function isActiveBo($isoCode): bool
     {
-        $iso_code = Helper::getIsoFromContext(\Context::getContext());
-
         $blikLater = BlueGatewayChannels::getByGatewayIdAndCurrency(
             Config::GATEWAY_ID_BLIK_LATER,
-            $iso_code
+            $isoCode
         );
 
         return (bool) $blikLater->id;

@@ -76,13 +76,11 @@ class VisaMobile implements GatewayType
     /**
      * @return bool
      */
-    public function isActiveBo(): bool
+    public function isActiveBo($isoCode): bool
     {
-        $iso_code = Helper::getIsoFromContext(\Context::getContext());
-
         return BlueGatewayTransfers::isTransferActive(
             Config::GATEWAY_ID_VISA_MOBILE,
-            $iso_code
+            $isoCode
         );
     }
 }

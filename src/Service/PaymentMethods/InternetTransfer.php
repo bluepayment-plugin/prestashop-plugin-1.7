@@ -76,14 +76,21 @@ class InternetTransfer implements GatewayType
      */
     public function isActive(): bool
     {
-        return true;
+        $iso_code = Helper::getIsoFromContext(\Context::getContext());
+        $idShop = \Context::getContext()->shop->id;
+        $transfer = Helper::getImgPayments('transfers', $iso_code, $idShop);
+
+        return count($transfer) > 0 ? true : false;
     }
 
     /**
      * @return bool
      */
-    public function isActiveBo(): bool
+    public function isActiveBo($isoCode): bool
     {
-        return true;
+        $idShop = \Context::getContext()->shop->id;
+        $transfer = Helper::getImgPayments('transfers', $isoCode, $idShop);
+
+        return count($transfer) > 0 ? true : false;
     }
 }

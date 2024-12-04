@@ -95,13 +95,11 @@ class Spingo implements GatewayType
     /**
      * @return bool
      */
-    public function isActiveBo(): bool
+    public function isActiveBo($isoCode): bool
     {
-        $iso_code = Helper::getIsoFromContext(\Context::getContext());
-
         $spingo = BlueGatewayChannels::getByGatewayIdAndCurrency(
             Config::GATEWAY_ID_SPINGO,
-            $iso_code
+            $isoCode
         );
 
         return (bool) $spingo->id;

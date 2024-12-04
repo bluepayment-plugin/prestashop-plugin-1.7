@@ -45,8 +45,8 @@ class Gateway
         return $this->gateway->isActive();
     }
 
-    public function isActiveBo(): bool
+    public function isActiveBo($isoCode): bool
     {
-        return $this->gateway->isActiveBo();
+        return $this->gateway->isActiveBo($isoCode);
     }
 }

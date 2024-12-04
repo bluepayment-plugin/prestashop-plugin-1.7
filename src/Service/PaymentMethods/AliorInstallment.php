@@ -88,13 +88,11 @@ class AliorInstallment implements GatewayType
     /**
      * @return bool
      */
-    public function isActiveBo(): bool
+    public function isActiveBo($isoCode): bool
     {
-        $iso_code = Helper::getIsoFromContext(\Context::getContext());
-
         $alior = BlueGatewayChannels::getByGatewayIdAndCurrency(
             Config::GATEWAY_ID_ALIOR,
-            $iso_code
+            $isoCode
         );
 
         return (bool) $alior->id;

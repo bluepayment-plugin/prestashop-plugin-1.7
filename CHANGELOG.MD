@@ -1,4 +1,9 @@
 # Changelog
+## [3.0.9] 04.12.2024
+- Fixed a bug with changing order statuses
+- Fixed a bug redirect payment
+- Fixed displayed payments in Admin Panel
+
 ## [3.0.8] 12.11.2024
 - Fixed a bug with changing order statuses
 

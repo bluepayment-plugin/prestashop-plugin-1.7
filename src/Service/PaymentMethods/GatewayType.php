@@ -30,5 +30,5 @@ interface GatewayType
 
     public function isActive(): bool;
 
-    public function isActiveBo(): bool;
+    public function isActiveBo($isoCode): bool;
 }

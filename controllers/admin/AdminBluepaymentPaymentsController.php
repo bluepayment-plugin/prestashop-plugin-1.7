@@ -40,10 +40,11 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $this->chceckConfigurationService();
     }
 
-    private function chceckConfigurationService(){
-        foreach (Helper::checkConfigurationServices() as $isocode => $configurationCurrency){
-            if (!$configurationCurrency){
-                $this->warnings [] = $this->l('Service configuration for currency: ').$isocode.$this->l(' is not complete');
+    private function chceckConfigurationService()
+    {
+        foreach (Helper::checkConfigurationServices() as $isocode => $configurationCurrency) {
+            if (!$configurationCurrency) {
+                $this->warnings[] = $this->l('Service configuration for currency: ') . $isocode . $this->l(' is not complete');
             }
         }
     }
