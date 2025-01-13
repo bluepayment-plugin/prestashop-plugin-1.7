@@ -88,9 +88,11 @@ $(document).ready(function () {
                                     ? response.message
                                     : 'Transaction ERROR - Empty data.';
 
+                                bmSubmitBlikData.postOrderId = response.postOrderId;
                                 clearInterval(blik_verify_check)
                                 bmHideLoader()
                                 responseMessages.parent('div').addClass('has-error')
+                                responseMessages.html('<span class="bm-blik-failure">' + message + '</span>')
                                 responseMessages.html(message)
                                 responseMessages.show()
                                 submitter.removeAttr('disabled')
@@ -138,6 +140,7 @@ $(document).ready(function () {
                 $('#blikSubmit').removeAttr('disabled').removeClass('disabled');
                 $('#wrongBlikCode').hide();
                 $('#bm-termofuse').hide();
+                $('.bm-blik-failure').hide();
                 blikCodeInput.parent('div').removeClass('has-error');
 
             }

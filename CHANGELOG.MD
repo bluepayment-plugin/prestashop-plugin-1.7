@@ -1,4 +1,7 @@
 # Changelog
+## [3.1.0] 13.01.2024
+- Fixed a bug with blik
+
 ## [3.0.9] 04.12.2024
 - Fixed a bug with changing order statuses
 - Fixed a bug redirect payment

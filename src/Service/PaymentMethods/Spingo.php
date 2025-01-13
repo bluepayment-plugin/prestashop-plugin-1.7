@@ -48,6 +48,8 @@ class Spingo implements GatewayType
             'spingo_merchantInfo' => $spingoMerchantInfo,
         ]);
 
+        $cardIdTime = \Context::getContext()->cart->id . '-' . time();
+
         $option = new PaymentOption();
         $option->setCallToActionText($module->l($data['gateway_name']))
             ->setAction($moduleLink)
@@ -61,6 +63,11 @@ class Spingo implements GatewayType
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway_id',
                     'value' => Config::GATEWAY_ID_SPINGO,
+                ],
+                [
+                    'type' => 'hidden',
+                    'name' => 'bluepayment_cart_id',
+                    'value' => $cardIdTime,
                 ],
             ])
             ->setLogo($data['gateway_logo_url'])

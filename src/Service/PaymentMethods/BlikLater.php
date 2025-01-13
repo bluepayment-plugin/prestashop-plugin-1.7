@@ -43,6 +43,7 @@ class BlikLater implements GatewayType
             [],
             true
         );
+        $cardIdTime = \Context::getContext()->cart->id . '-' . time();
 
         \Context::getContext()->smarty->assign([
             'blikLater_merchantInfo' => $blikLaterMerchantInfo,
@@ -60,6 +61,11 @@ class BlikLater implements GatewayType
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway_id',
                     'value' => Config::GATEWAY_ID_BLIK_LATER,
+                ],
+                [
+                    'type' => 'hidden',
+                    'name' => 'bluepayment_cart_id',
+                    'value' => $cardIdTime,
                 ],
             ])
             ->setCallToActionText($data['gateway_name'])

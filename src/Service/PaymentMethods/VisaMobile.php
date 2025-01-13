@@ -36,6 +36,7 @@ class VisaMobile implements GatewayType
             [],
             true
         );
+        $cardIdTime = \Context::getContext()->cart->id . '-' . time();
 
         $option = new PaymentOption();
         $option->setCallToActionText($module->l($data['gateway_name']))
@@ -50,6 +51,11 @@ class VisaMobile implements GatewayType
                     'type' => 'hidden',
                     'name' => 'bluepayment_gateway_id',
                     'value' => Config::GATEWAY_ID_VISA_MOBILE,
+                ],
+                [
+                    'type' => 'hidden',
+                    'name' => 'bluepayment_cart_id',
+                    'value' => $cardIdTime,
                 ],
             ])
             ->setLogo($data['gateway_logo_url'])
