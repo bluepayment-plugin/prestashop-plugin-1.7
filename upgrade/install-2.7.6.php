@@ -17,7 +17,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_2_7_6()
 {
     $smarty = Context::getContext()->smarty;
-    Tools::clearAllCache($smarty);
+    Tools::clearAllCache();
     Tools::clearCompile($smarty);
 
     return true;

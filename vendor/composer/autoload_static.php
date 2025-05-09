@@ -13,7 +13,9 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
         ),
         'B' => 
         array (
+            'BluePayment\\Tests\\' => 18,
             'BluePayment\\' => 12,
+            'BlueMedia\\ProductFeed\\' => 22,
             'BlueMedia\\OnlinePayments\\' => 25,
         ),
     );
@@ -23,13 +25,24 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
         array (
             0 => __DIR__ . '/..' . '/symfony/dotenv',
         ),
+        'BluePayment\\Tests\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/tests/php',
+        ),
         'BluePayment\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+            1 => __DIR__ . '/../..' . '/src',
+        ),
+        'BlueMedia\\ProductFeed\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/ProductFeed',
+            1 => __DIR__ . '/../..' . '/src/ProductFeed',
         ),
         'BlueMedia\\OnlinePayments\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/OnlinePayments',
+            1 => __DIR__ . '/../..' . '/src/OnlinePayments',
         ),
     );
 
@@ -54,6 +67,17 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
         'BlueMedia\\OnlinePayments\\Util\\Translations' => __DIR__ . '/../..' . '/src/OnlinePayments/Util/Translations.php',
         'BlueMedia\\OnlinePayments\\Util\\Validator' => __DIR__ . '/../..' . '/src/OnlinePayments/Util/Validator.php',
         'BlueMedia\\OnlinePayments\\Util\\XMLParser' => __DIR__ . '/../..' . '/src/OnlinePayments/Util/XMLParser.php',
+        'BlueMedia\\ProductFeed\\Configuration\\FeedConfiguration' => __DIR__ . '/../..' . '/src/ProductFeed/Configuration/FeedConfiguration.php',
+        'BlueMedia\\ProductFeed\\Configuration\\FileConfiguration' => __DIR__ . '/../..' . '/src/ProductFeed/Configuration/FileConfiguration.php',
+        'BlueMedia\\ProductFeed\\Configuration\\XmlDataConfiguration' => __DIR__ . '/../..' . '/src/ProductFeed/Configuration/XmlDataConfiguration.php',
+        'BlueMedia\\ProductFeed\\Configuration\\XmlFeedConfiguration' => __DIR__ . '/../..' . '/src/ProductFeed/Configuration/XmlFeedConfiguration.php',
+        'BlueMedia\\ProductFeed\\Creator\\SimpleXMLCreator' => __DIR__ . '/../..' . '/src/ProductFeed/Creator/SimpleXMLCreator.php',
+        'BlueMedia\\ProductFeed\\DataProvider\\ProductDataProvider' => __DIR__ . '/../..' . '/src/ProductFeed/DataProvider/ProductDataProvider.php',
+        'BlueMedia\\ProductFeed\\Executor\\ProductExecutor' => __DIR__ . '/../..' . '/src/ProductFeed/Executor/ProductExecutor.php',
+        'BlueMedia\\ProductFeed\\Generator\\XmlGenerator' => __DIR__ . '/../..' . '/src/ProductFeed/Generator/XmlGenerator.php',
+        'BlueMedia\\ProductFeed\\Menager\\FileMenager' => __DIR__ . '/../..' . '/src/ProductFeed/Menager/FileMenager.php',
+        'BlueMedia\\ProductFeed\\Presenter\\ProductPresenter' => __DIR__ . '/../..' . '/src/ProductFeed/Presenter/ProductPresenter.php',
+        'BlueMedia\\ProductFeed\\Remover\\FileRemover' => __DIR__ . '/../..' . '/src/ProductFeed/Remover/FileRemover.php',
         'BluePayment' => __DIR__ . '/../..' . '/bluepayment.php',
         'BluePayment\\Adapter\\ConfigurationAdapter' => __DIR__ . '/../..' . '/src/Adapter/ConfigurationAdapter.php',
         'BluePayment\\Analyse\\Amplitude' => __DIR__ . '/../..' . '/src/Analyse/Amplitude.php',
@@ -64,6 +88,8 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
         'BluePayment\\Api\\BlueGatewayTransfers' => __DIR__ . '/../..' . '/src/Api/BlueGatewayTransfers.php',
         'BluePayment\\Api\\GatewayInterface' => __DIR__ . '/../..' . '/src/Api/GatewayInterface.php',
         'BluePayment\\Config\\Config' => __DIR__ . '/../..' . '/src/Config/Config.php',
+        'BluePayment\\Config\\ConfigBanner' => __DIR__ . '/../..' . '/src/Config/ConfigBanner.php',
+        'BluePayment\\Config\\ConfigServices' => __DIR__ . '/../..' . '/src/Config/ConfigServices.php',
         'BluePayment\\Configure\\Configure' => __DIR__ . '/../..' . '/src/Configure/Configure.php',
         'BluePayment\\Hook\\AbstractHook' => __DIR__ . '/../..' . '/src/Hook/AbstractHook.php',
         'BluePayment\\Hook\\Admin' => __DIR__ . '/../..' . '/src/Hook/Admin.php',

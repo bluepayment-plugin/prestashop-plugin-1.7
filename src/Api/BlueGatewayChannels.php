@@ -241,7 +241,7 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
         $q->select('gc.id_blue_gateway_channels, gc.position');
         $q->from(self::TABLE, 'gc');
         $q->leftJoin('blue_gateway_channels_shop', 'gcs', 'gcs.id_blue_gateway_channels = gc.id_blue_gateway_channels');
-        $q->where('gc.id_blue_gateway_channels = "' . (int) $id . '"');
+        $q->where('gc.id_blue_gateway_channels = ' . (int) $id);
         if (\Shop::isFeatureActive()) {
             $q->where('gcs.id_shop = ' . (int) $shopId);
         }

@@ -24,6 +24,7 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
 
         try {
             Db::getInstance()->execute('START TRANSACTION;');
+
             $transaction = new Transactions(
                 $this->module,
                 new OrderHistory()

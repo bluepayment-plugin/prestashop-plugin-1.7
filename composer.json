@@ -6,7 +6,8 @@
   "autoload": {
     "psr-4": {
       "BluePayment\\": "src/",
-      "BlueMedia\\OnlinePayments\\": "src/OnlinePayments"
+      "BlueMedia\\OnlinePayments\\": "src/OnlinePayments",
+      "BlueMedia\\ProductFeed\\": "src/ProductFeed"
     },
     "classmap": [
       "bluepayment.php"
@@ -16,6 +17,7 @@
     "psr-4": {
       "BluePayment\\": "src/",
       "BluePayment\\Tests\\": "tests/php/",
+      "BlueMedia\\ProductFeed\\": "src/ProductFeed",
       "BlueMedia\\OnlinePayments\\": "src/OnlinePayments"
     },
     "classmap": [

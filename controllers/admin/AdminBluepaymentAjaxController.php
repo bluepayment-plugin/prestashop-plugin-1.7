@@ -14,6 +14,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BlueMedia\ProductFeed\Configuration\FeedConfiguration;
+use BlueMedia\ProductFeed\Menager\FileMenager;
+use BlueMedia\ProductFeed\Remover\FileRemover;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
@@ -152,6 +155,12 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
             $gateway = new BlueGateway($this->module, new BlueAPI($this->module));
             $gateway->getChannels();
             $gateway->getTransfers();
+
+            if (!Configuration::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED)) {
+                $fileMenage = new FileMenager();
+                $fileRemover = new FileRemover($fileMenage);
+                $fileRemover->removeAllFeedFile();
+            }
 
             $this->ajaxDie(json_encode(['success' => true]));
         } catch (Exception $exception) {

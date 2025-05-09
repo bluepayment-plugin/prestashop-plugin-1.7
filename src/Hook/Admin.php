@@ -134,7 +134,7 @@ class Admin extends AbstractHook
                 $this->context->smarty->assign(['version' => $ver]);
             }
 
-            if ($ver && version_compare($ver, $version, '>')) {
+            if (isset($ver) && $ver && version_compare($ver, $version, '>')) {
                 \PrestaShopLogger::addLog('Autopay - Dostępna aktualizacja', 2);
 
                 return $this->module->fetch('module:bluepayment/views/templates/admin/_partials/upgrade.tpl');

@@ -37,7 +37,6 @@ class VisaMobile implements GatewayType
             true
         );
         $cardIdTime = \Context::getContext()->cart->id . '-' . time();
-
         $option = new PaymentOption();
         $option->setCallToActionText($module->l($data['gateway_name']))
             ->setAction($moduleLink)

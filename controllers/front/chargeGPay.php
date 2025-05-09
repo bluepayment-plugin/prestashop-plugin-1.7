@@ -17,6 +17,7 @@ if (!defined('_PS_VERSION_')) {
 use BlueMedia\OnlinePayments\Model\Gateway;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use PrestaShop\PrestaShop\Core\Domain\Order\Exception\OrderException;
 
 /**
  * @property BluePayment $module

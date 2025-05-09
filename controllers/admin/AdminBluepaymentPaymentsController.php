@@ -14,6 +14,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BlueMedia\ProductFeed\Configuration\FeedConfiguration;
+use BlueMedia\ProductFeed\Menager\FileMenager;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
@@ -113,7 +115,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 if ((isset($pos[1], $pos[2])) && ($pos[2] == $idPosition)) {
                     $GatewayChannels = new BlueGatewayChannels($idPosition);
                     if (Validate::isLoadedObject($GatewayChannels)) {
-                        if (isset($position) && $GatewayChannels->updatePosition($idPosition, $way, $position)) {
+                        if ($GatewayChannels->updatePosition($idPosition, $way, $position)) {
                             Hook::exec('actionBlueGatewayChannelsUpdate');
                             exit(true);
                         } else {
@@ -233,6 +235,44 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $fields_form[2]['form'] = [
             'section' => [
+                'title' => $this->l('Product feed XML'),
+            ],
+            'legend' => [
+                'title' => $this->l('Product feed XML'),
+            ],
+            'input' => [
+                [
+                    'name' => '',
+                    'type' => 'description',
+                    'content' => './product-feed-xml.tpl',
+                ],
+                [
+                    'type' => 'switch',
+                    'label' => $this->l('Enable Autopay campaign tracking and publish product stream'),
+                    'name' => $this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED,
+                    'size' => 'full',
+                    'values' => [
+                        [
+                            'id' => 'active_on',
+                            'value' => 1,
+                            'label' => $this->l('Enabled'),
+                        ],
+                        [
+                            'id' => 'active_off',
+                            'value' => 0,
+                            'label' => $this->l('Disabled'),
+                        ],
+                    ],
+                ],
+            ],
+            'submit' => [
+                'title' => $this->l('Save'),
+                'class' => 'btn btn-primary pull-right',
+            ],
+        ];
+
+        $fields_form[3]['form'] = [
+            'section' => [
                 'title' => $this->l('Payment settings'),
             ],
             'legend' => [
@@ -285,7 +325,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[3]['form'] = [
+        $fields_form[4]['form'] = [
             'section' => [
                 'title' => $this->l('Payment settings'),
             ],
@@ -345,8 +385,42 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
+        $fields_form[5]['form'] = [
+            'section' => [
+                'title' => $this->l('Payment settings'),
+            ],
+            'legend' => [
+                'title' => $this->l('Payment info settings'),
+            ],
+            'input' => [
+                [
+                    'type' => 'switch-choose',
+                    'label' => $this->l('Send customer phone'),
+                    'name' => $this->module->name_upper . '_SEND_CUSTOM_PHONE',
+                    'size' => 'full',
+                    'values' => [
+                        [
+                            'id' => 'active_on',
+                            'value' => 1,
+                            'label' => $this->l('Yes'),
+                        ],
+                        [
+                            'id' => 'active_off',
+                            'value' => 0,
+                            'label' => $this->l('No'),
+                        ],
+                    ],
+                ],
+            ],
+            'submit' => [
+                'save_event' => 'USTAWIENIA DANYCH PŁATNOŚCI',
+                'title' => $this->l('Save'),
+                'class' => 'btn btn-primary pull-right',
+            ],
+        ];
+
         if ($alior) {
-            $fields_form[4]['form'] = [
+            $fields_form[6]['form'] = [
                 'section' => [
                     'title' => $this->l('Payment settings'),
                 ],
@@ -532,7 +606,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ];
         } else {
-            $fields_form[4]['form'] = [
+            $fields_form[6]['form'] = [
                 'section' => [
                     'title' => $this->l('Payment settings'),
                 ],
@@ -559,7 +633,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ];
         }
 
-        $fields_form[5]['form'] = [
+        $fields_form[7]['form'] = [
             'section' => [
                 'title' => $this->l('Payment settings'),
             ],
@@ -616,7 +690,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[6]['form'] = [
+        $fields_form[8]['form'] = [
             'section' => [
                 'title' => $this->l('Analitics'),
             ],
@@ -682,7 +756,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[7]['form'] = [
+        $fields_form[9]['form'] = [
             'section' => [
                 'title' => $this->l('Analitics'),
             ],
@@ -698,7 +772,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[8]['form'] = [
+        $fields_form[10]['form'] = [
             'section' => [
                 'title' => $this->l('Help'),
             ],
@@ -711,7 +785,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[9]['form'] = [
+        $fields_form[11]['form'] = [
             'section' => [
                 'title' => $this->l('Help'),
             ],
@@ -727,7 +801,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[10]['form'] = [
+        $fields_form[12]['form'] = [
             'section' => [
                 'title' => $this->l('Services for you'),
             ],
@@ -764,6 +838,27 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $link = new Link();
         $ajax_controller = $link->getAdminLink('AdminBluepaymentAjax');
 
+        $productFeedCronLink = [];
+        $productFeedFileLink = [];
+        foreach (Shop::getShops() as $shop) {
+            $idDefaultLanguage = Configuration::get('PS_LANG_DEFAULT', null, null, $shop['id_shop']);
+            $productFeedCronLink[] = $this->context->link->getModuleLink(
+                'bluepayment',
+                'feed',
+                [
+                    'id_lang' => $idDefaultLanguage,
+                    'id_shop' => $shop['id_shop'],
+                ]
+            );
+
+            $fileMenage = new FileMenager();
+            $filePath = $fileMenage->generateFilePath($idDefaultLanguage, $shop['id_shop']);
+            $fileLink = str_replace(_PS_ROOT_DIR_ . '/', $this->context->link->getBaseLink(), $filePath);
+            if (file_exists($filePath)) {
+                $productFeedFileLink[] = $fileLink;
+            }
+        }
+
         $helper->tpl_vars = [
             'fields_value' => $this->getConfigFieldsValues(),
             'languages' => $this->context->controller->getLanguages(),
@@ -776,6 +871,9 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'bm_assets_images' => $this->module->getAssetImages(),
             'url_iframe_banner' => $this->configIframe->getLinkIframeByIsoCode($this->context->language->iso_code, $this->context->currency->iso_code),
             'url_iframe_services' => $this->configIframeServices->getLinkIframeByIsoCode($this->context->language->iso_code),
+            'product_feed_cron_link' => $productFeedCronLink,
+            'product_feed_file_link' => $productFeedFileLink,
+            'is_disable_product_feed' => Configuration::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED),
         ];
 
         return $helper->generateForm($fields_form);

@@ -16,6 +16,7 @@ if (!defined('_PS_VERSION_')) {
 
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use PrestaShop\PrestaShop\Core\Domain\Order\Exception\OrderException;
 
 class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
 {

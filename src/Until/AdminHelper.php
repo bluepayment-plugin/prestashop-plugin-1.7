@@ -181,8 +181,8 @@ class AdminHelper
         $query->select('gt.*');
         $query->from('blue_gateway_transfers', 'gt');
         $query->leftJoin('blue_gateway_transfers_shop', 'gcs', 'gcs.id = gt.id');
-        $query->where('gt.gateway_id ' . $q);
-        $query->where('gt.gateway_currency = "' . pSql($currency) . '"');
+        $query->where('gt.gateway_id ' . pSQL($q));
+        $query->where('gt.gateway_currency = "' . pSQL($currency) . '"');
 
         if (\Shop::isFeatureActive()) {
             $query->where('gcs.id_shop = ' . (int) $idShop);

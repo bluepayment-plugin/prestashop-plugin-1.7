@@ -127,7 +127,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '3.1.0';
+        $this->version = '3.1.1';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -314,6 +314,8 @@ class BluePayment extends PaymentModule
         $this->l('Payment by card');
         $this->l('Virtual wallet');
         $this->l('Autopay - Configuration');
+        $this->l('Description XML');
+        $this->l('Title XML');
     }
 
     /**

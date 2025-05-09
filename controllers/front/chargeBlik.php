@@ -17,6 +17,7 @@ if (!defined('_PS_VERSION_')) {
 use BlueMedia\OnlinePayments\Model\Gateway;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use Configuration as Cfg;
 
 class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 {
@@ -76,6 +77,11 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         $customer = new Customer($cart->id_customer);
         $customerEmail = $customer->email;
 
+        $customerPhone = null;
+        if (Cfg::get('BLUEPAYMENT_SEND_CUSTOM_PHONE')) {
+            $customerPhone = Helper::getPhoneNumberByCartId($cart->id);
+        }
+
         if (Validate::isLoadedObject($this->context->cart) && !$this->context->cart->OrderExists()) {
             $this->moduleValidateOrder($cart->id, $amount, $customer);
         }
@@ -93,7 +99,8 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             $amount,
             $currency,
             $customerEmail,
-            $blikCode
+            $blikCode,
+            $customerPhone
         );
 
         echo json_encode($result);
@@ -124,7 +131,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($query, false);
     }
 
-    private function initTransaction($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode): array
+    private function initTransaction($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode, $customerPhone = null): array
     {
         $transaction = $this->getTransactionData($orderId, $blikCode);
 
@@ -136,7 +143,8 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
                 $amount,
                 $currency,
                 $customerEmail,
-                $blikCode
+                $blikCode,
+                $customerPhone
             );
 
             $result = $this->validateRequest($request, $orderId, $blikCode);
@@ -161,7 +169,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
         return $result;
     }
 
-    private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode)
+    private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode, $customerPhone = null)
     {
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode
@@ -180,12 +188,17 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
             'CustomerEmail' => $customerEmail,
             'CustomerIP' => $_SERVER['REMOTE_ADDR'],
             'Title' => 'BLIK Payment',
+            'CustomerPhone' => $customerPhone,
             'AuthorizationCode' => $blikCode,
             'ScreenType' => 'FULL',
             'PlatformName' => 'PrestaShop',
             'PlatformVersion' => _PS_VERSION_,
             'PlatformPluginVersion' => $this->module->version,
         ];
+
+        $data = array_filter($data, function ($value) {
+            return !is_null($value);
+        });
 
         $hash = array_merge($data, [$sharedKey]);
         $hash = Helper::generateAndReturnHash($hash);

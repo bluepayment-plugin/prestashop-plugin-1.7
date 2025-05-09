@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2024
+ * @copyright      Copyright (c) 2015-2025
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -87,13 +87,11 @@ $(document).ready(function () {
                                 let message = typeof response.message !== 'undefined' && response.message.length !== 0
                                     ? response.message
                                     : 'Transaction ERROR - Empty data.';
-
                                 bmSubmitBlikData.postOrderId = response.postOrderId;
                                 clearInterval(blik_verify_check)
                                 bmHideLoader()
                                 responseMessages.parent('div').addClass('has-error')
                                 responseMessages.html('<span class="bm-blik-failure">' + message + '</span>')
-                                responseMessages.html(message)
                                 responseMessages.show()
                                 submitter.removeAttr('disabled')
                             } else {

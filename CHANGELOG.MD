@@ -1,5 +1,9 @@
 # Changelog
-## [3.1.0] 13.01.2024
+## [3.1.1] 06.05.2025
+- Add Autopay pixel - product feed
+- Add customer phone number to start transaction
+
+## [3.1.0] 13.01.2025
 - Fixed a bug with blik
 
 ## [3.0.9] 04.12.2024

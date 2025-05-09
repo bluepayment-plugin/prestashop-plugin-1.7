@@ -260,7 +260,6 @@ class Transactions
         foreach ($orders as $orderId) {
             $order = new \Order($orderId);
             $currentOrderStatus = (int) $order->getCurrentState();
-//            $currentOrderStatus = (int) $order->getCurrentState();
             $existPayment = !$order->hasInvoice();
 
             if ($currentOrderStatus === $statusWaitingId
@@ -318,8 +317,8 @@ class Transactions
         $sql = new \DbQuery();
         $sql->select('id_order');
         $sql->from('orders');
-        $sql->where('reference = "' . $order->reference . '"');
-        $sql->where('id_cart = "' . (int) $order->id_cart . '"');
+        $sql->where('reference = "' . pSQL($order->reference) . '"');
+        $sql->where('id_cart = ' . (int) $order->id_cart);
 
         return \Db::getInstance()->executeS($sql);
     }

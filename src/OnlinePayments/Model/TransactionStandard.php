@@ -77,6 +77,11 @@ class TransactionStandard extends TransactionInit
     protected $language = 'pl';
 
     /**
+     * Customer phone number
+     */
+    protected $customerPhone = '';
+
+    /**
      * Set customerNrb.
      *
      * @param string $customerNrb
@@ -252,6 +257,26 @@ class TransactionStandard extends TransactionInit
     }
 
     /**
+     * @param string $customerPhone
+     *
+     * @return $this
+     */
+    public function setCustomerPhone($customerPhone)
+    {
+        $this->customerPhone = $customerPhone;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomerPhone()
+    {
+        return $this->customerPhone;
+    }
+
+    /**
      * Return object data as array.
      *
      * @return array
@@ -294,6 +319,10 @@ class TransactionStandard extends TransactionInit
 
         if (!empty($this->getLanguage())) {
             $result['Language'] = strtoupper($this->getLanguage());
+        }
+
+        if (!empty($this->customerPhone)) {
+            $result['CustomerPhone'] = $this->getCustomerPhone();
         }
 
         return Sorter::sortTransactionParams($result);

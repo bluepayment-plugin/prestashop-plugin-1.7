@@ -36,7 +36,7 @@ function upgrade_module_2_8_9($module)
     $amplitude->sendEvent($data);
 
     $smarty = Context::getContext()->smarty;
-    Tools::clearAllCache($smarty);
+    Tools::clearAllCache();
     Tools::clearCompile($smarty);
 
     return true;

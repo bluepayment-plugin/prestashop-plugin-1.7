@@ -18,6 +18,7 @@ use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\TransactionStandard;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use Configuration as Cfg;
 
 class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 {
@@ -44,6 +45,11 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         $customer = new Customer($cart->id_customer);
         if (!Validate::isLoadedObject($customer)) {
             Tools::redirect('index.php?controller=order&step=1');
+        }
+
+        $customerPhone = null;
+        if (Cfg::get('BLUEPAYMENT_SEND_CUSTOM_PHONE')) {
+            $customerPhone = Helper::getPhoneNumberByCartId($cart->id);
         }
 
         if (Validate::isLoadedObject($this->context->cart) && !$this->context->cart->OrderExists()) {
@@ -87,7 +93,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign([
             'bm_dir' => $this->module->getPathUrl(),
-            'form' => $this->createTransaction($gateway_id, $orderId, $amount, $customer),
+            'form' => $this->createTransaction($gateway_id, $orderId, $amount, $customer, $customerPhone),
         ]);
 
         $this->createTransactionQuery($orderId);
@@ -114,7 +120,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
         return $authorized;
     }
 
-    private function createTransaction($gateway_id, $orderId, $amount, $customer)
+    private function createTransaction($gateway_id, $orderId, $amount, $customer, $customerPhone = null)
     {
         $isoCode = $this->context->currency->iso_code;
 
@@ -140,6 +146,10 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             ->setCurrency($isoCode)
             ->setHtmlFormLanguage($this->context->language->iso_code ?: Config::DEFAULT_PAYMENT_FORM_LANGUAGE)
             ->setLanguage($this->context->language->iso_code ?: Config::DEFAULT_PAYMENT_FORM_LANGUAGE);
+
+        if ($customerPhone) {
+            $transactionStandard->setCustomerPhone($customerPhone);
+        }
 
         $regulationId = Tools::getValue('bluepayment-hidden-psd2-regulation-id', null);
 

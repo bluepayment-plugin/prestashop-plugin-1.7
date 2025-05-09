@@ -209,7 +209,7 @@ class TransactionBackground extends TransactionInit
         }
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $result = parent::toArray();
 

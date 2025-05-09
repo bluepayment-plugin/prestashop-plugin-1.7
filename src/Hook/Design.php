@@ -19,6 +19,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BlueMedia\ProductFeed\Configuration\FeedConfiguration;
 use Configuration as Cfg;
 
 class Design extends AbstractHook
@@ -33,6 +34,7 @@ class Design extends AbstractHook
         'displayLeftColumn',
         'displayRightColumn',
         'displayShoppingCartFooter',
+        'displayHeader',
     ];
 
     /**
@@ -86,6 +88,17 @@ class Design extends AbstractHook
         }
 
         return null;
+    }
+
+    public function displayHeader()
+    {
+        $feedConfiguration = new FeedConfiguration();
+        $parameters = $feedConfiguration->getParameters(\Context::getContext()->currency->iso_code);
+        $parameters['is_disable_product_feed'] = Cfg::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED);
+
+        $this->context->smarty->assign($parameters);
+
+        return $this->context->smarty->fetch('module:bluepayment/views/templates/front/display_header.tpl');
     }
 
     /**

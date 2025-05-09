@@ -200,6 +200,21 @@ class Configure
 
                 $res &= empty(
                     $this->configurationAdapter->get(
+                        $this->name . '_SEND_CUSTOM_PHONE',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
+                    $this->name . '_SEND_CUSTOM_PHONE',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
                         $this->name . '_PROMO_PAY_LATER',
                         null,
                         $group_id,
@@ -329,6 +344,8 @@ class Configure
             $res &= empty($this->configurationAdapter->get($this->name . '_BLIK_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_BLIK_REDIRECT', 0) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_GPAY_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_GPAY_REDIRECT', 0) : true;
 
+            $res &= empty($this->configurationAdapter->get($this->name . '_SEND_CUSTOM_PHONE')) ? $this->configurationAdapter->updateValue($this->name . '_SEND_CUSTOM_PHONE', 0) : true;
+
             $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_PAY_LATER')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_PAY_LATER', 1) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_PROMO_MATCHED_INSTALMENTS')) ? $this->configurationAdapter->updateValue($this->name . '_PROMO_MATCHED_INSTALMENTS', 1) : true;
 
@@ -345,7 +362,7 @@ class Configure
         );
 
         $smarty = \Context::getContext()->smarty;
-        \Tools::clearAllCache($smarty);
+        \Tools::clearAllCache();
         \Tools::clearCompile($smarty);
 
         return (bool) $res;
