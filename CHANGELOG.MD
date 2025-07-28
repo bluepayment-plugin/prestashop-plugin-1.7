@@ -1,4 +1,7 @@
 # Changelog
+## [3.2.0] 23.06.2025
+- Update functionality of refunds
+
 ## [3.1.1] 06.05.2025
 - Add Autopay pixel - product feed
 - Add customer phone number to start transaction

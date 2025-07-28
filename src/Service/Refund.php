@@ -31,7 +31,7 @@ class Refund
         $this->module = $module;
     }
 
-    public function refundOrder($amount, $remoteId, \Currency $currency): array
+    public function refundOrder(int $orderId, $amount, $remoteId, \Currency $currency): array
     {
         $amount = number_format((float) $amount, 2, '.', '');
 
@@ -59,7 +59,7 @@ class Refund
         $test_mode = \Configuration::get($this->module->name_upper . '_TEST_ENV');
         $payUrl = $test_mode ? \BlueMedia\OnlinePayments\Gateway::PAYMENT_DOMAIN_SANDBOX : \BlueMedia\OnlinePayments\Gateway::PAYMENT_DOMAIN_LIVE;
         curl_setopt_array($curl, [
-            CURLOPT_URL => 'https://' . $payUrl . '/transactionRefund',
+            CURLOPT_URL => 'https://' . $payUrl . '/settlementapi/transactionRefund',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -74,13 +74,51 @@ class Refund
         curl_close($curl);
         $xml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
         $resultSuccess = false;
-        $info = false;
-        if ($xml->messageID) {
-            if ($xml->messageID == $messageId) {
-                $resultSuccess = true;
+
+        if (isset($xml->messageID) && (string) $xml->messageID == $messageId) {
+            try {
+                $db = \Db::getInstance();
+                $data = [
+                    'order_id' => (int) $orderId,
+                    'remote_id' => pSQL($remoteId),
+                    'remote_out_id' => null,
+                    'amount' => (float) $amount,
+                    'currency' => pSQL($currency->iso_code),
+                    'message_id' => pSQL($messageId),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ];
+
+                if ($db->insert('blue_gateways_refunds', $data)) {
+                    $resultSuccess = true;
+                    $info = $this->module->l('Refund request submitted. Waiting for confirmation.', 'refund');
+                } else {
+                    $info = $this->module->l('Failed to record refund request in database: ', 'refund') . $db->getMsgError();
+                    \PrestaShopLogger::addLog(
+                        'Autopay Refund Error: Failed to insert into blue_gateways_refunds. DB Error: ' . $db->getMsgError() .
+                        ' Data: ' . print_r($data, true),
+                        3
+                    );
+                }
+            } catch (\PrestaShopDatabaseException $e) {
+                $resultSuccess = false;
+                $info = $this->module->l('Database error while recording refund request.', 'refund');
+                \PrestaShopLogger::addLog(
+                    'Autopay Refund Error: Exception during insert into blue_gateways_refunds. Exception: ' . $e->getMessage() .
+                    ' Data: ' . print_r($data, true),
+                    3
+                );
             }
+        } elseif (isset($xml->description)) {
+            $info = (string) $xml->description;
+        } elseif (curl_errno($curl)) {
+            $info = $this->module->l('Curl error: ', 'refund') . curl_error($curl);
         } else {
-            $info = $xml->description;
+            $info = $this->module->l('Unknown error during refund request or invalid response structure.', 'refund');
+            \PrestaShopLogger::addLog(
+                'Autopay Refund Error: Unknown error or invalid response. Response: ' . $response,
+                3
+            );
         }
 
         return [$resultSuccess, $info];

@@ -176,23 +176,17 @@ class Admin extends AbstractHook
                 $order = new \OrderCore($order->id);
                 $currency = new \Currency($order->id_currency);
 
-                $refundOrder = $refund->refundOrder(
+                $refundResult = $refund->refundOrder(
+                    (int) $order->id,
                     $refund_amount,
                     $order_payment['remote_id'],
                     $currency
                 );
 
-                if (!empty($refundOrder[1]) || $refundOrder[0] !== true) {
-                    $refund_errors[] = $this->module->l('Refund error: ') . $refundOrder[1];
-                }
-
-                if (empty($refund_errors) && $refundOrder[0] === true) {
-                    $history = new \OrderHistory();
-                    $history->id_order = (int) $order->id;
-                    $history->id_employee = (int) $this->context->employee->id;
-                    $history->changeIdOrderState(Cfg::get('PS_OS_REFUND'), (int) $order->id);
-                    $history->addWithemail(true, []);
-                    $refund_success[] = $this->module->l('Successful refund');
+                if ($refundResult[0] === true) {
+                    $refund_success[] = $refundResult[1];
+                } else {
+                    $refund_errors[] = $this->module->l('Refund request failed: ', 'admin') . $refundResult[1];
                 }
             }
         }

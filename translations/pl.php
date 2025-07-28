@@ -480,3 +480,9 @@ $_MODULE['<{bluepayment}prestashop>chargeblik_2dd485e2578bd9ca38f3b864e97a8fa4']
 $_MODULE['<{bluepayment}prestashop>chargeblik_15353e64372e441517b87fcea7cdf570'] = 'Ważność kodu BLIK minęła';
 $_MODULE['<{bluepayment}prestashop>payment_e2b7dec8fa4b498156dfee6e4c84b156'] = 'Wybrana forma płatności jest niedostępna.';
 $_MODULE['<{bluepayment}prestashop>payment_638e3e69e028995b3fa7b0e02c11ad55'] = 'Koszyk jest pusty.';
+$_MODULE['<{bluepayment}prestashop>refund_0f5c56bab915d8f1fc1e1d184d95fb97'] = 'Żądanie zwrotu przesłane. Oczekiwanie na potwierdzenie.';
+$_MODULE['<{bluepayment}prestashop>refund_064cda6140f7a3fa18ec7b0e813576f3'] = 'Nie udało się zarejestrować żądania zwrotu w bazie danych:';
+$_MODULE['<{bluepayment}prestashop>refund_e4cc6b080ae07d860f9b6897f3b70ce7'] = 'Błąd bazy danych podczas rejestrowania żądania zwrotu.';
+$_MODULE['<{bluepayment}prestashop>refund_f9a71bcce33424673cddd03493751cb3'] = 'Błąd curl:';
+$_MODULE['<{bluepayment}prestashop>refund_fcabf61f75f0bae312a2b1c4fbd927f6'] = 'Nieznany błąd podczas żądania zwrotu lub nieprawidłowa struktura odpowiedzi.';
+$_MODULE['<{bluepayment}prestashop>admin_95fd71f0b7e8d3f187a552733e89c417'] = 'Żądanie zwrotu nie powiodło się:';
