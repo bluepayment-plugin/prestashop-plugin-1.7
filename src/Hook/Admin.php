@@ -191,6 +191,10 @@ class Admin extends AbstractHook
             }
         }
 
+        $refunds = \Db::getInstance()->executeS(
+            'SELECT * FROM `' . _DB_PREFIX_ . 'blue_gateways_refunds` WHERE `order_id` = ' . (int) $params['id_order']
+        );
+
         $this->context->smarty->assign([
             'BM_ORDERS' => Helper::getOrdersByOrderId($params['id_order']),
             'BM_ORDER_ID' => $this->module->id_order,
@@ -201,6 +205,7 @@ class Admin extends AbstractHook
             'REFUND_SUCCESS' => $refund_success,
             'REFUND_TYPE' => $refund_type,
             'REFUND_AMOUNT' => $refund_amount,
+            'BM_REFUNDS' => $refunds,
         ]);
 
         return $this->module->fetch('module:bluepayment/views/templates/admin/status.tpl');
