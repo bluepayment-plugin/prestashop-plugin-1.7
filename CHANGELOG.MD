@@ -1,4 +1,7 @@
 # Changelog
+## [3.1.2] 05.08.2025
+- Fixed a bug with module thecheckout
+
 ## [3.1.1] 06.05.2025
 - Add Autopay pixel - product feed
 - Add customer phone number to start transaction
