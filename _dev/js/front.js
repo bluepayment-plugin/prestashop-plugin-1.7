@@ -46,6 +46,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 	$(document).ready(function () {
 		bindPsdCheckboxValidator();
 		bmModalSimple();
+		movePaymentFormForCheckout();
 	});
 
 
@@ -141,6 +142,18 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 
 	BmAHR();
 
+	function movePaymentFormForCheckout() {
+		//TheCheckout module fix
+		const targetBody = document.querySelector('#module-thecheckout-order');
+		if (!targetBody) return;
+
+		const paymentForm = document.querySelector('#payment-form');
+		const confirmButton = document.querySelector('#confirm_order');
+
+		if (paymentForm && confirmButton) {
+			confirmButton.parentNode.insertBefore(paymentForm, confirmButton);
+		}
+	}
 
 	initBM();
 
@@ -270,7 +283,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 					if (title != null) {
 						title.classList.add('active');
 					}
-				
+
 
 					/// Opening modal
 					if (checkHasModal(id) && modalType(id)) {
