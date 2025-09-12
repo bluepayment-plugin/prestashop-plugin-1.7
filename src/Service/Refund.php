@@ -72,6 +72,7 @@ class Refund
 
         $response = curl_exec($curl);
         curl_close($curl);
+
         $xml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
         $resultSuccess = false;
 

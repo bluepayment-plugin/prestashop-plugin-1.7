@@ -160,6 +160,10 @@ class Admin extends AbstractHook
 
         $order_payment = Helper::getLastOrderPaymentByOrderId($params['id_order']);
 
+        if (!$order_payment) {
+            return;
+        }
+
         $refundable = $order_payment['payment_status'] === self::PAYMENT_STATUS_SUCCESS;
         $refund_type = \Tools::getValue('bm_refund_type', 'full');
         $refund_amount = $refund_type === 'full'
