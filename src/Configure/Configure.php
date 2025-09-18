@@ -52,7 +52,8 @@ class Configure
         return $this->installConfiguration(\Shop::isFeatureActive())
             && $this->addOrderStatuses(
                 new CustomStatus()
-            );
+            )
+            && $this->addRefundsTable();
     }
 
     public function uninstall(): bool
@@ -506,5 +507,24 @@ class Configure
         }
 
         return (bool) $res;
+    }
+
+    public function addRefundsTable(): bool
+    {
+        $query = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'blue_gateways_refunds` (
+            `id_blue_gateway_refunds` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `order_id` varchar(256) NOT NULL,
+            `remote_id` varchar(50) NOT NULL,
+            `remote_out_id` varchar(50) NOT NULL,
+            `status` varchar(50) NOT NULL,
+            `amount` decimal(17, 2) UNSIGNED DEFAULT 0.0000 NOT NULL,
+            `currency` varchar(50) NOT NULL,
+            `message_id` varchar(200) NOT NULL,
+            `created_at` DATETIME DEFAULT NULL,
+            `updated_at` DATETIME DEFAULT NULL,
+            PRIMARY KEY (`id_blue_gateway_refunds`)
+        ) ENGINE=' . _MYSQL_ENGINE_ . '  DEFAULT CHARSET=UTF8;';
+
+        return \Db::getInstance()->execute($query);
     }
 }

@@ -1,4 +1,7 @@
 # Changelog
+## [3.2.0] 15.08.2025
+- Update functionality of refunds
+
 ## [3.1.2] 05.08.2025
 - Fixed a bug with module thecheckout
 

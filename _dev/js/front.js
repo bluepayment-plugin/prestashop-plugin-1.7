@@ -283,7 +283,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 					if (title != null) {
 						title.classList.add('active');
 					}
-				
+
 
 					/// Opening modal
 					if (checkHasModal(id) && modalType(id)) {

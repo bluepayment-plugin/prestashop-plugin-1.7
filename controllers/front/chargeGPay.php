@@ -137,7 +137,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
 
         $data = [
             'ServiceID' => $serviceId,
-            'OrderID' => (int) $orderId,
+            'OrderID' => $orderId,
             'Amount' => $amount,
             'Description' => 'Google Pay Payment',
             'GatewayID' => (string) Gateway::GATEWAY_ID_GOOGLE_PAY,
@@ -208,7 +208,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             Db::getInstance()->update(
                 'blue_transactions',
                 ['created_at' => date('Y-m-d H:i:s')],
-                'order_id = ' . (int) $orderId
+                'order_id = \''. pSQL($orderId) .'\''
             );
         }
 
@@ -252,7 +252,15 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
         );
 
         if (empty($transaction)) {
-            $request = $this->sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $token);
+            $request = $this->sendRequest(
+                $serviceId,
+                $sharedKey,
+                $orderId,
+                $amount,
+                $currency,
+                $customerEmail,
+                $token
+            );
             $result = $this->validateRequest($request, $orderId);
         } else {
             $result = $this->validateTransaction($transaction, $orderId);
@@ -263,16 +271,15 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
 
     private function validateRequest($response, $orderId): array
     {
-        $array = [];
         $data = [
-            'order_id' => (int) $orderId,
+            'order_id' => pSQL($orderId),
             'created_at' => date('Y-m-d H:i:s'),
         ];
 
         if (isset($response->confirmation)) {
             $array = $this->hasConfirmation($response, $orderId, $data);
         } else {
-            $array = $this->emptyConfirmation($response, $orderId);
+            $array = $this->emptyConfirmation($response, $orderId, $data);
         }
 
         if (empty($array)) {
@@ -285,7 +292,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
         return $array;
     }
 
-    private function emptyConfirmation($response, $orderId): array
+    private function emptyConfirmation($response, $orderId, $data): array
     {
         if ($response->status == 'PENDING') {
             $array = [
@@ -294,7 +301,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             ];
 
             $data['payment_status'] = 'PENDING';
-            $this->transactionQuery((int) $orderId, $data);
+            $this->transactionQuery($orderId, $data);
 
             if ($response->redirecturl && isset($response->redirecturl[0])) {
                 $redirectUrl = (array) $response->redirecturl;
@@ -354,7 +361,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
      * @param int $orderId
      * @param $data
      */
-    private function transactionQuery(int $orderId, $data)
+    private function transactionQuery($orderId, $data)
     {
         $gateway_id = (string) Gateway::GATEWAY_ID_GOOGLE_PAY;
         $transaction = $this->getTransactionByOrderId($orderId);
@@ -364,7 +371,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             Db::getInstance()->insert('blue_transactions', $data);
         } else {
             unset($data['order_id']);
-            Db::getInstance()->update('blue_transactions', $data, 'order_id = ' . $orderId);
+            Db::getInstance()->update('blue_transactions', $data, 'order_id = \''. pSQL($orderId) .'\'' );
         }
     }
 

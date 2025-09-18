@@ -160,6 +160,10 @@ class Admin extends AbstractHook
 
         $order_payment = Helper::getLastOrderPaymentByOrderId($params['id_order']);
 
+        if (!$order_payment) {
+            return;
+        }
+
         $refundable = $order_payment['payment_status'] === self::PAYMENT_STATUS_SUCCESS;
         $refund_type = \Tools::getValue('bm_refund_type', 'full');
         $refund_amount = $refund_type === 'full'
@@ -176,26 +180,24 @@ class Admin extends AbstractHook
                 $order = new \OrderCore($order->id);
                 $currency = new \Currency($order->id_currency);
 
-                $refundOrder = $refund->refundOrder(
+                $refundResult = $refund->refundOrder(
+                    (int) $order->id,
                     $refund_amount,
                     $order_payment['remote_id'],
                     $currency
                 );
 
-                if (!empty($refundOrder[1]) || $refundOrder[0] !== true) {
-                    $refund_errors[] = $this->module->l('Refund error: ') . $refundOrder[1];
-                }
-
-                if (empty($refund_errors) && $refundOrder[0] === true) {
-                    $history = new \OrderHistory();
-                    $history->id_order = (int) $order->id;
-                    $history->id_employee = (int) $this->context->employee->id;
-                    $history->changeIdOrderState(Cfg::get('PS_OS_REFUND'), (int) $order->id);
-                    $history->addWithemail(true, []);
-                    $refund_success[] = $this->module->l('Successful refund');
+                if ($refundResult[0] === true) {
+                    $refund_success[] = $refundResult[1];
+                } else {
+                    $refund_errors[] = $this->module->l('Refund request failed: ', 'admin') . $refundResult[1];
                 }
             }
         }
+
+        $refunds = \Db::getInstance()->executeS(
+            'SELECT * FROM `' . _DB_PREFIX_ . 'blue_gateways_refunds` WHERE `order_id` = ' . (int) $params['id_order']
+        );
 
         $this->context->smarty->assign([
             'BM_ORDERS' => Helper::getOrdersByOrderId($params['id_order']),
@@ -207,6 +209,7 @@ class Admin extends AbstractHook
             'REFUND_SUCCESS' => $refund_success,
             'REFUND_TYPE' => $refund_type,
             'REFUND_AMOUNT' => $refund_amount,
+            'BM_REFUNDS' => $refunds,
         ]);
 
         return $this->module->fetch('module:bluepayment/views/templates/admin/status.tpl');

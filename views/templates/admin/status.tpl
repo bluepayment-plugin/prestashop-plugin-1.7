@@ -95,6 +95,35 @@
                         });
                         {/literal}
                     </script>
+
+                    {if isset($BM_REFUNDS) && $BM_REFUNDS|count}
+                        <hr>
+                        <p><b>{l s='Refunds history' mod='bluepayment'}</b></p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>{l s='ID' mod='bluepayment'}</th>
+                                    <th>{l s='Remote Out ID' mod='bluepayment'}</th>
+                                    <th>{l s='Amount' mod='bluepayment'}</th>
+                                    <th>{l s='Status' mod='bluepayment'}</th>
+                                    <th>{l s='Date' mod='bluepayment'}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {foreach from=$BM_REFUNDS item=refund}
+                                    <tr>
+                                        <td>{$refund.id_blue_gateway_refunds}</td>
+                                        <td>{$refund.remote_out_id}</td>
+                                        <td>{$refund.amount} {$refund.currency}</td>
+                                        <td>{$refund.status}</td>
+                                        <td>{dateFormat date=$refund.created_at full=true}</td>
+                                    </tr>
+                                {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    {/if}
                 {/if}
             </div>
         </div>
