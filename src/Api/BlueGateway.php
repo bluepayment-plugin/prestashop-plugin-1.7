@@ -37,6 +37,11 @@ class BlueGateway
         return $this->api->getApiMode();
     }
 
+    public function getApi()
+    {
+        return $this->api;
+    }
+
     public function getTransfers()
     {
         return $this->api->getGatewaysFromAPI(

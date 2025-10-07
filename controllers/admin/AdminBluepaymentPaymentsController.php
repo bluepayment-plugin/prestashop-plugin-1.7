@@ -88,6 +88,10 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $this->context->controller->addCSS($this->module->getPathUrl() . 'views/css/admin.css');
         $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/admin.min.js');
 
+        if (file_exists($this->module->getLocalPath() . 'views/js/admin-test.js')) {
+            $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/admin-test.js');
+        }
+
         $this->content .= $this->renderForm();
 
         try {
@@ -235,6 +239,22 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
         $fields_form[2]['form'] = [
             'section' => [
+                'title' => $this->l('Authentication'),
+            ],
+            'legend' => [
+                'title' => $this->l('Test conntection'),
+            ],
+            'input' => [
+                [
+                    'name' => '',
+                    'type' => 'description',
+                    'content' => './test-connections.tpl',
+                ],
+            ],
+        ];
+
+        $fields_form[3]['form'] = [
+            'section' => [
                 'title' => $this->l('Product feed XML'),
             ],
             'legend' => [
@@ -271,7 +291,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[3]['form'] = [
+        $fields_form[4]['form'] = [
             'section' => [
                 'title' => $this->l('Payment settings'),
             ],
@@ -325,7 +345,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[4]['form'] = [
+        $fields_form[5]['form'] = [
             'section' => [
                 'title' => $this->l('Payment settings'),
             ],
@@ -385,7 +405,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[5]['form'] = [
+        $fields_form[6]['form'] = [
             'section' => [
                 'title' => $this->l('Payment settings'),
             ],
@@ -420,7 +440,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         ];
 
         if ($alior) {
-            $fields_form[6]['form'] = [
+            $fields_form[7]['form'] = [
                 'section' => [
                     'title' => $this->l('Payment settings'),
                 ],
@@ -606,7 +626,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                 ],
             ];
         } else {
-            $fields_form[6]['form'] = [
+            $fields_form[7]['form'] = [
                 'section' => [
                     'title' => $this->l('Payment settings'),
                 ],
@@ -633,7 +653,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ];
         }
 
-        $fields_form[7]['form'] = [
+        $fields_form[8]['form'] = [
             'section' => [
                 'title' => $this->l('Payment settings'),
             ],
@@ -690,7 +710,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[8]['form'] = [
+        $fields_form[9]['form'] = [
             'section' => [
                 'title' => $this->l('Analitics'),
             ],
@@ -756,7 +776,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[9]['form'] = [
+        $fields_form[10]['form'] = [
             'section' => [
                 'title' => $this->l('Analitics'),
             ],
@@ -772,7 +792,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[10]['form'] = [
+        $fields_form[11]['form'] = [
             'section' => [
                 'title' => $this->l('Help'),
             ],
@@ -785,7 +805,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[11]['form'] = [
+        $fields_form[12]['form'] = [
             'section' => [
                 'title' => $this->l('Help'),
             ],
@@ -801,7 +821,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             ],
         ];
 
-        $fields_form[12]['form'] = [
+        $fields_form[13]['form'] = [
             'section' => [
                 'title' => $this->l('Services for you'),
             ],

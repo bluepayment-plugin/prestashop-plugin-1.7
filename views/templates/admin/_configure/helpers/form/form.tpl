@@ -124,7 +124,7 @@
                 </li>
             {/if}
 
-            {if $fkey === 2}
+            {if $fkey === 3}
                 <li class="nav-item">
                     <a href="tab_rule_{$tabk}" data-hash="payment-options" class="nav-link tab "
                        id="tab_rule_link_{$tabk}"
@@ -134,7 +134,7 @@
                 </li>
             {/if}
 
-            {if $fkey === 3}
+            {if $fkey === 4}
                 <li class="nav-item">
                     <a href="tab_rule_{$tabk}" data-hash="analitics" class="nav-link tab " id="tab_rule_link_{$tabk}"
                        href="javascript:displaythemeeditorTab('{$tabk}');">
@@ -143,7 +143,7 @@
                 </li>
             {/if}
 
-            {if $fkey === 8}
+            {if $fkey === 9}
                 <li class="nav-item">
                     <a href="tab_rule_{$tabk}" data-hash="help" class="nav-link tab " id="tab_rule_link_{$tabk}"
                        href="javascript:displaythemeeditorTab('{$tabk}');">
@@ -152,7 +152,7 @@
                 </li>
             {/if}
 
-            {if $fkey === 10}
+            {if $fkey === 11}
                 <li class="nav-item">
                     <a href="tab_rule_{$tabk}" data-hash="services-for-you" class="nav-link tab "
                        id="tab_rule_link_{$tabk}"
@@ -162,7 +162,7 @@
                 </li>
             {/if}
 
-            {if $fkey === 12}
+            {if $fkey === 13}
                 <li class="nav-item">
                     <a href="tab_rule_{$tabk}" data-hash="product-feed-xml" class="nav-link tab "
                        id="tab_rule_link_{$tabk}"
@@ -216,7 +216,7 @@
                         {if $f == 0}
                             <div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
                             {include file="./benefits.tpl"}
-                        {elseif $f == 2 || $f == 3 ||  $f == 8 || $f == 10 || $f == 12}
+                        {elseif $f == 3 || $f == 4 ||  $f == 9 || $f == 11 || $f == 13}
 					        <div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
                         {/if}
 
@@ -310,11 +310,12 @@
                         {/block}
                         {block name="other_fieldsets"}{/block}
 
-                        {if $f == 1}
+                        {if $f == 2}
                             </div>
-                        {elseif $f == 3}
+                        {elseif $f == 4}
+                            adasdasd
                             {hook h='adminPayments'}
-                        {elseif $f == 2 ||  $f == 7 || $f == 9 || $f == 11 || $f == 12}
+                        {elseif $f == 3 ||  $f == 8 || $f == 10 || $f == 12 || $f == 13}
                             </div>
                         {/if}
                     {/foreach}

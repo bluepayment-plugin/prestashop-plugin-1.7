@@ -13,7 +13,6 @@
 
 declare(strict_types=1);
 
-namespace BluePayment\Install;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,6 +37,12 @@ class Installer
             'visible' => false,
             'parent' => -1,
             'name' => 'Autopay - Ajax',
+        ],
+        [
+            'class_name' => 'AdminTestConnection',
+            'visible' => false,
+            'parent' => -1,
+            'name' => 'Autopay - Test Connection',
         ],
     ];
 

@@ -1,4 +1,8 @@
 # Changelog
+## [3.2.1] 7.10.2025
+- Add test connection
+- Change image in README.md
+
 ## [3.2.0] 15.08.2025
 - Update functionality of refunds
 
