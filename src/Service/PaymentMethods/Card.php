@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use BluePayment\Until\PaymentPresentationHelper;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class Card implements GatewayType
@@ -39,6 +40,9 @@ class Card implements GatewayType
         $cardIdTime = \Context::getContext()->cart->id . '-' . time();
 
         $option = new PaymentOption();
+
+        PaymentPresentationHelper::assign($data, $data['gateway_name'] ?? 'Payment by card', Config::GATEWAY_ID_CARD);
+
         $option->setCallToActionText($module->l('Payment by card'))
             ->setAction($moduleLink)
             ->setInputs([

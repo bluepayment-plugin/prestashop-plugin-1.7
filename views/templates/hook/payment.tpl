@@ -53,7 +53,7 @@
 	<div class="bm-transfer-slideshow bm-slideshow bm-hide" data-slideshow="transfer">
         {foreach from=$img_transfers item=row name='img_transfers'}
 			<div class="slide">
-				<img src="{$row['gateway_logo_url']}" alt="{$row['gateway_name']}">
+				<img src="{$row['gateway_logo_url']}" alt="{$row['gateway_name']|default:''}">
 			</div>
         {/foreach}
 	</div>
@@ -79,16 +79,36 @@
 						<div id="blue_payway" class="bluepayment-gateways">
 							<div class="bluepayment-gateways__wrap">
                                 {foreach from=$gateway_transfers item=row name='gateway_transfers'}
-									<div class="bluepayment-gateways__item" data-bm-gateway-id="{$row['gateway_id']}">
-										<label for="{$row['gateway_name']}">
-											<input type="radio" id="{$row['gateway_name']}"
-											       class="bluepayment-gateways__radio"
-											       name="bm-transfer-id"
-											       value="{$row['gateway_id']}" required="required">
-											<img class="bluepayment-gateways__img" src="{$row['gateway_logo_url']}"
-											     alt="{$row['bank_name']}">
-											<span class="bluepayment-gateways__name">{$row['gateway_name']}</span>
+									<div class="bluepayment-gateways__item" data-bm-gateway-id="{$row.gateway_id}">
+										<input type="radio"
+											id="gateway_{$row.gateway_id}"
+											class="bluepayment-gateways__radio"
+											name="bm-transfer-id"
+											value="{$row.gateway_id}"
+											required="required">
+										<label for="gateway_{$row.gateway_id}">
+											<img class="bluepayment-gateways__img"
+												src="{$row.gateway_logo_url}"
+												alt="{$row.gateway_name|default:''|escape:'htmlall':'UTF-8'}">
+											<span class="bluepayment-gateways__name">{$row.gateway_name|default:''|escape:'htmlall':'UTF-8'}</span>
+											{if !empty($row.short_description) || !empty($row.group_short_description)}
+												{assign "short_desc" $row.short_description|default:$row.group_short_description}
+												{if !empty($row.description_url)}
+													<a href="{$row.description_url|escape:'htmlall':'UTF-8'}" class="bluepayment-gateways__short-desc" target="_blank" rel="noopener noreferrer">
+														{$short_desc|escape:'htmlall':'UTF-8'}
+													</a>
+												{else}
+													<span class="bluepayment-gateways__short-desc">
+														{$short_desc|escape:'htmlall':'UTF-8'}
+													</span>
+												{/if}
+											{/if}
 										</label>
+										{if !empty($row.description) || !empty($row.group_description)}
+											<div class="bluepayment-gateways__description" data-gateway-id="{$row.gateway_id}" style="display: none;">
+												{$row.description|default:$row.group_description nofilter}
+											</div>
+										{/if}
 									</div>
                                 {/foreach}
 							</div>

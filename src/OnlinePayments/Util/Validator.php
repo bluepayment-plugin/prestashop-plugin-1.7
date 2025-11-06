@@ -44,11 +44,12 @@ class Validator
      */
     public static function validateAmount($value)
     {
-        if (mb_strlen(mb_substr($value, mb_strrpos($value, '.'))) > 14) {
+        $valueStr = (string) $value;
+        if (mb_strlen(mb_substr($valueStr, mb_strrpos($valueStr, '.'))) > 14) {
             throw new \InvalidArgumentException('Wrong Amount format, requires max 14 numbers before ".", only numbers');
         }
 
-        $exploded = explode('.', $value);
+        $exploded = explode('.', $valueStr);
         if (count($exploded) > 2) {
             throw new \InvalidArgumentException('Wrong Amount format, only one "." is possible');
         }
@@ -203,7 +204,7 @@ class Validator
 
         $valueLength = mb_strlen($value);
 
-        if (!($valueLength >= 1 && $valueLength <= 5)) {
+        if ($valueLength > 5) {
             throw new \InvalidArgumentException('Wrong GatewayId format, requires max 5 characters');
         }
     }

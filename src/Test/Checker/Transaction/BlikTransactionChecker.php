@@ -33,11 +33,6 @@ final class BlikTransactionChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var OrderProcessor
      */
     private $orderProcessor;
@@ -54,13 +49,11 @@ final class BlikTransactionChecker implements CheckerInterface
 
     public function __construct(
         \Module $module,
-        \Context $context,
         OrderProcessor $orderProcessor,
         BlikTransactionProcessor $blikProcessor,
         BlikCodeProvider $blikCodeProvider
     ) {
         $this->module = $module;
-        $this->context = $context;
         $this->orderProcessor = $orderProcessor;
         $this->blikProcessor = $blikProcessor;
         $this->blikCodeProvider = $blikCodeProvider;

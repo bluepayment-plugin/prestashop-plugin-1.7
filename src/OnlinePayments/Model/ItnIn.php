@@ -709,7 +709,7 @@ class ItnIn extends AbstractModel
      */
     public function setGatewayId($gatewayId)
     {
-        Validator::validateGatewayId($gatewayId);
+        Validator::validateGatewayId((string) $gatewayId);
         $this->gatewayId = (int) $gatewayId;
 
         return $this;
@@ -880,7 +880,7 @@ class ItnIn extends AbstractModel
      */
     public function setServiceId($serviceId)
     {
-        Validator::validateServiceId($serviceId);
+        Validator::validateServiceId((string) $serviceId);
         $this->serviceId = (int) $serviceId;
 
         return $this;
@@ -1499,9 +1499,6 @@ class ItnIn extends AbstractModel
         }
         if (empty($this->amount)) {
             throw new \DomainException('Amount cannot be empty');
-        }
-        if (!($this->amount === $this->getAmount())) {
-            throw new \DomainException('Amount in wrong format');
         }
         if (empty($this->currency)) {
             throw new \DomainException('Currency cannot be empty');

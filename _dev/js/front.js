@@ -174,28 +174,11 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 		const paymentType = content.getAttribute('data-payment-wallet-type');
 
 		if (paymentRedirect) {
-			changingClauseBehavior(key, 'back');
 			changingButtonBehavior(key, 'back');
 		} else if (!paymentRedirect && paymentType === 'GooglePay') {
 			changingButtonBehavior(key, 'hideByClass');
-			changingClauseBehavior(key, 'move');
 		} else {
-			changingClauseBehavior(key, 'back');
 			changingButtonBehavior(key, 'back');
-		}
-	}
-
-	function changingClauseBehavior(key, behavior) {
-		const content = getPaymentContent(key);
-		const clause = document.querySelector('#conditions-to-approve');
-
-		if (behavior === 'move' && clause !== null) {
-			const formGroup = content.querySelector('.form-group');
-			if (formGroup !== null) {
-				formGroup.append(clause);
-			}
-		} else if (behavior === 'back' && clause !== null) {
-			document.querySelector('.payment-options').after(clause);
 		}
 	}
 
@@ -267,17 +250,14 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 						const paymentRedirect = paymentElm.getAttribute('data-payment-redirect');
 
 						if (paymentName === 'blik' && !paymentRedirect) {
-							changingClauseBehavior(id, 'move');
 							changingButtonBehavior(id, 'hide');
 
 						} else if (paymentName === 'wallet') {
 
 						} else {
-							changingClauseBehavior(id, 'back');
 							changingButtonBehavior(id, 'back');
 						}
 					} else {
-						changingClauseBehavior(id, 'back');
 						changingButtonBehavior(id, 'back');
 					}
 					if (title != null) {
@@ -461,6 +441,16 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 				const selectedPayment = container.querySelector('.bm-selected-payment');
 				const paymentName = container.getAttribute('data-payment-name');
 				let createLabel;
+
+				document.querySelectorAll('.bluepayment-gateways__description').forEach(desc => {
+					desc.style.display = 'none';
+				});
+
+				const gatewayId = item.getAttribute('data-bm-gateway-id');
+				const description = item.querySelector('.bluepayment-gateways__description');
+				if (description) {
+					description.style.display = 'block';
+				}
 
 				container.querySelector('label').style.display = 'none';
 				container.querySelector('label').classList.add('bm-payment-hide');

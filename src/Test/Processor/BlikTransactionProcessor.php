@@ -20,7 +20,6 @@ use BluePayment\Test\Repository\TransactionRepository;
 use BluePayment\Test\Sender\BlikTransactionSender;
 use BluePayment\Test\Validator\BlikTransactionValidator;
 use BluePayment\Until\Helper;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -180,8 +179,8 @@ final class BlikTransactionProcessor
     public function waitForTransactionStatus(
         int $orderId,
         array $targetStatuses = ['SUCCESS'],
-        ?int $maxAttempts = null,
-        ?int $interval = null
+        int $maxAttempts = null,
+        int $interval = null
     ): array {
         $maxAttempts = $maxAttempts ?? TestDataConfig::MAX_POLLING_ATTEMPTS;
         $interval = $interval ?? TestDataConfig::POLLING_INTERVAL_SECONDS;

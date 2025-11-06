@@ -16,6 +16,9 @@ if (!defined('_PS_VERSION_')) {
 
 class BluePaymentPaymentStatusModuleFrontController extends ModuleFrontController
 {
+    /** @var BluePayment */
+    public $module;
+
     /**
      * @throws PrestaShopException
      * @throws Exception

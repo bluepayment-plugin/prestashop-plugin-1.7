@@ -20,8 +20,14 @@ use BluePayment\Test\Executor\Interfaces\TestExecutorInterface;
 use BluePayment\Test\Factory\TestExecutorFactory;
 use BluePayment\Test\Logger\LogFileManager;
 
+/**
+ * @method string l(string $string, string $class = null, bool $addslashes = false, bool $htmlentities = true)
+ */
 class AdminTestConnectionController extends ModuleAdminController
 {
+    /** @var BluePayment */
+    public $module;
+
     public $bootstrap = true;
 
     private const ACTION_GET_TEST_STEPS = 'getTestSteps';
@@ -39,7 +45,7 @@ class AdminTestConnectionController extends ModuleAdminController
         parent::init();
         $this->factory = new TestExecutorFactory($this->module, $this->context);
 
-        $this->errorHandler = new ErrorHandler($this->module, 'connection');
+        $this->errorHandler = new ErrorHandler('connection');
         $this->errorHandler->register();
     }
 
@@ -52,30 +58,29 @@ class AdminTestConnectionController extends ModuleAdminController
     public function postProcess(): void
     {
         if (Tools::isSubmit('ajax')) {
+            $testType = Tools::getValue('test_type', 'connection');
+            $testStep = Tools::getValue('test_step', '');
+
             try {
                 $action = Tools::getValue('action', '');
-                $testType = Tools::getValue('test_type', 'connection');
 
                 switch ($action) {
                     case self::ACTION_GET_TEST_STEPS:
                         $this->processGetTestSteps($testType);
                         break;
                     case self::ACTION_EXECUTE_TEST_STEP:
-                        $testStep = Tools::getValue('test_step', '');
                         $this->processExecuteTestStep($testType, $testStep);
                         break;
                     case self::ACTION_DOWNLOAD_TEST_LOGS:
                         $this->processDownloadTestLogs($testType);
                         break;
                     default:
-                        $this->ajaxError($this->l('Unknown action'), '');
+                        $this->ajaxError($this->l('Unknown action'), $testType, null);
                 }
             } catch (TestException $e) {
-                $testStep = Tools::getValue('test_step', '');
                 $this->ajaxTestException($e, $testType, $testStep);
             } catch (\Throwable $e) {
                 $this->errorHandler->logException($e);
-                $testStep = Tools::getValue('test_step', '');
                 $this->ajaxError($this->l('An unexpected error occurred during the test. Please check the logs for details.'), $testType, $testStep);
             }
         }
@@ -106,7 +111,7 @@ class AdminTestConnectionController extends ModuleAdminController
                 'test_type' => $testType,
             ]);
         } catch (Exception $e) {
-            $this->ajaxError($this->l('Error getting test steps') . ': ' . $e->getMessage(), $testType);
+            $this->ajaxError($this->l('Error getting test steps') . ': ' . $e->getMessage(), $testType, null);
         }
     }
 
@@ -119,7 +124,7 @@ class AdminTestConnectionController extends ModuleAdminController
     private function processExecuteTestStep(string $testType, string $testStep): void
     {
         if (empty($testStep)) {
-            $this->ajaxError($this->l('Test step not specified'), $testType);
+            $this->ajaxError($this->l('Test step not specified'), $testType, null);
 
             return;
         }
@@ -197,10 +202,10 @@ class AdminTestConnectionController extends ModuleAdminController
     private function ajaxResponse(array $data): void
     {
         header('Content-Type: application/json');
-        die(json_encode($data));
+        exit(json_encode($data));
     }
 
-    private function ajaxError(string $message, string $testType, ?string $testStep = null): void
+    private function ajaxError(string $message, string $testType, ?string $testStep): void
     {
         $response = [
             'status' => 'error',
@@ -237,7 +242,7 @@ class AdminTestConnectionController extends ModuleAdminController
             $logFilePath = $logFileManager->getLogFilePath($testExecutor->getLogger());
             $logFileManager->downloadLogFile($logFilePath, $testType);
         } catch (Exception $e) {
-            $this->ajaxError($this->l('Error downloading test logs') . ': ' . $e->getMessage(), $testType);
+            $this->ajaxError($this->l('Error downloading test logs') . ': ' . $e->getMessage(), $testType, null);
         }
     }
 }

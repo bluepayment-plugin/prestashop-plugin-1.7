@@ -21,14 +21,6 @@ if (!defined('_PS_VERSION_')) {
 
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
-use Order;
-use Currency;
-use Validate;
-use OrderHistory;
-use Configuration;
-use Db;
-use PrestaShopLogger;
-use Exception;
 
 class Istn
 {
@@ -45,7 +37,7 @@ class Istn
             if ($childValue->count() > 0) {
                 $this->collectTransactionDataForHash($childValue, $hashData);
             } else {
-                $hashData[] = (string)$childValue;
+                $hashData[] = (string) $childValue;
             }
         }
     }
@@ -56,7 +48,8 @@ class Istn
         $hashData[] = $istnServiceID;
 
         if (!isset($xml->transactions->transaction)) {
-            PrestaShopLogger::addLog('Autopay ISTN Service: No transaction found in ISTN for hash validation.', 3);
+            \PrestaShopLogger::addLog('Autopay ISTN Service: No transaction found in ISTN for hash validation.', 3);
+
             return false;
         }
         $transactionNode = $xml->transactions->transaction; // Access the single transaction directly
@@ -71,15 +64,17 @@ class Istn
                         $this->module->name_upper . Config::SHARED_KEY,
                         $transactionCurrency
                     );
-                } catch (Exception $e) {
-                    PrestaShopLogger::addLog('Autopay ISTN Service: Exception while fetching shared key for incoming validation: ' . $e->getMessage(), 3);
+                } catch (\Exception $e) {
+                    \PrestaShopLogger::addLog('Autopay ISTN Service: Exception while fetching shared key for incoming validation: ' . $e->getMessage(), 3);
+
                     return false;
                 }
             }
         }
 
         if (!$sharedKey) {
-            PrestaShopLogger::addLog('Autopay ISTN Service: Could not determine shared key for incoming hash validation (missing currency in transaction or config issue).', 3);
+            \PrestaShopLogger::addLog('Autopay ISTN Service: Could not determine shared key for incoming hash validation (missing currency in transaction or config issue).', 3);
+
             return false;
         }
         $hashData[] = $sharedKey;
@@ -87,10 +82,11 @@ class Istn
         $calculatedHash = Helper::generateAndReturnHash($hashData);
 
         if ($calculatedHash !== $receivedHash) {
-            PrestaShopLogger::addLog(
+            \PrestaShopLogger::addLog(
                 'Autopay ISTN Service: Incoming HASH mismatch. Received: ' . $receivedHash . ', Calculated: ' . $calculatedHash,
                 3
             );
+
             return false;
         }
 
@@ -105,7 +101,8 @@ class Istn
         $isIncomingIstnAuthentic = $this->isValidIncomingIstn($xml, $receivedHash, $istnServiceID);
 
         if (!isset($xml->transactions->transaction)) {
-            PrestaShopLogger::addLog('Autopay ISTN Service: No transaction data in ISTN.', 2);
+            \PrestaShopLogger::addLog('Autopay ISTN Service: No transaction data in ISTN.', 2);
+
             return ['serviceID' => $istnServiceID, 'processedTransactions' => [], 'authentic' => $isIncomingIstnAuthentic];
         }
         $transaction = $xml->transactions->transaction;
@@ -119,7 +116,8 @@ class Istn
         ];
 
         if (!$isIncomingIstnAuthentic) {
-            PrestaShopLogger::addLog('Autopay ISTN Service: Incoming request is NOT authentic. Processing stopped.', 2);
+            \PrestaShopLogger::addLog('Autopay ISTN Service: Incoming request is NOT authentic. Processing stopped.', 2);
+
             return ['serviceID' => $istnServiceID, 'processedTransactions' => $processedTransactionsForResponse, 'authentic' => false];
         }
 
@@ -136,17 +134,18 @@ class Istn
         $istnCurrency = (string) $transaction->currency;
         $istnAmount = number_format((float) $transaction->amount, 2, '.', '');
 
-        $db = Db::getInstance();
+        $db = \Db::getInstance();
         try {
             $sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'blue_gateways_refunds` 
                     WHERE `remote_id` = \'' . pSQL($istnRemoteID) . '\'
-                      AND `amount` = ' . (float)$istnAmount . '
+                      AND `amount` = ' . (float) $istnAmount . '
                       AND `currency` = \'' . pSQL($istnCurrency) . '\'';
 
             $refundRecord = $db->getRow($sql);
 
             if (!$refundRecord) {
-                PrestaShopLogger::addLog('Autopay ISTN Service: No matching pending refund found for RemoteID: ' . $istnRemoteID, 2);
+                \PrestaShopLogger::addLog('Autopay ISTN Service: No matching pending refund found for RemoteID: ' . $istnRemoteID, 2);
+
                 return ['serviceID' => $istnServiceID, 'processedTransactions' => $processedTransactionsForResponse, 'authentic' => true];
             }
 
@@ -158,17 +157,19 @@ class Istn
             $updateData = [
                 'remote_out_id' => pSQL($istnRemoteOutID),
                 'status' => pSQL($istnTransferStatus),
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
             ];
-            $where = 'id_blue_gateway_refunds = ' . (int)$refundRecord['id_blue_gateway_refunds'];
+            $where = 'id_blue_gateway_refunds = ' . (int) $refundRecord['id_blue_gateway_refunds'];
 
             if (!$db->update('blue_gateways_refunds', $updateData, $where)) {
-                PrestaShopLogger::addLog('Autopay ISTN Service: Failed to update blue_gateways_refunds for id ' . $refundRecord['id_blue_gateway_refunds'] . '. DB Error: ' . $db->getMsgError(), 3);
+                \PrestaShopLogger::addLog('Autopay ISTN Service: Failed to update blue_gateways_refunds for id ' . $refundRecord['id_blue_gateway_refunds'] . '. DB Error: ' . $db->getMsgError(), 3);
+
                 return ['serviceID' => $istnServiceID, 'processedTransactions' => $processedTransactionsForResponse, 'authentic' => true];
             }
 
             if ($istnTransferStatus !== 'SUCCESS') {
-                PrestaShopLogger::addLog('Autopay ISTN Service: Refund status is not SUCCESS (' . $istnTransferStatus . '). remote_out_id and status updated. No order status change.', 1);
+                \PrestaShopLogger::addLog('Autopay ISTN Service: Refund status is not SUCCESS (' . $istnTransferStatus . '). remote_out_id and status updated. No order status change.', 1);
+
                 return [
                     'serviceID' => $istnServiceID,
                     'processedTransactions' => $processedTransactionsForResponse,
@@ -176,27 +177,29 @@ class Istn
                 ];
             }
 
-            $order = new Order((int) $istnOrderID);
-            if (!Validate::isLoadedObject($order)) {
-                PrestaShopLogger::addLog('Autopay ISTN Service: Could not load order ' . $istnOrderID . ' for status update.', 3);
+            $order = new \Order((int) $istnOrderID);
+            if (!\Validate::isLoadedObject($order)) {
+                \PrestaShopLogger::addLog('Autopay ISTN Service: Could not load order ' . $istnOrderID . ' for status update.', 3);
+
                 return ['serviceID' => $istnServiceID, 'processedTransactions' => $processedTransactionsForResponse, 'authentic' => true];
             }
 
-            $history = new OrderHistory();
+            $history = new \OrderHistory();
             $history->id_order = (int) $order->id;
             $history->id_employee = 0;
-            $currentState = (int)$order->getCurrentState();
-            $refundStateId = (int)Configuration::get('PS_OS_REFUND');
+            $currentState = (int) $order->getCurrentState();
+            $refundStateId = (int) \Configuration::get('PS_OS_REFUND');
 
             if ($currentState !== $refundStateId) {
                 $history->changeIdOrderState($refundStateId, (int) $order->id);
                 $history->addWithemail(true, []);
             } else {
-                 PrestaShopLogger::addLog('Autopay ISTN Service: Order ' . $order->id . ' is already in REFUNDED state.', 1);
+                \PrestaShopLogger::addLog('Autopay ISTN Service: Order ' . $order->id . ' is already in REFUNDED state.', 1);
             }
-        } catch (Exception $e) {
-            PrestaShopLogger::addLog('Autopay ISTN Service: Exception during DB operations: ' . $e->getMessage() . "\n" . $e->getTraceAsString(), 3);
+        } catch (\Exception $e) {
+            \PrestaShopLogger::addLog('Autopay ISTN Service: Exception during DB operations: ' . $e->getMessage() . "\n" . $e->getTraceAsString(), 3);
         }
+
         return ['serviceID' => $istnServiceID, 'processedTransactions' => $processedTransactionsForResponse, 'authentic' => true];
     }
 
@@ -238,10 +241,10 @@ class Istn
                 if (isset($transactionDataForResponse['orderID'])) {
                     $rawOrderId = $transactionDataForResponse['orderID'];
                 } else {
-                    $db = Db::getInstance();
+                    $db = \Db::getInstance();
                     $sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'blue_gateways_refunds` 
                             WHERE `remote_id` = \'' . pSQL($transactionDataForResponse['remoteID']) . '\'
-                              AND `amount` = ' . (float)$transactionDataForResponse['amount'] . '
+                              AND `amount` = ' . (float) $transactionDataForResponse['amount'] . '
                               AND `currency` = \'' . pSQL($transactionDataForResponse['currency']) . '\'';
 
                     $refundRecord = $db->getRow($sql);
@@ -252,33 +255,33 @@ class Istn
                 }
 
                 if ($rawOrderId) {
-                    $orderIdParts = explode('-', (string)$rawOrderId);
+                    $orderIdParts = explode('-', (string) $rawOrderId);
                     $orderId = $orderIdParts[0];
 
-                    if (is_numeric($orderId) && (int)$orderId > 0) {
-                        $order = new Order((int)$orderId);
-                        if (Validate::isLoadedObject($order)) {
-                            $currency = new Currency($order->id_currency);
-                            if (Validate::isLoadedObject($currency)) {
+                    if (is_numeric($orderId) && (int) $orderId > 0) {
+                        $order = new \Order((int) $orderId);
+                        if (\Validate::isLoadedObject($order)) {
+                            $currency = new \Currency($order->id_currency);
+                            if (\Validate::isLoadedObject($currency)) {
                                 $sharedKey = Helper::parseConfigByCurrency(
                                     $this->module->name_upper . Config::SHARED_KEY,
                                     $currency->iso_code
                                 );
                             } else {
-                                PrestaShopLogger::addLog('Autopay ISTN Service Response: Failed to load currency for order ID ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
+                                \PrestaShopLogger::addLog('Autopay ISTN Service Response: Failed to load currency for order ID ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
                             }
                         } else {
-                            PrestaShopLogger::addLog('Autopay ISTN Service Response: Failed to load order for ID ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
+                            \PrestaShopLogger::addLog('Autopay ISTN Service Response: Failed to load order for ID ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
                         }
                     } else {
-                        PrestaShopLogger::addLog('Autopay ISTN Service Response: Invalid OrderID in transaction for shared key: ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
+                        \PrestaShopLogger::addLog('Autopay ISTN Service Response: Invalid OrderID in transaction for shared key: ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
                     }
                 }
-            } catch (Exception $e) {
-                PrestaShopLogger::addLog('Autopay ISTN Service Response: Exception getting shared key: ' . $e->getMessage(), 3);
+            } catch (\Exception $e) {
+                \PrestaShopLogger::addLog('Autopay ISTN Service Response: Exception getting shared key: ' . $e->getMessage(), 3);
             }
         } elseif (!$transactionDataForResponse) {
-            PrestaShopLogger::addLog('Autopay ISTN Service Response: No transaction data to determine currency for shared key. Response hash may be incorrect.', 2);
+            \PrestaShopLogger::addLog('Autopay ISTN Service Response: No transaction data to determine currency for shared key. Response hash may be incorrect.', 2);
         }
 
         if (isset($sharedKey) && $sharedKey) {
@@ -286,7 +289,7 @@ class Istn
             $calculatedHash = Helper::generateAndReturnHash($hashData);
         } else {
             $calculatedHash = 'SHARED_KEY_UNAVAILABLE_HASH_INVALID';
-            PrestaShopLogger::addLog('Autopay ISTN Service Response: Shared key for response hash not found. Response hash is invalid.', 3);
+            \PrestaShopLogger::addLog('Autopay ISTN Service Response: Shared key for response hash not found. Response hash is invalid.', 3);
         }
 
         $confirmationList->appendChild($dom->createElement('hash', $calculatedHash));

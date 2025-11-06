@@ -17,6 +17,7 @@ if (!defined('_PS_VERSION_')) {
 use BlueMedia\ProductFeed\Configuration\FeedConfiguration;
 use BlueMedia\ProductFeed\Menager\FileMenager;
 use BlueMedia\ProductFeed\Remover\FileRemover;
+use BluePayment;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
@@ -27,6 +28,9 @@ use Configuration as Cfg;
 
 class AdminBluepaymentAjaxController extends ModuleAdminController
 {
+    /** @var BluePayment */
+    public $module;
+
     public function __construct()
     {
         parent::__construct();
@@ -46,7 +50,7 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
         $link = new Link();
         $controller = $link->getAdminLink('AdminBluepaymentPayments');
 
-        $this->ajaxDie(
+        exit(
             Tools::redirectAdmin($controller)
         );
     }
@@ -162,13 +166,13 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                 $fileRemover->removeAllFeedFile();
             }
 
-            $this->ajaxDie(json_encode(['success' => true]));
+            exit(json_encode(['success' => true]));
         } catch (Exception $exception) {
             PrestaShopLogger::addLog(
                 'Autopay - Ajax Error',
                 4
             );
-            $this->ajaxDie(json_encode(['success' => false]));
+            exit(json_encode(['success' => false]));
         }
     }
 }

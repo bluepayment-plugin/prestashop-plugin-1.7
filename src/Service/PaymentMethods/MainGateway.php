@@ -20,6 +20,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use BluePayment\Until\Helper;
+use BluePayment\Until\PaymentPresentationHelper;
 use Configuration as Cfg;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -42,6 +43,9 @@ class MainGateway implements GatewayType
             true
         );
         $option = new PaymentOption();
+
+        PaymentPresentationHelper::assign($data, $paymentName ?: 'Payments', 0);
+
         $option->setCallToActionText($paymentName)
             ->setAction($moduleLink)
             ->setInputs([

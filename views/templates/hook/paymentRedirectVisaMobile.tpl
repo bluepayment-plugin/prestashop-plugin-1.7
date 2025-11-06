@@ -17,7 +17,17 @@
 </span>
 <section>
 	<span class="bm-small-info">
-        {l s='Enter your phone number and confirm the payment in the application.' mod='bluepayment'}
+		{if !empty($bm_short_description)}
+			{if !empty($bm_description_url)}
+				<a href="{$bm_description_url|escape:'htmlall':'UTF-8'}" target="_blank" rel="noopener noreferrer">
+					{$bm_short_description|escape:'htmlall':'UTF-8'}
+				</a>
+			{else}
+				{$bm_short_description|escape:'htmlall':'UTF-8'}
+			{/if}
+		{else}
+			{l s='Enter your phone number and confirm the payment in the application.' mod='bluepayment'}
+		{/if}
 	</span>
 </section>
 

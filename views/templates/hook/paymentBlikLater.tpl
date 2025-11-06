@@ -15,16 +15,25 @@
 *}
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="bliklater">
 	<span class="bm-promo-desc">
-		{l s='Buy now and pay within 30 days. The service is available to Bank Millennium and VeloBank customers.' mod='bluepayment'}
-    <a href="#" class="bm-payment__elm bm-transfer" data-bm-modal-siimple data-open-modal-id="bliklater">
-      {l s='Learn more.' mod='bluepayment'}
-    </a>
+		{if !empty($bm_short_description)}
+			{if !empty($bm_description_url)}
+				<a href="{$bm_description_url|escape:'htmlall':'UTF-8'}" target="_blank" rel="noopener noreferrer">
+					{$bm_short_description|escape:'htmlall':'UTF-8'}
+				</a>
+			{else}
+				{$bm_short_description|escape:'htmlall':'UTF-8'}
+			{/if}
+		{else}
+			{l s='Buy now and pay within 30 days. The service is available to Bank Millennium and VeloBank customers.' mod='bluepayment'}
+		{/if}
 	</span>
 </span>
 <section>
-	<span class="bm-small-info">
-      	<p>{l s='You will be redirected to a page where you enter your BLIK code. You generate the BLIK code in your banking app.' mod='bluepayment'}</p>
-	</span>
+	{if !empty($bm_description)}
+		<div class="bm-payment-description bm-small-info" style="margin-bottom: 15px;">
+			{$bm_description nofilter}
+		</div>
+	{/if}
 </section>
 <div id="bliklater" class="bm-modal bm-fade bm-modal-bliklater" tabindex="-1" aria-hidden="true">
   <div class="bm-modal__dialog bm-modal__dialog--centered">

@@ -100,9 +100,7 @@ class Transformer
             $result['gatewayID'] = $model->getGatewayId();
         }
         if ($model->getPaymentDate()) {
-            $result['paymentDate'] = (($model->getPaymentDate() instanceof \DateTime)
-                ? $model->getPaymentDate()->format(Gateway::DATETIME_FORMAT) : ''
-            );
+            $result['paymentDate'] = $model->getPaymentDate()->format(Gateway::DATETIME_FORMAT);
         }
         if ($model->getPaymentStatus()) {
             $result['paymentStatus'] = $model->getPaymentStatus();
@@ -168,9 +166,7 @@ class Transformer
             $result['startAmount'] = $model->getStartAmount();
         }
         if ($model->getTransferDate()) {
-            $result['transferDate'] = (($model->getTransferDate() instanceof \DateTime)
-                ? $model->getTransferDate()->format(Gateway::DATETIME_FORMAT) : ''
-            );
+            $result['transferDate'] = $model->getTransferDate()->format(Gateway::DATETIME_FORMAT);
         }
         if ($model->getTransferStatus()) {
             $result['transferStatus'] = $model->getTransferStatus();
@@ -249,7 +245,7 @@ class Transformer
 
         $model = new ItnIn();
         if (isset($xml->serviceID)) {
-            $model->setServiceId((string) $xml->serviceID);
+            $model->setServiceId((int) $xml->serviceID);
         }
 
         if (isset($transaction->orderID)) {
@@ -263,13 +259,13 @@ class Transformer
         }
 
         if (isset($transaction->amount)) {
-            $model->setAmount((string) $transaction->amount);
+            $model->setAmount((float) $transaction->amount);
         }
         if (isset($transaction->currency)) {
             $model->setCurrency((string) $transaction->currency);
         }
         if (isset($transaction->gatewayID)) {
-            $model->setGatewayId((string) $transaction->gatewayID);
+            $model->setGatewayId((int) $transaction->gatewayID);
         }
         if (isset($transaction->paymentDate)) {
             $paymentDate = \DateTime::createFromFormat(

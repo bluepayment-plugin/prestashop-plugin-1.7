@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use BluePayment\Until\PaymentPresentationHelper;
 use Configuration as Cfg;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -40,8 +41,11 @@ class Blik implements GatewayType
             );
 
             $option = new PaymentOption();
+
+            PaymentPresentationHelper::assign($data, 'BLIK', Config::GATEWAY_ID_BLIK);
+
             $option
-                ->setCallToActionText($module->l($data['gateway_name']))
+                ->setCallToActionText($module->l($data['gateway_name'] ?? 'BLIK'))
                 ->setAction($moduleLink)
                 ->setInputs([
                     [
@@ -55,7 +59,7 @@ class Blik implements GatewayType
                         'value' => Config::GATEWAY_ID_BLIK,
                     ],
                 ])
-                ->setLogo($data['gateway_logo_url'])
+                ->setLogo($data['gateway_logo_url'] ?? '')
                 ->setAdditionalInformation(
                     $module->fetch('module:bluepayment/views/templates/hook/paymentRedirectBlik.tpl')
                 );
@@ -67,16 +71,18 @@ class Blik implements GatewayType
                 true
             );
 
+            PaymentPresentationHelper::assign($data, 'BLIK', Config::GATEWAY_ID_BLIK);
+
             \Context::getContext()->smarty->assign([
                 'blik_moduleLink' => $blikModuleLink,
             ]);
 
             $option = new PaymentOption();
             $option
-                ->setCallToActionText($data['gateway_name'])
+                ->setCallToActionText($data['gateway_name'] ?? 'BLIK')
                 ->setAction($blikModuleLink)
                 ->setBinary(true)
-                ->setLogo($data['gateway_logo_url'])
+                ->setLogo($data['gateway_logo_url'] ?? '')
                 ->setAdditionalInformation(
                     $module->fetch('module:bluepayment/views/templates/hook/paymentBlik.tpl')
                 );

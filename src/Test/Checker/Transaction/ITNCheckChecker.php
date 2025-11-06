@@ -35,11 +35,6 @@ class ITNCheckChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var CheckerInterface[]
      */
     private $checkers = [];
@@ -51,9 +46,8 @@ class ITNCheckChecker implements CheckerInterface
     public function __construct(\Module $module, \Context $context)
     {
         $this->module = $module;
-        $this->context = $context;
 
-        $this->checkers[] = new FriendlyUrlChecker($module, $context);
+        $this->checkers[] = new FriendlyUrlChecker($module);
         $this->checkers[] = new ITNReturnUrlChecker($module, $context);
         $this->checkers[] = new ITNStatusUrlChecker($module, $context);
     }

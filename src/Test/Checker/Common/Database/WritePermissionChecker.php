@@ -32,23 +32,16 @@ final class WritePermissionChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var \Db
      */
     private $db;
 
     /**
      * @param \Module $module
-     * @param \Context $context
      */
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
         $this->db = \Db::getInstance();
     }
 

@@ -15,6 +15,22 @@
 *}
 <span class="bm-payment__elm" data-open-payment="blik"></span>
 <section>
+	{if !empty($bm_short_description)}
+		{if !empty($bm_description_url)}
+			<a href="{$bm_description_url|escape:'htmlall':'UTF-8'}" class="bm-small-info" target="_blank" rel="noopener noreferrer" style="display: block; margin-bottom: 15px;">
+				{$bm_short_description|escape:'htmlall':'UTF-8'}
+			</a>
+		{else}
+			<span class="bm-small-info" style="display: block; margin-bottom: 15px;">
+				{$bm_short_description|escape:'htmlall':'UTF-8'}
+			</span>
+		{/if}
+	{/if}
+	{if !empty($bm_description)}
+		<div class="bm-payment-description" style="margin-bottom: 15px;">
+			{$bm_description nofilter}
+		</div>
+	{/if}
 	<form id="bluepaymentForm" action="{$blik_moduleLink}" method="POST">
 		<div class="bluepayment-loader"></div>
 		<div class="bluepayment-loader-bg"></div>

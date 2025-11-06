@@ -15,15 +15,11 @@ declare(strict_types=1);
 
 namespace BluePayment\Test\Factory;
 
-use Address;
 use BluePayment\Test\Provider\AddressProvider;
 use BluePayment\Test\Provider\CarrierProvider;
 use BluePayment\Test\Provider\CartProvider;
 use BluePayment\Test\Provider\CustomerProvider;
 use BluePayment\Test\Provider\ProductProvider;
-use Cart;
-use Customer;
-use Product;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -168,7 +164,7 @@ class TestObjectFactory
      *
      * @return \Cart Test cart
      */
-    public function createCart(\Customer $customer, \Address $address, \Product $product, ?\Carrier $carrier = null): \Cart
+    public function createCart(\Customer $customer, \Address $address, \Product $product, ?\Carrier $carrier): \Cart
     {
         $cartData = $this->cartProvider->prepareTestCartData($customer, $address, $carrier);
 

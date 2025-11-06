@@ -61,6 +61,6 @@ class CarrierProvider
             }
         }
 
-        throw new TestException('No valid carrier found for testing');
+        throw new TestException('No valid carrier found for testing', ['carriers_checked' => count($carriers)]);
     }
 }

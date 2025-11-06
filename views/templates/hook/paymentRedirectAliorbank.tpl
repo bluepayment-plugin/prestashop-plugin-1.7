@@ -15,18 +15,29 @@
 *}
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="aliorbank">
 	<span class="bm-promo-desc">
-		{l s='Spread the payment into convenient installments and buy without any problems.' mod='bluepayment'}
-		<a target="_blank" href="https://kalkulator.raty.aliorbank.pl/init?supervisor=B776&promotionList=B">
-			{l s='Find out more.' mod='bluepayment'}
-		</a>
-		<br />
+		{if !empty($bm_short_description)}
+			{if !empty($bm_description_url)}
+				<a href="{$bm_description_url|escape:'htmlall':'UTF-8'}" target="_blank" rel="noopener noreferrer">
+					{$bm_short_description|escape:'htmlall':'UTF-8'}
+				</a>
+			{else}
+				{$bm_short_description|escape:'htmlall':'UTF-8'}
+			{/if}
+		{else}
+			{l s='Spread the payment into convenient installments and buy without any problems.' mod='bluepayment'}
+			<a target="_blank" href="https://kalkulator.raty.aliorbank.pl/init?supervisor=B776&promotionList=B">
+				{l s='Find out more.' mod='bluepayment'}
+			</a>
+			<br />
+		{/if}
 	</span>
 </span>
-<section>
-	<p>
-        {l s='We will redirect you to the bank website. After your application and positive verification, the bank will send you a loan agreement via email. You can accept it online. Average time of the whole transaction - 15 minutes.' mod='bluepayment'}
-	</p>
-</section>
+
+{if !empty($bm_description)}
+	<section>
+		{$bm_description nofilter}
+	</section>
+{/if}
 
 <div class="modal bm-fade" id="aliorbank-desc" tabindex="-1" aria-hidden="true">
 	<div class="bm-modal__dialog">

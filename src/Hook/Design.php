@@ -64,7 +64,7 @@ class Design extends AbstractHook
      *
      * @param $params
      *
-     * @return void|null
+     * @return string|null
      */
     public function displayProductPriceBlock($params)
     {
@@ -251,8 +251,8 @@ class Design extends AbstractHook
             $this->context->smarty->assign([
                 'products' => $this->context->cart->getProducts(true),
                 'coupons' => $coupons_list,
-                'ga4_tracking_id' => Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID') ?? false,
-                'ga4_secret' => Cfg::get('BLUEPAYMENT_GA4_SECRET') ?? false,
+                'ga4_tracking_id' => Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID'),
+                'ga4_secret' => Cfg::get('BLUEPAYMENT_GA4_SECRET'),
             ]);
         }
 

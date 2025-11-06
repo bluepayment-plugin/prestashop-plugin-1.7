@@ -143,7 +143,10 @@ class Amplitude
     public function getPaymentGroupNameById($gatewayId): string
     {
         $module = \Module::getInstanceByName('bluepayment');
-        $module->debug($gatewayId);
+        if ($module) {
+            /* @phpstan-ignore-next-line */
+            $module->debug($gatewayId);
+        }
 
         switch ($gatewayId) {
             case Config::GATEWAY_ID_BLIK:
@@ -174,7 +177,10 @@ class Amplitude
             default:
                 $name = 'Przelew internetowy';
         }
-        $module->debug($name);
+        if ($module) {
+            /* @phpstan-ignore-next-line */
+            $module->debug($name);
+        }
 
         return $name;
     }
@@ -189,7 +195,10 @@ class Amplitude
     public function getPaymentNameByGatewayId($gatewayId)
     {
         $query = new \DbQuery();
-        $query->select('gateway_name')->from('blue_gateway_transfers')->where('gateway_id = ' . (int) $gatewayId);
+        $query->select('bgtl.gateway_name')
+            ->from('blue_gateway_transfers', 'bgt')
+            ->leftJoin('blue_gateway_transfers_lang', 'bgtl', 'bgt.id = bgtl.id AND bgtl.id_lang = ' . (int) \Context::getContext()->language->id)
+            ->where('bgt.gateway_id = ' . (int) $gatewayId);
 
         return \Db::getInstance()->getValue($query);
     }

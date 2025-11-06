@@ -16,11 +16,12 @@ if (!defined('_PS_VERSION_')) {
 
 use BlueMedia\OnlinePayments\Model\Gateway;
 use BluePayment\Config\Config;
+use BluePayment\Service\Payment\GatewayInitParametersProvider;
 use BluePayment\Until\Helper;
 use PrestaShop\PrestaShop\Core\Domain\Order\Exception\OrderException;
 
 /**
- * @property BluePayment $module
+ * @property bluepayment $module
  */
 class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
 {
@@ -151,11 +152,21 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             'PlatformPluginVersion' => $this->module->version,
         ];
 
+        try {
+            $provider = new GatewayInitParametersProvider();
+            $extra = $provider->forGateway((int) Gateway::GATEWAY_ID_GOOGLE_PAY, (string) $currency, $this->context->cart, (int) $this->context->shop->id);
+            if (is_array($extra) && !empty($extra)) {
+                $data = array_merge($data, $extra);
+            }
+        } catch (Exception $e) {
+            Tools::error_log($e);
+        }
+
         $hash = array_merge($data, [$sharedKey]);
         $hash = Helper::generateAndReturnHash($hash);
 
         $data['Hash'] = $hash;
-        $fields = is_array($data) ? http_build_query($data) : $data;
+        $fields = http_build_query($data);
 
         try {
             $curl = curl_init($gateway::getActionUrl($gateway::PAYMENT_ACTON_PAYMENT));
@@ -208,7 +219,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             Db::getInstance()->update(
                 'blue_transactions',
                 ['created_at' => date('Y-m-d H:i:s')],
-                'order_id = \''. pSQL($orderId) .'\''
+                'order_id = \'' . pSQL($orderId) . '\''
             );
         }
 
@@ -371,7 +382,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
             Db::getInstance()->insert('blue_transactions', $data);
         } else {
             unset($data['order_id']);
-            Db::getInstance()->update('blue_transactions', $data, 'order_id = \''. pSQL($orderId) .'\'' );
+            Db::getInstance()->update('blue_transactions', $data, 'order_id = \'' . pSQL((string) $orderId) . '\'');
         }
     }
 
@@ -413,7 +424,7 @@ class BluePaymentChargeGPayModuleFrontController extends ModuleFrontController
     {
         $this->module->validateOrder(
             $cartId,
-            Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
+            (int) Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
             $amount,
             $this->module->displayName,
             null,

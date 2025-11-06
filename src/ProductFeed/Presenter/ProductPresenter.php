@@ -22,7 +22,7 @@ class ProductPresenter
     public function present(array &$products, $idLang, $idShop)
     {
         foreach ($products as &$product) {
-            $idDefaultCurrency = \Configuration::get('PS_CURRENCY_DEFAULT', null, null, $idShop);
+            $idDefaultCurrency = (int) \Configuration::get('PS_CURRENCY_DEFAULT', null, null, $idShop);
 
             $price = \Product::getPriceStatic(
                 (int) $product['id_product'],
@@ -47,6 +47,7 @@ class ProductPresenter
             );
             $product['link'] = \Context::getContext()->link->getProductLink(
                 (int) $product['id_product'],
+                /* @phpstan-ignore-next-line */
                 \Tools::link_rewrite($product['title']),
                 null,
                 null,
@@ -58,6 +59,7 @@ class ProductPresenter
 
             if (isset($cover['id_image'])) {
                 $product['image_link'] = \Context::getContext()->link->getImageLink(
+                    /* @phpstan-ignore-next-line */
                     \Tools::link_rewrite($product['title']),
                     $cover['id_image']
                 );

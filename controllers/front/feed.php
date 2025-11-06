@@ -25,6 +25,9 @@ if (!defined('_PS_VERSION_')) {
 
 class BluePaymentFeedModuleFrontController extends ModuleFrontController
 {
+    /** @var BluePayment */
+    public $module;
+
     public function initContent()
     {
         if (!Configuration::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED)) {

@@ -32,11 +32,6 @@ final class TimeoutChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * Minimum recommended execution time limit in seconds
      *
      * @var int
@@ -45,12 +40,10 @@ final class TimeoutChecker implements CheckerInterface
 
     /**
      * @param \Module $module
-     * @param \Context $context
      */
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
     }
 
     public function check(): array
@@ -107,10 +100,6 @@ final class TimeoutChecker implements CheckerInterface
     private function getMaxExecutionTime(): int
     {
         $timeLimit = ini_get('max_execution_time');
-
-        if ($timeLimit === false || $timeLimit === '') {
-            return 0;
-        }
 
         return (int) $timeLimit;
     }

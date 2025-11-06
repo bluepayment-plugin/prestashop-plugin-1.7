@@ -13,6 +13,7 @@
 
 declare(strict_types=1);
 
+namespace BluePayment\Install;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -20,8 +21,6 @@ if (!defined('_PS_VERSION_')) {
 
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
-use Symfony\Component\Translation\TranslatorInterface;
-use Tab;
 
 class Installer
 {
@@ -53,7 +52,11 @@ class Installer
     protected $translator;
     protected $db;
 
-    public function __construct(\BluePayment $module, TranslatorInterface $translator)
+    /**
+     * @param \BluePayment $module
+     * @param mixed $translator
+     */
+    public function __construct(\BluePayment $module, $translator)
     {
         $this->module = $module;
         $this->translator = $translator;
@@ -131,6 +134,7 @@ class Installer
         $res = true;
 
         foreach (self::MODULE_ADMIN_CONTROLLERS as $controller) {
+            /* @phpstan-ignore-next-line */
             if (\Tab::getIdFromClassName($controller['class_name'])) {
                 continue;
             }
@@ -139,10 +143,6 @@ class Installer
             $tab->class_name = $controller['class_name'];
             $tab->id_parent = $controller['parent'];
             $tab->active = $controller['visible'];
-
-            if (isset($controller['icon'])) {
-                $tab->icon = $controller['icon'];
-            }
 
             foreach (\Language::getLanguages() as $lang) {
                 if ($lang['locale'] === 'pl-PL') {
@@ -174,6 +174,7 @@ class Installer
     public function uninstallTabs($tabId = 0): bool
     {
         foreach (static::MODULE_ADMIN_CONTROLLERS as $controller) {
+            /** @phpstan-ignore-next-line */
             $id_tab = (int) \Tab::getIdFromClassName($controller['class_name']);
             $tab = new \Tab($id_tab);
             if (\Validate::isLoadedObject($tab)) {

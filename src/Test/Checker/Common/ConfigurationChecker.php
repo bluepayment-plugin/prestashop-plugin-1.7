@@ -36,11 +36,6 @@ final class ConfigurationChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * Required configuration keys
      *
      * @var array
@@ -64,12 +59,10 @@ final class ConfigurationChecker implements CheckerInterface
 
     /**
      * @param \Module $module
-     * @param \Context $context
      */
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
     }
 
     public function check(): array

@@ -58,6 +58,8 @@ class Sorter
             'PlatformName',
             'PlatformVersion',
             'PlatformPluginVersion',
+            'Nip',
+            'AccountHolderName',
             'Hash',
         ];
 

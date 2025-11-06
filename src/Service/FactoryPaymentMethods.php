@@ -35,23 +35,22 @@ class FactoryPaymentMethods
 
     public function getGroup()
     {
-        if (!is_object(\Context::getContext()->currency)) {
-            $currency = \Context::getContext()->currency['iso_code'];
-        } else {
-            $currency = \Context::getContext()->currency->iso_code;
-        }
+        $currency = \Context::getContext()->currency->iso_code;
         $idShop = $this->context->shop->id;
+        $idLang = (int) \Context::getContext()->language->id;
 
         $q = new \DbQuery();
-        $q->select('*');
+        $q->select('gt.*, gcl.gateway_name, gcl.button_title, gcl.description, gcl.short_description, gcl.group_title, gcl.group_short_description, gcl.group_description');
         $q->from('blue_gateway_channels', 'gt');
         $q->leftJoin('blue_gateway_channels_shop', 'gts', 'gts.id_blue_gateway_channels = gt.id_blue_gateway_channels');
+        $q->leftJoin('blue_gateway_channels_lang', 'gcl', 'gcl.id_blue_gateway_channels = gt.id_blue_gateway_channels AND gcl.id_lang = ' . $idLang);
         $q->where('gt.gateway_status = 1');
         $q->where('gt.gateway_currency = "' . pSql($currency) . '"');
         if (\Shop::isFeatureActive()) {
             $q->where('gts.id_shop = ' . (int) $idShop);
         }
         $q->orderBy('gt.position');
+        $q->groupBy('gt.id_blue_gateway_channels');
 
         return \Db::getInstance()->executeS($q);
     }

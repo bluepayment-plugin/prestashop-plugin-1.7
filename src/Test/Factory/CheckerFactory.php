@@ -69,7 +69,7 @@ final class CheckerFactory
     public function createCheckerFromClass(string $className): CheckerInterface
     {
         if (!class_exists($className)) {
-            throw new TestException("Checker class not found: $className");
+            throw new TestException("Checker class not found: $className", ['className' => $className]);
         }
 
         $dependencies = $this->getDependenciesForClass($className);

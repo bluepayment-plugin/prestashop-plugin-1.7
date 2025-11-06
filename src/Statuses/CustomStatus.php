@@ -123,7 +123,7 @@ class CustomStatus
             $completed = new \OrderState();
             $completed->module_name = $module_name;
             $completed->template = $completed_template;
-            $completed->invoice = 1;
+            $completed->invoice = true;
             $completed->unremovable = $unremovable;
             $completed->color = $completed_color;
             $completed->send_email = $completed_send_email;

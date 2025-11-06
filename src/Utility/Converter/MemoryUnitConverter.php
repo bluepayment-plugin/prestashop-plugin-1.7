@@ -34,7 +34,7 @@ final class MemoryUnitConverter
     public static function convertToMB(string $memoryLimit): int
     {
         // If no memory limit is set, return -1 (unlimited)
-        if ($memoryLimit === '' || $memoryLimit === false) {
+        if ($memoryLimit === '') {
             return -1;
         }
 

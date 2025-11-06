@@ -27,8 +27,14 @@ use BluePayment\Until\AdminHelper;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 
+/**
+ * @method string l(string $string, string $class = null, bool $addslashes = false, bool $htmlentities = true)
+ */
 class AdminBluepaymentPaymentsController extends ModuleAdminController
 {
+    /** @var BluePayment */
+    public $module;
+
     private $configIframe;
     private $configIframeServices;
 
@@ -470,7 +476,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         'name' => $this->module->name_upper . '_PROMO_PAY_LATER',
                         'image' => 'switcher1.png',
                         'size' => 'auto',
-                        'class' => $alior ? 'bm-active' : 'bm-no-active',
+                        'class' => 'bm-active',
                         'modal' => 'bm-helper-alior',
                         'values' => [
                             [
@@ -861,7 +867,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $productFeedCronLink = [];
         $productFeedFileLink = [];
         foreach (Shop::getShops() as $shop) {
-            $idDefaultLanguage = Configuration::get('PS_LANG_DEFAULT', null, null, $shop['id_shop']);
+            $idDefaultLanguage = (int) Configuration::get('PS_LANG_DEFAULT', null, null, $shop['id_shop']);
             $productFeedCronLink[] = $this->context->link->getModuleLink(
                 'bluepayment',
                 'feed',

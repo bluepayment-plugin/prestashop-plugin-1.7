@@ -10,7 +10,6 @@
  * @copyright  Since 2015 Autopay S.A.
  * @license    https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -20,13 +19,16 @@ use BluePayment\Service\Istn as IstnService;
 
 class BluePaymentIstnModuleFrontController extends ModuleFrontController
 {
+    /** @var BluePayment */
+    public $module;
+
     public function initContent()
     {
         parent::initContent();
         header('Content-type: text/xml');
 
-        file_put_contents(__DIR__.'/../../logs/istn.xml', "\n".json_encode($_REQUEST, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), FILE_APPEND);
-        file_put_contents(__DIR__.'/../../logs/istn.xml', "\n".json_encode(base64_decode($_REQUEST['transactions']), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), FILE_APPEND);
+        file_put_contents(__DIR__ . '/../../logs/istn.xml', "\n" . json_encode($_REQUEST, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), FILE_APPEND);
+        file_put_contents(__DIR__ . '/../../logs/istn.xml', "\n" . json_encode(base64_decode($_REQUEST['transactions']), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), FILE_APPEND);
 
         $istnService = new IstnService($this->module);
         $serviceID = null;
@@ -34,11 +36,12 @@ class BluePaymentIstnModuleFrontController extends ModuleFrontController
         $isAuthentic = false;
 
         try {
+            /** @var \SimpleXMLElement|false $xml */
             $xml = Gateway::getItnInXml();
 
-            if ($xml === false || !isset($xml->serviceID) || !isset($xml->hash) || !isset($xml->transactions)) {
+            if ($xml === false || !($xml instanceof \SimpleXMLElement) || !isset($xml->serviceID) || !isset($xml->hash) || !isset($xml->transactions)) {
                 PrestaShopLogger::addLog('Autopay ISTN Controller: Failed to parse XML or missing crucial elements.', 3);
-                $serviceID = ($xml && isset($xml->serviceID)) ? (string)$xml->serviceID : null;
+                $serviceID = ($xml && isset($xml->serviceID)) ? (string) $xml->serviceID : null;
                 echo $istnService->returnConfirmation($serviceID, $processedTransactions, $isAuthentic);
                 exit;
             }
@@ -50,7 +53,6 @@ class BluePaymentIstnModuleFrontController extends ModuleFrontController
             $isAuthentic = $result['authentic'];
 
             echo $istnService->returnConfirmation($serviceID, $processedTransactions, $isAuthentic);
-
         } catch (Exception $e) {
             PrestaShopLogger::addLog('Autopay ISTN Controller: General Exception: ' . $e->getMessage() . "\n" . $e->getTraceAsString(), 3);
             echo $istnService->returnConfirmation($serviceID, $processedTransactions, $isAuthentic);
