@@ -32,11 +32,6 @@ final class PrestaShopVersionChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * Minimum supported PrestaShop version
      *
      * @var string
@@ -52,12 +47,10 @@ final class PrestaShopVersionChecker implements CheckerInterface
 
     /**
      * @param \Module $module
-     * @param \Context $context
      */
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
     }
 
     public function check(): array

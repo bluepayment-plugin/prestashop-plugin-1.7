@@ -127,7 +127,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '3.2.1';
+        $this->version = '3.3.0';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -342,15 +342,17 @@ class BluePayment extends PaymentModule
         $paymentDataCompleted = !empty($serviceId) && !empty($sharedKey);
 
         if ($paymentDataCompleted === false) {
-            return null;
+            return [];
         }
 
         $moduleLink = $this->context->link->getModuleLink('bluepayment', 'payment', [], true);
 
         // Get all transfers
+        $id_lang = (int) $this->context->language->id;
         $gatewayTransfer = new DbQuery();
         $gatewayTransfer->from('blue_gateway_transfers', 'gt');
         $gatewayTransfer->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+        $gatewayTransfer->leftJoin('blue_gateway_transfers_lang', 'gtl', 'gtl.id = gt.id AND gtl.id_lang = ' . $id_lang);
         $gatewayTransfer->where('gt.gateway_id NOT IN (' . Helper::getGatewaysList() . ')');
         $gatewayTransfer->where('gt.gateway_id NOT IN (' . Helper::getDeletedGatewaysList() . ')');
         $gatewayTransfer->where('gt.gateway_status = 1');
@@ -360,13 +362,14 @@ class BluePayment extends PaymentModule
             $gatewayTransfer->where('gts.id_shop = ' . (int) $id_shop);
         }
 
-        $gatewayTransfer->select('*');
+        $gatewayTransfer->select('gt.*, gtl.gateway_name, gtl.button_title, gtl.description, gtl.short_description, gtl.group_title, gtl.group_short_description, gtl.group_description');
         $gatewayTransfer = Db::getInstance()->executeS($gatewayTransfer);
 
         // Get all wallets
         $gatewayWallet = new DbQuery();
         $gatewayWallet->from('blue_gateway_transfers', 'gt');
         $gatewayWallet->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+        $gatewayWallet->leftJoin('blue_gateway_transfers_lang', 'gtl', 'gtl.id = gt.id AND gtl.id_lang = ' . $id_lang);
         $gatewayWallet->where('gt.gateway_id IN (' . Helper::getWalletsList() . ')');
         $gatewayWallet->where('gt.gateway_status = 1');
         $gatewayWallet->where('gt.gateway_currency = "' . pSql($currency->iso_code) . '"');
@@ -375,7 +378,7 @@ class BluePayment extends PaymentModule
             $gatewayWallet->where('gts.id_shop = ' . (int) $id_shop);
         }
 
-        $gatewayWallet->select('*');
+        $gatewayWallet->select('gt.*, gtl.gateway_name, gtl.button_title, gtl.description, gtl.short_description, gtl.group_title, gtl.group_short_description, gtl.group_description');
         $gatewayWallet = Db::getInstance()->executeS($gatewayWallet);
 
         $this->context->smarty->assign([
@@ -408,8 +411,7 @@ class BluePayment extends PaymentModule
 
         $date = new DateTime();
         $date->sub(new DateInterval('PT1H'));
-        $date->format('Y-m-d h:i:s');
-        if (is_null($dateTimeUpdate) || $dateTimeUpdate <= $date->format('Y-m-d h:i:s')) {
+        if (!empty($dateTimeUpdate) || $dateTimeUpdate <= $date->format('Y-m-d h:i:s')) {
             $gateway = new BlueGateway($this, new BlueAPI($this));
             $gateway->getChannels();
 

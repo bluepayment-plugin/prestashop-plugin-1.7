@@ -37,29 +37,22 @@ final class DatabaseEnvironmentChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var CheckerInterface[]
      */
     private $checkers = [];
 
     /**
      * @param \Module $module
-     * @param \Context $context
      */
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
 
         // Dodajemy poszczególne checkery
-        $this->checkers[] = new ConnectionAvailabilityChecker($module, $context);
-        $this->checkers[] = new ReadPermissionChecker($module, $context);
-        $this->checkers[] = new WritePermissionChecker($module, $context);
-        $this->checkers[] = new InnoDBChecker($module, $context);
+        $this->checkers[] = new ConnectionAvailabilityChecker($module);
+        $this->checkers[] = new ReadPermissionChecker($module);
+        $this->checkers[] = new WritePermissionChecker($module);
+        $this->checkers[] = new InnoDBChecker($module);
     }
 
     public function check(): array

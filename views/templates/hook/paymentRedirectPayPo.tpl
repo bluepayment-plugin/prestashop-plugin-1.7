@@ -15,16 +15,29 @@
 *}
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="paypo">
 	<span class="bm-promo-desc">
-		{l s='Pick up your purchases, check them out and pay later - in 30 days or in convenient installments.' mod='bluepayment'}
-		<a target="_blank" href="https://start.paypo.pl/">
-			{l s='Learn more' mod='bluepayment'}
-		</a>
+		{if !empty($bm_short_description)}
+			{if !empty($bm_description_url)}
+				<a href="{$bm_description_url|escape:'htmlall':'UTF-8'}" target="_blank" rel="noopener noreferrer">
+					{$bm_short_description|escape:'htmlall':'UTF-8'}
+				</a>
+			{else}
+				{$bm_short_description|escape:'htmlall':'UTF-8'}
+			{/if}
+		{else}
+			{l s='Pick up your purchases, check them out and pay later - in 30 days or in convenient installments.' mod='bluepayment'}
+		{/if}
 	</span>
 </span>
 <section>
-	<span class="bm-small-info">
-        {l s='You will be redirected to our partner Autopay website.' mod='bluepayment'}
-	</span>
+	{if !empty($bm_description)}
+		<div class="bm-payment-description bm-small-info">
+			{$bm_description nofilter}
+		</div>
+	{else}
+		<span class="bm-small-info">
+			{l s='You will be redirected to our partner Autopay website.' mod='bluepayment'}
+		</span>
+	{/if}
 </section>
 
 

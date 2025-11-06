@@ -15,10 +15,6 @@ declare(strict_types=1);
 
 namespace BluePayment\Test\Provider;
 
-use Address;
-use Cart;
-use Customer;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -37,7 +33,7 @@ class CartProvider
      *
      * @return array Cart data
      */
-    public function prepareTestCartData(\Customer $customer, \Address $address, ?\Carrier $carrier = null): array
+    public function prepareTestCartData(\Customer $customer, \Address $address, ?\Carrier $carrier): array
     {
         $context = \Context::getContext();
         $currencyId = (int) \Currency::getDefaultCurrency()->id;

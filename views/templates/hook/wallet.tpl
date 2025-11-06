@@ -21,7 +21,7 @@
         {foreach from=$img_wallets item=row name='img_wallets'}
 			<div class="slide">
 				<img src="{$row['gateway_logo_url']}"
-				     alt="{$row['gateway_name']}">
+				     alt="{$row['gateway_name']|default:''}">
 			</div>
         {/foreach}
 	</div>
@@ -64,15 +64,15 @@
                             {foreach from=$gateway_wallets item=row name='gateway_wallets'}
 								<div class="bluepayment-gateways__item" data-bm-gateway-id="{$row['gateway_id']}"
 								     data-bm-back="wallet"
-								     data-bm-wallet-name="{$row['gateway_name']}">
-									<input type="radio" id="{$row['gateway_name']}"
+								     data-bm-wallet-name="{$row['gateway_name']|default:''}">
+									<input type="radio" id="{$row['gateway_name']|default:''}"
 									       class="bluepayment-gateways__radio"
 									       name="bm-wallet-id" value="{$row['gateway_id']}"
 									       required="required">
-									<label class="bm-default" for="{$row['gateway_name']}">
+									<label class="bm-default" for="{$row['gateway_name']|default:''}">
 										<img class="bluepayment-gateways__img" src="{$row['gateway_logo_url']}"
-										     alt="{$row['gateway_name']}">
-										<span class="bluepayment-gateways__name">{$row['gateway_name']}</span>
+										     alt="{$row['gateway_name']|default:''}">
+										<span class="bluepayment-gateways__name">{$row['gateway_name']|default:''}</span>
 									</label>
 								</div>
                             {/foreach}

@@ -77,6 +77,14 @@ final class OrderProcessor
         }
 
         try {
+            if (!method_exists($this->module, 'validateOrder')) {
+                return [
+                    'success' => false,
+                    'order_id' => null,
+                    'error' => 'Module does not support validateOrder method',
+                ];
+            }
+
             $this->module->validateOrder(
                 (int) $cart->id,
                 (int) \Configuration::get('BLUEPAYMENT_STATUS_WAIT_PAY_ID'),

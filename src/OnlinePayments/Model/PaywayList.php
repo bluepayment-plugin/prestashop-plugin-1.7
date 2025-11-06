@@ -52,13 +52,13 @@ class PaywayList extends AbstractModel
     /**
      * Sets serviceID.
      *
-     * @param int $serviceId
+     * @param string $serviceId
      *
      * @return $this
      */
     public function setServiceId($serviceId)
     {
-        Validator::validateServiceId($serviceId);
+        Validator::validateServiceId((string) $serviceId);
         $this->serviceId = (int) $serviceId;
 
         return $this;
@@ -77,7 +77,7 @@ class PaywayList extends AbstractModel
     /**
      * Sets messageID.
      *
-     * @param int $messageId
+     * @param string $messageId
      *
      * @return $this
      */
@@ -151,14 +151,62 @@ class PaywayList extends AbstractModel
         if (empty($this->messageId)) {
             throw new \DomainException('MessageId cannot be empty');
         }
-        if (empty($this->hash)) {
-            throw new \DomainException('Hash cannot be empty');
-        }
-        if ($this->serviceId !== $serviceId) {
+        if ((string) $this->serviceId !== (string) $serviceId) {
             throw new \DomainException(sprintf('Not equal ServiceId, $this->serviceId: "%s", $serviceId: "%s"', $this->serviceId, $serviceId));
         }
-        if ($this->messageId !== $messageId) {
+        if ((string) $this->messageId !== (string) $messageId) {
             throw new \DomainException(sprintf('Not equal MessageId, $this->messageId: "%s", $messageId: "%s"', $this->messageId, $messageId));
         }
+    }
+
+    /**
+     * Creates PaywayList model from multilingual API responses.
+     *
+     * @param array $languageResponses Array of JSON responses keyed by language code
+     *
+     * @return PaywayList
+     */
+    public static function createFromMultiLanguageResponse(array $languageResponses)
+    {
+        $model = new self();
+        $gatewayIds = [];
+        $gatewayGroupsMap = [];
+
+        foreach ($languageResponses as $language => $json) {
+            if ($json->serviceID) {
+                $model->setServiceId((string) $json->serviceID);
+            }
+
+            if ($json->messageID) {
+                $model->setMessageId((string) $json->messageID);
+            }
+
+            if (isset($json->gatewayGroups) && is_array($json->gatewayGroups)) {
+                foreach ($json->gatewayGroups as $group) {
+                    $groupType = (string) $group->type;
+
+                    if (!isset($gatewayGroupsMap[$groupType])) {
+                        $gatewayGroupsMap[$groupType] = [];
+                    }
+
+                    $gatewayGroupsMap[$groupType][$language] = $group;
+                }
+            }
+
+            if (isset($json->gatewayList) && is_array($json->gatewayList)) {
+                foreach ($json->gatewayList as $gatewayData) {
+                    $gatewayIds[(string) $gatewayData->gatewayID] = true;
+                }
+            }
+        }
+
+        foreach (array_keys($gatewayIds) as $gatewayId) {
+            $gateway = Gateway::createFromMultiLanguageResponse($languageResponses, $gatewayId, $gatewayGroupsMap);
+            if ($gateway !== null) {
+                $model->addGateway($gateway);
+            }
+        }
+
+        return $model;
     }
 }

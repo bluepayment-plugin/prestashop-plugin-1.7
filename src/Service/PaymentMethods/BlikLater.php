@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
 use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use BluePayment\Until\PaymentPresentationHelper;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class BlikLater implements GatewayType
@@ -50,6 +51,9 @@ class BlikLater implements GatewayType
         ]);
 
         $option = new PaymentOption();
+
+        PaymentPresentationHelper::assign($data, $data['gateway_name'] ?? 'BLIK Pay Later', Config::GATEWAY_ID_BLIK_LATER);
+
         $option
             ->setInputs([
                 [

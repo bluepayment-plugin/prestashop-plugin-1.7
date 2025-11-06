@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use BluePayment\Until\PaymentPresentationHelper;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class VisaMobile implements GatewayType
@@ -38,6 +39,9 @@ class VisaMobile implements GatewayType
         );
         $cardIdTime = \Context::getContext()->cart->id . '-' . time();
         $option = new PaymentOption();
+
+        PaymentPresentationHelper::assign($data, $data['gateway_name'] ?? 'Visa Mobile', Config::GATEWAY_ID_VISA_MOBILE);
+
         $option->setCallToActionText($module->l($data['gateway_name']))
             ->setAction($moduleLink)
             ->setInputs([

@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
 use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use BluePayment\Until\PaymentPresentationHelper;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class PayPo implements GatewayType
@@ -49,6 +50,8 @@ class PayPo implements GatewayType
         ]);
 
         $option = new PaymentOption();
+
+        PaymentPresentationHelper::assign($data, $data['gateway_name'] ?? 'PayPo', Config::GATEWAY_ID_PAYPO);
         $option->setCallToActionText($module->l($data['gateway_name']))
             ->setAction($moduleLink)
             ->setInputs([

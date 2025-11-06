@@ -84,9 +84,12 @@ class Helper
             return false;
         }
 
+        $idLang = (int) \Context::getContext()->language->id;
+
         $query = new \DbQuery();
         $query->from('blue_gateway_transfers', 'gt');
         $query->leftJoin('blue_gateway_transfers_shop', 'gts', 'gts.id = gt.id');
+        $query->leftJoin('blue_gateway_transfers_lang', 'gtl', 'gtl.id = gt.id AND gtl.id_lang = ' . $idLang);
 
         if ($type === 'transfers') {
             $query->where('gt.gateway_id NOT IN (' . self::getGatewaysList() . ')');
@@ -101,7 +104,7 @@ class Helper
             $query->where('gts.id_shop = ' . (int) $idShop);
         }
 
-        $query->select('gateway_logo_url, gateway_name');
+        $query->select('gt.gateway_logo_url, gt.bank_name, gtl.gateway_name');
 
         return \Db::getInstance()->executeS($query);
     }
@@ -182,7 +185,7 @@ class Helper
      *
      * @return array
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
     public static function getOrdersByOrderId($id_order): array
     {

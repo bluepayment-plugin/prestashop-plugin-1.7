@@ -24,7 +24,6 @@ use BluePayment\Service\Gateway;
 use BluePayment\Service\Refund;
 use BluePayment\Until\AdminHelper;
 use BluePayment\Until\Helper;
-use Configuration as Cfg;
 
 class Admin extends AbstractHook
 {

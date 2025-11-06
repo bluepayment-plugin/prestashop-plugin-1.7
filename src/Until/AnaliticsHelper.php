@@ -29,7 +29,7 @@ class AnaliticsHelper
      *
      * @param $orderId
      *
-     * @return void
+     * @return array
      */
     public function sendOrderGaAnalitics($orderId): array
     {
@@ -64,7 +64,7 @@ class AnaliticsHelper
 
                         $cat = new \Category($p['id_category_default'], \Context::getContext()->language->id);
 
-                        if ($cat) {
+                        if (\Validate::isLoadedObject($cat)) {
                             $category_name = $cat->name;
                         }
 

@@ -123,7 +123,7 @@ abstract class AbstractTestExecutor implements TestExecutorInterface
 
             if (!$checkerClass) {
                 $this->logger->error('Unknown test step', ['step' => $step]);
-                throw new TestException('Unknown test step: ' . $step);
+                throw new TestException('Unknown test step: ' . $step, ['step' => $step]);
             }
 
             $checker = $this->checkerFactory->createCheckerFromClass($checkerClass);
@@ -153,7 +153,7 @@ abstract class AbstractTestExecutor implements TestExecutorInterface
                 'message' => $e->getMessage(),
                 'code' => $e->getCode(),
             ]);
-            throw new TestException('Unexpected error: ' . $e->getMessage(), 0, $e);
+            throw new TestException('Unexpected error: ' . $e->getMessage(), [], $e->getCode(), $e);
         }
     }
 

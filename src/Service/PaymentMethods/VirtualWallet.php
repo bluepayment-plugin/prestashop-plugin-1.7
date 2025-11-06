@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
 use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
+use BluePayment\Until\PaymentPresentationHelper;
 use Configuration as Cfg;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -55,11 +56,8 @@ class VirtualWallet implements GatewayType
             $gpayRedirect = true;
         }
 
-        if (!is_object(\Context::getContext()->currency)) {
-            $currency = \Context::getContext()->currency['iso_code'];
-        } else {
-            $currency = \Context::getContext()->currency->iso_code;
-        }
+        $currency = \Context::getContext()->currency->iso_code;
+
         $googlePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_GOOGLE_PAY, $currency);
         $applePay = $this->checkIfActiveSubChannel(Config::GATEWAY_ID_APPLE_PAY, $currency);
         $idShop = \Context::getContext()->shop->id;
@@ -74,6 +72,9 @@ class VirtualWallet implements GatewayType
         ]);
 
         $option = new PaymentOption();
+
+        PaymentPresentationHelper::assign($data, 'Virtual wallet', 0);
+
         $option->setCallToActionText($module->l('Virtual wallet'))
             ->setAction($moduleLink)
             ->setInputs([

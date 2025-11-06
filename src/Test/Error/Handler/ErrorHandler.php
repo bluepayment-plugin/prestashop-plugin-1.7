@@ -38,14 +38,13 @@ final class ErrorHandler
     private $isRegistered = false;
 
     /**
-     * @param \Module $module
      * @param string $testType Typ testu (connection, transaction)
      */
-    public function __construct(\Module $module, string $testType = 'connection')
+    public function __construct(string $testType = 'connection')
     {
         $config = new TestLoggerConfig();
 
-        $this->logger = new FileTestLogger($module, $testType, $config);
+        $this->logger = new FileTestLogger($testType, $config);
     }
 
     public function register(): void

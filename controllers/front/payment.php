@@ -17,11 +17,15 @@ if (!defined('_PS_VERSION_')) {
 use BlueMedia\OnlinePayments\Gateway;
 use BlueMedia\OnlinePayments\Model\TransactionStandard;
 use BluePayment\Config\Config;
+use BluePayment\Service\Payment\GatewayInitParametersProvider;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 
 class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 {
+    /** @var BluePayment */
+    public $module;
+
     public $ssl = true;
     public $display_column_left = false;
 
@@ -60,8 +64,8 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
             $this->module->validateOrder(
                 $cartId,
-                Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
-                $amount,
+                (int) Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
+                (float) $amount,
                 $this->module->displayName,
                 null,
                 [],
@@ -153,9 +157,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
         $regulationId = Tools::getValue('bluepayment-hidden-psd2-regulation-id', null);
 
-        // Parametr regulation-id jest przekazywany tylko w przypadku kanałow z regulaminami PSD
         if (empty($regulationId) === false) {
-            // Zaakceptowana przez uzytkownika PSD2 klauzula
             $transactionStandard
                 ->setDefaultRegulationAcceptanceID(Tools::getValue('bluepayment-hidden-psd2-regulation-id'))
                 ->setDefaultRegulationAcceptanceState('ACCEPTED')
@@ -164,6 +166,20 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
         if ($gateway_id !== 0) {
             $transactionStandard->setGatewayId($gateway_id);
+        }
+
+        try {
+            $provider = new GatewayInitParametersProvider();
+            $extra = $provider->forGateway((int) ($gateway_id ?: 0), (string) $isoCode, $this->context->cart, (int) $this->context->shop->id);
+
+            if (!empty($extra['Nip'])) {
+                $transactionStandard->setNip($extra['Nip']);
+            }
+            if (!empty($extra['AccountHolderName'])) {
+                $transactionStandard->setAccountHolderName($extra['AccountHolderName']);
+            }
+        } catch (Exception $e) {
+            Tools::error_log($e);
         }
 
         $form = '';

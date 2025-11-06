@@ -26,7 +26,7 @@ class BluePaymentBackModuleFrontController extends ModuleFrontController
 
         $orderId = Tools::getValue('OrderID');
         $order = explode('-', $orderId)[0];
-        $order = new OrderCore($order);
+        $order = new OrderCore((int) $order);
 
         $customer = new CustomerCore($order->id_customer);
 

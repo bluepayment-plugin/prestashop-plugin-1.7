@@ -16,9 +16,40 @@
 <span class="bm-payment__elm"></span>
 
 {if $gpayRedirect}
-	<p>{l s='You will be redirected to the website of our partner Autopay, where you can choose your fast and secure payment method.' mod='bluepayment'}</p>
+	{if !empty($bm_short_description)}
+		{if !empty($bm_description_url)}
+			<a href="{$bm_description_url|escape:'htmlall':'UTF-8'}" target="_blank" rel="noopener noreferrer">
+				<p>{$bm_short_description|escape:'htmlall':'UTF-8'}</p>
+			</a>
+		{else}
+			<p>{$bm_short_description|escape:'htmlall':'UTF-8'}</p>
+		{/if}
+	{else}
+		<p>{l s='You will be redirected to the website of our partner Autopay, where you can choose your fast and secure payment method.' mod='bluepayment'}</p>
+	{/if}
+	{if !empty($bm_description)}
+		<div class="bm-payment-description" style="margin-top: 10px;">
+			{$bm_description nofilter}
+		</div>
+	{/if}
 {else}
 	<section>
+		{if !empty($bm_short_description)}
+			{if !empty($bm_description_url)}
+				<a href="{$bm_description_url|escape:'htmlall':'UTF-8'}" class="bm-small-info" target="_blank" rel="noopener noreferrer" style="display: block; margin-bottom: 15px;">
+					{$bm_short_description|escape:'htmlall':'UTF-8'}
+				</a>
+			{else}
+				<span class="bm-small-info" style="display: block; margin-bottom: 15px;">
+					{$bm_short_description|escape:'htmlall':'UTF-8'}
+				</span>
+			{/if}
+		{/if}
+		{if !empty($bm_description)}
+			<div class="bm-payment-description" style="margin-bottom: 15px;">
+				{$bm_description nofilter}
+			</div>
+		{/if}
 		<div style="padding-bottom: 25px">
 			<div class="bluepayment-loader"></div>
 			<div class="bluepayment-loader-bg"></div>

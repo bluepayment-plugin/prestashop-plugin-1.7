@@ -40,30 +40,24 @@ final class PhpEnvironmentChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var CheckerInterface[]
      */
     private $checkers = [];
 
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
 
         // PHP version and extensions checks
-        $this->checkers[] = new VersionChecker($module, $context);
-        $this->checkers[] = new ExtensionXmlChecker($module, $context);
-        $this->checkers[] = new ExtensionCurlChecker($module, $context);
-        $this->checkers[] = new ExtensionZipChecker($module, $context);
-        $this->checkers[] = new ExtensionOpenSSLChecker($module, $context);
+        $this->checkers[] = new VersionChecker($module);
+        $this->checkers[] = new ExtensionXmlChecker($module);
+        $this->checkers[] = new ExtensionCurlChecker($module);
+        $this->checkers[] = new ExtensionZipChecker($module);
+        $this->checkers[] = new ExtensionOpenSSLChecker($module);
 
         // PHP limits checks
-        $this->checkers[] = new MemoryLimitChecker($module, $context);
-        $this->checkers[] = new TimeoutChecker($module, $context);
+        $this->checkers[] = new MemoryLimitChecker($module);
+        $this->checkers[] = new TimeoutChecker($module);
     }
 
     public function check(): array

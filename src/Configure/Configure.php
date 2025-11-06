@@ -23,7 +23,6 @@ use BluePayment\Adapter\ConfigurationAdapter;
 use BluePayment\Config\Config;
 use BluePayment\Statuses\CustomStatus;
 use BluePayment\Until\Helper;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class Configure
 {
@@ -35,10 +34,15 @@ class Configure
 
     public const TRANSLATE_GROUP = 'Modules.Bluepayment';
 
+    /**
+     * @param \BluePayment $module
+     * @param ConfigurationAdapter $configurationAdapter
+     * @param mixed $translator
+     */
     public function __construct(
         \BluePayment $module,
         ConfigurationAdapter $configurationAdapter,
-        TranslatorInterface $translator
+        $translator
     ) {
         $this->module = $module;
         $this->translator = $translator;

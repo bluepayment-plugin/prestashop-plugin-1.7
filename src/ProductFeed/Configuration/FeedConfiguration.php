@@ -31,7 +31,10 @@ class FeedConfiguration
 
     public function __construct()
     {
-        $this->module = \Module::getInstanceByName('bluepayment');
+        $module = \Module::getInstanceByName('bluepayment');
+        if ($module instanceof \BluePayment) {
+            $this->module = $module;
+        }
     }
 
     public function getParameters($currencyIsoCode)

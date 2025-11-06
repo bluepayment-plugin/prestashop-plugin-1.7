@@ -19,23 +19,39 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BluePayment\Traits\MultilingualGatewayTrait;
+
 class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
 {
+    use MultilingualGatewayTrait;
+
     private $module;
 
     public $id;
     public $gateway_status;
     public $gateway_id;
-    public $bank_name;
-    public $gateway_name;
     public $position;
     public $gateway_currency;
     public $gateway_type;
     public $gateway_logo_url;
+    public $available_for;
+    public $required_params;
+
+    public $gateway_name;
+    public $bank_name;
+    public $gateway_description;
+    public $group_title;
+    public $group_short_description;
+    public $group_description;
+    public $button_title;
+    public $description;
+    public $short_description;
+    public $description_url;
 
     public static $definition = [
         'table' => 'blue_gateway_transfers',
         'primary' => 'id',
+        'multilang' => true,
         'fields' => [
             'id' => [
                 'type' => self::TYPE_INT,
@@ -49,17 +65,6 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedId',
                 'required' => true,
-            ],
-            'bank_name' => [
-                'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
-                'required' => true,
-                'size' => 100,
-            ],
-            'gateway_name' => [
-                'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
-                'size' => 100,
             ],
             'position' => [
                 'type' => self::TYPE_INT,
@@ -77,6 +82,69 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
             'gateway_logo_url' => [
                 'type' => self::TYPE_STRING,
                 'validate' => 'isGenericName',
+                'size' => 500,
+            ],
+            'available_for' => [
+                'type' => self::TYPE_STRING,
+                'validate' => 'isGenericName',
+                'size' => 10,
+            ],
+            'required_params' => [
+                'type' => self::TYPE_HTML,
+            ],
+            'bank_name' => [
+                'type' => self::TYPE_STRING,
+                'validate' => 'isGenericName',
+                'size' => 255,
+            ],
+
+            'gateway_name' => [
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isGenericName',
+                'size' => 255,
+            ],
+            'gateway_description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'group_title' => [
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isGenericName',
+                'size' => 255,
+            ],
+            'group_short_description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'group_description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'button_title' => [
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isGenericName',
+                'size' => 255,
+            ],
+            'description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'short_description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'description_url' => [
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isUrl',
                 'size' => 500,
             ],
         ],
@@ -111,24 +179,39 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
                         unset($gatewayTransfersToRemove[$paymentGateway->getGatewayId()]);
                     }
 
-                    if (!$this->isTransferActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
-                        $payway->gateway_logo_url = $paymentGateway->getIconUrl();
-                        $payway->bank_name = $paymentGateway->getBankName();
-                        $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
-                        $payway->gateway_name = $paymentGateway->getGatewayName();
-                        $payway->gateway_type = 1;
-                        $payway->gateway_currency = $currency['iso_code'];
-                        $payway->force_id = true;
-                        $payway->gateway_id = $paymentGateway->getGatewayId();
+                    $payway->gateway_logo_url = $paymentGateway->getIconUrl();
+                    $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
+                    $payway->gateway_type = 1;
+                    $payway->gateway_currency = $currency['iso_code'];
+                    $payway->force_id = true;
+                    $payway->gateway_id = $paymentGateway->getGatewayId();
+                    $payway->bank_name = $paymentGateway->getBankName();
 
+                    $payway->available_for = (string) $paymentGateway->getAvailableFor();
+                    $payway->required_params = json_encode($paymentGateway->getRequiredParams(), JSON_UNESCAPED_UNICODE);
+
+                    $multilingualData = $this->mapGatewayToMultilingualData($paymentGateway);
+                    foreach ($multilingualData as $langId => $langData) {
+                        $payway->gateway_name[$langId] = $langData['gateway_name'];
+                        $payway->gateway_description[$langId] = $langData['gateway_description'];
+                        $payway->group_title[$langId] = $langData['group_title'];
+                        $payway->group_short_description[$langId] = $langData['group_short_description'];
+                        $payway->group_description[$langId] = $langData['group_description'];
+                        $payway->button_title[$langId] = $langData['button_title'];
+                        $payway->description[$langId] = $langData['description'];
+                        $payway->short_description[$langId] = $langData['short_description'];
+                        $payway->description_url[$langId] = $langData['description_url'];
+                    }
+
+                    if (!$this->isTransferActive($paymentGateway->getGatewayId(), $currency['iso_code'])) {
                         if (!$payway->id) {
                             $maxPosition = $this->getMaxTransfersPositionsByCurrency($currency);
                             $payway->position = $maxPosition ? $maxPosition + 1 : 0;
                         }
-
-                        $payway->save();
-                        (int) $position++;
                     }
+
+                    $payway->save();
+                    (int) $position++;
                 }
             }
 
@@ -174,7 +257,7 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
 
     private static function getByGatewayIdAndCurrency($gatewayId, $currency): BlueGatewayTransfers
     {
-        return new BlueGatewayTransfers(self::isTransferActive($gatewayId, $currency));
+        return new BlueGatewayTransfers(self::getTransferId($gatewayId, $currency));
     }
 
     public function removeGatewayCurrency($currency): bool

@@ -46,12 +46,12 @@ Po pozytywnej weryfikacji przez Autopay, płatności online zostaną aktywowane 
 
 2) Wejdź na http(s)://domena_sklepu.pl/nazwa_katalogu_administratora i zaloguj się do swojego konta administratora używając loginu i hasła.
 
-![Logowanie](https://user-images.githubusercontent.com/87177993/130193963-b91d3de8-57a6-4c62-80e3-64a2ce93d735.png)
+![Logowanie](docs/img/logowanie.png)
 
 3) Po zalogowaniu się przejdź do zakładki **Moduły > Moduły i usługi** (lub **Menedżer modułów** – w zależności od wersji sklepu).
 - kliknij **Dodaj nowy moduł** (widoczny w prawym górnym rogu), by wgrać paczkę plików, którą pobrałeś w poprzednim kroku;
 
-![Dodaj nowy moduł](https://user-images.githubusercontent.com/87177993/130194405-94fe13b7-e2f8-4ea9-bea0-8db12ebeeb9e.png)
+![Dodaj nowy moduł](docs/img/zaladuj.png)
 
 *(Po kliknięciu przycisku pojawi się okno umożliwiające wybór pliku z komputera.)*
 
@@ -67,11 +67,11 @@ Gdy instalacja się zakończy, system przeniesie cię automatycznie do Konfigura
 1) Zaloguj się za pomocą konta administratora na adres:
    http(s)://domena_sklepu.pl/nazwa_katalogu_administratora
 
-![Logowanie](https://user-images.githubusercontent.com/87177993/130193963-b91d3de8-57a6-4c62-80e3-64a2ce93d735.png)
+![Logowanie](docs/img/logowanie.png)
 
 2) Przejdź do zakładki **Preferencje ➝ Ruch**, znajdź **Przyjazny adres URL** i włącz klikając **Tak**.
 
-![Przyjazny adres URL](https://user-images.githubusercontent.com/87177993/130194986-893c69f6-e47c-428d-884e-44e8ffcfc6e6.png)
+![Przyjazny adres URL](docs/img/seo.png)
 
 
 ### Konfiguracja modułu
@@ -107,7 +107,7 @@ Rozszerzyliśmy możliwości analityczne modułu, poprzez podłączenie dodatkow
 
 Dzięki połączeniu możesz poznać dokładną ścieżkę zakupową klienta oraz sprawdzić jego zachowania na poszczególnych etapach procesu i na tej podstawie podjąć działania optymalizujące działanie sklepu.
 
-![Analityka](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/analityka.png)
+![Analityka](docs/img/analityka.png)
 
 ### Logi
 
@@ -134,27 +134,27 @@ Powiadomienia o zmianie statusu płatności wysyłane są w zależności od konf
 - Metody płatności obsługiwane Autopay są zgrupowane i zaprezentowane w
   estetyczny, nowoczesny sposób:
 
-![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_front.png)
+![Payment](docs/img/platnosci_front.png)
 - Wybór metody płatności typu przelew internetowy lub wirtualny portfel jest bardzo prosty, dzięki wdrożeniu wygodnego okienka:
 
-![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_modal.png)
+![Payment](docs/img/platnosci_modal.png)
 - Metody płatności Google Pay oraz Apple Pay zostały zgrupowane w pozycji Wirtualny portfel:
 
-![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_wirtualny_portfel.png)
+![Payment](docs/img/platnosci_wirtualny_portfel.png)
 - Wybraną metodę płatności możesz z łatwością zmienić. Nowy wygląd zapewnia również łatwy dostęp do niezbędnych informacji nt. przekierowań i regulaminów:
 
-![Payment](https://raw.githubusercontent.com/bluepayment-plugin/prestashop-plugin-1.7/master/docs/img/platnosci_przelew.png)
+![Payment](docs/img/platnosci_przelew.png)
 
 
 ## Aktualizacja
 
 1) Żeby dokonać aktualizacji – Wystarczy kliknąć Upgrade.
 
-![Upgrade](https://user-images.githubusercontent.com/87177993/130195194-14d14c9a-1cfa-43f8-aa4b-c82e72a28dac.png)
+![Upgrade](docs/img/aktualizacja.png)
 
 2) Następnie postępuj zgodnie z instrukcją opisaną w sekcji **Instalacja wtyczki**.
 
 ## Odinstalowanie
 Żeby odinstalować moduł – wybierz **Odinstaluj**.
 
-![Odinstaluj](https://user-images.githubusercontent.com/87177993/130195263-931b9ac8-a2f0-42c1-841f-0fc853a716b4.png)
+![Odinstaluj](docs/img/konfiguruj.png)

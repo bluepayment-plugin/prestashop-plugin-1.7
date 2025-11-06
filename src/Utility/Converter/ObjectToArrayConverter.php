@@ -48,8 +48,9 @@ trait ObjectToArrayConverter
                     $value = $property->getValue($item);
 
                     if (is_object($value) || is_array($value)) {
-                        $value = $this->convertObjectsToArrays(is_object($value) ? [$value] : $value);
-                        $value = is_object($value) ? reset($value) : $value;
+                        $wasObject = is_object($value);
+                        $value = $this->convertObjectsToArrays($wasObject ? [$value] : $value);
+                        $value = $wasObject ? reset($value) : $value;
                     }
 
                     $itemData[$key] = $value;

@@ -1,4 +1,8 @@
 # Changelog
+## [3.3.0] 06.11.2025
+- Gateway list v. 3.0
+- Fixed a bug with add test controller 
+
 ## [3.2.1] 7.10.2025
 - Add test connection
 - Change image in README.md

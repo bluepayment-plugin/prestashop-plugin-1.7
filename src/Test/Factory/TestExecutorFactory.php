@@ -87,6 +87,6 @@ final class TestExecutorFactory
      */
     public function createLogger(string $testType): TestLoggerInterface
     {
-        return new FileTestLogger($this->module, $testType, $this->loggerConfig);
+        return new FileTestLogger($testType, $this->loggerConfig);
     }
 }

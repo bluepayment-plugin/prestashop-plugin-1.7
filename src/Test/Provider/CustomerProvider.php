@@ -71,7 +71,7 @@ class CustomerProvider
             'firstname' => 'Test',
             'lastname' => 'BLIK',
             'email' => 'test.blik.' . time() . '@test.com',
-            'passwd' => \Tools::encrypt('test123'),
+            'passwd' => \Tools::hash('test123'),
             'is_guest' => 0,
             'active' => 1,
         ];

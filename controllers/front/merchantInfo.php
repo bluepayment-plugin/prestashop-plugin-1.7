@@ -20,6 +20,9 @@ use PrestaShop\PrestaShop\Core\Domain\Order\Exception\OrderException;
 
 class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
 {
+    /** @var BluePayment */
+    public $module;
+
     /**
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
@@ -136,7 +139,7 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
         $hash = array_merge($data, [$sharedKey]);
         $hash = Helper::generateAndReturnHash($hash);
         $data['Hash'] = $hash;
-        $fields = is_array($data) ? http_build_query($data) : $data;
+        $fields = http_build_query($data);
 
         try {
             $curl = curl_init($gateway::getActionUrl($gateway::GET_MERCHANT_INFO));
@@ -155,8 +158,8 @@ class BluePaymentMerchantInfoModuleFrontController extends ModuleFrontController
             if ($curlResponse === 'ERROR' || empty($curlResponse)) {
                 Tools::error_log(
                     'Invalid response from BlueMedia API during get merchant info for G-pay. Dta: '
-                    . print_r($data, 1)
-                    . "\nResponse:\n" . print_r($curlResponse, 1)
+                    . print_r($data, true)
+                    . "\nResponse:\n" . print_r($curlResponse, true)
                 );
 
                 return false;

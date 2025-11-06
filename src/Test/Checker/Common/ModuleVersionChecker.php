@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace BluePayment\Test\Checker\Common;
 
 use BluePayment\Test\Checker\Interfaces\CheckerInterface;
-use Module;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -30,17 +29,12 @@ final class ModuleVersionChecker implements CheckerInterface
     /**
      * @var string|null
      */
-    private static $lastError = null;
+    private static $lastError;
 
     /**
      * @var \Module
      */
     private $module;
-
-    /**
-     * @var \Context
-     */
-    private $context;
 
     /**
      * @var string
@@ -54,12 +48,10 @@ final class ModuleVersionChecker implements CheckerInterface
 
     /**
      * @param \Module $module
-     * @param \Context $context
      */
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
     }
 
     public function check(): array

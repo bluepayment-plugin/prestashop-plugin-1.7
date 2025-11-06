@@ -15,7 +15,24 @@
 *}
 <span class="bm-payment__elm" data-open-payment="card"></span>
 <section>
-	<span class="bm-small-info">
-		{l s='You will be redirected to our partner Autopay website where you will enter your card details.' mod='bluepayment'}
-	</span>
+	{if !empty($bm_short_description)}
+		{if !empty($bm_description_url)}
+			<a href="{$bm_description_url|escape:'htmlall':'UTF-8'}" class="bm-small-info" target="_blank" rel="noopener noreferrer">
+				{$bm_short_description|escape:'htmlall':'UTF-8'}
+			</a>
+		{else}
+			<span class="bm-small-info">
+				{$bm_short_description|escape:'htmlall':'UTF-8'}
+			</span>
+		{/if}
+	{else}
+		<span class="bm-small-info">
+			{l s='You will be redirected to our partner Autopay website where you will enter your card details.' mod='bluepayment'}
+		</span>
+	{/if}
+	{if !empty($bm_description)}
+		<div class="bm-payment-description" style="margin-top: 10px;">
+			{$bm_description nofilter}
+		</div>
+	{/if}
 </section>

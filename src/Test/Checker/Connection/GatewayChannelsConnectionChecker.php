@@ -34,19 +34,21 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
      */
     private $module;
 
-    /**
-     * @var \Context
-     */
-    private $context;
-
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
     }
 
     public function check(): array
     {
+        if (!($this->module instanceof \BluePayment)) {
+            return [
+                'status' => 'error',
+                'message' => $this->module->l('Invalid module type for Gateway connection check'),
+                'details' => ['module_type' => get_class($this->module)],
+            ];
+        }
+
         $api = new BlueAPI($this->module);
         $gateway = new BlueGateway($this->module, $api);
         $mode = $api->getApiMode();
@@ -207,7 +209,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
             $merchantData = $api->getApiMerchantData($currencyCode);
             $mode = $api->getApiMode();
 
-            $gatewayList = $api->gatewayAccountByCurrency($merchantData, $currencyCode, $mode);
+            $gatewayList = $api->gatewayAccountByCurrency($merchantData, $currencyCode, $mode, AdminHelper::getSortLanguages());
 
             if ($gatewayList && method_exists($gatewayList, 'getGateways')) {
                 $channels = $gatewayList->getGateways();

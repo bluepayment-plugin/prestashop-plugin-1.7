@@ -33,11 +33,6 @@ final class FileTestLogger implements TestLoggerInterface
     private $logFilePath;
 
     /**
-     * @var \Module
-     */
-    private $module;
-
-    /**
      * @var string
      */
     private $testType;
@@ -48,13 +43,11 @@ final class FileTestLogger implements TestLoggerInterface
     private $config;
 
     /**
-     * @param \Module $module
      * @param string $testType Test type (connection, transaction)
      * @param TestLoggerConfig|null $config Logger configuration
      */
-    public function __construct(\Module $module, string $testType, TestLoggerConfig $config = null)
+    public function __construct(string $testType, TestLoggerConfig $config = null)
     {
-        $this->module = $module;
         $this->testType = $testType;
         $this->config = $config ?? new TestLoggerConfig();
         $this->logFilePath = $this->initLogFile();
@@ -257,7 +250,7 @@ final class FileTestLogger implements TestLoggerInterface
         $now = time();
 
         // Find all archived log files for this test type
-        $pattern = $this->config->getLogFilesPattern($this->testType);
+        $pattern = $this->config->getLogDirectory() . $this->testType . '_test*.log';
         $files = glob($pattern);
 
         foreach ($files as $file) {

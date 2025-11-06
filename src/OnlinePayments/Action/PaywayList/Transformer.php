@@ -79,11 +79,11 @@ class Transformer
         }
 
         if (isset($xml->gateway)) {
-            if (is_array($xml->gateway) || isset($xml->gateway[0])) {
+            if (isset($xml->gateway[0])) {
                 foreach ($xml->gateway as $key => $gateway) {
                     $gatewayModel = new GatewayModel();
-                    $gatewayModel->setGatewayId((string) $gateway->gatewayID)
-                        ->setGatewayName((string) $gateway->gatewayName);
+                    $gatewayModel->setGatewayId((int) $gateway->gatewayID)
+                        ->setGatewayName((string) \Context::getContext()->language->id, (string) $gateway->gatewayName);
 
                     if (isset($gateway->gatewayType)) {
                         $gatewayModel->setGatewayType((string) $gateway->gatewayType);
@@ -127,7 +127,7 @@ class Transformer
     /**
      * Transforms JSON to model.
      *
-     * @param \stdClass $xml
+     * @param \stdClass $json
      *
      * @return PaywayList
      */
@@ -147,8 +147,8 @@ class Transformer
             if (is_array($json->gatewayList) || isset($json->gatewayList[0])) {
                 foreach ($json->gatewayList as $key => $gateway) {
                     $gatewayModel = new GatewayModel();
-                    $gatewayModel->setGatewayId((string) $gateway->gatewayID)
-                        ->setGatewayName((string) $gateway->gatewayName);
+                    $gatewayModel->setGatewayId((int) $gateway->gatewayID)
+                        ->setGatewayName((string) \Context::getContext()->language->id, (string) $gateway->gatewayName);
 
                     if (isset($gateway->gatewayType)) {
                         $gatewayModel->setGatewayType((string) $gateway->gatewayType);
@@ -174,6 +174,14 @@ class Transformer
                                 new \DateTimeZone(Gateway::DATETIME_TIMEZONE)
                             )
                         );
+                    }
+
+                    if (isset($gateway->availableFor)) {
+                        $gatewayModel->setAvailableFor((string) $gateway->availableFor);
+                    }
+
+                    if (isset($gateway->requiredParams) && is_array($gateway->requiredParams)) {
+                        $gatewayModel->setRequiredParams($gateway->requiredParams);
                     }
 
                     if (isset($gateway->currencyList)

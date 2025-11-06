@@ -32,34 +32,39 @@ final class ConnectionAvailabilityChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var \Db
      */
     private $db;
 
     /**
      * @param \Module $module
-     * @param \Context $context
      */
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
         $this->db = \Db::getInstance();
     }
 
     public function check(): array
     {
-        if (!$this->db->getLink()) {
+        try {
+            $result = $this->db->executeS('SELECT 1');
+            if ($result === false) {
+                return [
+                    'status' => 'error',
+                    'message' => $this->module->l('Could not connect to the database'),
+                    'details' => [
+                        'connection' => false,
+                    ],
+                ];
+            }
+        } catch (\Exception $e) {
             return [
                 'status' => 'error',
                 'message' => $this->module->l('Could not connect to the database'),
                 'details' => [
                     'connection' => false,
+                    'error' => $e->getMessage(),
                 ],
             ];
         }

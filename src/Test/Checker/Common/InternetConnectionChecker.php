@@ -32,11 +32,6 @@ final class InternetConnectionChecker implements CheckerInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var array
      */
     private $testHosts = [
@@ -47,12 +42,10 @@ final class InternetConnectionChecker implements CheckerInterface
 
     /**
      * @param \Module $module
-     * @param \Context $context
      */
-    public function __construct(\Module $module, \Context $context)
+    public function __construct(\Module $module)
     {
         $this->module = $module;
-        $this->context = $context;
     }
 
     /**

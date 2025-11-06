@@ -57,22 +57,22 @@ class TransactionInit extends AbstractModel
     /**
      * Transaction gateway id.
      *
-     * @var int|null
+     * @var string|null
      */
     protected $gatewayId;
 
     /**
-     * @var
+     * @var mixed
      */
     protected $acceptanceTime;
 
     /**
-     * @var
+     * @var mixed
      */
     protected $acceptanceState;
 
     /**
-     * @var
+     * @var mixed
      */
     protected $regulationId;
 
@@ -151,6 +151,20 @@ class TransactionInit extends AbstractModel
      * @var string
      */
     protected $platformPluginVersion = '';
+
+    /**
+     * NIP (for B2B flows or when required by gateway).
+     *
+     * @var string
+     */
+    protected $nip = '';
+
+    /**
+     * Account holder name (for gateways requiring accountHolderName).
+     *
+     * @var string
+     */
+    protected $accountHolderName = '';
 
     public function __construct()
     {
@@ -386,7 +400,7 @@ class TransactionInit extends AbstractModel
      *
      * @return string|null
      */
-    public function getGatewayId()
+    public function getGatewayId(): ?string
     {
         return $this->gatewayId;
     }
@@ -450,7 +464,7 @@ class TransactionInit extends AbstractModel
      */
     public function setServiceId($serviceId): self
     {
-        Validator::validateServiceId($serviceId);
+        Validator::validateServiceId((string) $serviceId);
         $this->serviceId = (int) $serviceId;
 
         return $this;
@@ -682,8 +696,60 @@ class TransactionInit extends AbstractModel
             $result['PlatformPluginVersion'] = $this->getPlatformPluginVersion();
         }
 
+        if (!empty($this->getNip())) {
+            $result['Nip'] = $this->getNip();
+        }
+
+        if (!empty($this->getAccountHolderName())) {
+            $result['AccountHolderName'] = $this->getAccountHolderName();
+        }
+
         $result['Hash'] = $this->getHash();
 
         return Sorter::sortTransactionParams($result);
+    }
+
+    /**
+     * Set NIP.
+     *
+     * @param string $nip
+     *
+     * @return $this
+     */
+    public function setNip(string $nip): self
+    {
+        $this->nip = $nip;
+
+        return $this;
+    }
+
+    /**
+     * Get NIP.
+     */
+    public function getNip(): string
+    {
+        return $this->nip;
+    }
+
+    /**
+     * Set AccountHolderName.
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    public function setAccountHolderName(string $name): self
+    {
+        $this->accountHolderName = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get AccountHolderName.
+     */
+    public function getAccountHolderName(): string
+    {
+        return $this->accountHolderName;
     }
 }

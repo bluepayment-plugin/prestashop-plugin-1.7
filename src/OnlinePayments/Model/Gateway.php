@@ -134,11 +134,11 @@ class Gateway extends AbstractModel
     private $gatewayId = 0;
 
     /**
-     * Gateway name.
+     * Gateway name (multilingual).
      *
-     * @var string
+     * @var array
      */
-    private $gatewayName = '';
+    private $gatewayName = [];
 
     /**
      * Gateway type.
@@ -190,6 +190,69 @@ class Gateway extends AbstractModel
     private $maxAmount;
 
     /**
+     * Button title (multilingual).
+     *
+     * @var array
+     */
+    private $buttonTitle = [];
+
+    /**
+     * Description (multilingual).
+     *
+     * @var array
+     */
+    private $description = [];
+
+    /**
+     * Short description (multilingual).
+     *
+     * @var array
+     */
+    private $shortDescription = [];
+
+    /**
+     * Description URL (multilingual).
+     *
+     * @var array
+     */
+    private $descriptionUrl = [];
+
+    /**
+     * Available for.
+     *
+     * @var string
+     */
+    private $availableFor = '';
+
+    /**
+     * Required params.
+     *
+     * @var array
+     */
+    private $requiredParams = [];
+
+    /**
+     * Group title (multilingual) - from gatewayGroups.
+     *
+     * @var array
+     */
+    private $groupTitle = [];
+
+    /**
+     * Group short description (multilingual) - from gatewayGroups.
+     *
+     * @var array
+     */
+    private $groupShortDescription = [];
+
+    /**
+     * Group description (multilingual) - from gatewayGroups.
+     *
+     * @var array
+     */
+    private $groupDescription = [];
+
+    /**
      * Returns gateway id.
      *
      * @return int
@@ -214,9 +277,9 @@ class Gateway extends AbstractModel
     }
 
     /**
-     * Returns gateway name.
+     * Returns gateway names (all languages).
      *
-     * @return string
+     * @return array
      */
     public function getGatewayName()
     {
@@ -224,17 +287,40 @@ class Gateway extends AbstractModel
     }
 
     /**
-     * Sets gateway name.
+     * Sets gateway name for specific language.
      *
+     * @param string $language
      * @param string $gatewayName
      *
      * @return $this
      */
-    public function setGatewayName($gatewayName)
+    public function setGatewayName($language, $gatewayName)
     {
-        $this->gatewayName = (string) $gatewayName;
+        $this->gatewayName[$language] = (string) $gatewayName;
 
         return $this;
+    }
+
+    /**
+     * Gets gateway name for specific language.
+     *
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public function getGatewayNameForLanguage($language)
+    {
+        return $this->gatewayName[$language] ?? null;
+    }
+
+    /**
+     * Gets gateway name for first available language or empty string.
+     *
+     * @return string
+     */
+    public function getGatewayNameDefault()
+    {
+        return !empty($this->gatewayName) ? reset($this->gatewayName) : '';
     }
 
     /**
@@ -436,6 +522,422 @@ class Gateway extends AbstractModel
     }
 
     /**
+     * Returns button titles (all languages).
+     *
+     * @return array
+     */
+    public function getButtonTitle()
+    {
+        return $this->buttonTitle;
+    }
+
+    /**
+     * Sets button title for specific language.
+     *
+     * @param string $language
+     * @param string $buttonTitle
+     *
+     * @return $this
+     */
+    public function setButtonTitle($language, $buttonTitle)
+    {
+        $this->buttonTitle[$language] = (string) $buttonTitle;
+
+        return $this;
+    }
+
+    /**
+     * Gets button title for specific language.
+     *
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public function getButtonTitleForLanguage($language)
+    {
+        return $this->buttonTitle[$language] ?? null;
+    }
+
+    /**
+     * Returns descriptions (all languages).
+     *
+     * @return array
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Sets description for specific language.
+     *
+     * @param string $language
+     * @param string $description
+     *
+     * @return $this
+     */
+    public function setDescription($language, $description)
+    {
+        $this->description[$language] = (string) $description;
+
+        return $this;
+    }
+
+    /**
+     * Gets description for specific language.
+     *
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public function getDescriptionForLanguage($language)
+    {
+        return $this->description[$language] ?? null;
+    }
+
+    /**
+     * Returns short descriptions (all languages).
+     *
+     * @return array
+     */
+    public function getShortDescription()
+    {
+        return $this->shortDescription;
+    }
+
+    /**
+     * Sets short description for specific language.
+     *
+     * @param string $language
+     * @param string $shortDescription
+     *
+     * @return $this
+     */
+    public function setShortDescription($language, $shortDescription)
+    {
+        $this->shortDescription[$language] = (string) $shortDescription;
+
+        return $this;
+    }
+
+    /**
+     * Gets short description for specific language.
+     *
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public function getShortDescriptionForLanguage($language)
+    {
+        return $this->shortDescription[$language] ?? null;
+    }
+
+    /**
+     * Returns description URLs (all languages).
+     *
+     * @return array
+     */
+    public function getDescriptionUrl()
+    {
+        return $this->descriptionUrl;
+    }
+
+    /**
+     * Sets description URL for specific language.
+     *
+     * @param string $language
+     * @param string $descriptionUrl
+     *
+     * @return $this
+     */
+    public function setDescriptionUrl($language, $descriptionUrl)
+    {
+        $this->descriptionUrl[$language] = (string) $descriptionUrl;
+
+        return $this;
+    }
+
+    /**
+     * Gets description URL for specific language.
+     *
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public function getDescriptionUrlForLanguage($language)
+    {
+        return $this->descriptionUrl[$language] ?? null;
+    }
+
+    /**
+     * Returns available for.
+     *
+     * @return string
+     */
+    public function getAvailableFor()
+    {
+        return $this->availableFor;
+    }
+
+    /**
+     * Sets available for.
+     *
+     * @param string $availableFor
+     *
+     * @return $this
+     */
+    public function setAvailableFor($availableFor)
+    {
+        $this->availableFor = (string) $availableFor;
+
+        return $this;
+    }
+
+    /**
+     * Returns required params.
+     *
+     * @return array
+     */
+    public function getRequiredParams()
+    {
+        return $this->requiredParams;
+    }
+
+    /**
+     * Sets required params.
+     *
+     * @param array $requiredParams
+     *
+     * @return $this
+     */
+    public function setRequiredParams(array $requiredParams)
+    {
+        $this->requiredParams = $requiredParams;
+
+        return $this;
+    }
+
+    /**
+     * Returns group titles (all languages).
+     *
+     * @return array
+     */
+    public function getGroupTitle()
+    {
+        return $this->groupTitle;
+    }
+
+    /**
+     * Sets group title for specific language.
+     *
+     * @param string $language
+     * @param string $groupTitle
+     *
+     * @return $this
+     */
+    public function setGroupTitle($language, $groupTitle)
+    {
+        $this->groupTitle[$language] = (string) $groupTitle;
+
+        return $this;
+    }
+
+    /**
+     * Gets group title for specific language.
+     *
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public function getGroupTitleForLanguage($language)
+    {
+        return $this->groupTitle[$language] ?? null;
+    }
+
+    /**
+     * Returns group short descriptions (all languages).
+     *
+     * @return array
+     */
+    public function getGroupShortDescription()
+    {
+        return $this->groupShortDescription;
+    }
+
+    /**
+     * Sets group short description for specific language.
+     *
+     * @param string $language
+     * @param string $groupShortDescription
+     *
+     * @return $this
+     */
+    public function setGroupShortDescription($language, $groupShortDescription)
+    {
+        $this->groupShortDescription[$language] = (string) $groupShortDescription;
+
+        return $this;
+    }
+
+    /**
+     * Gets group short description for specific language.
+     *
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public function getGroupShortDescriptionForLanguage($language)
+    {
+        return $this->groupShortDescription[$language] ?? null;
+    }
+
+    /**
+     * Returns group descriptions (all languages).
+     *
+     * @return array
+     */
+    public function getGroupDescription()
+    {
+        return $this->groupDescription;
+    }
+
+    /**
+     * Sets group description for specific language.
+     *
+     * @param string $language
+     * @param string $groupDescription
+     *
+     * @return $this
+     */
+    public function setGroupDescription($language, $groupDescription)
+    {
+        $this->groupDescription[$language] = (string) $groupDescription;
+
+        return $this;
+    }
+
+    /**
+     * Gets group description for specific language.
+     *
+     * @param string $language
+     *
+     * @return string|null
+     */
+    public function getGroupDescriptionForLanguage($language)
+    {
+        return $this->groupDescription[$language] ?? null;
+    }
+
+    /**
+     * Creates Gateway model from multilingual API responses.
+     *
+     * @param array $languageResponses Array of JSON responses keyed by language code
+     * @param string $gatewayId Gateway ID to process
+     * @param array $gatewayGroupsMap Map of gateway groups by type and language
+     *
+     * @return Gateway|null
+     */
+    public static function createFromMultiLanguageResponse(array $languageResponses, $gatewayId, array $gatewayGroupsMap = [])
+    {
+        $gateway = null;
+
+        foreach ($languageResponses as $language => $json) {
+            if (!isset($json->gatewayList) || !is_array($json->gatewayList)) {
+                continue;
+            }
+
+            foreach ($json->gatewayList as $gatewayData) {
+                if ((string) $gatewayData->gatewayID !== (string) $gatewayId) {
+                    continue;
+                }
+
+                if ($gateway === null) {
+                    $gateway = new self();
+                    $gateway->setGatewayId((int) $gatewayData->gatewayID);
+
+                    if (isset($gatewayData->groupType)) {
+                        $gateway->setGatewayType((string) $gatewayData->groupType);
+                    }
+
+                    if (isset($gatewayData->bankName)) {
+                        $gateway->setBankName((string) $gatewayData->bankName);
+                    }
+
+                    if (isset($gatewayData->gatewayPayment)) {
+                        $gateway->setGatewayPayment((string) $gatewayData->gatewayPayment);
+                    }
+
+                    if (isset($gatewayData->iconUrl)) {
+                        $gateway->setIconUrl((string) $gatewayData->iconUrl);
+                    }
+
+                    if (isset($gatewayData->availableFor)) {
+                        $gateway->setAvailableFor((string) $gatewayData->availableFor);
+                    }
+
+                    if (isset($gatewayData->requiredParams) && is_array($gatewayData->requiredParams)) {
+                        $gateway->setRequiredParams($gatewayData->requiredParams);
+                    }
+
+                    if (isset($gatewayData->currencies)
+                        && is_array($gatewayData->currencies)
+                        && isset($gatewayData->currencies[0]->minAmount, $gatewayData->currencies[0]->maxAmount)
+                    ) {
+                        $gateway->setMinAmount($gatewayData->currencies[0]->minAmount);
+                        $gateway->setMaxAmount($gatewayData->currencies[0]->maxAmount);
+                    }
+                }
+
+                // Mapowanie danych z gatewayGroups na podstawie groupType
+                if (isset($gatewayData->groupType) && !empty($gatewayGroupsMap)) {
+                    $groupType = (string) $gatewayData->groupType;
+
+                    if (isset($gatewayGroupsMap[$groupType][$language])) {
+                        $groupData = $gatewayGroupsMap[$groupType][$language];
+
+                        // Dodajemy pola z gatewayGroups jako osobne pola językowe
+                        if (isset($groupData->title) && !empty($groupData->title)) {
+                            $gateway->setGroupTitle($language, (string) $groupData->title);
+                        }
+
+                        if (isset($groupData->shortDescription) && !empty($groupData->shortDescription)) {
+                            $gateway->setGroupShortDescription($language, (string) $groupData->shortDescription);
+                        }
+
+                        if (isset($groupData->description) && !empty($groupData->description)) {
+                            $gateway->setGroupDescription($language, (string) $groupData->description);
+                        }
+                    }
+                }
+
+                if (isset($gatewayData->name) && !empty($gatewayData->name)) {
+                    $gateway->setGatewayName($language, (string) $gatewayData->name);
+                }
+
+                if (isset($gatewayData->buttonTitle) && !empty($gatewayData->buttonTitle)) {
+                    $gateway->setButtonTitle($language, (string) $gatewayData->buttonTitle);
+                }
+
+                if (isset($gatewayData->description) && !empty($gatewayData->description)) {
+                    $gateway->setDescription($language, (string) $gatewayData->description);
+                }
+
+                if (isset($gatewayData->shortDescription) && !empty($gatewayData->shortDescription)) {
+                    $gateway->setShortDescription($language, (string) $gatewayData->shortDescription);
+                }
+
+                if (isset($gatewayData->descriptionUrl) && !empty($gatewayData->descriptionUrl)) {
+                    $gateway->setDescriptionUrl($language, (string) $gatewayData->descriptionUrl);
+                }
+
+                break;
+            }
+        }
+
+        return $gateway;
+    }
+
+    /**
      * Validates model.
      *
      * @throws \DomainException
@@ -445,8 +947,8 @@ class Gateway extends AbstractModel
         if (empty($this->gatewayId)) {
             throw new \DomainException('GatewayId cannot be empty');
         }
-        if (empty($this->gatewayName)) {
-            throw new \DomainException('GatewayName cannot be empty');
+        if (!is_array($this->gatewayName) || empty($this->gatewayName)) {
+            throw new \DomainException('GatewayName cannot be empty and must be an array');
         }
     }
 }

@@ -21,9 +21,12 @@ if (!defined('_PS_VERSION_')) {
 
 use BlueMedia\OnlinePayments\Model\Gateway as GatewayModel;
 use BluePayment\Config\Config;
+use BluePayment\Traits\MultilingualGatewayTrait;
 
 class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 {
+    use MultilingualGatewayTrait;
+
     private $module;
 
     public const TABLE = 'blue_gateway_channels';
@@ -32,9 +35,6 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public $id_blue_gateway_channels;
     public $gateway_status;
     public $gateway_id;
-    public $bank_name;
-    public $gateway_name;
-    public $gateway_description;
     public $position;
     public $gateway_currency;
     public $gateway_payments;
@@ -42,10 +42,24 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
     public $gateway_logo_url;
     public $min_amount;
     public $max_amount;
+    public $bank_name;
+    public $available_for;
+    public $required_params;
+
+    public $gateway_name;
+    public $gateway_description;
+    public $group_title;
+    public $group_short_description;
+    public $group_description;
+    public $button_title;
+    public $description;
+    public $short_description;
+    public $description_url;
 
     public static $definition = [
         'table' => self::TABLE,
         'primary' => self::PRIMARY,
+        'multilang' => true,
         'fields' => [
             'id_blue_gateway_channels' => [
                 'type' => self::TYPE_INT,
@@ -59,21 +73,6 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedId',
                 'required' => true,
-            ],
-            'bank_name' => [
-                'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
-                'required' => true,
-                'size' => 100,
-            ],
-            'gateway_name' => [
-                'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
-                'size' => 100,
-            ],
-            'gateway_description' => [
-                'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
             ],
             'position' => [
                 'type' => self::TYPE_INT,
@@ -104,6 +103,70 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
             'max_amount' => [
                 'type' => self::TYPE_FLOAT,
                 'validate' => 'isFloat',
+            ],
+            'bank_name' => [
+                'type' => self::TYPE_STRING,
+                'validate' => 'isGenericName',
+                'size' => 255,
+            ],
+            'available_for' => [
+                'type' => self::TYPE_STRING,
+                'validate' => 'isGenericName',
+                'size' => 10,
+            ],
+            'required_params' => [
+                'type' => self::TYPE_HTML,
+            ],
+
+            'gateway_name' => [
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isGenericName',
+                'size' => 255,
+            ],
+
+            'gateway_description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'group_title' => [
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isGenericName',
+                'size' => 255,
+            ],
+            'group_short_description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'group_description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'button_title' => [
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isGenericName',
+                'size' => 255,
+            ],
+            'description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'short_description' => [
+                'type' => self::TYPE_HTML,
+                'lang' => true,
+                'validate' => 'isCleanHtml',
+            ],
+            'description_url' => [
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isUrl',
+                'size' => 500,
             ],
         ],
     ];
@@ -137,26 +200,12 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 
     public function createTransferPaymentOption(): GatewayModel
     {
-        $gateway = new GatewayModel();
-        $gateway->setGatewayId((string) Config::GATEWAY_ID_TRANSFER)->setGatewayName('Przelew internetowy');
-        $gateway->setGatewayType('1');
-        $gateway->setBankName('Przelew internetowy');
-        $gateway->setGatewayPayment('1');
-        $gateway->setIconUrl($this->module->getAssetImages() . $this->getPaymentsIcon());
-
-        return $gateway;
+        return $this->createMultilingualTransferGateway();
     }
 
     public function createWalletPaymentOption(): GatewayModel
     {
-        $gateway = new GatewayModel();
-        $gateway->setGatewayId((string) Config::GATEWAY_ID_WALLET)->setGatewayName('Wirtualny portfel');
-        $gateway->setGatewayType('1');
-        $gateway->setBankName('Wirtualny portfel');
-        $gateway->setGatewayPayment('1');
-        $gateway->setIconUrl($this->module->getAssetImages() . $this->getCardsIcon());
-
-        return $gateway;
+        return $this->createMultilingualWalletGateway();
     }
 
     public function syncGateway($apiGateways, $currency, $position = 1): ?BlueGatewayChannels
@@ -186,11 +235,23 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                 $payway->gateway_logo_url = $paymentGateway->getIconUrl();
                 $payway->bank_name = $paymentGateway->getBankName();
                 $payway->gateway_status = $payway->gateway_status !== null ? $payway->gateway_status : 1;
-                $payway->gateway_name = $paymentGateway->getGatewayName();
                 $payway->gateway_type = 1;
                 $payway->gateway_currency = $currency['iso_code'];
                 $payway->force_id = true;
                 $payway->gateway_id = $paymentGateway->getGatewayId();
+
+                $multilingualData = $this->mapGatewayToMultilingualData($paymentGateway);
+                foreach ($multilingualData as $langId => $langData) {
+                    $payway->gateway_name[$langId] = $langData['gateway_name'];
+                    $payway->gateway_description[$langId] = $langData['gateway_description'];
+                    $payway->group_title[$langId] = $langData['group_title'];
+                    $payway->group_short_description[$langId] = $langData['group_short_description'];
+                    $payway->group_description[$langId] = $langData['group_description'];
+                    $payway->button_title[$langId] = $langData['button_title'];
+                    $payway->description[$langId] = $langData['description'];
+                    $payway->short_description[$langId] = $langData['short_description'];
+                    $payway->description_url[$langId] = $langData['description_url'];
+                }
 
                 if ($paymentGateway->getGatewayId() == '9999' || $paymentGateway->getGatewayId() == '999') {
                     $payway->gateway_payments = '1';
@@ -198,6 +259,9 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
 
                 $payway->min_amount = $paymentGateway->getMinAmount();
                 $payway->max_amount = $paymentGateway->getMaxAmount();
+
+                $payway->available_for = (string) $paymentGateway->getAvailableFor();
+                $payway->required_params = json_encode($paymentGateway->getRequiredParams(), JSON_UNESCAPED_UNICODE);
 
                 if (!$payway->id) {
                     $maxPosition = $this->getMaxChannelsPositionsByCurrency($currency);
@@ -219,16 +283,6 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
         \PrestaShopLogger::addLog('BM - Error sync gateway channels', 3);
 
         return null;
-    }
-
-    public function getPaymentsIcon(): string
-    {
-        return 'payments.png';
-    }
-
-    public function getCardsIcon(): string
-    {
-        return 'cards.png';
     }
 
     /**

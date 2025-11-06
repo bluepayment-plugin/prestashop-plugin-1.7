@@ -40,7 +40,7 @@ class Gateway
     public const PAYMENT_ACTON_PAYMENT = '/payment';
     public const PAYMENT_ACTON_PAYWAY_LIST = '/paywayList';
 
-    public const PAYMENT_ACTON_GATEWAY_LIST = '/gatewayList/v2';
+    public const PAYMENT_ACTON_GATEWAY_LIST = '/gatewayList/v3';
 
     public const GET_MERCHANT_INFO = '/webapi/googlePayMerchantInfo';
     public const GET_REGULATIONS = '/webapi/regulationsGet';
@@ -95,7 +95,7 @@ class Gateway
             self::HASH_SHA512 => 1,
         ];
 
-    /** @var HttpClient */
+    /** @var HttpClient|CurtHttpClient */
     protected static $httpClient;
 
     /**
@@ -172,7 +172,7 @@ class Gateway
         $transactionBackground
             ->setReceiverAddress((string) $xmlData->receiverAddress)
             ->setOrderId((string) $xmlData->orderID)
-            ->setAmount((string) $xmlData->amount)
+            ->setAmount((float) $xmlData->amount)
             ->setRemoteId((string) $xmlData->remoteID)
             ->setBankHref((string) $xmlData->bankHref)
             ->setHash((string) $xmlData->hash);
@@ -327,7 +327,7 @@ class Gateway
     }
 
     /**
-     * @return string
+     * @return \SimpleXMLElement
      */
     public static function getItnInXml()
     {
@@ -402,7 +402,7 @@ class Gateway
         $xml->openMemory();
         $xml->startDocument('1.0', 'UTF-8');
         $xml->startElement('confirmationList');
-        $xml->writeElement('serviceID', $confirmationList['serviceID']);
+        $xml->writeElement('serviceID', (string) $confirmationList['serviceID']);
         $xml->startElement('transactionsConfirmations');
         $xml->startElement('transactionConfirmed');
         $xml->writeElement('orderID', $confirmationList['orderID']);
@@ -578,7 +578,7 @@ class Gateway
                 continue;
             }
             if (is_array($value)) {
-                $value = array_filter($value, 'mb_strlen');
+                $value = array_filter($value, function ($item) { return mb_strlen((string) $item) > 0; });
                 $value = implode(self::$hashingSeparator, $value);
             }
             if (!empty($value)) {
@@ -620,35 +620,58 @@ class Gateway
         $responseParsed = XMLParser::parse($this->response);
 
         $model = Transformer::toModel($responseParsed);
-        $model->validate((int) $fields['ServiceID'], (string) $fields['MessageID']);
+        $model->validate((string) $fields['ServiceID'], (string) $fields['MessageID']);
 
         return $model;
     }
 
-    final public function doGatewayList(string $currencies)
+    final public function doGatewayList(string $currencies, array $languages)
     {
-        $fields = [
-            'ServiceID' => self::$serviceId,
-            'MessageID' => $this->generateMessageId(),
-            'Currencies' => $currencies,
-        ];
-        $fields['Hash'] = self::generateHash($fields);
+        $aggregatedResponses = [];
+        $lastFields = null;
 
-        $responseObject = self::$httpClient->postJson(
-            self::getActionUrl(self::PAYMENT_ACTON_GATEWAY_LIST),
-            ['Content-Type:application/json'],
-            $fields
-        );
+        foreach ($languages as $language) {
+            $fields = [
+                'ServiceID' => self::$serviceId,
+                'MessageID' => $this->generateMessageId(),
+                'Currencies' => $currencies,
+                'Language' => strtoupper($language['iso_code']),
+            ];
+            $fields['Hash'] = self::generateHash($fields);
+            $lastFields = $fields;
 
-        $this->response = (string) $responseObject->getBody();
-        $this->validateJSONResponse();
+            $responseObject = self::$httpClient->postJson(
+                self::getActionUrl(self::PAYMENT_ACTON_GATEWAY_LIST),
+                ['Content-Type:application/json'],
+                $fields
+            );
 
-        $responseParsed = json_decode($this->response);
+            $this->response = (string) $responseObject->getBody();
 
-        $model = Transformer::JSONtoModel($responseParsed);
+            if ($this->response == 'INVALID DATA') {
+                Logger::log(
+                    Logger::EMERGENCY,
+                    'Got error: INVALID DATA, of serice ID: ' . $fields['ServiceID'] . ' currency: ' . $fields['Currencies'] . ' language: ' . $fields['Language'],
+                    [
+                        'full-response' => $this->response,
+                    ]
+                );
+                continue;
+            }
+            $this->validateJSONResponse();
+
+            $responseParsed = json_decode($this->response);
+
+            $aggregatedResponses[$language['id_lang']] = $responseParsed;
+        }
+
+        if (!$lastFields) {
+            return null;
+        }
 
         try {
-            $model->validate((int) $fields['ServiceID'], (string) $fields['MessageID']);
+            $model = PaywayList::createFromMultiLanguageResponse($aggregatedResponses);
+            $model->validate((string) $fields['ServiceID'], (string) $fields['MessageID']);
         } catch (\DomainException $e) {
             return null;
         }
@@ -691,6 +714,6 @@ class Gateway
      */
     public function generateMessageId()
     {
-        return md5(time());
+        return md5((string) time());
     }
 }

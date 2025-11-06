@@ -36,7 +36,7 @@ class HookDispatcher
     /**
      * Hook classes
      *
-     * @var Hook\AbstractHook[]
+     * @var AbstractHook[]
      */
     private $hooks = [];
 

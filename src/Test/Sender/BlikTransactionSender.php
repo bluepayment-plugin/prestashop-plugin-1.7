@@ -70,7 +70,7 @@ final class BlikTransactionSender
             ? Gateway::MODE_SANDBOX
             : Gateway::MODE_LIVE;
 
-        $gateway = new Gateway($serviceId, $sharedKey, $gateway_mode);
+        $gateway = new Gateway((int) $serviceId, $sharedKey, $gateway_mode);
 
         $data = [
             'ServiceID' => $serviceId,
@@ -93,7 +93,7 @@ final class BlikTransactionSender
         $hash = Helper::generateAndReturnHash($hash);
 
         $data['Hash'] = $hash;
-        $fields = is_array($data) ? http_build_query($data) : $data;
+        $fields = http_build_query($data);
 
         try {
             $curl = curl_init($gateway::getActionUrl($gateway::PAYMENT_ACTON_PAYMENT));

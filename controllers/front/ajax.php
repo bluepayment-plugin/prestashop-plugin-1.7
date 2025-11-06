@@ -16,6 +16,9 @@ if (!defined('_PS_VERSION_')) {
 
 class BluepaymentAjaxModuleFrontController extends ModuleFrontController
 {
+    /** @var BluePayment */
+    public $module;
+
     public $ajax;
 
     public function __construct()
@@ -51,7 +54,7 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
                 (int) Context::getContext()->shop->id
             );
 
-            $this->ajaxDie(
+            exit(
                 json_encode(
                     [
                         'success' => true,

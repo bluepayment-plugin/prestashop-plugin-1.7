@@ -63,7 +63,7 @@ class Transactions
      *
      * @param $response
      *
-     * @throws Exception
+     * @throws \Exception
      * @throws \DOMException
      */
     public function processStatusPayment($response)
@@ -90,7 +90,7 @@ class Transactions
      *
      * @param $transaction
      *
-     * @throws Exception
+     * @throws \Exception
      * @throws \DOMException
      */
     public function updateStatusTransactionAndOrder($transaction)
@@ -115,25 +115,19 @@ class Transactions
             $order->hydrate($orderTmp[0]);
         }
 
-        $orderPayments = $order->getOrderPaymentCollection();
-
-        if (is_object($orderPayments)) {
-            $orderPayment = $orderPayments;
-        } else {
-            $orderPayment = new \OrderPaymentCore();
-        }
-
         if (!\Validate::isLoadedObject($order)) {
             $message = $this->module->name_upper . ' - Order not found';
-            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', $orderId);
+            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'Order', (int) $orderId);
             $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_CONFIRMED);
 
             return;
         }
 
-        if (!is_object($orderPayment)) {
-            $message = $this->module->name_upper . ' - Order payment not found';
-            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'OrderPayment', $orderId);
+        $orderPayments = $order->getOrderPaymentCollection();
+
+        if (!$orderPayments instanceof \PrestaShopCollection) {
+            $message = $this->module->name_upper . ' - Order payment collection not found';
+            \PrestaShopLogger::addLog(self::BM_PREFIX . $message, 3, null, 'OrderPayment', (int) $orderId);
             $this->returnConfirmation($realOrderId, $orderId, self::TRANSACTION_NOTCONFIRMED);
 
             return;
@@ -207,8 +201,8 @@ class Transactions
     /**
      * @param $transaction
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function updateOrderPayments($transaction): void
     {
@@ -345,8 +339,8 @@ class Transactions
      * @param $order_id
      * @param $confirmation
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException|DOMException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      * @throws \DOMException
      */
     public function returnConfirmation($realOrderId, $order_id, $confirmation)
@@ -421,7 +415,7 @@ class Transactions
             return false;
         }
 
-        $order = new \OrderCore($order);
+        $order = new \Order((int) $order);
         $currency = new \Currency($order->id_currency);
 
         $service_id = Helper::parseConfigByCurrency(

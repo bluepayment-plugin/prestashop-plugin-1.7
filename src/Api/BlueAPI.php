@@ -76,7 +76,7 @@ class BlueAPI
      *
      * @return bool
      */
-    public function getGatewaysFromAPI($gateway, $mode, $currencies): bool
+    public function getGatewaysFromAPI($gateway, $mode, $currencies, $languages): bool
     {
         if (!is_object($gateway)) {
             return false;
@@ -85,7 +85,7 @@ class BlueAPI
         if ($currencies && $mode) {
             foreach ($currencies as $currency) {
                 $getMerchantData = $this->getApiMerchantData($currency['iso_code']);
-                $apiResponse = $this->gatewayAccountByCurrency($getMerchantData, $currency['iso_code'], $mode);
+                $apiResponse = $this->gatewayAccountByCurrency($getMerchantData, $currency['iso_code'], $mode, $languages);
 
                 $this->getApiResponseSyncGateway($gateway, $apiResponse, $currency);
             }
@@ -157,14 +157,17 @@ class BlueAPI
         return null;
     }
 
-    public function gatewayAccountByCurrency($merchantData, $currencyCode, $mode)
+    public function gatewayAccountByCurrency($merchantData, $currencyCode, $mode, $languages)
     {
         if (is_array($merchantData)
             && isset($merchantData[0])
             && !empty($merchantData[0])
             && isset($merchantData[1])
             && !empty($merchantData[1])
-            && $currencyCode && $mode) {
+            && $currencyCode
+            && $mode
+            && $languages
+        ) {
             $serviceId = $merchantData[0];
             $hashKey = $merchantData[1];
 
@@ -176,7 +179,7 @@ class BlueAPI
                 Config::HASH_SEPARATOR
             );
 
-            return $gateway->doGatewayList($currencyCode);
+            return $gateway->doGatewayList($currencyCode, $languages);
         }
 
         return null;
