@@ -13,6 +13,17 @@
  * @copyright      Copyright (c) 2015-2025
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
+{include file="./notification-info.tpl" assign="notification"}
+{include file="./auth-info.tpl" assign="auth"}
+{include file="./redirect-info.tpl" assign="redirect"}
+{include file="./analitics-info.tpl" assign="analitics"}
+{assign var=contents value=[
+    'module:bluepayment/views/templates/admin/_configure/helpers/form/notification-info.tpl' => $notification,
+    'module:bluepayment/views/templates/admin/_configure/helpers/form/auth-info.tpl' => $auth,
+    'module:bluepayment/views/templates/admin/_configure/helpers/form/redirect-info.tpl' => $redirect,
+    'module:bluepayment/views/templates/admin/_configure/helpers/form/analitics-info.tpl' => $analitics
+]}
+
 {block name="input_row"}
 	<div class="form-group {$_input.name|lower}{if isset($_input.form_group_class)} {$_input.form_group_class}{/if}"{if $_input.name == 'id_state'} id="contains_states"{if !$contains_states} style="display:none;"{/if}{/if}{if isset($tabs) && isset($_input.tab)} data-tab-id="{$_input.tab}"{/if}>
         {if $_input.type == 'hidden'}
@@ -21,7 +32,7 @@
         {elseif $_input.type == 'description'}
 			<div class="infoheading_class col-sm-12">
                 {assign var=desc_template value=$_input.content}
-                {include file="$desc_template"}
+                {$contents[$desc_template]}
 			</div>
         {elseif $_input.type == 'infoheading'}
 			<div class="section-heading">
