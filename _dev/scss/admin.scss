@@ -66,7 +66,8 @@
 }
 
 .bm-configure .panel-footer {
-  height: 60px !important
+  height: 60px !important;
+  padding: 12px;
 }
 
 .translatable-field {
@@ -166,7 +167,6 @@
 
 .panel-footer {
   background-color: #fff;
-  margin: 30px -20px -20px !important
 }
 
 .blue_gateway_channels tbody > tr:hover > td, .btn-info {

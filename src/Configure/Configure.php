@@ -20,6 +20,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use BluePayment\Adapter\ConfigurationAdapter;
+use BluePayment\Adapter\TranslatorAdapter;
 use BluePayment\Config\Config;
 use BluePayment\Statuses\CustomStatus;
 use BluePayment\Until\Helper;
@@ -37,12 +38,12 @@ class Configure
     /**
      * @param \BluePayment $module
      * @param ConfigurationAdapter $configurationAdapter
-     * @param mixed $translator
+     * @param TranslatorAdapter $translator
      */
     public function __construct(
         \BluePayment $module,
         ConfigurationAdapter $configurationAdapter,
-        $translator
+        TranslatorAdapter $translator
     ) {
         $this->module = $module;
         $this->translator = $translator;

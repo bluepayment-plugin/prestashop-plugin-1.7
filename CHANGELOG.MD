@@ -1,4 +1,7 @@
 # Changelog
+## [3.4.0] 09.12.2025
+- adaptation for PrestaShop 9.0
+
 ## [3.3.0] 06.11.2025
 - Gateway list v. 3.0
 - Fixed a bug with add test controller 

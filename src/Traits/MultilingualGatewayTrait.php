@@ -25,6 +25,47 @@ use BluePayment\Config\Config;
 trait MultilingualGatewayTrait
 {
     /**
+     * Get hardcoded translations for gateway multilingual data
+     * This bypasses PrestaShop's cache system to prevent language mixing
+     *
+     * @param string $key Translation key
+     * @param string $iso Language ISO code
+     *
+     * @return string Translated string
+     */
+    protected function getGatewayTranslation(string $key, string $iso): string
+    {
+        $translations = [
+            'pl' => [
+                'Online Transfer' => 'Przelew online',
+                'Fast and secure online bank transfer' => 'Szybki i bezpieczny przelew bankowy online',
+                'Pay by transfer' => 'Zapłać przelewem',
+                'Digital Wallet' => 'Portfel cyfrowy',
+                'Mobile payments and digital wallets' => 'Płatności mobilne i portfele cyfrowe',
+                'Pay with wallet' => 'Zapłać portfelem',
+            ],
+            'en' => [
+                'Online Transfer' => 'Online Transfer',
+                'Fast and secure online bank transfer' => 'Fast and secure online bank transfer',
+                'Pay by transfer' => 'Pay by transfer',
+                'Digital Wallet' => 'Digital Wallet',
+                'Mobile payments and digital wallets' => 'Mobile payments and digital wallets',
+                'Pay with wallet' => 'Pay with wallet',
+            ],
+            'es' => [
+                'Online Transfer' => 'Transferencia en línea',
+                'Fast and secure online bank transfer' => 'Transferencia bancaria online rápida y segura',
+                'Pay by transfer' => 'Pagar por transferencia',
+                'Digital Wallet' => 'Cartera digital',
+                'Mobile payments and digital wallets' => 'Pagos móviles y carteras digitales',
+                'Pay with wallet' => 'Pagar con cartera',
+            ],
+        ];
+        
+        return $translations[$iso][$key] ?? $key;
+    }
+
+    /**
      * Creates multilingual Transfer Payment Option Gateway
      *
      * @return GatewayModel
@@ -41,13 +82,12 @@ trait MultilingualGatewayTrait
 
         foreach ($languages as $language) {
             $langId = (int) $language['id_lang'];
-            $locale = isset($language['locale']) && $language['locale'] ? $language['locale'] : $language['iso_code'];
+            $iso = isset($language['iso_code']) ? $language['iso_code'] : 'en';
 
-            $translator = $this->module->getTranslator();
-            $name = $translator->trans('Online Transfer', [], 'Modules.Bluepayment', $locale);
-            $desc = $translator->trans('Fast and secure online bank transfer', [], 'Modules.Bluepayment', $locale);
-            $short = $translator->trans('Online Transfer', [], 'Modules.Bluepayment', $locale);
-            $btn = $translator->trans('Pay by transfer', [], 'Modules.Bluepayment', $locale);
+            $name = $this->getGatewayTranslation('Online Transfer', $iso);
+            $desc = $this->getGatewayTranslation('Fast and secure online bank transfer', $iso);
+            $short = $this->getGatewayTranslation('Online Transfer', $iso);
+            $btn = $this->getGatewayTranslation('Pay by transfer', $iso);
 
             $gateway->setGatewayName((string) $langId, $name);
             $gateway->setDescription((string) $langId, $desc);
@@ -77,13 +117,12 @@ trait MultilingualGatewayTrait
 
         foreach ($languages as $language) {
             $langId = (int) $language['id_lang'];
-            $locale = isset($language['locale']) && $language['locale'] ? $language['locale'] : $language['iso_code'];
+            $iso = isset($language['iso_code']) ? $language['iso_code'] : 'en';
 
-            $translator = $this->module->getTranslator();
-            $name = $translator->trans('Digital Wallet', [], 'Modules.Bluepayment', $locale);
-            $desc = $translator->trans('Mobile payments and digital wallets', [], 'Modules.Bluepayment', $locale);
-            $short = $translator->trans('Digital Wallet', [], 'Modules.Bluepayment', $locale);
-            $btn = $translator->trans('Pay with wallet', [], 'Modules.Bluepayment', $locale);
+            $name = $this->getGatewayTranslation('Digital Wallet', $iso);
+            $desc = $this->getGatewayTranslation('Mobile payments and digital wallets', $iso);
+            $short = $this->getGatewayTranslation('Digital Wallet', $iso);
+            $btn = $this->getGatewayTranslation('Pay with wallet', $iso);
 
             $gateway->setGatewayName((string) $langId, $name);
             $gateway->setDescription((string) $langId, $desc);

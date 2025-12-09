@@ -15,7 +15,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use BlueMedia\OnlinePayments\Model\Gateway;
-use BluePayment;
 use BluePayment\Config\Config;
 use BluePayment\Service\Payment\GatewayInitParametersProvider;
 use BluePayment\Until\Helper;

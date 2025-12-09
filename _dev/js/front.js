@@ -147,12 +147,73 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 		const targetBody = document.querySelector('#module-thecheckout-order');
 		if (!targetBody) return;
 
-		const paymentForm = document.querySelector('#payment-form');
-		const confirmButton = document.querySelector('#confirm_order');
-
-		if (paymentForm && confirmButton) {
-			confirmButton.parentNode.insertBefore(paymentForm, confirmButton);
+		if (typeof prestashop !== 'undefined') {
+			prestashop.on('thecheckout_updatePaymentBlock', function() {
+				setTimeout(function() {
+					restorePaymentStateFromLocalStorage();
+				}, 100);
+			});
 		}
+	}
+
+	function restorePaymentStateFromLocalStorage() {
+		const formId = localStorage.getItem("bm-form-id");
+		const gatewayId = localStorage.getItem("bm-gateway");
+
+		if (!formId || !gatewayId) return;
+
+		const container = getPaymentContainer(formId);
+		const content = getPaymentContent(formId);
+		const title = getPaymentTitle(formId);
+
+		if (!container || !content) return;
+
+		const gatewayElement = document.querySelector('[data-bm-gateway-id="' + gatewayId + '"]');
+		if (!gatewayElement) return;
+
+		if (title) {
+			title.classList.add("active");
+		}
+
+		const originalLabel = container.querySelector("label");
+		if (originalLabel) {
+			originalLabel.style.display = "none";
+			originalLabel.classList.add("bm-payment-hide");
+		}
+
+		let selectedPaymentLabel = container.querySelector(".bm-selected-payment");
+		if (!selectedPaymentLabel) {
+			selectedPaymentLabel = document.createElement("label");
+			selectedPaymentLabel.className = "bm-selected-payment";
+			selectedPaymentLabel.append(createSelectedPaymentImgElement(gatewayElement));
+			selectedPaymentLabel.append(createSelectedPaymentWrapElement(gatewayElement));
+			container.appendChild(selectedPaymentLabel);
+		} else {
+			selectedPaymentLabel.innerHTML = "";
+			selectedPaymentLabel.append(createSelectedPaymentImgElement(gatewayElement));
+			selectedPaymentLabel.append(createSelectedPaymentWrapElement(gatewayElement));
+		}
+
+		container.classList.add("active");
+		content.classList.add("active");
+		content.style.display = "flex";
+
+		if (gatewayElement) {
+			gatewayElement.style.display = "flex";
+		}
+
+		const gatewayDescToShow = document.querySelector('[data-show-bm-gateway-id="' + gatewayId + '"]');
+		if (gatewayDescToShow) {
+			gatewayDescToShow.style.display = "block";
+		}
+
+		const paymentName = container.getAttribute("data-payment-name");
+		if (paymentName === "transfer") {
+			getTransferClauses(gatewayElement);
+		}
+
+		getGatewayState();
+		buttonResetPaymentState(formId);
 	}
 
 	initBM();

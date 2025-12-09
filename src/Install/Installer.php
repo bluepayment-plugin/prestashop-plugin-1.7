@@ -19,6 +19,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BluePayment\Adapter\TranslatorAdapter;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Config\Config;
 
@@ -54,9 +55,9 @@ class Installer
 
     /**
      * @param \BluePayment $module
-     * @param mixed $translator
+     * @param TranslatorAdapter $translator
      */
-    public function __construct(\BluePayment $module, $translator)
+    public function __construct(\BluePayment $module, TranslatorAdapter $translator)
     {
         $this->module = $module;
         $this->translator = $translator;

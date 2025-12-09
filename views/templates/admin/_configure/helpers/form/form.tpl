@@ -450,8 +450,6 @@
             {/foreach}
 
             allowEmployeeFormLang = {$allowEmployeeFormLang|intval};
-            displayFlags(languages, id_language, allowEmployeeFormLang);
-
 
             function initChangesTable() {
                 $('.blue_gateway_channels').find('th, td').filter(':nth-child(2)').append(function () {

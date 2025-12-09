@@ -23,6 +23,7 @@ if (!defined('_PS_VERSION_')) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 use BluePayment\Adapter\ConfigurationAdapter;
+use BluePayment\Adapter\TranslatorAdapter;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
@@ -127,7 +128,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '3.3.0';
+        $this->version = '3.4.0';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -462,5 +463,66 @@ class BluePayment extends PaymentModule
         }
 
         return true;
+    }
+
+    /**
+     * Get translator adapter that works with different PrestaShop versions
+     *
+     * @return TranslatorAdapter
+     */
+    public function getTranslator(): TranslatorAdapter
+    {
+        try {
+            $context = $this->getContext();
+            if ($context !== null && method_exists($context, 'getTranslator')) {
+                $contextTranslator = $context->getTranslator();
+                if ($contextTranslator !== null) {
+                    return new TranslatorAdapter($contextTranslator);
+                }
+            }
+        } catch (\Exception $e) {
+            // During module installation, context might not be fully initialized
+            // Fall back to a basic translator implementation
+        }
+
+        $fallbackTranslator = new class() {
+            public function trans($id, array $parameters = [], $domain = null, $locale = null)
+            {
+                return (string) $id;
+            }
+
+            public function getLocale()
+            {
+                return 'en-US';
+            }
+        };
+
+        return new TranslatorAdapter($fallbackTranslator);
+    }
+
+    /**
+     * Translation method compatible with different PrestaShop versions
+     * Override the parent l() method to ensure compatibility
+     *
+     * @param string $string Text to translate
+     * @param bool|string $specific Specific parameter for compatibility with ModuleCore::l()
+     * @param string|null $locale Locale parameter for compatibility with ModuleCore::l()
+     *
+     * @return string Translated text
+     */
+    public function l($string, $specific = false, $locale = null)
+    {
+        if (method_exists(get_parent_class($this), 'l')) {
+            try {
+                return parent::l($string, $specific, $locale);
+            } catch (Exception $e) {
+            }
+        }
+
+        $translator = $this->getTranslator();
+        $domain = 'Modules.Bluepayment.Shop';
+        $targetLocale = $locale ?: $this->getContext()->language->locale;
+
+        return $translator->trans($string, [], $domain, $targetLocale);
     }
 }

@@ -27,9 +27,6 @@ use BluePayment\Until\AdminHelper;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 
-/**
- * @method string l(string $string, string $class = null, bool $addslashes = false, bool $htmlentities = true)
- */
 class AdminBluepaymentPaymentsController extends ModuleAdminController
 {
     /** @var BluePayment */
@@ -46,6 +43,58 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $this->configIframe = new ConfigBanner();
         $this->configIframeServices = new ConfigServices();
         $this->chceckConfigurationService();
+    }
+
+    /**
+     * Translation method compatible with different PrestaShop versions
+     *
+     * @param string $string Text to translate
+     * @param string|null $class Specific translation context (compatible with PS 1.7/8.1)
+     * @param bool $addslashes Add slashes to the translation
+     * @param bool $htmlentities Convert special characters to HTML entities
+     *
+     * @return string Translated text
+     *
+     * @phpstan-ignore-next-line Method exists in ModuleAdminController
+     */
+    protected function l($string, $class = null, $addslashes = false, $htmlentities = true)
+    {
+        if (class_exists('Translate')) {
+            try {
+                $context = $class ?: 'AdminBluepaymentPaymentsController';
+                $translation = Translate::getModuleTranslation(
+                    $this->module,
+                    $string,
+                    $context
+                );
+
+                if ($translation !== $string) {
+                    return $translation;
+                }
+
+                $moduleTranslation = Translate::getModuleTranslation(
+                    $this->module,
+                    $string,
+                    $this->module->name
+                );
+
+                if ($moduleTranslation !== $string) {
+                    return $moduleTranslation;
+                }
+            } catch (Exception $e) {
+                // Continue to fallback
+            }
+        }
+
+        if (method_exists(get_parent_class($this), 'l')) {
+            try {
+                /* @phpstan-ignore-next-line */
+                return parent::l($string, $class, $addslashes, $htmlentities);
+            } catch (Exception $e) {
+            }
+        }
+
+        return $string;
     }
 
     private function chceckConfigurationService()

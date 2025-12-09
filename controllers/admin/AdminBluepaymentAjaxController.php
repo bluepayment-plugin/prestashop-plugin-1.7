@@ -17,7 +17,6 @@ if (!defined('_PS_VERSION_')) {
 use BlueMedia\ProductFeed\Configuration\FeedConfiguration;
 use BlueMedia\ProductFeed\Menager\FileMenager;
 use BlueMedia\ProductFeed\Remover\FileRemover;
-use BluePayment;
 use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
@@ -34,6 +33,25 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
     public function __construct()
     {
         parent::__construct();
+    }
+
+    /**
+     * Ajax die method compatible with different PrestaShop versions
+     *
+     * @param string $value Value to output
+     * @param string|null $controller Controller name
+     * @param string|null $method Method name
+     *
+     * @phpstan-ignore-next-line Method exists in some PrestaShop versions
+     */
+    protected function ajaxDie($value = null, $controller = null, $method = null)
+    {
+        if (method_exists(get_parent_class($this), 'ajaxDie')) {
+            /* @phpstan-ignore-next-line */
+            return parent::ajaxDie($value, $controller, $method);
+        }
+
+        exit($value);
     }
 
     public function initContent(): void
