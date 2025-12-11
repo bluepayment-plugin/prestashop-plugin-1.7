@@ -27,9 +27,6 @@ class BluePaymentIstnModuleFrontController extends ModuleFrontController
         parent::initContent();
         header('Content-type: text/xml');
 
-        file_put_contents(__DIR__ . '/../../logs/istn.xml', "\n" . json_encode($_REQUEST, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), FILE_APPEND);
-        file_put_contents(__DIR__ . '/../../logs/istn.xml', "\n" . json_encode(base64_decode($_REQUEST['transactions']), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), FILE_APPEND);
-
         $istnService = new IstnService($this->module);
         $serviceID = null;
         $processedTransactions = [];
@@ -48,11 +45,15 @@ class BluePaymentIstnModuleFrontController extends ModuleFrontController
 
             $result = $istnService->processIstnRequest($xml);
 
-            $serviceID = $result['serviceID'];
-            $processedTransactions = $result['processedTransactions'];
-            $isAuthentic = $result['authentic'];
+            if ($result) {
+                $serviceID = $result['serviceID'];
+                $processedTransactions = $result['processedTransactions'];
+                $isAuthentic = $result['authentic'];
 
-            echo $istnService->returnConfirmation($serviceID, $processedTransactions, $isAuthentic);
+                echo $istnService->returnConfirmation($serviceID, $processedTransactions, $isAuthentic);
+            } else {
+                $istnService->returnConfirmation($serviceID, $processedTransactions, $isAuthentic);
+            }
         } catch (Exception $e) {
             PrestaShopLogger::addLog('Autopay ISTN Controller: General Exception: ' . $e->getMessage() . "\n" . $e->getTraceAsString(), 3);
             echo $istnService->returnConfirmation($serviceID, $processedTransactions, $isAuthentic);
