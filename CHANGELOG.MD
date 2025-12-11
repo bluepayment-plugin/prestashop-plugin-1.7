@@ -1,4 +1,7 @@
 # Changelog
+## [3.4.1] 11.12.2025
+- fixes for ISTN parsing
+
 ## [3.4.0] 09.12.2025
 - adaptation for PrestaShop 9.0
 
