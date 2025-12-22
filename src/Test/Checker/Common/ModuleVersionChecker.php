@@ -80,7 +80,7 @@ final class ModuleVersionChecker implements CheckerInterface
             return [
                 'status' => 'warning',
                 'message' => sprintf(
-                    $this->module->l('Could not check for module updates. Current version is %s'),
+                    $this->module->l('Could not check for module updates. Current version is %s', 'moduleversionchecker'),
                     $currentVersion
                 ),
                 'details' => $details,
@@ -91,7 +91,7 @@ final class ModuleVersionChecker implements CheckerInterface
             return [
                 'status' => 'warning',
                 'message' => sprintf(
-                    $this->module->l('Module database version needs to be upgraded to match file version %s'),
+                    $this->module->l('Module database version needs to be upgraded to match file version %s', 'moduleversionchecker'),
                     $currentVersion
                 ),
                 'details' => $details,
@@ -102,7 +102,7 @@ final class ModuleVersionChecker implements CheckerInterface
             return [
                 'status' => 'warning',
                 'message' => sprintf(
-                    $this->module->l('Module version %s is outdated. Latest version is %s'),
+                    $this->module->l('Module version %s is outdated. Latest version is %s', 'moduleversionchecker'),
                     $currentVersion,
                     $latestAddonsVersion
                 ),
@@ -115,7 +115,7 @@ final class ModuleVersionChecker implements CheckerInterface
         return [
             'status' => 'success',
             'message' => sprintf(
-                $this->module->l('Module version %s is up to date'),
+                $this->module->l('Module version %s is up to date', 'moduleversionchecker'),
                 $currentVersion
             ),
             'details' => $details,
@@ -134,7 +134,17 @@ final class ModuleVersionChecker implements CheckerInterface
                 return false;
             }
 
-            return \Tools::version_compare($module->version, $module->database_version, '>');
+            $databaseVersion = \Db::getInstance()->getValue('
+                SELECT version 
+                FROM `' . _DB_PREFIX_ . 'module` 
+                WHERE name = "' . pSQL($this->module->name) . '"
+            ');
+
+            if (!$databaseVersion) {
+                return false;
+            }
+
+            return \Tools::version_compare($module->version, $databaseVersion, '>');
         } catch (\Exception $e) {
             self::$lastError = 'Error checking module upgrade: ' . $e->getMessage();
 
@@ -183,11 +193,11 @@ final class ModuleVersionChecker implements CheckerInterface
 
     public function getName(): string
     {
-        return $this->module->l('Module Version Check');
+        return $this->module->l('Module Version Check', 'moduleversionchecker');
     }
 
     public function getDescription(): string
     {
-        return $this->module->l('Checks if the module version is up to date');
+        return $this->module->l('Checks if the module version is up to date', 'moduleversionchecker');
     }
 }

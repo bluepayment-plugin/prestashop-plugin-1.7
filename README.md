@@ -1,4 +1,4 @@
-# Instrukcja dla modułu PrestaShop 1.7 i 8.x: "Płatności online Autopay" 
+# Instrukcja dla modułu PrestaShop 1.7 i 9.x: "Płatności online Autopay" 
 
 ## Podstawowe informacje
 Płatności online Autopay to moduł płatności umożliwiający realizację transakcji bezgotówkowych w sklepie opartym na platformie PrestaShop 1.7 oraz 8.x.

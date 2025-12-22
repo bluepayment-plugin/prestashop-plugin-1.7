@@ -100,11 +100,11 @@ final class PhpEnvironmentChecker implements CheckerInterface
     {
         switch ($status) {
             case 'error':
-                return $this->module->l('PHP environment check failed') . ': ' . implode('; ', $errorMessages);
+                return $this->module->l('PHP environment check failed', 'phpenvironmentchecker') . ': ' . implode('; ', $errorMessages);
             case 'warning':
-                return $this->module->l('PHP environment check completed with warnings') . ': ' . implode('; ', $warningMessages);
+                return $this->module->l('PHP environment check completed with warnings', 'phpenvironmentchecker') . ': ' . implode('; ', $warningMessages);
             default:
-                return $this->module->l('PHP environment check passed successfully');
+                return $this->module->l('PHP environment check passed successfully', 'phpenvironmentchecker');
         }
     }
 

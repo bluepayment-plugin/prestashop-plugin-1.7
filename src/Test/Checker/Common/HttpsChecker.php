@@ -46,7 +46,7 @@ final class HttpsChecker implements CheckerInterface
         if (!$isHttps) {
             return [
                 'status' => 'warning',
-                'message' => $this->module->l('HTTPS protocol is not enabled. Payment gateway requires secure connection'),
+                'message' => $this->module->l('HTTPS protocol is not enabled. Payment gateway requires secure connection', 'httpschecker'),
                 'details' => [
                     'https_enabled' => false,
                     'current_protocol' => 'http',
@@ -56,7 +56,7 @@ final class HttpsChecker implements CheckerInterface
 
         return [
             'status' => 'success',
-            'message' => $this->module->l('HTTPS protocol is enabled'),
+            'message' => $this->module->l('HTTPS protocol is enabled', 'httpschecker'),
             'details' => [
                 'https_enabled' => true,
                 'current_protocol' => 'https',
@@ -66,11 +66,11 @@ final class HttpsChecker implements CheckerInterface
 
     public function getName(): string
     {
-        return $this->module->l('HTTPS Protocol Check');
+        return $this->module->l('HTTPS Protocol Check', 'httpschecker');
     }
 
     public function getDescription(): string
     {
-        return $this->module->l('Checks if the website uses HTTPS protocol');
+        return $this->module->l('Checks if the website uses HTTPS protocol', 'httpschecker');
     }
 }

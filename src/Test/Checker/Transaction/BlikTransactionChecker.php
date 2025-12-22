@@ -71,7 +71,7 @@ final class BlikTransactionChecker implements CheckerInterface
             if (!$orderResult['success']) {
                 return [
                     'success' => false,
-                    'message' => $this->module->l('Failed to create test order'),
+                    'message' => $this->module->l('Failed to create test order', 'bliktransactionchecker'),
                     'details' => $orderResult,
                 ];
             }
@@ -80,7 +80,7 @@ final class BlikTransactionChecker implements CheckerInterface
             if (!$order instanceof \Order) {
                 return [
                     'success' => false,
-                    'message' => $this->module->l('Invalid order object'),
+                    'message' => $this->module->l('Invalid order object', 'bliktransactionchecker'),
                     'details' => $orderResult,
                 ];
             }
@@ -100,7 +100,7 @@ final class BlikTransactionChecker implements CheckerInterface
                 return [
                     'success' => false,
                     'status' => 'error',
-                    'message' => $this->module->l('BLIK transaction failed or timed out'),
+                    'message' => $this->module->l('BLIK transaction failed or timed out', 'bliktransactionchecker'),
                     'details' => $statusResult,
                 ];
             }
@@ -108,7 +108,7 @@ final class BlikTransactionChecker implements CheckerInterface
             return [
                 'success' => true,
                 'status' => 'success',
-                'message' => $this->module->l('BLIK payment process completed successfully'),
+                'message' => $this->module->l('BLIK payment process completed successfully', 'bliktransactionchecker'),
                 'order_id' => $order->id,
                 'transaction_status' => $statusResult['status'],
                 'details' => [
@@ -120,7 +120,7 @@ final class BlikTransactionChecker implements CheckerInterface
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => $this->module->l('Error during BLIK transaction test'),
+                'message' => $this->module->l('Error during BLIK transaction test', 'bliktransactionchecker'),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ];

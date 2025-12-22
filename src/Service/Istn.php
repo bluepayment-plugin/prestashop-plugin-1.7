@@ -25,6 +25,7 @@ use BluePayment\Until\Helper;
 class Istn
 {
     private $module;
+    private $lastIncomingIstnFailureReason;
 
     public function __construct(\BluePayment $module)
     {
@@ -44,6 +45,7 @@ class Istn
 
     private function isValidIncomingIstn(\SimpleXMLElement $xml, string $receivedHash, string $istnServiceID): bool
     {
+        $this->lastIncomingIstnFailureReason = null;
         $hashData = [];
         $hashData[] = $istnServiceID;
 
@@ -65,16 +67,14 @@ class Istn
                         $transactionCurrency
                     );
                 } catch (\Exception $e) {
-                    \PrestaShopLogger::addLog('Autopay ISTN Service: Exception while fetching shared key for incoming validation: ' . $e->getMessage(), 3);
-
                     return false;
                 }
             }
         }
 
         if (!$sharedKey) {
-            \PrestaShopLogger::addLog('Autopay ISTN Service: Could not determine shared key for incoming hash validation (missing currency in transaction or config issue).', 3);
-
+            // Missing shared key (e.g., currency not configured) – treat as non-authentic without logging to avoid noise.
+            $this->lastIncomingIstnFailureReason = 'missing_shared_key';
             return false;
         }
         $hashData[] = $sharedKey;
@@ -116,7 +116,9 @@ class Istn
         ];
 
         if (!$isIncomingIstnAuthentic) {
-            \PrestaShopLogger::addLog('Autopay ISTN Service: Incoming request is NOT authentic. Processing stopped.', 2);
+            if ($this->lastIncomingIstnFailureReason !== 'missing_shared_key') {
+                \PrestaShopLogger::addLog('Autopay ISTN Service: Incoming request is NOT authentic. Processing stopped.', 2);
+            }
 
             return ['serviceID' => $istnServiceID, 'processedTransactions' => $processedTransactionsForResponse, 'authentic' => false];
         }
@@ -203,7 +205,7 @@ class Istn
         return ['serviceID' => $istnServiceID, 'processedTransactions' => $processedTransactionsForResponse, 'authentic' => true];
     }
 
-    public function returnConfirmation(?string $serviceID, array $processedTransactions, bool $isIncomingIstnAuthentic): string
+    public function returnConfirmation(?string $serviceID, array $processedTransactions, bool $isIncomingIstnAuthentic): ?string
     {
         $dom = new \DOMDocument('1.0', 'UTF-8');
         $confirmationList = $dom->createElement('confirmationList');
@@ -238,58 +240,63 @@ class Istn
             try {
                 $rawOrderId = null;
 
-                if (isset($transactionDataForResponse['orderID'])) {
-                    $rawOrderId = $transactionDataForResponse['orderID'];
-                } else {
-                    $db = \Db::getInstance();
-                    $sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'blue_gateways_refunds` 
-                            WHERE `remote_id` = \'' . pSQL($transactionDataForResponse['remoteID']) . '\'
-                              AND `amount` = ' . (float) $transactionDataForResponse['amount'] . '
-                              AND `currency` = \'' . pSQL($transactionDataForResponse['currency']) . '\'';
-
-                    $refundRecord = $db->getRow($sql);
-
-                    if ($refundRecord) {
-                        $rawOrderId = $refundRecord['order_id'];
+                if (isset($transactionDataForResponse['currency']) && $transactionDataForResponse['currency']) {
+                    try {
+                        $sharedKey = Helper::parseConfigByCurrency(
+                            $this->module->name_upper . Config::SHARED_KEY,
+                            $transactionDataForResponse['currency']
+                        );
+                    } catch (\Exception $e) {
+                        // Swallow exception to avoid noisy logs when currency config is missing/invalid.
                     }
                 }
 
-                if ($rawOrderId) {
-                    $orderIdParts = explode('-', (string) $rawOrderId);
-                    $orderId = $orderIdParts[0];
-
-                    if (is_numeric($orderId) && (int) $orderId > 0) {
-                        $order = new \Order((int) $orderId);
-                        if (\Validate::isLoadedObject($order)) {
-                            $currency = new \Currency($order->id_currency);
-                            if (\Validate::isLoadedObject($currency)) {
-                                $sharedKey = Helper::parseConfigByCurrency(
-                                    $this->module->name_upper . Config::SHARED_KEY,
-                                    $currency->iso_code
-                                );
-                            } else {
-                                \PrestaShopLogger::addLog('Autopay ISTN Service Response: Failed to load currency for order ID ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
-                            }
-                        } else {
-                            \PrestaShopLogger::addLog('Autopay ISTN Service Response: Failed to load order for ID ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
-                        }
+                if (!$sharedKey) {
+                    if (isset($transactionDataForResponse['orderID'])) {
+                        $rawOrderId = $transactionDataForResponse['orderID'];
                     } else {
-                        \PrestaShopLogger::addLog('Autopay ISTN Service Response: Invalid OrderID in transaction for shared key: ' . $orderId . ' (raw: ' . $rawOrderId . ')', 2);
+                        $db = \Db::getInstance();
+                        $sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'blue_gateways_refunds` 
+                                WHERE `remote_id` = \'' . pSQL($transactionDataForResponse['remoteID']) . '\'
+                                  AND `amount` = ' . (float) $transactionDataForResponse['amount'] . '
+                                  AND `currency` = \'' . pSQL($transactionDataForResponse['currency']) . '\'';
+
+                        $refundRecord = $db->getRow($sql);
+
+                        if ($refundRecord) {
+                            $rawOrderId = $refundRecord['order_id'];
+                        }
+                    }
+
+                    if ($rawOrderId) {
+                        $orderIdParts = explode('-', (string) $rawOrderId);
+                        $orderId = $orderIdParts[0];
+
+                        if (is_numeric($orderId) && (int) $orderId > 0) {
+                            $order = new \Order((int) $orderId);
+                            if (\Validate::isLoadedObject($order)) {
+                                $currency = new \Currency($order->id_currency);
+                                if (\Validate::isLoadedObject($currency)) {
+                                    $sharedKey = Helper::parseConfigByCurrency(
+                                        $this->module->name_upper . Config::SHARED_KEY,
+                                        $currency->iso_code
+                                    );
+                                }
+                            }
+                        }
                     }
                 }
             } catch (\Exception $e) {
                 \PrestaShopLogger::addLog('Autopay ISTN Service Response: Exception getting shared key: ' . $e->getMessage(), 3);
             }
-        } elseif (!$transactionDataForResponse) {
-            \PrestaShopLogger::addLog('Autopay ISTN Service Response: No transaction data to determine currency for shared key. Response hash may be incorrect.', 2);
         }
 
         if (isset($sharedKey) && $sharedKey) {
             $hashData[] = $sharedKey;
             $calculatedHash = Helper::generateAndReturnHash($hashData);
         } else {
-            $calculatedHash = 'SHARED_KEY_UNAVAILABLE_HASH_INVALID';
-            \PrestaShopLogger::addLog('Autopay ISTN Service Response: Shared key for response hash not found. Response hash is invalid.', 3);
+            // No shared key available; per requirement return null to avoid noisy logs and invalid responses.
+            return null;
         }
 
         $confirmationList->appendChild($dom->createElement('hash', $calculatedHash));

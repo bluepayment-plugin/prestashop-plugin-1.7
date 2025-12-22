@@ -44,7 +44,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
         if (!($this->module instanceof \BluePayment)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Invalid module type for Gateway connection check'),
+                'message' => $this->module->l('Invalid module type for Gateway connection check', 'gatewaychannelsconnectionchecker'),
                 'details' => ['module_type' => get_class($this->module)],
             ];
         }
@@ -58,7 +58,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
         if (empty($currencies)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('No currencies available'),
+                'message' => $this->module->l('No currencies available', 'gatewaychannelsconnectionchecker'),
                 'details' => [],
             ];
         }
@@ -74,7 +74,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
             if (empty($merchantData) || !isset($merchantData[0]) || !isset($merchantData[1])) {
                 $results[$currencyCode] = $this->createWarningResult(
                     $currencyCode,
-                    $this->module->l('API credentials not configured for currency') . ' ' . $currencyCode,
+                    $this->module->l('API credentials not configured for currency', 'gatewaychannelsconnectionchecker') . ' ' . $currencyCode,
                     [
                         'service_id_configured' => false,
                         'shared_key_configured' => false,
@@ -98,7 +98,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
             if ($channelsResult['success']) {
                 $results[$currencyCode] = $this->createSuccessResult(
                     $currencyCode,
-                    $this->module->l('Gateway connection successful for currency') . ' ' . $currencyCode,
+                    $this->module->l('Gateway connection successful for currency', 'gatewaychannelsconnectionchecker') . ' ' . $currencyCode,
                     [
                         'response_time' => $responseTime,
                         'response_time_formatted' => $responseTime . 'ms',
@@ -111,7 +111,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
             } else {
                 $results[$currencyCode] = $this->createWarningResult(
                     $currencyCode,
-                    $this->module->l('Gateway connection failed for currency') . ' ' . $currencyCode,
+                    $this->module->l('Gateway connection failed for currency', 'gatewaychannelsconnectionchecker') . ' ' . $currencyCode,
                     [
                         'response_time' => $responseTime,
                         'response_time_formatted' => $responseTime . 'ms',
@@ -128,7 +128,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
         if ($connectionCount === 0) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Gateway connection failed for all currencies'),
+                'message' => $this->module->l('Gateway connection failed for all currencies', 'gatewaychannelsconnectionchecker'),
                 'details' => $results,
             ];
         }
@@ -247,11 +247,11 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
     private function getStatusMessage(string $status): string
     {
         if ($status === 'error') {
-            return $this->module->l('Failed to retrieve payment channels for one or more currencies');
+            return $this->module->l('Failed to retrieve payment channels for one or more currencies', 'gatewaychannelsconnectionchecker');
         } elseif ($status === 'warning') {
-            return $this->module->l('Payment channels retrieved successfully but some currencies are not configured');
+            return $this->module->l('Payment channels retrieved successfully but some currencies are not configured', 'gatewaychannelsconnectionchecker');
         } else {
-            return $this->module->l('Payment channels retrieved successfully for all configured currencies');
+            return $this->module->l('Payment channels retrieved successfully for all configured currencies', 'gatewaychannelsconnectionchecker');
         }
     }
 }

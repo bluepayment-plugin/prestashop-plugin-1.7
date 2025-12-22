@@ -69,7 +69,7 @@ final class InternetConnectionChecker implements CheckerInterface
         if (empty($connectedHosts)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('No internet connection detected'),
+                'message' => $this->module->l('No internet connection detected', 'internetconnectionchecker'),
                 'details' => [
                     'connected' => false,
                     'tested_hosts' => $this->testHosts,
@@ -81,7 +81,7 @@ final class InternetConnectionChecker implements CheckerInterface
         if (!empty($failedHosts)) {
             return [
                 'status' => 'warning',
-                'message' => $this->module->l('Internet connection detected but some hosts are unreachable'),
+                'message' => $this->module->l('Internet connection detected but some hosts are unreachable', 'internetconnectionchecker'),
                 'details' => [
                     'connected' => true,
                     'tested_hosts' => $this->testHosts,
@@ -93,7 +93,7 @@ final class InternetConnectionChecker implements CheckerInterface
 
         return [
             'status' => 'success',
-            'message' => $this->module->l('Internet connection is working properly'),
+            'message' => $this->module->l('Internet connection is working properly', 'internetconnectionchecker'),
             'details' => [
                 'connected' => true,
                 'tested_hosts' => $this->testHosts,
@@ -131,7 +131,7 @@ final class InternetConnectionChecker implements CheckerInterface
      */
     public function getName(): string
     {
-        return $this->module->l('Internet Connection Check');
+        return $this->module->l('Internet Connection Check', 'internetconnectionchecker');
     }
 
     /**
@@ -139,6 +139,6 @@ final class InternetConnectionChecker implements CheckerInterface
      */
     public function getDescription(): string
     {
-        return $this->module->l('Checks if there is an active internet connection');
+        return $this->module->l('Checks if there is an active internet connection', 'internetconnectionchecker');
     }
 }

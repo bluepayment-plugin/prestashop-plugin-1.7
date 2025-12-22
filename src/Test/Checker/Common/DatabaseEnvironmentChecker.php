@@ -99,11 +99,11 @@ final class DatabaseEnvironmentChecker implements CheckerInterface
     {
         switch ($status) {
             case 'error':
-                return $this->module->l('Database environment check failed') . ': ' . implode('; ', $errorMessages);
+                return $this->module->l('Database environment check failed', 'databaseenvironmentchecker') . ': ' . implode('; ', $errorMessages);
             case 'warning':
-                return $this->module->l('Database environment check completed with warnings') . ': ' . implode('; ', $warningMessages);
+                return $this->module->l('Database environment check completed with warnings', 'databaseenvironmentchecker') . ': ' . implode('; ', $warningMessages);
             default:
-                return $this->module->l('Database environment check passed successfully');
+                return $this->module->l('Database environment check passed successfully', 'databaseenvironmentchecker');
         }
     }
 

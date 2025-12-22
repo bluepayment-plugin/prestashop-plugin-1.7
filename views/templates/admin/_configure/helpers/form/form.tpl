@@ -313,7 +313,6 @@
                         {if $f == 2}
                             </div>
                         {elseif $f == 4}
-                            adasdasd
                             {hook h='adminPayments'}
                         {elseif $f == 3 ||  $f == 8 || $f == 10 || $f == 12 || $f == 13}
                             </div>

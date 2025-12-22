@@ -52,7 +52,7 @@ final class ConnectionAvailabilityChecker implements CheckerInterface
             if ($result === false) {
                 return [
                     'status' => 'error',
-                    'message' => $this->module->l('Could not connect to the database'),
+                    'message' => $this->module->l('Could not connect to the database', 'connectionavailabilitychecker'),
                     'details' => [
                         'connection' => false,
                     ],
@@ -61,7 +61,7 @@ final class ConnectionAvailabilityChecker implements CheckerInterface
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Could not connect to the database'),
+                'message' => $this->module->l('Could not connect to the database', 'connectionavailabilitychecker'),
                 'details' => [
                     'connection' => false,
                     'error' => $e->getMessage(),
@@ -71,7 +71,7 @@ final class ConnectionAvailabilityChecker implements CheckerInterface
 
         return [
             'status' => 'success',
-            'message' => $this->module->l('Database connection is available'),
+            'message' => $this->module->l('Database connection is available', 'connectionavailabilitychecker'),
             'details' => [
                 'connection' => true,
             ],
@@ -80,11 +80,11 @@ final class ConnectionAvailabilityChecker implements CheckerInterface
 
     public function getName(): string
     {
-        return $this->module->l('Database Connection Availability Check');
+        return $this->module->l('Database Connection Availability Check', 'connectionavailabilitychecker');
     }
 
     public function getDescription(): string
     {
-        return $this->module->l('Checks if the database connection is available');
+        return $this->module->l('Checks if the database connection is available', 'connectionavailabilitychecker');
     }
 }

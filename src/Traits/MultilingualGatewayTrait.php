@@ -61,7 +61,7 @@ trait MultilingualGatewayTrait
                 'Pay with wallet' => 'Pagar con cartera',
             ],
         ];
-        
+
         return $translations[$iso][$key] ?? $key;
     }
 

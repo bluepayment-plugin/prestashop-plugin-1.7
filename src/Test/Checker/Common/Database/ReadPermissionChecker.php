@@ -53,17 +53,17 @@ final class ReadPermissionChecker implements CheckerInterface
             if ($result === false) {
                 return [
                     'status' => 'error',
-                    'message' => $this->module->l('Database read permission check failed'),
+                    'message' => $this->module->l('Database read permission check failed', 'readpermissionchecker'),
                     'details' => [
                         'read' => false,
-                        'error' => $this->module->l('Could not execute a simple SELECT query'),
+                        'error' => $this->module->l('Could not execute a simple SELECT query', 'readpermissionchecker'),
                     ],
                 ];
             }
 
             return [
                 'status' => 'success',
-                'message' => $this->module->l('Database read permission is valid'),
+                'message' => $this->module->l('Database read permission is valid', 'readpermissionchecker'),
                 'details' => [
                     'read' => true,
                 ],
@@ -71,7 +71,7 @@ final class ReadPermissionChecker implements CheckerInterface
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Database read permission check failed'),
+                'message' => $this->module->l('Database read permission check failed', 'readpermissionchecker'),
                 'details' => [
                     'read' => false,
                     'error' => $e->getMessage(),
@@ -82,11 +82,11 @@ final class ReadPermissionChecker implements CheckerInterface
 
     public function getName(): string
     {
-        return $this->module->l('Database Read Permission Check');
+        return $this->module->l('Database Read Permission Check', 'readpermissionchecker');
     }
 
     public function getDescription(): string
     {
-        return $this->module->l('Checks if the database can be read from');
+        return $this->module->l('Checks if the database can be read from', 'readpermissionchecker');
     }
 }

@@ -57,7 +57,7 @@ final class LogPermissionsChecker implements CheckerInterface
         if (!is_dir($this->logDir)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Log directory does not exist'),
+                'message' => $this->module->l('Log directory does not exist', 'logpermissionschecker'),
                 'details' => [
                     'log_dir' => $this->logDir,
                     'exists' => false,
@@ -68,7 +68,7 @@ final class LogPermissionsChecker implements CheckerInterface
         if (!is_writable($this->logDir)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Log directory is not writable. Unable to save logs'),
+                'message' => $this->module->l('Log directory is not writable. Unable to save logs', 'logpermissionschecker'),
                 'details' => [
                     'log_dir' => $this->logDir,
                     'exists' => true,
@@ -84,7 +84,7 @@ final class LogPermissionsChecker implements CheckerInterface
         if ($writeTest === false) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Cannot write to log directory. Check file permissions'),
+                'message' => $this->module->l('Cannot write to log directory. Check file permissions', 'logpermissionschecker'),
                 'details' => [
                     'log_dir' => $this->logDir,
                     'exists' => true,
@@ -99,7 +99,7 @@ final class LogPermissionsChecker implements CheckerInterface
 
         return [
             'status' => 'success',
-            'message' => $this->module->l('Log directory is writable'),
+            'message' => $this->module->l('Log directory is writable', 'logpermissionschecker'),
             'details' => [
                 'log_dir' => $this->logDir,
                 'exists' => true,
@@ -111,11 +111,11 @@ final class LogPermissionsChecker implements CheckerInterface
 
     public function getName(): string
     {
-        return $this->module->l('Log Permissions Check');
+        return $this->module->l('Log Permissions Check', 'logpermissionschecker');
     }
 
     public function getDescription(): string
     {
-        return $this->module->l('Checks if the log directory has proper write permissions');
+        return $this->module->l('Checks if the log directory has proper write permissions', 'logpermissionschecker');
     }
 }

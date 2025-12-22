@@ -40,7 +40,7 @@ class ApiConnectionChecker implements CheckerInterface
         if (!($this->module instanceof \BluePayment)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Invalid module type for API connection check'),
+                'message' => $this->module->l('Invalid module type for API connection check', 'apiconnectionchecker'),
                 'details' => ['module_type' => get_class($this->module)],
             ];
         }
@@ -53,7 +53,7 @@ class ApiConnectionChecker implements CheckerInterface
         if (empty($currencies)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('No currencies available'),
+                'message' => $this->module->l('No currencies available', 'apiconnectionchecker'),
                 'details' => [],
             ];
         }
@@ -69,7 +69,7 @@ class ApiConnectionChecker implements CheckerInterface
             if (empty($merchantData) || !isset($merchantData[0]) || !isset($merchantData[1])) {
                 $results[$currencyCode] = [
                     'status' => 'warning',
-                    'message' => $this->module->l('API credentials not configured for currency') . ' ' . $currencyCode,
+                    'message' => $this->module->l('API credentials not configured for currency', 'apiconnectionchecker') . ' ' . $currencyCode,
                     'details' => [
                         'service_id_configured' => false,
                         'shared_key_configured' => false,
@@ -95,7 +95,7 @@ class ApiConnectionChecker implements CheckerInterface
             if ($isConnected) {
                 $results[$currencyCode] = [
                     'status' => 'success',
-                    'message' => $this->module->l('API connection successful for currency') . ' ' . $currencyCode,
+                    'message' => $this->module->l('API connection successful for currency', 'apiconnectionchecker') . ' ' . $currencyCode,
                     'details' => [
                         'service_id' => $serviceId,
                         'response_time' => $responseTime,
@@ -106,7 +106,7 @@ class ApiConnectionChecker implements CheckerInterface
             } else {
                 $results[$currencyCode] = [
                     'status' => 'error',
-                    'message' => $this->module->l('API connection failed for currency') . ' ' . $currencyCode,
+                    'message' => $this->module->l('API connection failed for currency', 'apiconnectionchecker') . ' ' . $currencyCode,
                     'details' => [
                         'service_id' => $serviceId,
                         'response_time' => $responseTime,
@@ -122,7 +122,7 @@ class ApiConnectionChecker implements CheckerInterface
         if ($connectionCount === 0) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('API connection failed for all currencies'),
+                'message' => $this->module->l('API connection failed for all currencies', 'apiconnectionchecker'),
                 'details' => $results,
             ];
         }
@@ -140,11 +140,11 @@ class ApiConnectionChecker implements CheckerInterface
     private function getStatusMessage(string $status): string
     {
         if ($status === 'error') {
-            return $this->module->l('API connection failed for one or more currencies');
+            return $this->module->l('API connection failed for one or more currencies', 'apiconnectionchecker');
         } elseif ($status === 'warning') {
-            return $this->module->l('API connection successful but some currencies are not configured');
+            return $this->module->l('API connection successful but some currencies are not configured', 'apiconnectionchecker');
         } else {
-            return $this->module->l('API connection successful for all configured currencies');
+            return $this->module->l('API connection successful for all configured currencies', 'apiconnectionchecker');
         }
     }
 

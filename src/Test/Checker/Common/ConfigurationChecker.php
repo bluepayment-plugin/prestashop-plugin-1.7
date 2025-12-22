@@ -70,7 +70,7 @@ final class ConfigurationChecker implements CheckerInterface
         if (!$this->module->active) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Autopay module is not active'),
+                'message' => $this->module->l('Autopay module is not active', 'configurationchecker'),
                 'details' => [
                     'module_active' => false,
                 ],
@@ -99,7 +99,7 @@ final class ConfigurationChecker implements CheckerInterface
         if (!empty($missingConfig)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Missing required configuration parameters'),
+                'message' => $this->module->l('Missing required configuration parameters', 'configurationchecker'),
                 'details' => [
                     'module_active' => true,
                     'missing_config' => $missingConfig,
@@ -110,7 +110,7 @@ final class ConfigurationChecker implements CheckerInterface
         if (!empty($missingCurrencyConfig)) {
             return [
                 'status' => 'warning',
-                'message' => $this->module->l('Missing currency-specific configuration parameters'),
+                'message' => $this->module->l('Missing currency-specific configuration parameters', 'configurationchecker'),
                 'details' => [
                     'module_active' => true,
                     'missing_currency_config' => $missingCurrencyConfig,
@@ -129,7 +129,7 @@ final class ConfigurationChecker implements CheckerInterface
         if (!empty($invalidServiceIds)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Service Partner ID is not valid for some currencies'),
+                'message' => $this->module->l('Service Partner ID is not valid for some currencies', 'configurationchecker'),
                 'details' => [
                     'module_active' => true,
                     'invalid_service_ids' => $invalidServiceIds,
@@ -153,7 +153,7 @@ final class ConfigurationChecker implements CheckerInterface
 
         return [
             'status' => 'success',
-            'message' => $this->module->l('Module configuration is valid'),
+            'message' => $this->module->l('Module configuration is valid', 'configurationchecker'),
             'details' => [
                 'module_active' => true,
                 'config_valid' => true,
@@ -171,11 +171,11 @@ final class ConfigurationChecker implements CheckerInterface
 
     public function getName(): string
     {
-        return $this->module->l('Module Configuration Check');
+        return $this->module->l('Module Configuration Check', 'configurationchecker');
     }
 
     public function getDescription(): string
     {
-        return $this->module->l('Checks if the module is properly configured');
+        return $this->module->l('Checks if the module is properly configured', 'configurationchecker');
     }
 }

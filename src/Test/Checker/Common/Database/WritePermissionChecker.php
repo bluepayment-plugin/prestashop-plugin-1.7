@@ -61,10 +61,10 @@ final class WritePermissionChecker implements CheckerInterface
             if (!$createResult) {
                 return [
                     'status' => 'error',
-                    'message' => $this->module->l('Database write permission check failed'),
+                    'message' => $this->module->l('Database write permission check failed', 'writepermissionchecker'),
                     'details' => [
                         'write' => false,
-                        'error' => $this->module->l('Could not create temporary test table'),
+                        'error' => $this->module->l('Could not create temporary test table', 'writepermissionchecker'),
                     ],
                 ];
             }
@@ -79,10 +79,10 @@ final class WritePermissionChecker implements CheckerInterface
 
                 return [
                     'status' => 'error',
-                    'message' => $this->module->l('Database write permission check failed'),
+                    'message' => $this->module->l('Database write permission check failed', 'writepermissionchecker'),
                     'details' => [
                         'write' => false,
-                        'error' => $this->module->l('Could not insert test record'),
+                        'error' => $this->module->l('Could not insert test record', 'writepermissionchecker'),
                     ],
                 ];
             }
@@ -93,17 +93,17 @@ final class WritePermissionChecker implements CheckerInterface
             if (!$dropResult) {
                 return [
                     'status' => 'error',
-                    'message' => $this->module->l('Database write permission check failed'),
+                    'message' => $this->module->l('Database write permission check failed', 'writepermissionchecker'),
                     'details' => [
                         'write' => false,
-                        'error' => $this->module->l('Could not drop temporary test table'),
+                        'error' => $this->module->l('Could not drop temporary test table', 'writepermissionchecker'),
                     ],
                 ];
             }
 
             return [
                 'status' => 'success',
-                'message' => $this->module->l('Database write permission is valid'),
+                'message' => $this->module->l('Database write permission is valid', 'writepermissionchecker'),
                 'details' => [
                     'write' => true,
                 ],
@@ -127,11 +127,11 @@ final class WritePermissionChecker implements CheckerInterface
 
     public function getName(): string
     {
-        return $this->module->l('Database Write Permission Check');
+        return $this->module->l('Database Write Permission Check', 'writepermissionchecker');
     }
 
     public function getDescription(): string
     {
-        return $this->module->l('Checks if the database can be written to by creating, modifying and dropping a temporary table');
+        return $this->module->l('Checks if the database can be written to by creating, modifying and dropping a temporary table', 'writepermissionchecker');
     }
 }

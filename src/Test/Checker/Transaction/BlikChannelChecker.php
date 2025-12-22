@@ -45,7 +45,7 @@ class BlikChannelChecker implements CheckerInterface
         if (!($this->module instanceof \BluePayment)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('Invalid module type for BLIK channel check'),
+                'message' => $this->module->l('Invalid module type for BLIK channel check', 'blikchannelchecker'),
                 'details' => ['module_type' => get_class($this->module)],
             ];
         }
@@ -59,7 +59,7 @@ class BlikChannelChecker implements CheckerInterface
         if (empty($currencies)) {
             return [
                 'status' => 'error',
-                'message' => $this->module->l('No currencies available'),
+                'message' => $this->module->l('No currencies available', 'blikchannelchecker'),
                 'details' => [],
             ];
         }
@@ -75,7 +75,7 @@ class BlikChannelChecker implements CheckerInterface
             if (empty($merchantData) || !isset($merchantData[0]) || !isset($merchantData[1])) {
                 $results[$currencyCode] = [
                     'status' => 'warning',
-                    'message' => $this->module->l('API credentials not configured for currency') . ' ' . $currencyCode,
+                    'message' => $this->module->l('API credentials not configured for currency', 'blikchannelchecker') . ' ' . $currencyCode,
                     'details' => [
                         'currency' => $currencyCode,
                         'service_id_configured' => false,
@@ -97,7 +97,7 @@ class BlikChannelChecker implements CheckerInterface
                     $blikAvailableInAnyCurrency = true;
                     $results[$currencyCode] = [
                         'status' => 'success',
-                        'message' => $this->module->l('BLIK payment channel is available for currency') . ' ' . $currencyCode,
+                        'message' => $this->module->l('BLIK payment channel is available for currency', 'blikchannelchecker') . ' ' . $currencyCode,
                         'details' => [
                             'currency' => $currencyCode,
                             'mode' => $mode,
@@ -108,7 +108,7 @@ class BlikChannelChecker implements CheckerInterface
                 } else {
                     $results[$currencyCode] = [
                         'status' => 'warning',
-                        'message' => $this->module->l('BLIK payment channel is not available for currency') . ' ' . $currencyCode,
+                        'message' => $this->module->l('BLIK payment channel is not available for currency', 'blikchannelchecker') . ' ' . $currencyCode,
                         'details' => [
                             'currency' => $currencyCode,
                             'mode' => $mode,
@@ -123,7 +123,7 @@ class BlikChannelChecker implements CheckerInterface
             } else {
                 $results[$currencyCode] = [
                     'status' => 'error',
-                    'message' => $this->module->l('Failed to check BLIK payment channel for currency') . ' ' . $currencyCode,
+                    'message' => $this->module->l('Failed to check BLIK payment channel for currency', 'blikchannelchecker') . ' ' . $currencyCode,
                     'details' => [
                         'currency' => $currencyCode,
                         'error' => $channelsResult['error'] ?? 'Unknown error',
@@ -218,15 +218,15 @@ class BlikChannelChecker implements CheckerInterface
     private function getStatusMessage(string $status, bool $blikAvailable): string
     {
         if ($status === 'error') {
-            return $this->module->l('Failed to check BLIK payment channel for one or more currencies');
+            return $this->module->l('Failed to check BLIK payment channel for one or more currencies', 'blikchannelchecker');
         } elseif ($status === 'warning') {
             if ($blikAvailable) {
-                return $this->module->l('BLIK payment channel is available but not for all currencies');
+                return $this->module->l('BLIK payment channel is available but not for all currencies', 'blikchannelchecker');
             } else {
-                return $this->module->l('BLIK payment channel is not available for any currency');
+                return $this->module->l('BLIK payment channel is not available for any currency', 'blikchannelchecker');
             }
         } else {
-            return $this->module->l('BLIK payment channel is available for all configured currencies');
+            return $this->module->l('BLIK payment channel is available for all configured currencies', 'blikchannelchecker');
         }
     }
 }

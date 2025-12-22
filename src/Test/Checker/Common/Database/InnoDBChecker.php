@@ -64,10 +64,10 @@ final class InnoDBChecker implements CheckerInterface
             if (!$innodbAvailable) {
                 return [
                     'status' => 'warning',
-                    'message' => $this->module->l('InnoDB engine is not available'),
+                    'message' => $this->module->l('InnoDB engine is not available', 'innodbchecker'),
                     'details' => [
                         'innodb' => false,
-                        'error' => $this->module->l('InnoDB engine is not available'),
+                        'error' => $this->module->l('InnoDB engine is not available', 'innodbchecker'),
                     ],
                 ];
             }
@@ -76,13 +76,13 @@ final class InnoDBChecker implements CheckerInterface
                 return [
                     'status' => 'warning',
                     'message' => sprintf(
-                        $this->module->l('Default database engine is not InnoDB. Current: %s'),
+                        $this->module->l('Default database engine is not InnoDB. Current: %s', 'innodbchecker'),
                         _MYSQL_ENGINE_
                     ),
                     'details' => [
                         'innodb' => false,
                         'error' => sprintf(
-                            $this->module->l('Default database engine is not InnoDB. Current: %s'),
+                            $this->module->l('Default database engine is not InnoDB. Current: %s', 'innodbchecker'),
                             _MYSQL_ENGINE_
                         ),
                     ],
@@ -92,7 +92,7 @@ final class InnoDBChecker implements CheckerInterface
             /* @phpstan-ignore-next-line */
             return [
                 'status' => 'success',
-                'message' => $this->module->l('InnoDB engine is available and set as default'),
+                'message' => $this->module->l('InnoDB engine is available and set as default', 'innodbchecker'),
                 'details' => [
                     'innodb' => true,
                     'is_default' => true,
@@ -101,7 +101,7 @@ final class InnoDBChecker implements CheckerInterface
         } catch (\Exception $e) {
             return [
                 'status' => 'warning',
-                'message' => $this->module->l('Could not check InnoDB engine status'),
+                'message' => $this->module->l('Could not check InnoDB engine status', 'innodbchecker'),
                 'details' => [
                     'innodb' => false,
                     'error' => $e->getMessage(),
@@ -112,11 +112,11 @@ final class InnoDBChecker implements CheckerInterface
 
     public function getName(): string
     {
-        return $this->module->l('Database InnoDB Engine Check');
+        return $this->module->l('Database InnoDB Engine Check', 'innodbchecker');
     }
 
     public function getDescription(): string
     {
-        return $this->module->l('Checks if the InnoDB database engine is available and set as default');
+        return $this->module->l('Checks if the InnoDB database engine is available and set as default', 'innodbchecker');
     }
 }

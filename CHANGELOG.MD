@@ -1,4 +1,9 @@
 # Changelog
+## [3.4.1] 22.12.2025
+- fixes for ISTN parsing
+- fixes translate
+- fixes test connection
+
 ## [3.4.0] 09.12.2025
 - adaptation for PrestaShop 9.0
 

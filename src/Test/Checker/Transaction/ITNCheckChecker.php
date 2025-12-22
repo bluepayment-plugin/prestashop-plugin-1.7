@@ -106,13 +106,13 @@ class ITNCheckChecker implements CheckerInterface
     private function getSummaryMessage(string $status, array $errorMessages, array $warningMessages): string
     {
         if ($status === 'error') {
-            return $this->module->l('ITN check failed') . ': ' . implode(', ', $errorMessages);
+            return $this->module->l('ITN check failed', 'itncheckchecker') . ': ' . implode(', ', $errorMessages);
         }
 
         if ($status === 'warning') {
-            return $this->module->l('ITN check completed with warnings') . ': ' . implode(', ', $warningMessages);
+            return $this->module->l('ITN check completed with warnings', 'itncheckchecker') . ': ' . implode(', ', $warningMessages);
         }
 
-        return $this->module->l('All ITN checks passed successfully');
+        return $this->module->l('All ITN checks passed successfully', 'itncheckchecker');
     }
 }
