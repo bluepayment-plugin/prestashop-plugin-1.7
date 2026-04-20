@@ -10,14 +10,14 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 {literal}
 <script type="text/javascript">
     {/literal}
-    var aplitudeUserId = '{$amplitude_user_id}';
-    var aplitudeId = '{$amplitude_id}';
+    var aplitudeUserId = '{$amplitude_user_id|escape:'javascript':'UTF-8'}';
+    var aplitudeId = '{$amplitude_id|escape:'javascript':'UTF-8'}';
     {literal}
     (function (e, t) {
         var n = e.amplitude || {_q: [], _iq: {}};
@@ -116,58 +116,58 @@
 
             {if $fkey === 0}
                 <li class="nav-item">
-                    <a href="tab_rule_{$tabk}" data-hash="authorization" class="nav-link tab "
-                       id="tab_rule_link_{$tabk}"
-                       href="javascript:displaythemeeditorTab('{$tabk}');">
-                        {$fvalue.form.section.title}
+                    <a href="tab_rule_{$tabk|escape:'html':'UTF-8'}" data-hash="authorization" class="nav-link tab "
+                       id="tab_rule_link_{$tabk|escape:'html':'UTF-8'}"
+                       href="javascript:displaythemeeditorTab('{$tabk|escape:'javascript':'UTF-8'}');">
+                        {$fvalue.form.section.title|escape:'html':'UTF-8'}
                     </a>
                 </li>
             {/if}
 
             {if $fkey === 3}
                 <li class="nav-item">
-                    <a href="tab_rule_{$tabk}" data-hash="payment-options" class="nav-link tab "
-                       id="tab_rule_link_{$tabk}"
-                       href="javascript:displaythemeeditorTab('{$tabk}');">
-                        {$fvalue.form.section.title}
+                    <a href="tab_rule_{$tabk|escape:'html':'UTF-8'}" data-hash="payment-options" class="nav-link tab "
+                       id="tab_rule_link_{$tabk|escape:'html':'UTF-8'}"
+                       href="javascript:displaythemeeditorTab('{$tabk|escape:'javascript':'UTF-8'}');">
+                        {$fvalue.form.section.title|escape:'html':'UTF-8'}
                     </a>
                 </li>
             {/if}
 
             {if $fkey === 4}
                 <li class="nav-item">
-                    <a href="tab_rule_{$tabk}" data-hash="analitics" class="nav-link tab " id="tab_rule_link_{$tabk}"
-                       href="javascript:displaythemeeditorTab('{$tabk}');">
-                        {$fvalue.form.section.title}
+                    <a href="tab_rule_{$tabk|escape:'html':'UTF-8'}" data-hash="analitics" class="nav-link tab " id="tab_rule_link_{$tabk|escape:'html':'UTF-8'}"
+                       href="javascript:displaythemeeditorTab('{$tabk|escape:'javascript':'UTF-8'}');">
+                        {$fvalue.form.section.title|escape:'html':'UTF-8'}
                     </a>
                 </li>
             {/if}
 
             {if $fkey === 9}
                 <li class="nav-item">
-                    <a href="tab_rule_{$tabk}" data-hash="help" class="nav-link tab " id="tab_rule_link_{$tabk}"
-                       href="javascript:displaythemeeditorTab('{$tabk}');">
-                        {$fvalue.form.section.title}
+                    <a href="tab_rule_{$tabk|escape:'html':'UTF-8'}" data-hash="help" class="nav-link tab " id="tab_rule_link_{$tabk|escape:'html':'UTF-8'}"
+                       href="javascript:displaythemeeditorTab('{$tabk|escape:'javascript':'UTF-8'}');">
+                        {$fvalue.form.section.title|escape:'html':'UTF-8'}
                     </a>
                 </li>
             {/if}
 
             {if $fkey === 11}
                 <li class="nav-item">
-                    <a href="tab_rule_{$tabk}" data-hash="services-for-you" class="nav-link tab "
-                       id="tab_rule_link_{$tabk}"
-                       href="javascript:displaythemeeditorTab('{$tabk}');">
-                        {$fvalue.form.section.title}
+                    <a href="tab_rule_{$tabk|escape:'html':'UTF-8'}" data-hash="services-for-you" class="nav-link tab "
+                       id="tab_rule_link_{$tabk|escape:'html':'UTF-8'}"
+                       href="javascript:displaythemeeditorTab('{$tabk|escape:'javascript':'UTF-8'}');">
+                        {$fvalue.form.section.title|escape:'html':'UTF-8'}
                     </a>
                 </li>
             {/if}
 
             {if $fkey === 13}
                 <li class="nav-item">
-                    <a href="tab_rule_{$tabk}" data-hash="product-feed-xml" class="nav-link tab "
-                       id="tab_rule_link_{$tabk}"
-                       href="javascript:displaythemeeditorTab('{$tabk}');">
-                        {$fvalue.form.section.title}
+                    <a href="tab_rule_{$tabk|escape:'html':'UTF-8'}" data-hash="product-feed-xml" class="nav-link tab "
+                       id="tab_rule_link_{$tabk|escape:'html':'UTF-8'}"
+                       href="javascript:displaythemeeditorTab('{$tabk|escape:'javascript':'UTF-8'}');">
+                        {$fvalue.form.section.title|escape:'html':'UTF-8'}
                     </a>
                 </li>
             {/if}
@@ -182,68 +182,68 @@
     <div class="col-md-9">
 
         {if isset($fields.title)}
-            <h3>{$fields.title}</h3>
+            <h3>{$fields.title|escape:'html':'UTF-8'}</h3>
         {/if}
 
         {block name="defaultForm"}
 
-            {if isset($identifier_bk) && $identifier_bk == $identifier}
+            {if isset($identifier_bk) && $identifier_bk === $identifier}
                 {capture name='identifier_count'}{counter name='identifier_count'}{/capture}
             {/if}
 
             {assign var='identifier_bk' value=$identifier scope='parent'}
-            {if isset($table_bk) && $table_bk == $table}
+            {if isset($table_bk) && $table_bk === $table}
                 {capture name='table_count'}{counter name='table_count'}{/capture}
             {/if}
 
             {assign var='table_bk' value=$table scope='parent'}
-            <form id="{if isset($fields.form.form.id_form)}{$fields.form.form.id_form|escape:'html':'UTF-8'}{else}{if $table == null}configuration_form{else}{$table}_form{/if}{if isset($smarty.capture.table_count) && $smarty.capture.table_count}_{$smarty.capture.table_count|intval}{/if}{/if}"
-                  class="defaultForm form-horizontal{if isset($name_controller) && $name_controller} {$name_controller}{/if}"{if isset($current) && $current} action="{$current|escape:'html':'UTF-8'}{if isset($token) && $token}&amp;token={$token|escape:'html':'UTF-8'}{/if}"{/if}
-                  method="post" enctype="multipart/form-data"{if isset($style)} style="{$style}"{/if} novalidate>
+            <form id="{if isset($fields.form.form.id_form)}{$fields.form.form.id_form|escape:'html':'UTF-8'}{else}{if $table === null}configuration_form{else}{$table|escape:'html':'UTF-8'}_form{/if}{if isset($smarty.capture.table_count) && $smarty.capture.table_count}_{$smarty.capture.table_count|intval}{/if}{/if}"
+                  class="defaultForm form-horizontal{if isset($name_controller) && $name_controller} {$name_controller|escape:'html':'UTF-8'}{/if}"{if isset($current) && $current} action="{$current|escape:'html':'UTF-8'}{if isset($token) && $token}&amp;token={$token|escape:'html':'UTF-8'}{/if}"{/if}
+                  method="post" enctype="multipart/form-data"{if isset($style)} style="{$style|escape:'html':'UTF-8'}"{/if} novalidate>
                 {if $form_id}
-                    <input type="hidden" name="{$identifier}"
-                           id="{$identifier}{if isset($smarty.capture.identifier_count) && $smarty.capture.identifier_count}_{$smarty.capture.identifier_count|intval}{/if}"
-                           value="{$form_id}"/>
+                    <input type="hidden" name="{$identifier|escape:'html':'UTF-8'}"
+                           id="{$identifier|escape:'html':'UTF-8'}{if isset($smarty.capture.identifier_count) && $smarty.capture.identifier_count}_{$smarty.capture.identifier_count|intval}{/if}"
+                           value="{$form_id|escape:'html':'UTF-8'}"/>
                 {/if}
                 {if !empty($submit_action)}
-                    <input type="hidden" name="{$submit_action}" value="1"/>
+                    <input type="hidden" name="{$submit_action|escape:'html':'UTF-8'}" value="1"/>
                 {/if}
                 {$tabkey = 0}
 
                 {foreach $fields as $f => $fieldset}
                 {foreach $fieldset.form.section as $fieldset2}
 
-                        {if $f == 0}
-                            <div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
+                        {if $f === 0}
+                            <div id="tab_rule_{$tabkey|escape:'html':'UTF-8'}" class="{$submit_action|escape:'html':'UTF-8'} tab_rule_tab ">
                             {include file="./benefits.tpl"}
-                        {elseif $f == 3 || $f == 4 ||  $f == 9 || $f == 11 || $f == 13}
-					        <div id="tab_rule_{$tabkey}" class="{$submit_action} tab_rule_tab ">
+                        {elseif $f === 3 || $f === 4 ||  $f === 9 || $f === 11 || $f === 13}
+					        <div id="tab_rule_{$tabkey|escape:'html':'UTF-8'}" class="{$submit_action|escape:'html':'UTF-8'} tab_rule_tab ">
                         {/if}
 
                         {block name="fieldset"}
                             {capture name='fieldset_name'}{counter name='fieldset_name'}{/capture}
                             <div class="panel"
-                                 id="fieldset_{$f}{if isset($smarty.capture.identifier_count) && $smarty.capture.identifier_count}_{$smarty.capture.identifier_count|intval}{/if}{if $smarty.capture.fieldset_name > 1}_{($smarty.capture.fieldset_name - 1)|intval}{/if}">
+                                 id="fieldset_{$f|escape:'html':'UTF-8'}{if isset($smarty.capture.identifier_count) && $smarty.capture.identifier_count}_{$smarty.capture.identifier_count|intval}{/if}{if $smarty.capture.fieldset_name > 1}_{($smarty.capture.fieldset_name - 1)|intval}{/if}">
                                 {foreach $fieldset.form as $key => $field}
 
-                                    {if $key == 'legend'}
+                                    {if $key === 'legend'}
                                         {block name="legend"}
                                             <div class="panel-heading">
                                                 {if isset($field.image) && isset($field.title)}<img src="{$field.image}"
                                                                                                     alt="{$field.title|escape:'html':'UTF-8'}" />{/if}
-                                                {if isset($field.icon)}<i class="{$field.icon}"></i>{/if}
-                                                {$field.title}
+                                                {if isset($field.icon)}<i class="{$field.icon|escape:'html':'UTF-8'}"></i>{/if}
+                                                {$field.title|escape:'html':'UTF-8'}
                                             </div>
                                         {/block}
-                                    {elseif $key == 'description' && $field}
-                                        <!-- <div class="alert alert-info">{$field}</div> -->
-                                    {elseif $key == 'input'}
+                                    {elseif $key === 'description' && $field}
+                                        <!-- <div class="alert alert-info">{$field|escape:'html':'UTF-8'}</div> -->
+                                    {elseif $key === 'input'}
 
                                         {foreach $field as $input}
                                             {include file="./configure_fields.tpl" _input=$input}
                                         {/foreach}
 
-                                    {elseif $key == 'form_group'}
+                                    {elseif $key === 'form_group'}
 
                                         {foreach $fieldset.form.form_group.fields as $key2 => $fields_group_input}
                                             {foreach $fields_group_input as $kkk => $fields_group_form}
@@ -251,7 +251,7 @@
 
                                                     {if $form_key === 'legend'}
                                                         <div class="section-heading">
-                                                            {$form_subgroup_input.title}
+                                                            {$form_subgroup_input.title|escape:'html':'UTF-8'}
                                                         </div>
                                                     {elseif $form_key === 'input'}
 
@@ -274,30 +274,30 @@
                                             {if isset($fieldset['form']['submit']) && !empty($fieldset['form']['submit'])}
                                                 <button type="submit" value="1"
                                                         {if isset($fieldset['form']['submit']['save_event']) && !empty($fieldset['form']['submit']['save_event'])}
-                                                            data-save-event="{$fieldset['form']['submit']['save_event']}"
+                                                            data-save-event="{$fieldset['form']['submit']['save_event']|escape:'html':'UTF-8'}"
                                                         {/if}
-                                                        id="{if isset($fieldset['form']['submit']['id'])}{$fieldset['form']['submit']['id']}{else}{$table}_form_submit_btn{/if}{if $smarty.capture.form_submit_btn > 1}_{($smarty.capture.form_submit_btn - 1)|intval}{/if}"
-                                                        name="{if isset($fieldset['form']['submit']['name'])}{$fieldset['form']['submit']['name']}{else}{$submit_action}{/if}{if isset($fieldset['form']['submit']['stay']) && $fieldset['form']['submit']['stay']}AndStay{/if}"
-                                                        class="{if isset($fieldset['form']['submit']['class'])}{$fieldset['form']['submit']['class']}{else}btn btn-primary pull-right{/if}">
-                                                    {$fieldset['form']['submit']['title']}
+                                                        id="{if isset($fieldset['form']['submit']['id'])}{$fieldset['form']['submit']['id']|escape:'html':'UTF-8'}{else}{$table|escape:'html':'UTF-8'}_form_submit_btn{/if}{if $smarty.capture.form_submit_btn > 1}_{($smarty.capture.form_submit_btn - 1)|intval}{/if}"
+                                                        name="{if isset($fieldset['form']['submit']['name'])}{$fieldset['form']['submit']['name']|escape:'html':'UTF-8'}{else}{$submit_action|escape:'html':'UTF-8'}{/if}{if isset($fieldset['form']['submit']['stay']) && $fieldset['form']['submit']['stay']}AndStay{/if}"
+                                                        class="{if isset($fieldset['form']['submit']['class'])}{$fieldset['form']['submit']['class']|escape:'html':'UTF-8'}{else}btn btn-primary pull-right{/if}">
+                                                    {$fieldset['form']['submit']['title']|escape:'html':'UTF-8'}
                                                 </button>
                                             {/if}
 
                                             {if isset($fieldset['form']['buttons'])}
                                                 {foreach from=$fieldset['form']['buttons'] item=btn key=k}
                                                     {if isset($btn.href) && trim($btn.href) != ''}
-                                                        <a href="{$btn.href}"
-                                                           {if isset($btn['id'])}id="{$btn['id']}"{/if}
-                                                           class="btn btn-primary{if isset($btn['class'])} {$btn['class']}{/if}" {if isset($btn.js) && $btn.js} onclick="{$btn.js}"{/if}>{if isset($btn['icon'])}
-                                                                <i class="{$btn['icon']}"></i>
-                                                            {/if}{$btn.title}</a>
+                                                        <a href="{$btn.href|escape:'html':'UTF-8'}"
+                                                           {if isset($btn['id'])}id="{$btn['id']|escape:'html':'UTF-8'}"{/if}
+                                                           class="btn btn-primary{if isset($btn['class'])} {$btn['class']|escape:'html':'UTF-8'}{/if}" {if isset($btn.js) && $btn.js} onclick="{$btn.js|escape:'html':'UTF-8'}"{/if}>{if isset($btn['icon'])}
+                                                                <i class="{$btn['icon']|escape:'html':'UTF-8'}"></i>
+                                                            {/if}{$btn.title|escape:'html':'UTF-8'}</a>
                                                     {else}
                                                         <button type="button"
-                                                                {if isset($btn['id'])}id="{$btn['id']}"{/if}
-                                                                class="btn btn-primary{if isset($btn['class'])} {$btn['class']}{/if}"
-                                                                name="{if isset($btn['name'])}{$btn['name']}{else}submitOptions{$table}{/if}"{if isset($btn.js) && $btn.js} onclick="{$btn.js}"{/if}>{if isset($btn['icon'])}
-                                                                <i class="{$btn['icon']}"></i>
-                                                            {/if}{$btn.title}
+                                                                {if isset($btn['id'])}id="{$btn['id']|escape:'html':'UTF-8'}"{/if}
+                                                                class="btn btn-primary{if isset($btn['class'])} {$btn['class']|escape:'html':'UTF-8'}{/if}"
+                                                                name="{if isset($btn['name'])}{$btn['name']|escape:'html':'UTF-8'}{else}submitOptions{$table|escape:'html':'UTF-8'}{/if}"{if isset($btn.js) && $btn.js} onclick="{$btn.js|escape:'html':'UTF-8'}"{/if}>{if isset($btn['icon'])}
+                                                                <i class="{$btn['icon']|escape:'html':'UTF-8'}"></i>
+                                                            {/if}{$btn.title|escape:'html':'UTF-8'}
                                                         </button>
                                                     {/if}
                                                 {/foreach}
@@ -310,11 +310,11 @@
                         {/block}
                         {block name="other_fieldsets"}{/block}
 
-                        {if $f == 2}
+                        {if $f === 2}
                             </div>
-                        {elseif $f == 4}
+                        {elseif $f === 4}
                             {hook h='adminPayments'}
-                        {elseif $f == 3 ||  $f == 8 || $f == 10 || $f == 12 || $f == 13}
+                        {elseif $f === 3 ||  $f === 8 || $f === 10 || $f === 12 || $f === 13}
                             </div>
                         {/if}
                     {/foreach}
@@ -435,16 +435,16 @@
 
     {if $firstCall}
         <script type="text/javascript">
-            var module_dir = '{$smarty.const._MODULE_DIR_}';
+            var module_dir = '{$smarty.const._MODULE_DIR_|escape:'javascript':'UTF-8'}';
             var id_language = {$defaultFormLanguage|intval};
             var languages = [];
 
             {foreach $languages as $k => $language}
             languages[{$k}] = {
-                id_lang: {$language.id_lang},
-                iso_code: '{$language.iso_code}',
-                name: '{$language.name}',
-                is_default: '{$language.is_default}'
+                id_lang: {$language.id_lang|intval},
+                iso_code: '{$language.iso_code|escape:'javascript':'UTF-8'}',
+                name: '{$language.name|escape:'javascript':'UTF-8'}',
+                is_default: '{$language.is_default|escape:'javascript':'UTF-8'}'
             };
             {/foreach}
 
@@ -547,9 +547,9 @@
             {block name="script"}{/block}
         </script>
         <script type="text/javascript">
-            let bm_ajax = "{$ajax_controller}"
-            let bm_token = "{$ajax_token}";
-            let bm_token2 = "{$ajax_payments_token}";
+            let bm_ajax = "{$ajax_controller|escape:'javascript':'UTF-8'}"
+            let bm_token = "{$ajax_token|escape:'javascript':'UTF-8'}";
+            let bm_token2 = "{$ajax_payments_token|escape:'javascript':'UTF-8'}";
 
             let success_msg = "{l s='Configuration saved successfully' mod='bluepayment'}"
             let error_msg = "{l s='Error, configuration not saved' mod='bluepayment'}"

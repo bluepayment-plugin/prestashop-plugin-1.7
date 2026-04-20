@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <div class="panel paymentList">
@@ -19,13 +19,13 @@
 	</div>
 	<div class="row">
         {foreach $list as $l}
-            {$l}
+            {$l nofilter}
         {/foreach}
 	</div>
     {if isset($transfer_payments)}
         {foreach $transfer_payments as $key => $currency}
-			<div class="modal fade" id="Przelew_internetowy_{$key}" tabindex="-1" role="dialog"
-			     aria-labelledby="Przelew_internetowy_{$key}" aria-hidden="true">
+			<div class="modal fade" id="9999_{$key|escape:'html':'UTF-8'}" tabindex="-1" role="dialog"
+			     aria-labelledby="9999_{$key|escape:'html':'UTF-8'}" aria-hidden="true">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -42,12 +42,12 @@
 								<div class="bluepayment-gateways__wrap">
                                     {foreach $currency as $card}
 										<div class="bluepayment-gateways__item">
-											<label for="{$card['gateway_name']}">
+											<label for="{$card['gateway_name']|escape:'html':'UTF-8'}">
 												<img class="bluepayment-gateways__img"
-												     src="{$card['gateway_logo_url']}"
-												     alt="{$card['gateway_name']}">
+												     src="{$card['gateway_logo_url']|escape:'html':'UTF-8'}"
+												     alt="{$card['gateway_name']|escape:'html':'UTF-8'}">
 												<span class="bluepayment-gateways__name">
-													{$card['gateway_name']}
+													{$card['gateway_name']|escape:'html':'UTF-8'}
 												</span>
 											</label>
 										</div>
@@ -65,8 +65,8 @@
 
     {if isset($wallets) and is_array($wallets) }
         {foreach $wallets as $key => $currency}
-			<div class="modal fade" id="Wirtualny_portfel_{$key}" tabindex="-1" role="dialog"
-			     aria-labelledby="Wirtualny_portfel_{$key}" aria-hidden="true">
+			<div class="modal fade" id="999_{$key|escape:'html':'UTF-8'}" tabindex="-1" role="dialog"
+			     aria-labelledby="999_{$key|escape:'html':'UTF-8'}" aria-hidden="true">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -82,12 +82,12 @@
 								<div class="bluepayment-gateways__wrap">
                                     {foreach $currency as $card}
 										<div class="bluepayment-gateways__item">
-											<label for="{$card['gateway_name']}">
+											<label for="{$card['gateway_name']|escape:'html':'UTF-8'}">
 												<img class="bluepayment-gateways__img"
-												     src="{$card['gateway_logo_url']}"
-												     alt="{$card['gateway_name']}">
+												     src="{$card['gateway_logo_url']|escape:'html':'UTF-8'}"
+												     alt="{$card['gateway_name']|escape:'html':'UTF-8'}">
 												<span class="bluepayment-gateways__name">
-                                                    {$card['gateway_name']}
+                                                    {$card['gateway_name']|escape:'html':'UTF-8'}
                                                 </span>
 											</label>
 										</div>
@@ -130,7 +130,7 @@
 								</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-name.png"
+						     src="{$helper_images.helper_name|escape:'html':'UTF-8'}"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 
@@ -141,7 +141,7 @@
 								</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-name2.png"
+						     src="{$helper_images.helper_name2|escape:'html':'UTF-8'}"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 				</div>
@@ -177,7 +177,7 @@
 								</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-payment.png"
+						     src="{$helper_images.helper_payment|escape:'html':'UTF-8'}"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 
@@ -188,7 +188,7 @@
 								</span>
 						</p>
 						<img class="bm-helper__image img-responsive" width="330"
-						     src="{$bm_assets_images|escape:'html':'UTF-8'}/helpers/helper-payment2.png"
+						     src="{$helper_images.helper_payment2|escape:'html':'UTF-8'}"
 						     alt="{l s='How to change the order?' mod='bluepayment'}">
 					</div>
 				</div>

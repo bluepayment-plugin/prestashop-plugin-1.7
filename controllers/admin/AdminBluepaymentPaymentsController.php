@@ -22,6 +22,7 @@ use BluePayment\Api\BlueGateway;
 use BluePayment\Api\BlueGatewayChannels;
 use BluePayment\Config\Config;
 use BluePayment\Config\ConfigBanner;
+use BluePayment\Config\ConfigHelp;
 use BluePayment\Config\ConfigServices;
 use BluePayment\Until\AdminHelper;
 use BluePayment\Until\Helper;
@@ -34,14 +35,17 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
     private $configIframe;
     private $configIframeServices;
+    private $configHelper;
 
     public function __construct()
     {
         $this->bootstrap = true;
         parent::__construct();
+        $langIsoCode = $this->context->language->iso_code;
         Context::getContext()->smarty->assign('src_img', $this->module->getAssetImages());
         $this->configIframe = new ConfigBanner();
         $this->configIframeServices = new ConfigServices();
+        $this->configHelper = new ConfigHelp();
         $this->chceckConfigurationService();
     }
 
@@ -192,6 +196,11 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
     {
         $fields_form = [];
         $id_default_lang = (int) Configuration::get('PS_LANG_DEFAULT');
+
+        if (!empty(ContextCore::getContext()->employee->id_lang)) {
+            $id_default_lang = (int) ContextCore::getContext()->employee->id_lang;
+        }
+
         $statuses = OrderState::getOrderStates($id_default_lang, true);
         $currency = $this->context->currency;
 
@@ -949,6 +958,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'product_feed_cron_link' => $productFeedCronLink,
             'product_feed_file_link' => $productFeedFileLink,
             'is_disable_product_feed' => Configuration::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED),
+            'help_links' => $this->configHelper->getLinksByIsoCode($this->context->language->iso_code),
         ];
 
         return $helper->generateForm($fields_form);

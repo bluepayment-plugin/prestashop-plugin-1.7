@@ -10,12 +10,12 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <!-- Global site tag (gtag.js) - Google Analytics -->
 {literal}
-<script async src="https://www.googletagmanager.com/gtag/js?id={/literal}{$tracking_id}{literal}"></script>{/literal}
+<script async src="https://www.googletagmanager.com/gtag/js?id={/literal}{$tracking_id|escape:'url':'UTF-8'}{literal}"></script>{/literal}
 {literal}
 <script>
 	window.dataLayer = window.dataLayer || [];
@@ -23,14 +23,14 @@
 		dataLayer.push(arguments);
 	}
 	gtag('js', new Date());
-	gtag('config', '{/literal}{$tracking_id}{literal}');
+	gtag('config', '{/literal}{$tracking_id|escape:'javascript':'UTF-8'}{literal}');
 </script>
 {/literal}
 <!-- END Global site tag (gtag.js) - Google Analytics -->
 
 {if isset($bm_ajax_controller)}
 	<script type="text/javascript">
-		var bm_ajax_controller = "{$bm_ajax_controller}";
+		var bm_ajax_controller = "{$bm_ajax_controller|escape:'javascript':'UTF-8'}";
 	</script>
 {/if}
 {if isset($controller) && $controller == 'cart'}
@@ -48,7 +48,7 @@
 							"name": "{$product['name']|cleanHtml nofilter}",
 							"brand": "{$product['manufacturer_name']|cleanHtml nofilter}",
 							"category": "{$product['category']|cleanHtml nofilter}",
-							"variant": "{$product['id_product_attribute']}",
+							"variant": "{$product['id_product_attribute']|escape:'javascript':'UTF-8'}",
 							"quantity": "{$product['cart_quantity']|escape:'htmlall':'UTF-8'}",
 							"price": "{$product['price']|escape:'htmlall':'UTF-8'}",
                             {literal}},{/literal}
@@ -64,8 +64,8 @@
 {elseif isset($controller) && $controller == 'product' && isset($product)}
 	{if isset($ga4_tracking_id) && !empty($ga4_tracking_id) && isset($ga4_secret) && !empty($ga4_secret)}
 	<script type="text/javascript">
-		const ga4_tracking_id = '{$ga4_tracking_id}';
-        const ga4_secret = '{$ga4_secret}';
+		const ga4_tracking_id = '{$ga4_tracking_id|escape:'javascript':'UTF-8'}';
+        const ga4_secret = '{$ga4_secret|escape:'javascript':'UTF-8'}';
         {literal}
         fetch(`https://www.google-analytics.com/mp/collect?api_secret=${ga4_secret}&measurement_id=${ga4_tracking_id}`, {
 	        method: "POST",

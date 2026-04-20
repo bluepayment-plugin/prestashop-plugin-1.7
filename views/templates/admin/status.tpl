@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <div class="row">
@@ -21,7 +21,7 @@
                 {l s='Bluemedia Refunds' mod='bluepayment'}
             </div>
 
-            {$BM_CANCEL_ORDER_MESSAGE}
+            {$BM_CANCEL_ORDER_MESSAGE nofilter}
 
             <div class="card-body">
 
@@ -63,7 +63,7 @@
                     <div role="alert" class="alert alert-danger">
                         <p class="alert-text">
                             {foreach from = $REFUND_ERRORS item = error}
-                        <div>{$error}</div>
+                        <div>{$error|escape:'html':'UTF-8'}</div>
                         {/foreach}
                         </p>
                     </div>
@@ -72,7 +72,7 @@
                     <div role="alert" class="alert alert-success">
                         <p class="alert-text">
                             {foreach from = $REFUND_SUCCESS item = success}
-                        <div>{$success}</div>
+                        <div>{$success|escape:'html':'UTF-8'}</div>
                         {/foreach}
                         </p>
                     </div>
@@ -113,10 +113,10 @@
                                 <tbody>
                                 {foreach from=$BM_REFUNDS item=refund}
                                     <tr>
-                                        <td>{$refund.id_blue_gateway_refunds}</td>
-                                        <td>{$refund.remote_out_id}</td>
-                                        <td>{$refund.amount} {$refund.currency}</td>
-                                        <td>{$refund.status}</td>
+                                        <td>{$refund.id_blue_gateway_refunds|escape:'html':'UTF-8'}</td>
+                                        <td>{$refund.remote_out_id|escape:'html':'UTF-8'}</td>
+                                        <td>{$refund.amount|escape:'html':'UTF-8'} {$refund.currency|escape:'html':'UTF-8'}</td>
+                                        <td>{$refund.status|escape:'html':'UTF-8'}</td>
                                         <td>{dateFormat date=$refund.created_at full=true}</td>
                                     </tr>
                                 {/foreach}

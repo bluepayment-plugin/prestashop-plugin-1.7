@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <div class="alert alert-warning bm-update-info">
@@ -18,7 +18,7 @@
 	<p>
         {l s='New version of Autopay Payments is available. Go to modules and click Upgrade to update the module.' mod='bluepayment'}
 		<span class="badge badge-warning">
-			{l s='new version' mod='bluepayment'} - {$version}
+			{l s='new version' mod='bluepayment'} - {$version|escape:'html':'UTF-8'}
 		</span>
 	</p>
 </div>

@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="aliorbank">
@@ -48,8 +48,8 @@
 				</h5>
 				<button type="button" class="bm-modal__close" data-dismiss="modal"
 				        aria-label="{l s='Close' mod='bluepayment'}">
-					<img src="{$bm_dir}views/img/close.svg" width="20"
-					     alt="{l s='Close' mod='bluepayment'}"/>
+					<img src="{$bm_dir|escape:'html':'UTF-8'}views/img/close.svg" width="20"
+				     alt="{l s='Close' mod='bluepayment'}"/>
 				</button>
 			</div>
 

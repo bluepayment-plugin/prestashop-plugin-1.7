@@ -10,13 +10,13 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <div class="ga-listing"
-     data-product-id="{$ga_product_id}"
-     data-product-name="{$ga_product_name}"
-     data-product-brand="{$ga_product_brand}"
-     data-product-cat="{$ga_product_cat}"
-     data-product-price="{$ga_product_price}"
+     data-product-id="{$ga_product_id|escape:'html':'UTF-8'}"
+     data-product-name="{$ga_product_name|escape:'html':'UTF-8'}"
+     data-product-brand="{$ga_product_brand|escape:'html':'UTF-8'}"
+     data-product-cat="{$ga_product_cat|escape:'html':'UTF-8'}"
+     data-product-price="{$ga_product_price|escape:'html':'UTF-8'}"
 ></div>

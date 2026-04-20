@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
@@ -30,7 +30,7 @@ const METADATA = "/**\n" +
   " *\n" +
   " * @category       BlueMedia\n" +
   " * @package        BlueMedia_BluePayment\n" +
-  " * @copyright      Copyright (c) 2015-2025\n" +
+  " * @copyright      Copyright (c) 2015-2026\n" +
   " * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License\n" +
   " */";
 

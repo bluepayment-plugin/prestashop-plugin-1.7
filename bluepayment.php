@@ -128,7 +128,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '3.4.1';
+        $this->version = '3.5.0';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -404,7 +404,7 @@ class BluePayment extends PaymentModule
             'bm_promo_checkout' => Cfg::get($this->name_upper . '_PROMO_CHECKOUT'),
             'gpayRedirect' => Cfg::get($this->name_upper . '_GPAY_REDIRECT'),
             'start_payment_translation' => $this->l('Start payment'),
-            'start_payment_intro' => $this->l('Internet transfer, BLIK, payment card, Google Pay, Apple Pay'),
+            'start_payment_intro' => $this->l('Card payment, bank transfer, Apple Pay, Google Pay and more'),
             'order_subject_to_payment_obligation_translation' => $this->l('Order with the obligation to pay'),
         ]);
 

@@ -230,15 +230,26 @@ class Gateway
     private function validateJSONResponse()
     {
         $response = json_decode($this->response);
-        if ($response->result != 'OK') {
-            Logger::log(
-                Logger::EMERGENCY,
-                sprintf('Got error: "%s", code: "%s"', $response->description, $response->errorStatus),
-                [
-                    'full-response' => $this->response,
-                ]
-            );
-            throw new \RuntimeException((string) $response->description . ' for service ' . self::$serviceId);
+        if (!isset($response->result) || $response->result != 'OK') {
+            if (isset($response->description) && $response->errorStatus) {
+                Logger::log(
+                    Logger::EMERGENCY,
+                    sprintf('Got error: "%s", code: "%s"', $response->description, $response->errorStatus),
+                    [
+                        'full-response' => $this->response,
+                    ]
+                );
+            } else {
+                Logger::log(
+                    Logger::EMERGENCY,
+                    'Got error validate JSON response:',
+                    [
+                        'full-response' => $this->response,
+                    ]
+                );
+            }
+
+            throw new \RuntimeException((string) $response->details . ' for service ' . self::$serviceId);
         }
     }
 

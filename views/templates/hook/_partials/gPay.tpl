@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 {*<span class="bm-payment__elm"></span>*}
@@ -28,8 +28,8 @@
 		<div class="bluepayment-loader-bg"></div>
 		<div id="gpay-button"></div>
 		<span id="gpay-url" style="display:none;"
-		      data-merchant-info-address="{$wallet_merchantInfo}"
-		      data-charge-address="{$gpay_moduleLinkCharge}">
+		      data-merchant-info-address="{$wallet_merchantInfo|escape:'html':'UTF-8'}"
+		      data-charge-address="{$gpay_moduleLinkCharge|escape:'html':'UTF-8'}">
 		</span>
 		<div id="bm-termofuse" class="help-block js-g-pay-terms-of-use" style="display:none; color: red;">
             {l s='Please accept the [1]Transaction Regulations[/1]' tags=['<strong>'] mod='bluepayment'}

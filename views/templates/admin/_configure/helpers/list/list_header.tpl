@@ -62,7 +62,7 @@
 	<script type="text/javascript" src="../js/jquery/plugins/jquery.tablednd.js"></script>
 	<script type="text/javascript">
 		var come_from = '{$list_id|addslashes}';
-		var alternate = {if $order_way == 'DESC'}'1'{else}'0'{/if};
+		var alternate = {if $order_way === 'DESC'}'1'{else}'0'{/if};
 	</script>
 	<script type="text/javascript" src="../js/admin/dnd.js"></script>
 {/if}
@@ -74,11 +74,11 @@
 				if (key == 13)
 				{
 					e.preventDefault();
-					formSubmit(e, 'submitFilterButton{$list_id}');
+					formSubmit(e, 'submitFilterButton{$list_id|escape:'javascript':'UTF-8'}');
 				}
 			})
-			$('#submitFilterButton{$list_id}').click(function() {
-				$('#submitFilter{$list_id}').val(1);
+			$('#submitFilterButton{$list_id|escape:'javascript':'UTF-8'}').click(function() {
+				$('#submitFilter{$list_id|escape:'javascript':'UTF-8'}').val(1);
 			});
 
 			if ($("table .datepicker").length > 0) {
@@ -113,7 +113,7 @@
 
 <div class="row">
 
-	<div class="alert alert-warning" id="{$list_id}-empty-filters-alert" style="display:none;">{l s='Please fill at least one field to perform a search in this list.' mod='bluepayment'}</div>
+	<div class="alert alert-warning" id="{$list_id|escape:'html':'UTF-8'}-empty-filters-alert" style="display:none;">{l s='Please fill at least one field to perform a search in this list.' mod='bluepayment'}</div>
 {if isset($sql) && $sql}
 	<form id="sql_form_{$list_id|escape:'html':'UTF-8'}" action="{$link->getAdminLink('AdminRequestSql', true, [], ['addrequest_sql' => 1])|escape}" method="post" class="hide">
 		<input type="hidden" id="sql_query_{$list_id|escape:'html':'UTF-8'}" name="sql" value="{$sql|escape}"/>
@@ -122,11 +122,11 @@
 {/if}
 
 {block name="startForm"}
-	<form method="post" action="{$action|escape:'html':'UTF-8'}" class="form-horizontal clearfix" id="form-{$list_id}">
+	<form method="post" action="{$action|escape:'html':'UTF-8'}" class="form-horizontal clearfix" id="form-{$list_id|escape:'html':'UTF-8'}">
 {/block}
 
 {if !$simple_header}
-	<input type="hidden" id="submitFilter{$list_id}" name="submitFilter{$list_id}" value="0"/>
+	<input type="hidden" id="submitFilter{$list_id|escape:'html':'UTF-8'}" name="submitFilter{$list_id|escape:'html':'UTF-8'}" value="0"/>
 	<input type="hidden" name="page" value="{$page|intval}"/>
 	<input type="hidden" name="selected_pagination" value="{$selected_pagination|intval}"/>
 
@@ -151,19 +151,19 @@
 					//get reference on save link
 					btn_save = $('i[class~="process-icon-save"]').parent();
 					//get reference on form submit button
-					btn_submit = $('#{$table}_form_submit_btn');
+					btn_submit = $('#{$table|escape:'javascript':'UTF-8'}_form_submit_btn');
 					if (btn_save.length > 0 && btn_submit.length > 0) {
 						//get reference on save and stay link
 						btn_save_and_stay = $('i[class~="process-icon-save-and-stay"]').parent();
 						//get reference on current save link label
-						lbl_save = $('#desc-{$table}-save div');
+						lbl_save = $('#desc-{$table|escape:'javascript':'UTF-8'}-save div');
 						//override save link label with submit button value
 						if (btn_submit.val().length > 0) {
 							lbl_save.html(btn_submit.attr("value"));
 						}
 						if (btn_save_and_stay.length > 0) {
 							//get reference on current save link label
-							lbl_save_and_stay = $('#desc-{$table}-save-and-stay div');
+							lbl_save_and_stay = $('#desc-{$table|escape:'javascript':'UTF-8'}-save-and-stay div');
 							//override save and stay link label with submit button value
 							if (btn_submit.val().length > 0 && lbl_save_and_stay && !lbl_save_and_stay.hasClass('locked')) {
 								lbl_save_and_stay.html(btn_submit.val() + " {l s='and stay' mod='bluepayment'} ");
@@ -172,9 +172,9 @@
 						//hide standard submit button
 						btn_submit.hide();
 						//bind enter key press to validate form
-						$('#{$table}_form').keypress(function (e) {
+						$('#{$table|escape:'javascript':'UTF-8'}_form').keypress(function (e) {
 							if (e.which == 13 && e.target.localName != 'textarea') {
-								$('#desc-{$table}-save').click();
+								$('#desc-{$table|escape:'javascript':'UTF-8'}-save').click();
 							}
 						});
 						//submit the form
@@ -187,14 +187,14 @@
 								submited = true;
 								//add hidden input to emulate submit button click when posting the form -> field name posted
 								btn_submit.before('<input type="hidden" name="'+btn_submit.attr("name")+'" value="1" />');
-								$('#{$table}_form').submit();
+								$('#{$table|escape:'javascript':'UTF-8'}_form').submit();
 								return false;
 							});
 							if (btn_save_and_stay) {
 								btn_save_and_stay.click(function() {
 									//add hidden input to emulate submit button click when posting the form -> field name posted
 									btn_submit.before('<input type="hidden" name="'+btn_submit.attr("name")+'AndStay" value="1" />');
-									$('#{$table}_form').submit();
+									$('#{$table|escape:'javascript':'UTF-8'}_form').submit();
 									return false;
 								});
 							}
@@ -227,7 +227,7 @@
 	@media (max-width: 992px) {
 		{foreach from=$fields_display item=param name=params}
 			.table-responsive-row td:nth-of-type({math equation="x+y" x=$smarty.foreach.params.index y=$y}):before {
-				content: "{$param.title}";
+				content: "{$param.title|escape:'html':'UTF-8'}";
 			}
 		{/foreach}
 	}
@@ -235,40 +235,40 @@
 
 	{block name="preTable"}{/block}
 	<div class="table-responsive-row clearfix{if isset($use_overflow) && $use_overflow} overflow-y{/if}">
-		<table id="table-{if $table_id}{$table_id}{elseif $table}{$table}{/if}" class="table{if $table_dnd} tableDnD{/if} {$table}" >
+		<table id="table-{if $table_id}{$table_id|escape:'html':'UTF-8'}{elseif $table}{$table|escape:'html':'UTF-8'}{/if}" class="table{if $table_dnd} tableDnD{/if} {$table|escape:'html':'UTF-8'}" >
 			<thead>
 				<tr class="nodrag nodrop">
 					{if $bulk_actions && $has_bulk_actions}
 						<th class="center fixed-width-xs"></th>
 					{/if}
 					{foreach $fields_display AS $key => $params}
-					<th class="{if isset($params.class)}{$params.class}{/if}{if isset($params.align)} {$params.align}{/if}">
-						<span class="title_box{if isset($order_by) && ($key == $order_by)} active{/if}">
+					<th class="{if isset($params.class)}{$params.class|escape:'html':'UTF-8'}{/if}{if isset($params.align)} {$params.align|escape:'html':'UTF-8'}{/if}">
+						<span class="title_box{if isset($order_by) && ($key === $order_by)} active{/if}">
 							{if isset($params.hint)}
 								<span class="label-tooltip" data-toggle="tooltip"
 									title="
 										{if is_array($params.hint)}
 											{foreach $params.hint as $hint}
 												{if is_array($hint)}
-													{$hint.text}
+													{$hint.text|escape:'html':'UTF-8'}
 												{else}
-													{$hint}
+													{$hint|escape:'html':'UTF-8'}
 												{/if}
 											{/foreach}
 										{else}
-											{$params.hint}
+											{$params.hint|escape:'html':'UTF-8'}
 										{/if}
 									">
-									{$params.title}
+									{$params.title|escape:'html':'UTF-8'}
 								</span>
 							{else}
-								{$params.title}
+								{$params.title|escape:'html':'UTF-8'}
 							{/if}
 							{if (!isset($params.orderby) || $params.orderby) && !$simple_header && $show_filters}
-								<a {if isset($order_by) && ($key == $order_by) && ($order_way == 'DESC')}class="active"{/if} href="{$currentIndex|escape:'html':'UTF-8'}&amp;{$list_id}Orderby={$key|urlencode}&amp;{$list_id}Orderway=desc&amp;token={$token|escape:'html':'UTF-8'}{if isset($smarty.get.$identifier)}&amp;{$identifier}={$smarty.get.$identifier|intval}{/if}">
+								<a {if isset($order_by) && ($key === $order_by) && ($order_way === 'DESC')}class="active"{/if} href="{$currentIndex|escape:'html':'UTF-8'}&amp;{$list_id|escape:'html':'UTF-8'}Orderby={$key|urlencode}&amp;{$list_id|escape:'html':'UTF-8'}Orderway=desc&amp;token={$token|escape:'html':'UTF-8'}{if isset($smarty.get.$identifier)}&amp;{$identifier}={$smarty.get.$identifier|intval}{/if}">
 									<i class="icon-caret-down"></i>
 								</a>
-								<a {if isset($order_by) && ($key == $order_by) && ($order_way == 'ASC')}class="active"{/if} href="{$currentIndex|escape:'html':'UTF-8'}&amp;{$list_id}Orderby={$key|urlencode}&amp;{$list_id}Orderway=asc&amp;token={$token|escape:'html':'UTF-8'}{if isset($smarty.get.$identifier)}&amp;{$identifier}={$smarty.get.$identifier|intval}{/if}">
+								<a {if isset($order_by) && ($key === $order_by) && ($order_way === 'ASC')}class="active"{/if} href="{$currentIndex|escape:'html':'UTF-8'}&amp;{$list_id|escape:'html':'UTF-8'}Orderby={$key|urlencode}&amp;{$list_id|escape:'html':'UTF-8'}Orderway=asc&amp;token={$token|escape:'html':'UTF-8'}{if isset($smarty.get.$identifier)}&amp;{$identifier}={$smarty.get.$identifier|intval}{/if}">
 									<i class="icon-caret-up"></i>
 								</a>
 							{/if}
@@ -278,7 +278,7 @@
 					{if $multishop_active && $shop_link_type}
 						<th>
 							<span class="title_box">
-							{if $shop_link_type == 'shop'}
+							{if $shop_link_type === 'shop'}
 								{l s='Shop' mod='bluepayment'}
 							{else}
 								{l s='Shop group' mod='bluepayment'}
@@ -299,62 +299,62 @@
 					{/if}
 					{* Filters (input, select, date or bool) *}
 					{foreach $fields_display AS $key => $params}
-						<th {if isset($params.align)} class="{$params.align}" {/if}>
+						<th {if isset($params.align)} class="{$params.align|escape:'html':'UTF-8'}" {/if}>
 							{if isset($params.search) && !$params.search}
 								--
 							{else}
-								{if $params.type == 'bool'}
+								{if $params.type === 'bool'}
 									<select class="filter fixed-width-sm center"
-                          onchange="$('#submitFilterButton{$list_id}').focus();$('#submitFilterButton{$list_id}').click();"
-                          name="{$list_id}Filter_{if isset($params.filter_key)}{$params.filter_key}{else}{$key}{/if}">
+                          onchange="$('#submitFilterButton{$list_id|escape:'javascript':'UTF-8'}').focus();$('#submitFilterButton{$list_id|escape:'javascript':'UTF-8'}').click();"
+                          name="{$list_id|escape:'html':'UTF-8'}Filter_{if isset($params.filter_key)}{$params.filter_key|escape:'html':'UTF-8'}{else}{$key|escape:'html':'UTF-8'}{/if}">
 										<option value="">-</option>
-										<option value="1" {if $params.value == 1} selected="selected" {/if}>{l s='Yes' d='Admin.Global'}</option>
-										<option value="0" {if $params.value == 0 && $params.value != ''} selected="selected" {/if}>{l s='No' d='Admin.Global'}</option>
+										<option value="1" {if $params.value === 1} selected="selected" {/if}>{l s='Yes' d='Admin.Global'}</option>
+										<option value="0" {if $params.value === 0 && $params.value !== ''} selected="selected" {/if}>{l s='No' d='Admin.Global'}</option>
 									</select>
-								{elseif $params.type == 'date' || $params.type == 'datetime'}
+								{elseif $params.type === 'date' || $params.type === 'datetime'}
 									<div class="date_range row">
  										<div class="input-group fixed-width-md center">
-											<input type="text" class="filter datepicker date-input form-control" id="local_{$params.id_date}_0" name="local_{$params.name_date}[0]"  placeholder="{l s='From' mod='bluepayment'}" />
-											<input type="hidden" id="{$params.id_date}_0" name="{$params.name_date}[0]" value="{if isset($params.value.0)}{$params.value.0}{/if}">
+											<input type="text" class="filter datepicker date-input form-control" id="local_{$params.id_date|escape:'html':'UTF-8'}_0" name="local_{$params.name_date|escape:'html':'UTF-8'}[0]"  placeholder="{l s='From' mod='bluepayment'}" />
+											<input type="hidden" id="{$params.id_date|escape:'html':'UTF-8'}_0" name="{$params.name_date|escape:'html':'UTF-8'}[0]" value="{if isset($params.value.0)}{$params.value.0|escape:'html':'UTF-8'}{/if}">
 											<span class="input-group-addon">
 												<i class="icon-calendar"></i>
 											</span>
 										</div>
  										<div class="input-group fixed-width-md center">
-											<input type="text" class="filter datepicker date-input form-control" id="local_{$params.id_date}_1" name="local_{$params.name_date}[1]"  placeholder="{l s='To' mod='bluepayment'}" />
-											<input type="hidden" id="{$params.id_date}_1" name="{$params.name_date}[1]" value="{if isset($params.value.1)}{$params.value.1}{/if}">
+											<input type="text" class="filter datepicker date-input form-control" id="local_{$params.id_date|escape:'html':'UTF-8'}_1" name="local_{$params.name_date|escape:'html':'UTF-8'}[1]"  placeholder="{l s='To' mod='bluepayment'}" />
+											<input type="hidden" id="{$params.id_date|escape:'html':'UTF-8'}_1" name="{$params.name_date|escape:'html':'UTF-8'}[1]" value="{if isset($params.value.1)}{$params.value.1|escape:'html':'UTF-8'}{/if}">
 											<span class="input-group-addon">
 												<i class="icon-calendar"></i>
 											</span>
 										</div>
 										<script>
 											$(function() {
-												var dateStart = parseDate($("#{$params.id_date}_0").val());
-												var dateEnd = parseDate($("#{$params.id_date}_1").val());
-												$("#local_{$params.id_date}_0").datepicker("option", "altField", "#{$params.id_date}_0");
-												$("#local_{$params.id_date}_1").datepicker("option", "altField", "#{$params.id_date}_1");
+												var dateStart = parseDate($("#{$params.id_date|escape:'javascript':'UTF-8'}_0").val());
+												var dateEnd = parseDate($("#{$params.id_date|escape:'javascript':'UTF-8'}_1").val());
+												$("#local_{$params.id_date|escape:'javascript':'UTF-8'}_0").datepicker("option", "altField", "#{$params.id_date|escape:'javascript':'UTF-8'}_0");
+												$("#local_{$params.id_date|escape:'javascript':'UTF-8'}_1").datepicker("option", "altField", "#{$params.id_date|escape:'javascript':'UTF-8'}_1");
 												if (dateStart !== null){
-													$("#local_{$params.id_date}_0").datepicker("setDate", dateStart);
+													$("#local_{$params.id_date|escape:'javascript':'UTF-8'}_0").datepicker("setDate", dateStart);
 												}
 												if (dateEnd !== null){
-													$("#local_{$params.id_date}_1").datepicker("setDate", dateEnd);
+													$("#local_{$params.id_date|escape:'javascript':'UTF-8'}_1").datepicker("setDate", dateEnd);
 												}
 											});
 										</script>
 									</div>
-								{elseif $params.type == 'select'}
+								{elseif $params.type === 'select'}
 									{if isset($params.filter_key)}
-										<select class="filter{if isset($params.align) && $params.align == 'center'}center{/if}" onchange="$('#submitFilterButton{$list_id}').focus();$('#submitFilterButton{$list_id}').click();" name="{$list_id}Filter_{$params.filter_key}" {if isset($params.width)} style="width:{$params.width}px"{/if}>
-											<option value="" {if $params.value == ''} selected="selected" {/if}>-</option>
+										<select class="filter{if isset($params.align) && $params.align === 'center'}center{/if}" onchange="$('#submitFilterButton{$list_id|escape:'javascript':'UTF-8'}').focus();$('#submitFilterButton{$list_id|escape:'javascript':'UTF-8'}').click();" name="{$list_id|escape:'html':'UTF-8'}Filter_{$params.filter_key|escape:'html':'UTF-8'}" {if isset($params.width)} style="width:{$params.width}px"{/if}>
+										<option value="" {if $params.value === ''} selected="selected" {/if}>-</option>
 											{if isset($params.list) && is_array($params.list)}
 												{foreach $params.list AS $option_value => $option_display}
-													<option value="{$option_value}" {if (string)$option_display === (string)$params.value ||  (string)$option_value === (string)$params.value} selected="selected"{/if}>{$option_display}</option>
+													<option value="{$option_value|escape:'html':'UTF-8'}" {if (string)$option_display === (string)$params.value ||  (string)$option_value === (string)$params.value} selected="selected"{/if}>{$option_display|escape:'html':'UTF-8'}</option>
 												{/foreach}
 											{/if}
 										</select>
 									{/if}
 								{else}
-									<input type="text" class="filter" name="{$list_id}Filter_{if isset($params.filter_key)}{$params.filter_key}{else}{$key}{/if}" value="{$params.value|escape:'html':'UTF-8'}" {if isset($params.width) && $params.width != 'auto'} style="width:{$params.width}px"{/if} />
+									<input type="text" class="filter" name="{$list_id|escape:'html':'UTF-8'}Filter_{if isset($params.filter_key)}{$params.filter_key|escape:'html':'UTF-8'}{else}{$key|escape:'html':'UTF-8'}{/if}" value="{$params.value|escape:'html':'UTF-8'}" {if isset($params.width) && $params.width !== 'auto'} style="width:{$params.width}px"{/if} />
 								{/if}
 							{/if}
 						</th>
@@ -368,11 +368,11 @@
 							{if $show_filters}
 							<span class="pull-right">
 								{*Search must be before reset for default form submit*}
-								<button type="submit" id="submitFilterButton{$list_id}" name="submitFilter" class="btn btn-default" data-list-id="{$list_id}">
+								<button type="submit" id="submitFilterButton{$list_id|escape:'html':'UTF-8'}" name="submitFilter" class="btn btn-default" data-list-id="{$list_id|escape:'html':'UTF-8'}">
 									<i class="icon-search"></i> {l s='Search' d='Admin.Actions'}
 								</button>
 								{if $filters_has_value}
-									<button type="submit" name="submitReset{$list_id}" class="btn btn-warning">
+									<button type="submit" name="submitReset{$list_id|escape:'html':'UTF-8'}" class="btn btn-warning">
 										<i class="icon-eraser"></i> {l s='Reset' mod='bluepayment'}
 									</button>
 								{/if}

@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 
@@ -20,7 +20,7 @@
                 width="100%"
                 height="1000"
                 frameborder="0"
-                src="{$url_iframe_services}"
+                src="{$url_iframe_services|escape:'html':'UTF-8'}"
         >
         </iframe>
     {/if}

@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 
@@ -34,9 +34,9 @@
         <div class="col-lg-9">
             {foreach $product_feed_cron_link as $cron_link}
                 <div class="input-group">
-                    <input type="text" class="form-control" value="{$cron_link}" readonly>
+                    <input type="text" class="form-control" value="{$cron_link|escape:'html':'UTF-8'}" readonly>
                     <span class="input-group-btn">
-                        <a href="{$cron_link}" target="_blank" class="btn btn-primary">
+                        <a href="{$cron_link|escape:'html':'UTF-8'}" target="_blank" class="btn btn-primary">
                             <i class="icon-external-link mr-2"></i> {l s='Otwórz' mod='bluepayment'}
                         </a>
                     </span>
@@ -58,9 +58,9 @@
             {/if}
             {foreach $product_feed_file_link as $file_link}
                 <div class="input-group">
-                    <input type="text" class="form-control" value="{$file_link}" readonly>
+                    <input type="text" class="form-control" value="{$file_link|escape:'html':'UTF-8'}" readonly>
                     <span class="input-group-btn">
-                        <a href="{$file_link}" target="_blank" class="btn btn-primary">
+                        <a href="{$file_link|escape:'html':'UTF-8'}" target="_blank" class="btn btn-primary">
                             <i class="icon-external-link mr-2"></i>
                             {l s='Otwórz' mod='bluepayment'}
                         </a>

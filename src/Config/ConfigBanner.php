@@ -28,6 +28,7 @@ class ConfigBanner
     public const BM_IFRAME_BANNER_DE = 'https://plugins-api.autopay.pl/de/plugins-baner-presta/';
     public const BM_IFRAME_BANNER_SK = 'https://plugins-api.autopay.pl/sk/plugins-baner-presta/';
     public const BM_IFRAME_BANNER_CZ = 'https://plugins-api.autopay.pl/cz/plugins-baner-presta/';
+    public const BM_IFRAME_BANNER_ES = 'https://plugins-api.autopay.pl/es/plugins-baner-presta/';
 
     private $module;
 
@@ -56,6 +57,9 @@ class ConfigBanner
                 break;
             case 'CZ':
                 $url = self::BM_IFRAME_BANNER_CZ;
+                break;
+            case 'ES':
+                $url = self::BM_IFRAME_BANNER_ES;
                 break;
             default:
                 $url = self::BM_IFRAME_BANNER_EN;

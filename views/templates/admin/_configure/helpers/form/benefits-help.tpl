@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 {*
@@ -25,7 +25,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 {if !empty($url_iframe_banner)}
@@ -33,7 +33,7 @@
 			width="100%"
 			height="575"
 			frameborder="0"
-			src="{$url_iframe_banner}"
+			src="{$url_iframe_banner|escape:'html':'UTF-8'}"
 	>
 	</iframe>
 {/if}

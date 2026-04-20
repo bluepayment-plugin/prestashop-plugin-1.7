@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <span class="bm-payment__elm" data-open-payment="blik"></span>
@@ -31,7 +31,7 @@
 			{$bm_description nofilter}
 		</div>
 	{/if}
-	<form id="bluepaymentForm" action="{$blik_moduleLink}" method="POST">
+	<form id="bluepaymentForm" action="{$blik_moduleLink|escape:'html':'UTF-8'}" method="POST">
 		<div class="bluepayment-loader"></div>
 		<div class="bluepayment-loader-bg"></div>
 		<div style="padding-bottom: 25px;">

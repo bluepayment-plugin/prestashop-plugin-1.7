@@ -26,6 +26,7 @@ class ConfigServices
     public const BM_IFRAME_SERVICES_DE = 'https://plugins-api.autopay.pl/de/presta-vas/';
     public const BM_IFRAME_SERVICES_SK = 'https://plugins-api.autopay.pl/sk/presta-vas/';
     public const BM_IFRAME_SERVICES_CZ = 'https://plugins-api.autopay.pl/cz/presta-vas/';
+    public const BM_IFRAME_SERVICES_ES = 'https://plugins-api.autopay.pl/es/presta-vas/';
 
     private $module;
 
@@ -51,6 +52,9 @@ class ConfigServices
                 break;
             case 'CZ':
                 $url = self::BM_IFRAME_SERVICES_CZ;
+                break;
+            case 'ES':
+                $url = self::BM_IFRAME_SERVICES_ES;
                 break;
             case 'EN':
             default:

@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <ul class="bm-list-icon" style="margin-top: 20px;">
@@ -23,17 +23,17 @@
 			</h4>
             <ul class="bm-list">
                 <li>
-	                <a target="_blank" href="https://developers.autopay.pl/online/wdrozenie-krok-po-kroku?utm_campaign=help&utm_source=prestashop_panel&mtm_medium=text_link#wdrozenie-krok-po-kroku">
+	                <a target="_blank" href="{$help_links.implementation|escape:'html':'UTF-8'}">
 		                {l s='Implementing online payments' mod='bluepayment'}
 	                </a> {l s='step by step' mod='bluepayment'}
                 </li>
                 <li>
-	                <a target="_blank" href="https://developers.autopay.pl/online/wtyczki/prestashop-1-7?utm_campaign=help&utm_source=prestashop_panel&mtm_medium=text_link#konfiguracja">
+	                <a target="_blank" href="{$help_links.configuration|escape:'html':'UTF-8'}">
 		                {l s='Module configuration' mod='bluepayment'}
 	                </a>
                 </li>
                 <li>
-	                <a target="_blank" href="https://developers.autopay.pl/online/wtyczki/prestashop-1-7?utm_campaign=help&utm_source=prestashop_panel&mtm_medium=text_link#aktualizacja">
+	                <a target="_blank" href="{$help_links.update|escape:'html':'UTF-8'}">
 		                {l s='Update the module' mod='bluepayment'}
 	                </a>
                 </li>
@@ -47,7 +47,7 @@
 			<h4 class="bm-list-icon__heading">
 				{l s='Contact us' mod='bluepayment'}
 			</h4>
-			<a target="_blank" href="https://developers.autopay.pl/kontakt/plugins/presta?utm_campaign=help&utm_source=prestashop_panel&mtm_medium=text_link">
+			<a target="_blank" href="{$help_links.contact|escape:'html':'UTF-8'}">
 				{l s='Write to us' mod='bluepayment'}
 			</a>
 		</div>

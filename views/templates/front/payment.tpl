@@ -10,21 +10,21 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <html>
 <head>
-    <link rel="stylesheet" href="{$bm_dir}views/css/front.css" />
+    <link rel="stylesheet" href="{$bm_dir|escape:'html':'UTF-8'}views/css/front.css" />
     <title>{l s='Autopay redirect...' mod='bluepayment'}</title>
 </head>
 <body class="blue-media-body">
 <div class="bm-redirect-page">
     <div class="bm-redirect-page-content">
-        <img src="{$bm_dir}views/img/blue-media.svg" class="logo" />
+        <img src="{$bm_dir|escape:'html':'UTF-8'}views/img/blue-media.svg" class="logo" />
         <p>{l s='Redirection to payment in progress.' mod='bluepayment'}</p>
         <p>{l s='Please wait a moment...' mod='bluepayment'}</p>
-        <img src="{$bm_dir}views/img/redirect.gif" class="loader" />
+        <img src="{$bm_dir|escape:'html':'UTF-8'}views/img/redirect.gif" class="loader" />
     </div>
 
     <div>

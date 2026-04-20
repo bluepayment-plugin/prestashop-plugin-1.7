@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 {if $selectPayWay}
@@ -53,7 +53,7 @@
 	<div class="bm-transfer-slideshow bm-slideshow bm-hide" data-slideshow="transfer">
         {foreach from=$img_transfers item=row name='img_transfers'}
 			<div class="slide">
-				<img src="{$row['gateway_logo_url']}" alt="{$row['gateway_name']|default:''}">
+				<img src="{$row['gateway_logo_url']|escape:'html':'UTF-8'}" alt="{$row['gateway_name']|default:''|escape:'html':'UTF-8'}">
 			</div>
         {/foreach}
 	</div>
@@ -69,7 +69,7 @@
 					        data-dismiss="bm-modal"
 					        data-modal-type="transfer"
 					        aria-label="{l s='Close' mod='bluepayment'}">
-						<img src="{$bm_dir}views/img/close.svg" width="20"
+						<img src="{$bm_dir|escape:'html':'UTF-8'}views/img/close.svg" width="20"
 						     alt="{l s='Close' mod='bluepayment'}"/>
 					</button>
 				</div>
@@ -79,16 +79,16 @@
 						<div id="blue_payway" class="bluepayment-gateways">
 							<div class="bluepayment-gateways__wrap">
                                 {foreach from=$gateway_transfers item=row name='gateway_transfers'}
-									<div class="bluepayment-gateways__item" data-bm-gateway-id="{$row.gateway_id}">
+									<div class="bluepayment-gateways__item" data-bm-gateway-id="{$row.gateway_id|escape:'html':'UTF-8'}">
 										<input type="radio"
-											id="gateway_{$row.gateway_id}"
+											id="gateway_{$row.gateway_id|escape:'html':'UTF-8'}"
 											class="bluepayment-gateways__radio"
 											name="bm-transfer-id"
-											value="{$row.gateway_id}"
+											value="{$row.gateway_id|escape:'html':'UTF-8'}"
 											required="required">
-										<label for="gateway_{$row.gateway_id}">
+										<label for="gateway_{$row.gateway_id|escape:'html':'UTF-8'}">
 											<img class="bluepayment-gateways__img"
-												src="{$row.gateway_logo_url}"
+												src="{$row.gateway_logo_url|escape:'html':'UTF-8'}"
 												alt="{$row.gateway_name|default:''|escape:'htmlall':'UTF-8'}">
 											<span class="bluepayment-gateways__name">{$row.gateway_name|default:''|escape:'htmlall':'UTF-8'}</span>
 											{if !empty($row.short_description) || !empty($row.group_short_description)}
@@ -105,7 +105,7 @@
 											{/if}
 										</label>
 										{if !empty($row.description) || !empty($row.group_description)}
-											<div class="bluepayment-gateways__description" data-gateway-id="{$row.gateway_id}" style="display: none;">
+											<div class="bluepayment-gateways__description" data-gateway-id="{$row.gateway_id|escape:'html':'UTF-8'}" style="display: none;">
 												{$row.description|default:$row.group_description nofilter}
 											</div>
 										{/if}

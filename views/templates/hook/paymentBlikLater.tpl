@@ -10,7 +10,7 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 <span class="bm-payment__elm bm-payment__promo" data-open-payment="bliklater">
@@ -39,18 +39,18 @@
   <div class="bm-modal__dialog bm-modal__dialog--centered">
     <div class="bm-modal__content">
       <button type="button" class="bm-modal__close bm-modal__close--custom" data-dismiss="bm-modal" aria-label="{l s='Close' mod='bluepayment'}">
-        <img src="{$bm_dir}views/img/close.svg" width="15" alt="{l s='Close' mod='bluepayment'}">
+        <img src="{$bm_dir|escape:'html':'UTF-8'}views/img/close.svg" width="15" alt="{l s='Close' mod='bluepayment'}">
       </button>
       <div class="bm-modal__body">
       <div class="bliklater-modal-content">
-        <img class="bliklater-modal-content--logo" alt="{l s='BLIK Pay later' mod='bluepayment'}" src="{$bm_dir}views/img/bliklater-logo.svg">
+        <img class="bliklater-modal-content--logo" alt="{l s='BLIK Pay later' mod='bluepayment'}" src="{$bm_dir|escape:'html':'UTF-8'}views/img/bliklater-logo.svg">
 
         <p class="bliklater-modal-content--header">{l s='Buy now, pay in within 30 days' mod='bluepayment'}</p>
 
         <div class="bliklater-modal-content--items">
           <div class="bliklater-modal-content--item">
             <div class="bliklater-modal-content--item-img-wrapper">
-              <img class="bliklater-modal-content--item-img" src="{$bm_dir}views/img/bliklater-img1.svg">
+              <img class="bliklater-modal-content--item-img" src="{$bm_dir|escape:'html':'UTF-8'}views/img/bliklater-img1.svg">
             </div>
             <div class="bliklater-modal-content--item-content">
               <div class="bliklater-modal-content--item-header">{l s='Activation' mod='bluepayment'}</div>
@@ -61,7 +61,7 @@
           </div>
           <div class="bliklater-modal-content--item">
             <div class="bliklater-modal-content--item-img-wrapper">
-              <img class="bliklater-modal-content--item-img" src="{$bm_dir}views/img/bliklater-img2.svg">
+              <img class="bliklater-modal-content--item-img" src="{$bm_dir|escape:'html':'UTF-8'}views/img/bliklater-img2.svg">
             </div>
             <div class="bliklater-modal-content--item-content">
               <div class="bliklater-modal-content--item-header">{l s='Shopping' mod='bluepayment'}</div>
@@ -72,7 +72,7 @@
           </div>
           <div class="bliklater-modal-content--item">
             <div class="bliklater-modal-content--item-img-wrapper">
-              <img class="bliklater-modal-content--item-img" src="{$bm_dir}views/img/bliklater-img3.svg">
+              <img class="bliklater-modal-content--item-img" src="{$bm_dir|escape:'html':'UTF-8'}views/img/bliklater-img3.svg">
             </div>
             <div class="bliklater-modal-content--item-right">
               <div class="bliklater-modal-content--item-header">{l s='After every purchase' mod='bluepayment'}</div>

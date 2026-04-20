@@ -19,6 +19,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use BluePayment\Config\ConfigHelp;
 use BluePayment\Service\FactoryPaymentMethods;
 use BluePayment\Service\Gateway;
 use BluePayment\Service\Refund;
@@ -39,12 +40,17 @@ class Admin extends AbstractHook
     public const PAYMENT_STATUS_PENDING = 'PENDING';
     public const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
     public const PAYMENT_STATUS_FAILURE = 'FAILURE';
+    /**
+     * @var ConfigHelp
+     */
+    private $configHelper;
 
     /**
      * Get the payment methods available in the administration
      */
     public function adminPayments()
     {
+        $this->configHelper = new ConfigHelp();
         $list = $transferPayments = $wallets = [];
 
         $adminHelper = new AdminHelper($this->module);
@@ -95,6 +101,7 @@ class Admin extends AbstractHook
                 'transfer_payments' => $transferPayments,
                 'bm_assets_images' => $this->module->getAssetImages(),
                 'wallets' => $wallets,
+                'helper_images' => $this->configHelper->getHelperImagesByIsoCode($this->context->language->iso_code, $this->module->getAssetImages()),
             ]
         );
 

@@ -1,4 +1,9 @@
 # Changelog
+## [3.5.0] 07.04.2026
+- change payment description for redirect option
+- added translations for Spanish, Italian and German
+- add translation of messages for test connection
+
 ## [3.4.1] 22.12.2025
 - fixes for ISTN parsing
 - fixes translate

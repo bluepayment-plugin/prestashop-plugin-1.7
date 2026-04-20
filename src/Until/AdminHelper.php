@@ -20,8 +20,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use BluePayment\Config\Config;
-use Currency;
-use HelperList;
 
 class AdminHelper
 {
@@ -67,7 +65,7 @@ class AdminHelper
 
         if ($gatewayLogo === $name . 'payments.png') {
             $context->smarty->assign([
-                'gateway_slideshow' => Helper::getImgPayments(
+                'gateway_slideshow' => \BluePayment\Until\Helper::getImgPayments(
                     'transfers',
                     $context->currency->iso_code,
                     $context->shop->id
@@ -81,7 +79,7 @@ class AdminHelper
             );
         } elseif ($gatewayLogo === $name . 'cards.png') {
             $context->smarty->assign([
-                'gateway_slideshow' => Helper::getImgPayments(
+                'gateway_slideshow' => \BluePayment\Until\Helper::getImgPayments(
                     'wallet',
                     $context->currency->iso_code,
                     $context->shop->id
@@ -104,10 +102,10 @@ class AdminHelper
     {
         if ($gatewayLogo == 1) {
             return '<div class="btn-info" data-toggle="modal" data-target="#' . str_replace(
-                ' ',
-                '_',
-                (string) $object['gateway_name']
-            ) . '_' . $object['gateway_currency'] . '">
+                    ' ',
+                    '_',
+                    (string) $object['gateway_id']
+                ) . '_' . $object['gateway_currency'] . '">
             <img class="img-fluid" width="24" src="' . Config::BM_IMAGES_PATH . 'question.png" alt=""></div>';
         } else {
             return '';
@@ -174,9 +172,9 @@ class AdminHelper
 
         $q = '';
         if ($type === 'wallet') {
-            $q = 'IN (' . Helper::getWalletsList() . ')';
+            $q = 'IN (' . \BluePayment\Until\Helper::getWalletsList() . ')';
         } elseif ($type === 'transfer') {
-            $q = 'NOT IN (' . Helper::getGatewaysList() . ')';
+            $q = 'NOT IN (' . \BluePayment\Until\Helper::getGatewaysList() . ')';
         }
 
         $query = new \DbQuery();
@@ -206,7 +204,7 @@ class AdminHelper
      */
     public static function getSortCurrencies(array $currency = null): array
     {
-        $sortCurrencies = $currency ?? \Currency::getCurrenciesByIdShop(\Context::getContext()->shop->id);
+        $sortCurrencies = $currency ?? self::getCurrenciesByIdShop(\Context::getContext()->shop->id);
 
         usort($sortCurrencies, function ($a, $b) {
             if ($a['id_currency'] == $b['id_currency']) {
@@ -217,6 +215,46 @@ class AdminHelper
         });
 
         return (array) $sortCurrencies;
+    }
+
+    public static function getCurrenciesByIdShop($idShop = 0)
+    {
+        $sql = (new \DbQuery())
+            ->select('*')
+            ->from('currency', 'c')
+            ->innerJoin('currency_shop', 'cs', 'c.`id_currency` = cs.`id_currency`')
+            ->where('c.`deleted` = 0')
+            ->where('c.`active` = 1')
+            ->orderBy('c.`iso_code` ASC');
+
+        if ($idShop) {
+            $sql->where('cs.`id_shop` = ' . (int) $idShop);
+        }
+
+        $currencies = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+
+        return self::addCldrDatasToCurrency($currencies);
+    }
+
+    protected static function addCldrDatasToCurrency($currencies, $isObject = false)
+    {
+        if (is_array($currencies)) {
+            foreach ($currencies as $k => $c) {
+                $currencies[$k] = \Currency::getCurrencyInstance($c['id_currency']);
+                if (!$isObject) {
+                    $currencies[$k] = (array) $currencies[$k];
+                    $currencies[$k]['id_currency'] = $currencies[$k]['id'];
+                }
+            }
+        } else {
+            $currencies = \Currency::getCurrencyInstance($currencies['id_currency']);
+            if (!$isObject) {
+                $currencies = (array) $currencies;
+                $currencies['id_currency'] = $currencies['id'];
+            }
+        }
+
+        return $currencies;
     }
 
     public static function getSortLanguages($languages = null): array

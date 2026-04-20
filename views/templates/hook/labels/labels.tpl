@@ -10,12 +10,12 @@
  *
  * @category       BlueMedia
  * @package        BlueMedia_BluePayment
- * @copyright      Copyright (c) 2015-2025
+ * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
 
 
-<div class="bm-promo-icons bm-promo-icons--{$bm_promo_type}">
+<div class="bm-promo-icons bm-promo-icons--{$bm_promo_type|escape:'html':'UTF-8'}">
     {if isset($bm_pay_later) && $bm_pay_later}
 		<div class="bm-promo-icons__item">
       <div class="bm-promo-icons__icon">
