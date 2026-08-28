@@ -33,40 +33,12 @@
 </div>
 
 
-<div class="modal fade" id="bm-helper-analitics-ga-id" tabindex="-1" role="dialog"
-     aria-labelledby="bm-helper-analitics-ga-id" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2>{l s='Where can I find my Google Account ID?' mod='bluepayment'}</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="bm-helper modal-body">
-				<div class="row">
-					<div class="col-sm-12">
-						<span class="bm-helper__header">{l s='Universal Analytics' mod='bluepayment'}</span>
-						<ul class="bm-helper__list">
-							<li>{l s='Go to "Administrator" in the lower left corner.' mod='bluepayment'}</li>
-							<li>{l s='In the "Property" section, click "Tracking information".' mod='bluepayment'}</li>
-							<li>{l s='Click "Tracking Code."' mod='bluepayment'}</li>
-							<li>{l s='Your tracking ID is located in the upper right corner (e.g. UA-000000-2).' mod='bluepayment'}</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-
 <div class="modal fade" id="bm-helper-analitics-ga4-id" tabindex="-1" role="dialog"
      aria-labelledby="bm-helper-analitics-ga4-id" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2>{l s='Where can I find the measurement ID?' mod='bluepayment'}</h2>
+				<h2 class="bm-modal__title">{l s='Where can I find the measurement ID?' mod='bluepayment'}</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -93,7 +65,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2>{l s='How do I create an API secret?' mod='bluepayment'}</h2>
+				<h2 class="bm-modal__title">{l s='How do I create an API secret?' mod='bluepayment'}</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

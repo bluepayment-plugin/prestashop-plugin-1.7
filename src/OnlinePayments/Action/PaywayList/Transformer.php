@@ -184,12 +184,26 @@ class Transformer
                         $gatewayModel->setRequiredParams($gateway->requiredParams);
                     }
 
-                    if (isset($gateway->currencyList)
-                        && is_array($gateway->currencyList)
-                        && isset($gateway->currencyList[0]->minAmount, $gateway->currencyList[0]->maxAmount)
-                    ) {
-                        $gatewayModel->setMinAmount($gateway->currencyList[0]->minAmount);
-                        $gatewayModel->setMaxAmount($gateway->currencyList[0]->maxAmount);
+                    $currencyList = [];
+                    if (isset($gateway->currencies) && is_array($gateway->currencies)) {
+                        $currencyList = $gateway->currencies;
+                    } elseif (isset($gateway->currencyList) && is_array($gateway->currencyList)) {
+                        $currencyList = $gateway->currencyList;
+                    }
+
+                    if (!empty($currencyList)) {
+                        foreach ($currencyList as $currencyEntry) {
+                            if (isset($currencyEntry->currency, $currencyEntry->minAmount, $currencyEntry->maxAmount)) {
+                                $gatewayModel->setCurrencyData(
+                                    strtoupper((string) $currencyEntry->currency),
+                                    (float) $currencyEntry->minAmount,
+                                    (float) $currencyEntry->maxAmount
+                                );
+                            }
+                        }
+                    } elseif (isset($gateway->minAmount, $gateway->maxAmount)) {
+                        $gatewayModel->setMinAmount((float) $gateway->minAmount);
+                        $gatewayModel->setMaxAmount((float) $gateway->maxAmount);
                     }
 
                     $model->addGateway($gatewayModel);

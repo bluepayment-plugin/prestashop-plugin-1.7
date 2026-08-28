@@ -33,12 +33,10 @@ class AnaliticsHelper
      */
     public function sendOrderGaAnalitics($orderId): array
     {
-        $gaTrackerId = Cfg::get('BLUEPAYMENT_GA_TRACKER_ID');
         $ga4TrackerId = Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID');
         $ga4Secret = Cfg::get('BLUEPAYMENT_GA4_SECRET');
-        $gaType = Cfg::get('BLUEPAYMENT_GA_TYPE');
 
-        if ($gaTrackerId || ($ga4TrackerId && $ga4Secret)) {
+        if ($ga4TrackerId && $ga4Secret) {
             // Get ga user session
             $query = new \DbQuery();
             $query->from('blue_transactions')
@@ -70,55 +68,32 @@ class AnaliticsHelper
 
                         ++$p_key;
 
-                        if ($gaType === '1') {
-                            $args['pr' . $p_key . 'id'] = $p['product_id'];
-                            $args['pr' . $p_key . 'nm'] = \Product::getProductName($p['product_id']);
-                            $args['pr' . $p_key . 'br'] = $brand;
-                            $args['pr' . $p_key . 'ca'] = $category_name;
-                            $args['pr' . $p_key . 'pr'] = $p['total_price_tax_incl'];
-                            $args['pr' . $p_key . 'qt'] = $p['product_quantity'];
-                        } elseif ($gaType === '2') {
-                            $items[$p_key - 1] = [
-                                'item_id' => $p['product_id'],
-                                'item_name' => \Product::getProductName($p['product_id']),
-                                'item_brand' => $brand,
-                                'item_category' => $category_name,
-                                'price' => $p['total_price_tax_incl'],
-                                'quantity' => $p['product_quantity'],
-                            ];
-                        }
+                        $items[$p_key - 1] = [
+                            'item_id' => $p['product_id'],
+                            'item_name' => \Product::getProductName($p['product_id']),
+                            'item_brand' => $brand,
+                            'item_category' => $category_name,
+                            'price' => $p['total_price_tax_incl'],
+                            'quantity' => $p['product_quantity'],
+                        ];
                     }
                 }
 
-                if ($gaType === '1') {
-                    // GA Universal
-                    $analitics = new AnalyticsTracking($gaTrackerId, $gaUserId);
+                $analitics = new AnalyticsTracking($ga4TrackerId, $gaUserId, $ga4Secret);
 
-                    $args['cu'] = \Context::getContext()->currency->iso_code;
-                    $args['ti'] = $orderGa->id_cart . '-' . time();
-                    $args['tr'] = $orderGa->total_paid_tax_incl;
-                    $args['tt'] = $orderGa->total_paid - $orderGa->total_paid_tax_excl;
-                    $args['ts'] = $orderGa->total_shipping_tax_incl;
-                    $args['pa'] = 'purchase';
-                    $analitics->gaSendEvent('ecommerce', 'purchase', 'accepted', $args);
-                } elseif ($gaType === '2') {
-                    // GA 4
-                    $analitics = new AnalyticsTracking($ga4TrackerId, $gaUserId, $ga4Secret);
-
-                    $args['events'][] = [
-                        'name' => 'purchase',
-                        'params' => [
-                            'items' => $items,
-                            'currency' => \Context::getContext()->currency->iso_code,
-                            'transaction_id' => $orderGa->id_cart . '-' . time(),
-                            'value' => $orderGa->total_paid_tax_incl,
-                            'tax' => $orderGa->total_paid - $orderGa->total_paid_tax_excl,
-                            'shipping' => $orderGa->total_shipping_tax_incl,
-                        ],
-                    ];
-                    $args['user_id'] = $orderGa->id_customer;
-                    $analitics->ga4SendEvent($args);
-                }
+                $args['events'][] = [
+                    'name' => 'purchase',
+                    'params' => [
+                        'items' => $items,
+                        'currency' => \Context::getContext()->currency->iso_code,
+                        'transaction_id' => $orderGa->id_cart . '-' . time(),
+                        'value' => $orderGa->total_paid_tax_incl,
+                        'tax' => $orderGa->total_paid - $orderGa->total_paid_tax_excl,
+                        'shipping' => $orderGa->total_shipping_tax_incl,
+                    ],
+                ];
+                $args['user_id'] = $orderGa->id_customer;
+                $analitics->ga4SendEvent($args);
 
                 // Reset state
                 $transactionData = [

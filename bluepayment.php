@@ -128,7 +128,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '3.5.0';
+        $this->version = '3.5.1';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -480,12 +480,12 @@ class BluePayment extends PaymentModule
                     return new TranslatorAdapter($contextTranslator);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // During module installation, context might not be fully initialized
             // Fall back to a basic translator implementation
         }
 
-        $fallbackTranslator = new class() {
+        $fallbackTranslator = new class {
             public function trans($id, array $parameters = [], $domain = null, $locale = null)
             {
                 return (string) $id;

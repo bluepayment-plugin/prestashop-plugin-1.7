@@ -29,7 +29,7 @@
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h2>
+							<h2 class="bm-modal__title">
                                 {l s='List of supported banks' mod='bluepayment'}
 							</h2>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -70,7 +70,7 @@
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h2>
+							<h2 class="bm-modal__title">
                                 {l s='List of supported wallets' mod='bluepayment'}
 							</h2>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -111,7 +111,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2>
+				<h2 class="bm-modal__title">
                     {l s='Name of the payment module in the store' mod='bluepayment'}
 				</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -156,7 +156,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2>
+				<h2 class="bm-modal__title">
                     {l s='Show payment methods in store' mod='bluepayment'}
 				</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -203,7 +203,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2>
+				<h2 class="bm-modal__title">
                     {l s='Google Pay' mod='bluepayment'}
 				</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -271,7 +271,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2>
+				<h2 class="bm-modal__title">
                     {l s='Entering BLIK code' mod='bluepayment'}
 				</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">

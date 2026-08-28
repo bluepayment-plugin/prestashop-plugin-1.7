@@ -72,13 +72,6 @@ $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_1305a2b0c6
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c1211c7117dc3890214439b340a57a51'] = 'Statusy zamówień, dla których ma zostać zmieniony status płatności';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_6df5cc9d4ec4315cb11e27deb45a47c3'] = 'Analityka';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_e03adcfa0e2bfff2c153300b51d46fae'] = 'Google Analitics';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_b4dacc93cafdc9573e481463912c44e9'] = 'Twoja wersja Google Analytics';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c0e1149ec9332c8132a0290a435cab54'] = 'Universal Analytics';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_be51d65c1a97a1b83ecceca4ee181293'] = 'Google Analytics 4';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_26c0a11136ce732ac7c39710bd31f5a5'] = 'Wskaż z której wersji Google Analytics korzystasz.';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_038f348c1402d91a308da7d0e17190f5'] = 'Identyfikator konta Google';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_318630b57220f4a6430895d2d42f98bb'] = 'W Universal Analytics jest to \"Identyfikator śledzenia\" (np. UA-000000-2).';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c3fd91a59240cb13178bbdfbeb5d078e'] = 'Gdzie znajdę identyfikator?';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_52bbe9b50aca2ca1e0549bc7592d288e'] = 'Identyfikator pomiaru Google Analytics 4';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_8f7480ee23ab0f1edced8fbb75f2850e'] = 'Identyfikator jest w formacie G-XXXXXXX.';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_a0a368b5cbe7aef711ad72a1b90e6658'] = 'Gdzie znajdę identyfikator pomiaru?';
@@ -201,12 +194,6 @@ $_MODULE['<{bluepayment}prestashop>analitics-info_d7a3391a32af0a3b94a72c8bf7bcb0
 $_MODULE['<{bluepayment}prestashop>analitics-info_feb36d0eaa4f2ba93484407ab7a8e132'] = 'Połącz Google Analytics z wtyczką do płatności Autopay i zyskaj więcej danych o swoich klientach na etapie płatności.';
 $_MODULE['<{bluepayment}prestashop>analitics-info_0830e93731b70f29c884ae5e885c93e0'] = 'Dzięki połączeniu możesz dowiedzieć się m.in. jaka jest konwersja poszczególnych metod płatności lub jak wygląda lejek sprzedażowy na etapie płatności.';
 $_MODULE['<{bluepayment}prestashop>analitics-info_c2a8e32503c1a65a1684c66e7d6998dc'] = 'Konfiguracja Google Analytics';
-$_MODULE['<{bluepayment}prestashop>analitics-info_59ebaa01b1fe78e1cf76b227e734ead8'] = 'Gdzie mogę znaleźć swój identyfikator konta Google?';
-$_MODULE['<{bluepayment}prestashop>analitics-info_c0e1149ec9332c8132a0290a435cab54'] = 'Universal Analytics';
-$_MODULE['<{bluepayment}prestashop>analitics-info_08762378c17ef447d983ea14e6726ec1'] = 'Przejdź do „Administrator” w lewym dolnym rogu.';
-$_MODULE['<{bluepayment}prestashop>analitics-info_78b71995de29f38c9580f968bde1f3b5'] = 'W sekcji „Właściwość” kliknij „Informacje o śledzeniu”.';
-$_MODULE['<{bluepayment}prestashop>analitics-info_c3e140d231d51124ba9f5fc6d741e773'] = 'Kliknij „Kod śledzenia”.';
-$_MODULE['<{bluepayment}prestashop>analitics-info_9624ab3e25e5873050019879f80b470a'] = 'Twój identyfikator śledzenia znajduje się w prawym górnym rogu (np. UA-000000-2).';
 $_MODULE['<{bluepayment}prestashop>analitics-info_a0a368b5cbe7aef711ad72a1b90e6658'] = 'Gdzie znajdę identyfikator pomiaru?';
 $_MODULE['<{bluepayment}prestashop>analitics-info_be51d65c1a97a1b83ecceca4ee181293'] = 'Google Analytics 4';
 $_MODULE['<{bluepayment}prestashop>analitics-info_d981572695df5157cd5ecedf9cba70f2'] = 'Przejdź do „Administrator” w lewym dolnym rogu.';
@@ -215,6 +202,8 @@ $_MODULE['<{bluepayment}prestashop>analitics-info_69801e2380e4ee6171d76bb0220a8a
 $_MODULE['<{bluepayment}prestashop>analitics-info_febb3d4a84a440f959daa8dcffe4bb42'] = 'Twój identyfikator pomiaru znajduje się w prawym górnym rogu (np. G-QCX4K9GSPC).';
 $_MODULE['<{bluepayment}prestashop>analitics-info_ccb6da7cd06a07823e72edcdcfe199ac'] = 'Jak utworzyć API secret?';
 $_MODULE['<{bluepayment}prestashop>analitics-info_14d8a26655e6b11ae85fa4f9efa9abb7'] = 'Następnie kliknij “Utwórz” w sekcji “Measurement Protocol”';
+$_MODULE['<{bluepayment}prestashop>analitics-ua-migration-notice_0dc52d261cb6a25c4cf2a7ce3edb3ceb'] = 'Universal Analytics nie jest już obsługiwane przez ten moduł, a dotychczasowe ustawienia tej wersji analityki zostały usunięte.';
+$_MODULE['<{bluepayment}prestashop>analitics-ua-migration-notice_f032758b4cdec6baa08d4f60d2d652e8'] = 'Analityka aktualnie nie działa. Wprowadź poniżej identyfikator pomiaru Google Analytics 4 oraz klucz API, aby ponownie zbierać dane.';
 $_MODULE['<{bluepayment}prestashop>help_7ac7b4fddad34aebffd59b1f71b74f17'] = 'Zapoznaj się z materiałami';
 $_MODULE['<{bluepayment}prestashop>help_377c0cf71c491e15b797d7950de46cd1'] = 'Wdrożenie płatności online';
 $_MODULE['<{bluepayment}prestashop>help_86c70f8ed514ef4787300d0d20faf791'] = 'krok po kroku';

@@ -175,12 +175,12 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
 
     private function sendRequest($serviceId, $sharedKey, $orderId, $amount, $currency, $customerEmail, $blikCode, $customerPhone = null)
     {
-        $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
+        $test_mode = Cfg::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode
-            ? \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX
-            : \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
+            ? BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX
+            : BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
 
-        $gateway = new \BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
+        $gateway = new BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
 
         $data = [
             'ServiceID' => $serviceId,
@@ -377,7 +377,7 @@ class BluePaymentChargeBlikModuleFrontController extends ModuleFrontController
     {
         $this->module->validateOrder(
             $cartId,
-            (int) Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
+            (int) Cfg::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
             $amount,
             $this->module->displayName,
             null,

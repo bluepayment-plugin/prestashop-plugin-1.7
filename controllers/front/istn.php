@@ -33,10 +33,10 @@ class BluePaymentIstnModuleFrontController extends ModuleFrontController
         $isAuthentic = false;
 
         try {
-            /** @var \SimpleXMLElement|false $xml */
+            /** @var SimpleXMLElement|false $xml */
             $xml = Gateway::getItnInXml();
 
-            if ($xml === false || !($xml instanceof \SimpleXMLElement) || !isset($xml->serviceID) || !isset($xml->hash) || !isset($xml->transactions)) {
+            if ($xml === false || !($xml instanceof SimpleXMLElement) || !isset($xml->serviceID) || !isset($xml->hash) || !isset($xml->transactions)) {
                 PrestaShopLogger::addLog('Autopay ISTN Controller: Failed to parse XML or missing crucial elements.', 3);
                 $serviceID = ($xml && isset($xml->serviceID)) ? (string) $xml->serviceID : null;
                 echo $istnService->returnConfirmation($serviceID, $processedTransactions, $isAuthentic);

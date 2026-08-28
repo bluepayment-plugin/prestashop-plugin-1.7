@@ -32,7 +32,7 @@ class BluePaymentStatusModuleFrontController extends ModuleFrontController
                 $this->module,
                 new OrderHistory()
             );
-            $transaction->processStatusPayment(\BlueMedia\OnlinePayments\Gateway::getItnInXml());
+            $transaction->processStatusPayment(BlueMedia\OnlinePayments\Gateway::getItnInXml());
             Db::getInstance()->execute('COMMIT;');
         } catch (Exception $exception) {
             Tools::redirect($this->context->link->getModuleLink('bluepayment', 'paymentStatus', [

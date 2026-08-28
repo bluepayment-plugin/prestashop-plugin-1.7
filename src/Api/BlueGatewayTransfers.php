@@ -170,6 +170,10 @@ class BlueGatewayTransfers extends \ObjectModel implements GatewayInterface
         if ($apiGateways && $currency) {
             foreach ($apiGateways->getGateways() as $paymentGateway) {
                 if ($paymentGateway->getGatewayName() !== 'Kartowa płatność automatyczna') {
+                    if (!$paymentGateway->isAvailableForCurrency($currency['iso_code'])) {
+                        continue;
+                    }
+
                     $payway = self::getByGatewayIdAndCurrency(
                         $paymentGateway->getGatewayId(),
                         $currency['iso_code']

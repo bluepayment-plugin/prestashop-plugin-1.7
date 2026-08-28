@@ -35,10 +35,9 @@ class Helper
             'BLUEPAYMENT_SHOW_PAYWAY',
             'BLUEPAYMENT_TEST_ENV',
 
-            'BLUEPAYMENT_GA_TYPE',
-            'BLUEPAYMENT_GA_TRACKER_ID',
             'BLUEPAYMENT_GA4_TRACKER_ID',
             'BLUEPAYMENT_GA4_SECRET',
+            'BLUEPAYMENT_GA_UA_NOTICE',
 
             'BLUEPAYMENT_BLIK_REDIRECT',
             'BLUEPAYMENT_GPAY_REDIRECT',
@@ -338,11 +337,11 @@ class Helper
                     $invoice = $order->getInvoicesCollection();
                     $file_attachement = [];
 
-                    if ($result['pdf_invoice'] && (int) \Configuration::get('PS_INVOICE') && $order->invoice_number) {
+                    if ($result['pdf_invoice'] && (int) Cfg::get('PS_INVOICE') && $order->invoice_number) {
                         \Hook::exec('actionPDFInvoiceRender', ['order_invoice_list' => $invoice]);
                         $pdf = new \PDF($invoice, \PDF::TEMPLATE_INVOICE, $context->smarty);
                         $file_attachement['invoice']['content'] = $pdf->render(false);
-                        $file_attachement['invoice']['name'] = \Configuration::get(
+                        $file_attachement['invoice']['name'] = Cfg::get(
                             'PS_INVOICE_PREFIX',
                             (int) $order->id_lang,
                             null,
@@ -353,7 +352,7 @@ class Helper
                     if ($result['pdf_delivery'] && $order->delivery_number) {
                         $pdf = new \PDF($invoice, \PDF::TEMPLATE_DELIVERY_SLIP, $context->smarty);
                         $file_attachement['delivery']['content'] = $pdf->render(false);
-                        $file_attachement['delivery']['name'] = \Configuration::get(
+                        $file_attachement['delivery']['name'] = Cfg::get(
                             'PS_DELIVERY_PREFIX',
                             \Context::getContext()->language->id,
                             null,
@@ -396,7 +395,7 @@ class Helper
     {
         $data = [];
 
-        foreach (AdminHelper::getSortCurrencies() as $currency) {
+        foreach (\BluePayment\Until\AdminHelper::getSortCurrencies() as $currency) {
             $data[$currency['iso_code']] =
                     Helper::parseConfigByCurrency('BLUEPAYMENT_SERVICE_PARTNER_ID', $currency['iso_code']) == ''
                     || Helper::parseConfigByCurrency('BLUEPAYMENT_SHARED_KEY', $currency['iso_code']) == '' ? false : true;

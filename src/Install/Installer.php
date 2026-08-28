@@ -242,9 +242,9 @@ class Installer
     {
         if ($sqlStatements && is_object($db)) {
             return $db->execute($sqlStatements);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public function eventInstalled()

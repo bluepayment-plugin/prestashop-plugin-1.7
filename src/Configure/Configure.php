@@ -116,36 +116,6 @@ class Configure
 
                 $res &= empty(
                     $this->configurationAdapter->get(
-                        $this->name . '_GA_TYPE',
-                        null,
-                        $group_id,
-                        $shop_id
-                    )
-                ) ? $this->configurationAdapter->updateValue(
-                    $this->name . '_GA_TYPE',
-                    2,
-                    false,
-                    $group_id,
-                    $shop_id
-                ) : true;
-
-                $res &= empty(
-                    $this->configurationAdapter->get(
-                        $this->name . '_GA_TRACKER_ID',
-                        null,
-                        $group_id,
-                        $shop_id
-                    )
-                ) ? $this->configurationAdapter->updateValue(
-                    $this->name . '_GA_TRACKER_ID',
-                    0,
-                    false,
-                    $group_id,
-                    $shop_id
-                ) : true;
-
-                $res &= empty(
-                    $this->configurationAdapter->get(
                         $this->name . '_GA4_TRACKER_ID',
                         null,
                         $group_id,
@@ -343,8 +313,6 @@ class Configure
             /* Sets up Global configuration */
             $res = empty($this->configurationAdapter->get($this->name . '_TEST_ENV')) ? $this->configurationAdapter->updateValue($this->name . '_TEST_ENV', 0) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_SHOW_PAYWAY')) ? $this->configurationAdapter->updateValue($this->name . '_SHOW_PAYWAY', 1) : true;
-            $res &= empty($this->configurationAdapter->get($this->name . '_GA_TYPE')) ? $this->configurationAdapter->updateValue($this->name . '_GA_TYPE', 2) : true;
-            $res &= empty($this->configurationAdapter->get($this->name . '_GA_TRACKER_ID')) ? $this->configurationAdapter->updateValue($this->name . '_GA_TRACKER_ID', 0) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_GA4_TRACKER_ID')) ? $this->configurationAdapter->updateValue($this->name . '_GA4_TRACKER_ID', 0) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_GA4_SECRET')) ? $this->configurationAdapter->updateValue($this->name . '_GA4_SECRET', 0) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_BLIK_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_BLIK_REDIRECT', 0) : true;

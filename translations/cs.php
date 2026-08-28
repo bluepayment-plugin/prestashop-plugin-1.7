@@ -74,13 +74,6 @@ $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_93e2d2c900
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_1305a2b0c6c0eaf556d3ac2b18e25155'] = 'Neúspěšná platba';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_6df5cc9d4ec4315cb11e27deb45a47c3'] = 'Analytika';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_e03adcfa0e2bfff2c153300b51d46fae'] = 'Google Analitics';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_b4dacc93cafdc9573e481463912c44e9'] = 'Vaše verze služby Google Analytics';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c0e1149ec9332c8132a0290a435cab54'] = 'Universal Analytics';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_be51d65c1a97a1b83ecceca4ee181293'] = 'Google Analytics 4';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_26c0a11136ce732ac7c39710bd31f5a5'] = 'Uveďte, kterou verzi služby Google Analytics používáte.';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_038f348c1402d91a308da7d0e17190f5'] = 'ID účtu Google';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_318630b57220f4a6430895d2d42f98bb'] = 'V nástroji Universal Analytics je to \"ID sledování\" (např. UA-000000-2).';
-$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_c3fd91a59240cb13178bbdfbeb5d078e'] = 'Kde najdu průkaz totožnosti?';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_52bbe9b50aca2ca1e0549bc7592d288e'] = 'ID měření Google Analytics 4';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_8f7480ee23ab0f1edced8fbb75f2850e'] = 'Identifikátor je ve formátu G-XXXXXXX.';
 $_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_a0a368b5cbe7aef711ad72a1b90e6658'] = 'Kde najdu identifikátor měření?';
@@ -170,12 +163,6 @@ $_MODULE['<{bluepayment}prestashop>analitics-info_d7a3391a32af0a3b94a72c8bf7bcb0
 $_MODULE['<{bluepayment}prestashop>analitics-info_f2c22cc73de0025574448600f0c1a30d'] = 'Zkombinujte službu Google Analytics s platebním pluginem Autopay a získejte více údajů o svých zákaznících ve fázi platby.';
 $_MODULE['<{bluepayment}prestashop>analitics-info_0830e93731b70f29c884ae5e885c93e0'] = 'Díky propojení můžete například zjistit, jaká je konverze různých platebních metod nebo jak vypadá prodejní trychtýř ve fázi platby.';
 $_MODULE['<{bluepayment}prestashop>analitics-info_c2a8e32503c1a65a1684c66e7d6998dc'] = 'Konfigurace služby Google Analytics';
-$_MODULE['<{bluepayment}prestashop>analitics-info_59ebaa01b1fe78e1cf76b227e734ead8'] = 'Kde najdu své ID účtu Google?';
-$_MODULE['<{bluepayment}prestashop>analitics-info_c0e1149ec9332c8132a0290a435cab54'] = 'Universal Analytics';
-$_MODULE['<{bluepayment}prestashop>analitics-info_08762378c17ef447d983ea14e6726ec1'] = 'V levém dolním rohu přejděte na položku \"Správce\".';
-$_MODULE['<{bluepayment}prestashop>analitics-info_78b71995de29f38c9580f968bde1f3b5'] = 'V části \"Property\" klikněte na \"Tracking information\".';
-$_MODULE['<{bluepayment}prestashop>analitics-info_c3e140d231d51124ba9f5fc6d741e773'] = 'Klikněte na \"Sledovací kód\".';
-$_MODULE['<{bluepayment}prestashop>analitics-info_9624ab3e25e5873050019879f80b470a'] = 'ID pro sledování najdete v pravém horním rohu (např. UA-000000-2).';
 $_MODULE['<{bluepayment}prestashop>analitics-info_a0a368b5cbe7aef711ad72a1b90e6658'] = 'Kde najdu identifikátor měření?';
 $_MODULE['<{bluepayment}prestashop>analitics-info_be51d65c1a97a1b83ecceca4ee181293'] = 'Google Analytics 4';
 $_MODULE['<{bluepayment}prestashop>analitics-info_d981572695df5157cd5ecedf9cba70f2'] = 'V levém dolním rohu přejděte na položku \"Správce\".';

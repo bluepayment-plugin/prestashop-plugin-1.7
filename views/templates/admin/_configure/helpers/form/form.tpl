@@ -182,7 +182,7 @@
     <div class="col-md-9">
 
         {if isset($fields.title)}
-            <h3>{$fields.title|escape:'html':'UTF-8'}</h3>
+            <h3 class="bm-configure__title">{$fields.title|escape:'html':'UTF-8'}</h3>
         {/if}
 
         {block name="defaultForm"}
@@ -458,36 +458,11 @@
 
             $(document).ready(function () {
 
-                const gaType = $('input[name=BLUEPAYMENT_GA_TYPE]');
                 const payTest = $("input[name=BLUEPAYMENT_TEST_ENV]");
                 const showPayWay = $("input[name=BLUEPAYMENT_SHOW_PAYWAY]");
 
                 const payTestValue = $("input[name=BLUEPAYMENT_TEST_ENV]:checked").val();
                 const showPayWayValue = $("input[name=BLUEPAYMENT_SHOW_PAYWAY]:checked").val();
-                const gaTypeValue = $('input[name=BLUEPAYMENT_GA_TYPE]:checked').val();
-
-
-                const trackerGaId = $('.bluepayment_ga_tracker_id');
-                const trackerGa4Id = $('.bluepayment_ga4_tracker_id');
-                const trackerGa4Secret = $('.bluepayment_ga4_secret');
-
-                trackerGaId.hide();
-                trackerGa4Id.hide();
-                trackerGa4Secret.hide();
-
-                function checkGaType(state) {
-                    if (state === '1') {
-                        trackerGaId.show();
-                        trackerGa4Id.hide();
-                        trackerGa4Secret.hide();
-                    } else if (state === '2') {
-                        trackerGaId.hide();
-                        trackerGa4Id.show();
-                        trackerGa4Secret.show();
-                    }
-                }
-
-                checkGaType(gaTypeValue);
 
 
                 $("button[name=submitbluepayment]").click(function (e) {
@@ -506,10 +481,6 @@
 
                 payTest.click(function () {
                     checkPayTest($(this).val());
-                })
-
-                gaType.click(function () {
-                    checkGaType($(this).val());
                 })
 
                 function checkShowPayway(state) {

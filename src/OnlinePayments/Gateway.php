@@ -231,7 +231,7 @@ class Gateway
     {
         $response = json_decode($this->response);
         if (!isset($response->result) || $response->result != 'OK') {
-            if (isset($response->description) && $response->errorStatus) {
+            if (isset($response->description, $response->errorStatus) && $response->errorStatus) {
                 Logger::log(
                     Logger::EMERGENCY,
                     sprintf('Got error: "%s", code: "%s"', $response->description, $response->errorStatus),
@@ -249,7 +249,7 @@ class Gateway
                 );
             }
 
-            throw new \RuntimeException((string) $response->details . ' for service ' . self::$serviceId);
+            throw new \RuntimeException((string) ($response->description ?? '') . ' for service ' . self::$serviceId);
         }
     }
 

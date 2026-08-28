@@ -27,6 +27,7 @@ class Amplitude
 
     /**
      * @throws \Exception
+     *
      * @codeCoverageIgnore
      */
     private function __construct()
@@ -35,6 +36,7 @@ class Amplitude
 
     /**
      * @throws \Exception
+     *
      * @codeCoverageIgnore
      */
     private function __clone()
@@ -44,6 +46,7 @@ class Amplitude
 
     /**
      * @throws \Exception
+     *
      * @codeCoverageIgnore
      */
     public function __wakeup()

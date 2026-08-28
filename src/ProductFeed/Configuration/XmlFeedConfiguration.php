@@ -18,9 +18,9 @@ if (!defined('_PS_VERSION_')) {
 }
 class XmlFeedConfiguration
 {
-    const GOOGLE_MERCHANT_XML_NAMESPACE = 'http://base.google.com/ns/1.0';
+    public const GOOGLE_MERCHANT_XML_NAMESPACE = 'http://base.google.com/ns/1.0';
 
-    const AVAILABILITY_IN_STOCK = 'in stock';
+    public const AVAILABILITY_IN_STOCK = 'in stock';
 
-    const AVAILABILITY_OUT_OF_STOCK = 'out of stock';
+    public const AVAILABILITY_OUT_OF_STOCK = 'out of stock';
 }

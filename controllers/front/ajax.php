@@ -67,8 +67,8 @@ class BluepaymentAjaxModuleFrontController extends ModuleFrontController
             $product = new Product(
                 $product_id,
                 true,
-                (int) Context::getContext()->language->id,
-                (int) Context::getContext()->shop->id
+                (int) $this->context->language->id,
+                (int) $this->context->shop->id
             );
 
             exit(

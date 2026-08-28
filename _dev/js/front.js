@@ -70,7 +70,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 	}
 
 	function actionValidate(isBmTransfer = false, isResetButton = false) {
-		let conditions = $('section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]');
+		let conditions = $('#conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]');
 
 		if (!validateBmSubmit()) {
 			$('div[id=payment-confirmation] button').prop('disabled', true);
@@ -94,7 +94,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 	}
 
 	function bindPsdCheckboxValidator() {
-		$('div.content div.payment-options input, section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]')
+		$('.payment-options input, .payment-options__list input, .payment__list input, #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]')
 			.on('click', function () {
 				const triggerName = this.getAttribute('name');
 				setTimeout(function () {
@@ -102,7 +102,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 				}, 55);
 			});
 
-		$('section.checkout-step #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]').on('click', function () {
+		$('#conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]').on('click', function () {
 			actionValidate();
 		});
 	}
@@ -223,6 +223,10 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 
 
 	function initBM() {
+		if (!document.querySelector('.payment-options, .payment-options__list, .payment__list')) {
+			return;
+		}
+
 		createPaymentGroup();
 		createMainFrame(getAllPaymentsMethodBM());
 		radioPayments();
@@ -264,7 +268,11 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 			if (document.querySelector('#conditions-to-approve') !== null) {
 				document.querySelector('#conditions-to-approve').after(btn);
 			} else {
-				document.querySelector('.payment-options').after(btn);
+				const paymentOptions = document
+					.querySelector('.payment-options, .payment-options__list, .payment__list');
+				if (paymentOptions) {
+					paymentOptions.after(btn);
+				}
 			}
 		} else if (behavior === 'hide') {
 			style = 'none';

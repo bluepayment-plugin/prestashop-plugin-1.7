@@ -42,7 +42,7 @@ class BlikChannelChecker implements CheckerInterface
 
     public function check(): array
     {
-        if (!($this->module instanceof \BluePayment)) {
+        if (!$this->module instanceof \BluePayment) {
             return [
                 'status' => 'error',
                 'message' => $this->module->l('Invalid module type for BLIK channel check', 'blikchannelchecker'),
@@ -222,11 +222,11 @@ class BlikChannelChecker implements CheckerInterface
         } elseif ($status === 'warning') {
             if ($blikAvailable) {
                 return $this->module->l('BLIK payment channel is available but not for all currencies', 'blikchannelchecker');
-            } else {
-                return $this->module->l('BLIK payment channel is not available for any currency', 'blikchannelchecker');
             }
-        } else {
-            return $this->module->l('BLIK payment channel is available for all configured currencies', 'blikchannelchecker');
+
+            return $this->module->l('BLIK payment channel is not available for any currency', 'blikchannelchecker');
         }
+
+        return $this->module->l('BLIK payment channel is available for all configured currencies', 'blikchannelchecker');
     }
 }

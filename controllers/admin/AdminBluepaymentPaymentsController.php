@@ -42,7 +42,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $this->bootstrap = true;
         parent::__construct();
         $langIsoCode = $this->context->language->iso_code;
-        Context::getContext()->smarty->assign('src_img', $this->module->getAssetImages());
+        $this->context->smarty->assign('src_img', $this->module->getAssetImages());
         $this->configIframe = new ConfigBanner();
         $this->configIframeServices = new ConfigServices();
         $this->configHelper = new ConfigHelp();
@@ -181,12 +181,10 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                         if ($GatewayChannels->updatePosition($idPosition, $way, $position)) {
                             Hook::exec('actionBlueGatewayChannelsUpdate');
                             exit(true);
-                        } else {
-                            exit('{"hasError" : true, errors : "Can not update position"}');
                         }
-                    } else {
-                        exit('{"hasError" : true, "errors" : "This can not be loaded"}');
+                        exit('{"hasError" : true, errors : "Can not update position"}');
                     }
+                    exit('{"hasError" : true, "errors" : "This can not be loaded"}');
                 }
             }
         }
@@ -195,7 +193,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
     public function renderForm()
     {
         $fields_form = [];
-        $id_default_lang = (int) Configuration::get('PS_LANG_DEFAULT');
+        $id_default_lang = (int) Cfg::get('PS_LANG_DEFAULT');
 
         if (!empty(ContextCore::getContext()->employee->id_lang)) {
             $id_default_lang = (int) ContextCore::getContext()->employee->id_lang;
@@ -781,58 +779,33 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'legend' => [
                 'title' => $this->l('Google Analitics'),
             ],
-            'input' => [
+            'input' => array_merge(
+                $this->getUniversalAnalyticsNoticeInput(),
                 [
-                    'name' => '',
-                    'type' => 'description',
-                    'content' => './analitics-info.tpl',
-                ],
-                [
-                    'type' => 'switch-choose',
-                    'label' => $this->l('Your version of Google Analytics'),
-                    'name' => $this->module->name_upper . '_GA_TYPE',
-                    'size' => 'full',
-                    'values' => [
-                        [
-                            'id' => 'active_on',
-                            'value' => 1,
-                            'label' => $this->l('Universal Analytics'),
-                        ],
-                        [
-                            'id' => 'active_off',
-                            'value' => 2,
-                            'label' => $this->l('Google Analytics 4'),
-                        ],
+                    [
+                        'name' => '',
+                        'type' => 'description',
+                        'content' => './analitics-info.tpl',
                     ],
-                    'help' => $this->l('Indicate which version of Google Analytics you are using.'),
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->l('Google Account ID'),
-                    'name' => $this->module->name_upper . '_GA_TRACKER_ID',
-                    'size' => 40,
-                    'help' => $this->l('In Universal Analytics, this is the "Tracking ID" (e.g. UA-000000-2). ')
-                        . ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga-id">'
-                        . $this->l('Where can I find the identifier?') . '</a>',
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->l('Google Analytics Measurement ID 4'),
-                    'name' => $this->module->name_upper . '_GA4_TRACKER_ID',
-                    'size' => 40,
-                    'help' => $this->l('The identifier is in the format G-XXXXXXX. ')
-                        . ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga4-id">'
-                        . $this->l('Where can I find the measurement ID?') . '</a>',
-                ],
-                [
-                    'type' => 'text',
-                    'label' => $this->l('API secret '),
-                    'name' => $this->module->name_upper . '_GA4_SECRET',
-                    'size' => 40,
-                    'help' => '<a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga4-key">'
-                        . $this->l('How do I create an API secret?') . '</a>',
-                ],
-            ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('Google Analytics Measurement ID 4'),
+                        'name' => $this->module->name_upper . '_GA4_TRACKER_ID',
+                        'size' => 40,
+                        'help' => $this->l('The identifier is in the format G-XXXXXXX. ')
+                            . ' <a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga4-id">'
+                            . $this->l('Where can I find the measurement ID?') . '</a>',
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('API secret '),
+                        'name' => $this->module->name_upper . '_GA4_SECRET',
+                        'size' => 40,
+                        'help' => '<a target="#" data-toggle="modal" data-target="#bm-helper-analitics-ga4-key">'
+                            . $this->l('How do I create an API secret?') . '</a>',
+                    ],
+                ]
+            ),
             'submit' => [
                 'save_event' => 'GOOGLE ANALITICS',
                 'title' => $this->l('Save'),
@@ -925,7 +898,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         $productFeedCronLink = [];
         $productFeedFileLink = [];
         foreach (Shop::getShops() as $shop) {
-            $idDefaultLanguage = (int) Configuration::get('PS_LANG_DEFAULT', null, null, $shop['id_shop']);
+            $idDefaultLanguage = (int) Cfg::get('PS_LANG_DEFAULT', null, null, $shop['id_shop']);
             $productFeedCronLink[] = $this->context->link->getModuleLink(
                 'bluepayment',
                 'feed',
@@ -957,7 +930,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             'url_iframe_services' => $this->configIframeServices->getLinkIframeByIsoCode($this->context->language->iso_code),
             'product_feed_cron_link' => $productFeedCronLink,
             'product_feed_file_link' => $productFeedFileLink,
-            'is_disable_product_feed' => Configuration::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED),
+            'is_disable_product_feed' => Cfg::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED),
             'help_links' => $this->configHelper->getLinksByIsoCode($this->context->language->iso_code),
         ];
 
@@ -997,5 +970,29 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         }
 
         return $data;
+    }
+
+    private function getUniversalAnalyticsNoticeInput(): array
+    {
+        if (!Cfg::get($this->module->name_upper . '_GA_UA_NOTICE')) {
+            return [];
+        }
+
+        $ga4Tracker = trim((string) Cfg::get($this->module->name_upper . '_GA4_TRACKER_ID'));
+        $ga4Secret = trim((string) Cfg::get($this->module->name_upper . '_GA4_SECRET'));
+
+        $hasGa4 = !in_array($ga4Tracker, ['', '0'], true) && !in_array($ga4Secret, ['', '0'], true);
+
+        if ($hasGa4) {
+            return [];
+        }
+
+        return [
+            [
+                'name' => '',
+                'type' => 'description',
+                'content' => './analitics-ua-migration-notice.tpl',
+            ],
+        ];
     }
 }

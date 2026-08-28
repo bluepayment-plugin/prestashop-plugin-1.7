@@ -19,12 +19,19 @@ import {getIdElement, getPaymentContainer, getPaymentContent} from './helpers';
 export const getFirstElementFrame = (data) => data.map((item, index) => index === 0);
 
 export function getAllPaymentsMethodBM(typeClass) {
-	const elements = document.querySelectorAll('.js-additional-information.additional-information');
+	const elements = document.querySelectorAll('.js-additional-information');
 	const array = Array.from(elements);
 	const setType = typeClass ? typeClass : 'bm-payment__elm';
 
 	return array.filter(element => Array.from(element.children)
 		.some(item => item.classList.contains(setType)));
+}
+
+function isNestedPaymentStructure(index) {
+	const container = getPaymentContainer(index);
+	const content = getPaymentContent(index);
+
+	return !!(container && content && container !== content && container.contains(content));
 }
 
 export function createMainFrame(arr) {
@@ -49,10 +56,18 @@ function BeginWrapPayments(elm, index) {
 		const div = document.createElement('div');
 		div.className = 'bm-frame-start';
 
+		const nested = !checkIfOpcGroup() && isNestedPaymentStructure(index);
+
 		if (checkIfOpcGroup()) {
 			element = document.querySelector('#payment-option-' + index + '-main-title');
+		} else if (nested) {
+			element = getPaymentContainer(index);
 		} else {
-			element = elm.parentNode.previousElementSibling;
+			element = elm && elm.parentNode ? elm.parentNode.previousElementSibling : null;
+		}
+
+		if (!element || (nested && !element.parentNode)) {
+			return;
 		}
 
 		const img = document.createElement('img')
@@ -70,6 +85,8 @@ function BeginWrapPayments(elm, index) {
 
 		if (checkIfOpcGroup()) {
 			element.parentNode.insertBefore(div, element.previousSibling);
+		} else if (nested) {
+			element.parentNode.insertBefore(div, element);
 		} else {
 			element.prepend(div)
 		}
@@ -88,8 +105,14 @@ function EndWrapPayments(elm, index) {
 
 		if (checkIfOpcGroup()) {
 			element = document.querySelector('#payment-option-' + index + '-main-title');
+		} else if (isNestedPaymentStructure(index)) {
+			element = getPaymentContainer(index);
 		} else {
-			element = elm.parentNode;
+			element = elm ? elm.parentNode : null;
+		}
+
+		if (!element || !element.parentNode) {
+			return;
 		}
 
 		element.parentNode.insertBefore(div, element.nextSibling);
@@ -97,7 +120,11 @@ function EndWrapPayments(elm, index) {
 }
 
 function checkIfOpcGroup() {
-	const list = document.querySelector('.payment-options');
+	// Hummingbird uses BEM classes (.payment-options__list / .payment__list) instead of .payment-options
+	const list = document.querySelector('.payment-options, .payment-options__list, .payment__list');
+	if (!list) {
+		return false;
+	}
 	return Array.from(list.children).some(e => e.dataset.paymentModule === 'bluepayment')
 }
 
@@ -131,8 +158,9 @@ export function createPaymentGroup() {
 		}
 
 		const desc = item.querySelector('.bm-promo-desc');
-		if(desc !== null) {
-			container.querySelector('label span').appendChild(desc);
+		const descTarget = container.querySelector('label span') || container.querySelector('label');
+		if(desc !== null && descTarget !== null) {
+			descTarget.appendChild(desc);
 		}
 
 		return false;

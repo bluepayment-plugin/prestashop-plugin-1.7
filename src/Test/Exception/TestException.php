@@ -21,13 +21,14 @@ if (!defined('_PS_VERSION_')) {
 
 class TestException extends \Exception
 {
-    private array $errorDetails;
+    /** @var array */
+    private $errorDetails;
 
     public function __construct(
         string $message,
         array $errorDetails = [],
         int $code = 0,
-        \Throwable $previous = null
+        ?\Throwable $previous = null
     ) {
         parent::__construct($message, $code, $previous);
         $this->errorDetails = $errorDetails;

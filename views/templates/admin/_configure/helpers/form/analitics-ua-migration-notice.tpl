@@ -13,9 +13,7 @@
  * @copyright      Copyright (c) 2015-2026
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
 *}
-<p class="bm-order-confirmation">
-    {l s='We are waiting for payment. If you have interrupted it for any reason, please order it again.' mod='bluepayment'}
-</p>
-<p class="bm-order-confirmation">
-    {l s='Order status' mod='bluepayment'}: {$order_status|escape:'html':'UTF-8'}
-</p>
+<div class="alert alert-warning" role="alert">
+	<p>{l s='Universal Analytics is no longer supported by this module, and your previous Universal Analytics settings have been removed.' mod='bluepayment'}</p>
+	<p>{l s='Analytics is currently not working. Enter the Google Analytics 4 measurement ID and API secret below to start collecting data again.' mod='bluepayment'}</p>
+</div>

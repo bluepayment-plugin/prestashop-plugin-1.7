@@ -28,17 +28,17 @@ if (!defined('_PS_VERSION_')) {
 final class BlikTransactionProcessor
 {
     /**
-     * @var \BluePayment\Test\Repository\TransactionRepository
+     * @var TransactionRepository
      */
     private $transactionRepository;
 
     /**
-     * @var \BluePayment\Test\Sender\BlikTransactionSender
+     * @var BlikTransactionSender
      */
     private $transactionSender;
 
     /**
-     * @var \BluePayment\Test\Validator\BlikTransactionValidator
+     * @var BlikTransactionValidator
      */
     private $transactionValidator;
 
@@ -179,8 +179,8 @@ final class BlikTransactionProcessor
     public function waitForTransactionStatus(
         int $orderId,
         array $targetStatuses = ['SUCCESS'],
-        int $maxAttempts = null,
-        int $interval = null
+        ?int $maxAttempts = null,
+        ?int $interval = null
     ): array {
         $maxAttempts = $maxAttempts ?? TestDataConfig::MAX_POLLING_ATTEMPTS;
         $interval = $interval ?? TestDataConfig::POLLING_INTERVAL_SECONDS;

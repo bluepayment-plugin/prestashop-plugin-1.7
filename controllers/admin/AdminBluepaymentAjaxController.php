@@ -77,14 +77,14 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
     {
         try {
             foreach (Helper::getFields() as $configField) {
-                $value = Tools::getValue($configField, Configuration::get($configField));
-                Configuration::updateValue($configField, $value);
+                $value = Tools::getValue($configField, Cfg::get($configField));
+                Cfg::updateValue($configField, $value);
             }
 
             foreach (Helper::getFieldsMultiple() as $configField) {
                 $fieldReplace = str_replace('[]', '', $configField);
-                $value = Tools::getValue($fieldReplace, Configuration::get($fieldReplace));
-                Configuration::updateValue($fieldReplace, is_array($value) ? implode(',', array_map('intval', $value)) : '');
+                $value = Tools::getValue($fieldReplace, Cfg::get($fieldReplace));
+                Cfg::updateValue($fieldReplace, is_array($value) ? implode(',', array_map('intval', $value)) : '');
             }
 
             $paymentName = [];
@@ -169,16 +169,16 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                 $sharedKey[$currency['iso_code']] = $parseHashKey;
             }
 
-            Configuration::updateValue($this->module->name_upper . '_PAYMENT_NAME', $paymentName);
-            Configuration::updateValue($this->module->name_upper . '_PAYMENT_GROUP_NAME', $paymentGroupName);
-            Configuration::updateValue($this->module->name_upper . Config::SERVICE_PARTNER_ID, json_encode($serviceId));
-            Configuration::updateValue($this->module->name_upper . Config::SHARED_KEY, json_encode($sharedKey));
+            Cfg::updateValue($this->module->name_upper . '_PAYMENT_NAME', $paymentName);
+            Cfg::updateValue($this->module->name_upper . '_PAYMENT_GROUP_NAME', $paymentGroupName);
+            Cfg::updateValue($this->module->name_upper . Config::SERVICE_PARTNER_ID, json_encode($serviceId));
+            Cfg::updateValue($this->module->name_upper . Config::SHARED_KEY, json_encode($sharedKey));
 
             $gateway = new BlueGateway($this->module, new BlueAPI($this->module));
             $gateway->getChannels();
             $gateway->getTransfers();
 
-            if (!Configuration::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED)) {
+            if (!Cfg::get($this->module->name_upper . FeedConfiguration::AP_SUFFIX_ENABLED_PRODUCT_FEED)) {
                 $fileMenage = new FileMenager();
                 $fileRemover = new FileRemover($fileMenage);
                 $fileRemover->removeAllFeedFile();

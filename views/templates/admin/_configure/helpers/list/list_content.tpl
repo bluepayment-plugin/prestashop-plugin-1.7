@@ -73,7 +73,7 @@
 						{if isset($params.maxlength) && Tools::strlen($tr.$key) > $params.maxlength}
 							<span title="{$tr.$key|escape:'html':'UTF-8'}">{$tr.$key|truncate:$params.maxlength:'...'|escape:'html':'UTF-8'}</span>
 						{else}
-							{$tr.$key}
+							{$tr.$key nofilter}
 						{/if}
 					{elseif isset($params.activeVisu)}
 						{if $tr.$key}
@@ -114,7 +114,7 @@
 					{elseif isset($params.type) && $params.type == 'datetime'}
 						{dateFormat date=$tr.$key full=1}
 					{elseif isset($params.type) && $params.type == 'decimal'}
-						{$tr.$key|string_format:"%.2f"}
+						{$tr.$key|string_format:"%.2f"|escape:'html':'UTF-8'}
 					{elseif isset($params.type) && $params.type == 'percent'}
 						{$tr.$key|escape:'html':'UTF-8'} {l s='%' mod='bluepayment'}
 					{elseif isset($params.type) && $params.type == 'bool'}

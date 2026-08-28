@@ -46,7 +46,7 @@ final class FileTestLogger implements TestLoggerInterface
      * @param string $testType Test type (connection, transaction)
      * @param TestLoggerConfig|null $config Logger configuration
      */
-    public function __construct(string $testType, TestLoggerConfig $config = null)
+    public function __construct(string $testType, ?TestLoggerConfig $config = null)
     {
         $this->testType = $testType;
         $this->config = $config ?? new TestLoggerConfig();

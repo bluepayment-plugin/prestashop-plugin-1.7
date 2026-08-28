@@ -20,8 +20,7 @@
 			       value="{$fields_value[$_input.name]|escape:'html':'UTF-8'}"/>
         {elseif $_input.type == 'description'}
 			<div class="infoheading_class col-sm-12">
-                {assign var=desc_template value=$_input.content}
-                {include file="$desc_template"}
+                {include file='./_render_description.tpl' desc_template=$_input.content}
 			</div>
         {elseif $_input.type == 'infoheading'}
 			<div class="section-heading">
@@ -174,7 +173,7 @@
 										</div>
                                         {if isset($_input.help)}
 											<div class="col-lg-12">
-												<p class="help-text">{$_input.help}</p>
+												<p class="help-text">{$_input.help|escape:'html':'UTF-8'}</p>
 											</div>
                                         {/if}
 										</div>
@@ -312,7 +311,7 @@
                                     {/strip}
 								</div>
                                 {if isset($value.p) && $value.p}<p
-										class="help-block">{$value.p}</p>{/if}
+										class="help-block">{$value.p|escape:'html':'UTF-8'}</p>{/if}
                             {/foreach}
 
                         {elseif $_input.type == 'switch' || $_input.type == 'shop' || $_input.type == 'switch-choose' }
@@ -370,7 +369,7 @@
 
 
                             {if isset($_input.help)}
-								<p class="help-text">{$_input.help}</p>
+								<p class="help-text">{$_input.help|escape:'html':'UTF-8'}</p>
                             {/if}
 
 

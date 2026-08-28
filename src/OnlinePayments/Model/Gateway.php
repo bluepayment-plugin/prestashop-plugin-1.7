@@ -190,6 +190,11 @@ class Gateway extends AbstractModel
     private $maxAmount;
 
     /**
+     * @var array
+     */
+    private $currenciesData = [];
+
+    /**
      * Button title (multilingual).
      *
      * @var array
@@ -448,6 +453,15 @@ class Gateway extends AbstractModel
      */
     public function getMinAmount()
     {
+        if ($this->minAmount !== null) {
+            return $this->minAmount;
+        }
+        if (!empty($this->currenciesData)) {
+            $first = reset($this->currenciesData);
+
+            return $first['min'];
+        }
+
         return $this->minAmount;
     }
 
@@ -466,6 +480,15 @@ class Gateway extends AbstractModel
      */
     public function getMaxAmount()
     {
+        if ($this->maxAmount !== null) {
+            return $this->maxAmount;
+        }
+        if (!empty($this->currenciesData)) {
+            $first = reset($this->currenciesData);
+
+            return $first['max'];
+        }
+
         return $this->maxAmount;
     }
 
@@ -477,6 +500,44 @@ class Gateway extends AbstractModel
         $this->maxAmount = $maxAmount;
 
         return $this;
+    }
+
+    public function setCurrencyData(string $iso, float $min, float $max): self
+    {
+        $this->currenciesData[strtoupper($iso)] = ['min' => $min, 'max' => $max];
+
+        return $this;
+    }
+
+    /**
+     * @return array map keyed by uppercase ISO code
+     */
+    public function getCurrenciesData(): array
+    {
+        return $this->currenciesData;
+    }
+
+    public function isAvailableForCurrency(string $iso): bool
+    {
+        if (empty($this->currenciesData)) {
+            return true;
+        }
+
+        return isset($this->currenciesData[strtoupper($iso)]);
+    }
+
+    public function getMinAmountForCurrency(string $iso): ?float
+    {
+        $key = strtoupper($iso);
+
+        return isset($this->currenciesData[$key]) ? $this->currenciesData[$key]['min'] : null;
+    }
+
+    public function getMaxAmountForCurrency(string $iso): ?float
+    {
+        $key = strtoupper($iso);
+
+        return isset($this->currenciesData[$key]) ? $this->currenciesData[$key]['max'] : null;
     }
 
     /**
@@ -879,12 +940,26 @@ class Gateway extends AbstractModel
                         $gateway->setRequiredParams($gatewayData->requiredParams);
                     }
 
-                    if (isset($gatewayData->currencies)
-                        && is_array($gatewayData->currencies)
-                        && isset($gatewayData->currencies[0]->minAmount, $gatewayData->currencies[0]->maxAmount)
-                    ) {
-                        $gateway->setMinAmount($gatewayData->currencies[0]->minAmount);
-                        $gateway->setMaxAmount($gatewayData->currencies[0]->maxAmount);
+                    $currencyList = [];
+                    if (isset($gatewayData->currencies) && is_array($gatewayData->currencies)) {
+                        $currencyList = $gatewayData->currencies;
+                    } elseif (isset($gatewayData->currencyList) && is_array($gatewayData->currencyList)) {
+                        $currencyList = $gatewayData->currencyList;
+                    }
+
+                    if (!empty($currencyList)) {
+                        foreach ($currencyList as $currencyEntry) {
+                            if (isset($currencyEntry->currency, $currencyEntry->minAmount, $currencyEntry->maxAmount)) {
+                                $gateway->setCurrencyData(
+                                    strtoupper((string) $currencyEntry->currency),
+                                    (float) $currencyEntry->minAmount,
+                                    (float) $currencyEntry->maxAmount
+                                );
+                            }
+                        }
+                    } elseif (isset($gatewayData->minAmount, $gatewayData->maxAmount)) {
+                        $gateway->setMinAmount((float) $gatewayData->minAmount);
+                        $gateway->setMaxAmount((float) $gatewayData->maxAmount);
                     }
                 }
 

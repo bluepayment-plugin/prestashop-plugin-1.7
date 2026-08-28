@@ -57,34 +57,6 @@ class AnalyticsTracking
      *
      * @return array
      */
-    public function gaSendData(array $data): array
-    {
-        $postUrl = 'https://www.google-analytics.com/collect?';
-        $postUrl .= http_build_query($data);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $postUrl);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        $result = curl_exec($ch);
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        return [
-            'statusCode' => $statusCode,
-            'resp' => $result,
-        ];
-    }
-
-    /**
-     * Data send with curl
-     *
-     * @param array $data
-     *
-     * @return array
-     */
     public function ga4SendData(array $data): array
     {
         $postUrl = 'https://www.google-analytics.com/mp/collect?measurement_id='
@@ -107,33 +79,6 @@ class AnalyticsTracking
             'statusCode' => $statusCode,
             'resp' => $result,
         ];
-    }
-
-    /**
-     * Tracking Universal Ga
-     *
-     * @param $category
-     * @param $action
-     * @param $label
-     * @param array $products
-     *
-     * @return array
-     */
-    public function gaSendEvent($category = null, $action = null, $label = null, array $products = []): array
-    {
-        $data = [
-            'v' => 1,
-            'tid' => $this->trackedId,
-            'cid' => $this->gaParseCookie(),
-            't' => 'event',
-            'ec' => $category, // (Required)
-            'ea' => $action, // (Required)
-            'el' => $label,
-        ];
-
-        $dataMerge = array_merge($data, $products);
-
-        return $this->gaSendData($dataMerge);
     }
 
     /**

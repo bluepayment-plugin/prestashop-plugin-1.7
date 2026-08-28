@@ -48,7 +48,7 @@ final class TestExecutorFactory
      * @param \Context $context
      * @param TestLoggerConfig|null $loggerConfig
      */
-    public function __construct(\Module $module, \Context $context, TestLoggerConfig $loggerConfig = null)
+    public function __construct(\Module $module, \Context $context, ?TestLoggerConfig $loggerConfig = null)
     {
         $this->module = $module;
         $this->context = $context;
@@ -66,6 +66,10 @@ final class TestExecutorFactory
      */
     public function createTestExecutor(string $testType): TestExecutorInterface
     {
+        if (!in_array($testType, ['connection', 'transaction'], true)) {
+            throw new \Exception(sprintf('Unknown test type: %s', $testType));
+        }
+
         $logger = $this->createLogger($testType);
 
         switch ($testType) {

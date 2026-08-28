@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace BluePayment\Test\Checker\Connection;
 
 use BluePayment\Api\BlueAPI;
-use BluePayment\Api\BlueGateway;
 use BluePayment\Test\Checker\Interfaces\CheckerInterface;
 use BluePayment\Until\AdminHelper;
 use BluePayment\Utility\Converter\ObjectToArrayConverter;
@@ -41,7 +40,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
 
     public function check(): array
     {
-        if (!($this->module instanceof \BluePayment)) {
+        if (!$this->module instanceof \BluePayment) {
             return [
                 'status' => 'error',
                 'message' => $this->module->l('Invalid module type for Gateway connection check', 'gatewaychannelsconnectionchecker'),
@@ -50,7 +49,6 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
         }
 
         $api = new BlueAPI($this->module);
-        $gateway = new BlueGateway($this->module, $api);
         $mode = $api->getApiMode();
 
         $currencies = AdminHelper::getSortCurrencies();
@@ -66,6 +64,7 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
         $results = [];
         $overallStatus = 'success';
         $connectionCount = 0;
+        $gatewayLists = $api->gatewayAccountsByCurrencies($currencies, $mode, AdminHelper::getSortLanguages());
 
         foreach ($currencies as $currency) {
             $currencyCode = $currency['iso_code'];
@@ -89,7 +88,10 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
             }
 
             $startTime = microtime(true);
-            $channelsResult = $this->testGatewayChannels($gateway, $currencyCode);
+            $channelsResult = $this->testGatewayChannels(
+                array_key_exists($currencyCode, $gatewayLists) ? $gatewayLists[$currencyCode] : null,
+                $currencyCode
+            );
             $endTime = microtime(true);
             $responseTime = round(($endTime - $startTime) * 1000, 2);
 
@@ -195,24 +197,23 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
     }
 
     /**
-     * Test gateway channels for a specific currency
+     * Test gateway channels for a specific currency.
      *
-     * @param BlueGateway $gateway Gateway instance
+     * @param mixed $gatewayList Gateway list response
      * @param string $currencyCode Currency code
      *
      * @return array Test result
      */
-    private function testGatewayChannels(BlueGateway $gateway, string $currencyCode): array
+    private function testGatewayChannels($gatewayList, string $currencyCode): array
     {
         try {
-            $api = $gateway->getApi();
-            $merchantData = $api->getApiMerchantData($currencyCode);
-            $mode = $api->getApiMode();
-
-            $gatewayList = $api->gatewayAccountByCurrency($merchantData, $currencyCode, $mode, AdminHelper::getSortLanguages());
-
             if ($gatewayList && method_exists($gatewayList, 'getGateways')) {
-                $channels = $gatewayList->getGateways();
+                $channels = [];
+                foreach ($gatewayList->getGateways() as $channel) {
+                    if (!method_exists($channel, 'isAvailableForCurrency') || $channel->isAvailableForCurrency($currencyCode)) {
+                        $channels[] = $channel;
+                    }
+                }
 
                 $channelsData = $this->convertObjectsToArrays($channels);
 
@@ -250,8 +251,8 @@ class GatewayChannelsConnectionChecker implements CheckerInterface
             return $this->module->l('Failed to retrieve payment channels for one or more currencies', 'gatewaychannelsconnectionchecker');
         } elseif ($status === 'warning') {
             return $this->module->l('Payment channels retrieved successfully but some currencies are not configured', 'gatewaychannelsconnectionchecker');
-        } else {
-            return $this->module->l('Payment channels retrieved successfully for all configured currencies', 'gatewaychannelsconnectionchecker');
         }
+
+        return $this->module->l('Payment channels retrieved successfully for all configured currencies', 'gatewaychannelsconnectionchecker');
     }
 }

@@ -209,13 +209,9 @@ class Design extends AbstractHook
         $controller = \Tools::getValue('controller');
 
         $tracking_id = false;
-        $secret_key = false;
 
-        if (Cfg::get('BLUEPAYMENT_GA_TRACKER_ID')) {
-            $tracking_id = Cfg::get('BLUEPAYMENT_GA_TRACKER_ID');
-        } elseif (Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID') && Cfg::get('BLUEPAYMENT_GA4_SECRET')) {
+        if (Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID') && Cfg::get('BLUEPAYMENT_GA4_SECRET')) {
             $tracking_id = Cfg::get('BLUEPAYMENT_GA4_TRACKER_ID');
-            $secret_key = Cfg::get('BLUEPAYMENT_GA4_SECRET');
         }
 
         if (empty($tracking_id)) {
@@ -224,7 +220,6 @@ class Design extends AbstractHook
 
         $this->context->smarty->assign([
             'tracking_id' => $tracking_id,
-            'tracking_secret_key' => $secret_key,
             'controller' => $controller,
             'bm_ajax_controller' => $this->context->link->getModuleLink(
                 $this->module->name,
@@ -268,6 +263,7 @@ class Design extends AbstractHook
      * @param string $type
      *
      * @return void
+     *
      * @codeCoverageIgnore
      */
     public function getSmartyAssets(string $type = 'main')

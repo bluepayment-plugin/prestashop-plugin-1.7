@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace BluePayment\Test\Logger;
 
+use BluePayment\Test\Config\Logger\TestLoggerConfig;
 use BluePayment\Test\Logger\Interfaces\TestLoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -22,6 +23,19 @@ if (!defined('_PS_VERSION_')) {
 }
 final class LogFileManager
 {
+    /**
+     * @var TestLoggerConfig
+     */
+    private $config;
+
+    /**
+     * @param TestLoggerConfig|null $config
+     */
+    public function __construct(?TestLoggerConfig $config = null)
+    {
+        $this->config = $config ?? new TestLoggerConfig();
+    }
+
     /**
      * @param TestLoggerInterface $logger
      *
@@ -31,22 +45,19 @@ final class LogFileManager
      */
     public function getLogFilePath(TestLoggerInterface $logger): string
     {
-        $logFilePath = $logger->getLogFilePath();
-
-        if (!file_exists($logFilePath)) {
-            throw new \Exception('Log file does not exist');
-        }
-
-        return $logFilePath;
+        return $this->resolveLogFilePath($logger->getLogFilePath());
     }
 
     /**
      * @param string $logFilePath
      * @param string $testType
+     *
+     * @throws \Exception
      */
     public function downloadLogFile(string $logFilePath, string $testType): void
     {
-        $fileName = 'test_' . $testType . '_' . date('Y-m-d_H-i-s') . '.log';
+        $logFilePath = $this->resolveLogFilePath($logFilePath);
+        $fileName = 'test_' . $this->sanitizeTestType($testType) . '_' . date('Y-m-d_H-i-s') . '.log';
 
         header('Content-Type: text/plain');
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
@@ -57,5 +68,43 @@ final class LogFileManager
 
         readfile($logFilePath);
         exit;
+    }
+
+    /**
+     * @param string $logFilePath
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    private function resolveLogFilePath(string $logFilePath): string
+    {
+        $logDirectory = realpath($this->config->getLogDirectory());
+        $realPath = realpath($logFilePath);
+
+        if ($logDirectory === false || $realPath === false || !is_file($realPath)) {
+            throw new \Exception('Log file does not exist');
+        }
+
+        $logDirectory = rtrim($logDirectory, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
+
+        if (strpos($realPath, $logDirectory) !== 0
+            || strpos(substr($realPath, strlen($logDirectory)), \DIRECTORY_SEPARATOR) !== false
+            || strtolower((string) pathinfo($realPath, \PATHINFO_EXTENSION)) !== 'log'
+        ) {
+            throw new \Exception('Log file does not exist');
+        }
+
+        return $realPath;
+    }
+
+    /**
+     * @param string $testType
+     *
+     * @return string
+     */
+    private function sanitizeTestType(string $testType): string
+    {
+        return (string) preg_replace('/[^a-zA-Z0-9_-]/', '', $testType);
     }
 }

@@ -75,6 +75,7 @@ class Istn
         if (!$sharedKey) {
             // Missing shared key (e.g., currency not configured) – treat as non-authentic without logging to avoid noise.
             $this->lastIncomingIstnFailureReason = 'missing_shared_key';
+
             return false;
         }
         $hashData[] = $sharedKey;

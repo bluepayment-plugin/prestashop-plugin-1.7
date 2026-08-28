@@ -222,7 +222,18 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
             $paymentOptionsArray = $this->getOnlyGroups($paymentsGroup);
             $paymentOptionsArray[Config::GATEWAY_ID_TRANSFER] = $this->createTransferPaymentOption();
             $paymentOptionsArray[Config::GATEWAY_ID_WALLET] = $this->createWalletPaymentOption();
+            $payway = null;
             foreach ($paymentOptionsArray as $paymentGateway) {
+                $gatewayIdInt = (int) $paymentGateway->getGatewayId();
+                $isSynthetic = in_array(
+                    $gatewayIdInt,
+                    [Config::GATEWAY_ID_TRANSFER, Config::GATEWAY_ID_WALLET],
+                    true
+                );
+                if (!$isSynthetic && !$paymentGateway->isAvailableForCurrency($currency['iso_code'])) {
+                    continue;
+                }
+
                 $payway = self::getByGatewayIdAndCurrency(
                     $paymentGateway->getGatewayId(),
                     $currency['iso_code']
@@ -257,8 +268,10 @@ class BlueGatewayChannels extends \ObjectModel implements GatewayInterface
                     $payway->gateway_payments = '1';
                 }
 
-                $payway->min_amount = $paymentGateway->getMinAmount();
-                $payway->max_amount = $paymentGateway->getMaxAmount();
+                $minForCurrency = $paymentGateway->getMinAmountForCurrency($currency['iso_code']);
+                $maxForCurrency = $paymentGateway->getMaxAmountForCurrency($currency['iso_code']);
+                $payway->min_amount = $minForCurrency !== null ? $minForCurrency : $paymentGateway->getMinAmount();
+                $payway->max_amount = $maxForCurrency !== null ? $maxForCurrency : $paymentGateway->getMaxAmount();
 
                 $payway->available_for = (string) $paymentGateway->getAvailableFor();
                 $payway->required_params = json_encode($paymentGateway->getRequiredParams(), JSON_UNESCAPED_UNICODE);

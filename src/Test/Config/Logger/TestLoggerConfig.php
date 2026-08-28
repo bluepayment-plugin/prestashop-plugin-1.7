@@ -89,7 +89,7 @@ final class TestLoggerConfig
      */
     public function getLogFilePath(string $testType): string
     {
-        return $this->logDirectory . sprintf($this->logFileNamePattern, $testType);
+        return $this->logDirectory . sprintf($this->logFileNamePattern, $this->sanitizeTestType($testType));
     }
 
     /**
@@ -101,7 +101,19 @@ final class TestLoggerConfig
      */
     public function getArchiveFileNamePattern(string $testType): string
     {
-        return $this->logDirectory . sprintf($this->archiveFileNamePattern, $testType, '%s');
+        return $this->logDirectory . sprintf($this->archiveFileNamePattern, $this->sanitizeTestType($testType), '%s');
+    }
+
+    /**
+     * Restricts the test type to safe filename characters to prevent path traversal
+     *
+     * @param string $testType Test type
+     *
+     * @return string
+     */
+    private function sanitizeTestType(string $testType): string
+    {
+        return preg_replace('/[^a-zA-Z0-9_-]/', '', $testType);
     }
 
     /**

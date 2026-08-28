@@ -16,29 +16,29 @@
 {extends file=$layout}
 
 {block name='content'}
-	<section id="main" style="padding: 20px">
+	<section id="main" class="bm-payment-status" style="padding: 20px">
 		<div class="box">
 			<a href="https://bluepayment.pl" target="_blank">
 				<img src="{$bm_dir|escape:'html':'UTF-8'}views/img/bluepayment.svg" class="payment-brand" alt="Bluemedia" />
 			</a>
-			<h1>
+			<h1 class="bm-payment-status__title">
                 {l s='Payment status' mod='bluepayment'}
 			</h1>
-			<p class="warning">
+			<p class="warning bm-payment-status__text">
                 {l s='Transaction status unknown.' mod='bluepayment'}
 			</p>
             {if isset($error)}
-				<p>
+				<p class="bm-payment-status__text">
 					<strong>
                         {$error|escape:'html':'UTF-8'}
 					</strong>
 				</p>
             {/if}
 			<div class="payment-navigation cart_navigation">
-				<a href="{$urls.base_url|escape:'html':'UTF-8'}" class="btn btn-primary">
+				<a href="{$urls.base_url|escape:'html':'UTF-8'}" class="btn btn-primary bm-payment-status__btn">
                     {l s='Return to the shop' mod='bluepayment'}
 				</a>
-				<a class="btn btn-primary" href="{$urls.pages.history|escape:'html':'UTF-8'}">
+				<a class="btn btn-primary bm-payment-status__btn" href="{$urls.pages.history|escape:'html':'UTF-8'}">
                     {l s='View order history' mod='bluepayment'}
 				</a>
 			</div>

@@ -110,7 +110,7 @@ $(document).ready(function () {
                             window.location.href = response.redirectUrl;
                         }
 
-                        responseMessages.html('<b>' + response.message + '</b>');
+                        responseMessages.empty().append($('<b>').text(response.message));
                         responseMessages.show();
                         bmSubmitGpayData.postOrderId = response.postOrderId;
                         gpayVerifyCheck = setInterval(chargeGPay(paymentToken), 1250)
@@ -123,7 +123,7 @@ $(document).ready(function () {
                         clearInterval(gpayVerifyCheck);
                         bmHideLoader();
                         responseMessages.parent('div').addClass('has-error');
-                        responseMessages.html(response.message);
+                        responseMessages.text(response.message);
                         responseMessages.show();
                         submitter.removeAttr('disabled')
                     }
@@ -131,7 +131,7 @@ $(document).ready(function () {
                     clearInterval(gpayVerifyCheck);
                     bmHideLoader();
                     responseMessages.parent('div').addClass('has-error');
-                    responseMessages.html('Transaction ERROR - Empty data.');
+                    responseMessages.text('Transaction ERROR - Empty data.');
                     responseMessages.show();
                     submitter.removeAttr('disabled');
                 }

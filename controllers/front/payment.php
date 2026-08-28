@@ -64,7 +64,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
             $this->module->validateOrder(
                 $cartId,
-                (int) Configuration::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
+                (int) Cfg::get($this->module->name_upper . '_STATUS_WAIT_PAY_ID'),
                 (float) $amount,
                 $this->module->displayName,
                 null,
@@ -79,18 +79,17 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
 
             if (empty($bluepaymentCartId)) {
                 exit($this->module->l('This cart is empty.', 'bluepayment'));
-            } else {
-                $bluepaymentCartId = explode('-', $bluepaymentCartId);
-                $bluepaymentCartId = empty($bluepaymentCartId[0]) ? 0 : $bluepaymentCartId[0];
-
-                $order = Order::getByCartId($bluepaymentCartId);
-                $cart = Cart::getCartByOrderId($order->id);
-
-                $totalPaid = (float) $cart->getOrderTotal(true, Cart::BOTH);
-                $amount = number_format(round($totalPaid, 2), 2, '.', '');
-
-                $orderId = $order->id . '-' . time();
             }
+            $bluepaymentCartId = explode('-', $bluepaymentCartId);
+            $bluepaymentCartId = empty($bluepaymentCartId[0]) ? 0 : $bluepaymentCartId[0];
+
+            $order = Order::getByCartId($bluepaymentCartId);
+            $cart = Cart::getCartByOrderId($order->id);
+
+            $totalPaid = (float) $cart->getOrderTotal(true, Cart::BOTH);
+            $amount = number_format(round($totalPaid, 2), 2, '.', '');
+
+            $orderId = $order->id . '-' . time();
         }
 
         $gateway_id = (int) Tools::getValue('bluepayment_gateway', 0);
@@ -138,7 +137,7 @@ class BluePaymentPaymentModuleFrontController extends ModuleFrontController
             $isoCode
         );
 
-        $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
+        $test_mode = Cfg::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode ? Gateway::MODE_SANDBOX : Gateway::MODE_LIVE;
 
         $gateway = new Gateway($service_id, $shared_key, $gateway_mode);

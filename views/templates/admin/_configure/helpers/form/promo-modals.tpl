@@ -18,7 +18,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>
+        <h2 class="bm-modal__title">
             {l s='Alior Raty' mod='bluepayment'}
         </h2>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">

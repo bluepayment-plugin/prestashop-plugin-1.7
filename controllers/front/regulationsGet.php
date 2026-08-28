@@ -63,10 +63,10 @@ class BluePaymentRegulationsGetModuleFrontController extends ModuleFrontControll
 
         $test_mode = Configuration::get($this->module->name_upper . '_TEST_ENV');
         $gateway_mode = $test_mode
-            ? \BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX
-            : \BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
+            ? BlueMedia\OnlinePayments\Gateway::MODE_SANDBOX
+            : BlueMedia\OnlinePayments\Gateway::MODE_LIVE;
 
-        $gateway = new \BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
+        $gateway = new BlueMedia\OnlinePayments\Gateway($serviceId, $sharedKey, $gateway_mode);
 
         /**
          * string MerchantDomain for BM should be different localhost

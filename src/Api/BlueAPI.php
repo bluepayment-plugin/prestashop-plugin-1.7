@@ -82,18 +82,74 @@ class BlueAPI
             return false;
         }
 
-        if ($currencies && $mode) {
-            foreach ($currencies as $currency) {
-                $getMerchantData = $this->getApiMerchantData($currency['iso_code']);
-                $apiResponse = $this->gatewayAccountByCurrency($getMerchantData, $currency['iso_code'], $mode, $languages);
-
-                $this->getApiResponseSyncGateway($gateway, $apiResponse, $currency);
-            }
-        } else {
+        if (!$currencies || !$mode) {
             return false;
         }
 
+        $responses = $this->gatewayAccountsByCurrencies($currencies, $mode, $languages);
+
+        foreach ($currencies as $currency) {
+            $currencyCode = $currency['iso_code'];
+            $apiResponse = array_key_exists($currencyCode, $responses) ? $responses[$currencyCode] : null;
+            $this->getApiResponseSyncGateway($gateway, $apiResponse, $currency);
+        }
+
         return true;
+    }
+
+    public function gatewayAccountsByCurrencies($currencies, $mode, $languages): array
+    {
+        if (!$currencies || !$mode) {
+            return [];
+        }
+
+        $groups = [];
+        foreach ($currencies as $currency) {
+            $merchantData = $this->getApiMerchantData($currency['iso_code']);
+            if (empty($merchantData)) {
+                continue;
+            }
+
+            $groupKey = implode('|', $merchantData);
+            if (!isset($groups[$groupKey])) {
+                $groups[$groupKey] = [
+                    'merchantData' => $merchantData,
+                    'currencies' => [],
+                ];
+            }
+
+            $groups[$groupKey]['currencies'][] = $currency;
+        }
+
+        $responses = [];
+        foreach ($groups as $group) {
+            $currencyCodes = array_column($group['currencies'], 'iso_code');
+            $apiResponse = $this->gatewayAccountByCurrency(
+                $group['merchantData'],
+                implode(',', $currencyCodes),
+                $mode,
+                $languages
+            );
+
+            if ($apiResponse === null && count($group['currencies']) > 1) {
+                foreach ($group['currencies'] as $currency) {
+                    $responses[$currency['iso_code']] = $this->gatewayAccountByCurrency(
+                        $group['merchantData'],
+                        $currency['iso_code'],
+                        $mode,
+                        $languages
+                    );
+                }
+
+                continue;
+            }
+
+            foreach ($group['currencies'] as $currency) {
+                $responses[$currency['iso_code']] = $apiResponse;
+            }
+        }
+
+        return $responses;
     }
 
     public function getApiResponseSyncGateway($gateway, $response, $currency, $position = 0)
@@ -179,7 +235,11 @@ class BlueAPI
                 Config::HASH_SEPARATOR
             );
 
-            return $gateway->doGatewayList($currencyCode, $languages);
+            try {
+                return $gateway->doGatewayList($currencyCode, $languages);
+            } catch (\RuntimeException $exception) {
+                return null;
+            }
         }
 
         return null;

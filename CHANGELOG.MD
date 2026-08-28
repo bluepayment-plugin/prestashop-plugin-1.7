@@ -1,4 +1,12 @@
 # Changelog
+## [3.5.1] 28.08.2026
+- enhance currency grouping and validation for gateway and transfer connection
+- handle RuntimeException in gateway list retrieval
+- use the description field in exception messages when available
+- new typography and Google Fonts (Roboto Condensed, Open Sans) in templates and e-mails
+- add dynamic description field rendering in admin configure forms
+- fixes for Hummingbird theme compatibility
+
 ## [3.5.0] 07.04.2026
 - change payment description for redirect option
 - added translations for Spanish, Italian and German

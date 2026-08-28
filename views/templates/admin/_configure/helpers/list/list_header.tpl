@@ -106,7 +106,7 @@
 	{capture name=hookName assign=hookName}display{$name_controller|ucfirst}ListBefore{/capture}
 	{hook h=$hookName}
 {elseif isset($smarty.get.controller)}
-	{capture name=hookName assign=hookName}display{$smarty.get.controller|ucfirst|htmlentities}ListBefore{/capture}
+	{capture name=hookName assign=hookName}display{$smarty.get.controller|regex_replace:'/[^a-zA-Z0-9_]/':''|ucfirst}ListBefore{/capture}
 	{hook h=$hookName}
 {/if}
 

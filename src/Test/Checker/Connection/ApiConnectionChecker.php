@@ -37,7 +37,7 @@ class ApiConnectionChecker implements CheckerInterface
 
     public function check(): array
     {
-        if (!($this->module instanceof \BluePayment)) {
+        if (!$this->module instanceof \BluePayment) {
             return [
                 'status' => 'error',
                 'message' => $this->module->l('Invalid module type for API connection check', 'apiconnectionchecker'),
@@ -143,9 +143,9 @@ class ApiConnectionChecker implements CheckerInterface
             return $this->module->l('API connection failed for one or more currencies', 'apiconnectionchecker');
         } elseif ($status === 'warning') {
             return $this->module->l('API connection successful but some currencies are not configured', 'apiconnectionchecker');
-        } else {
-            return $this->module->l('API connection successful for all configured currencies', 'apiconnectionchecker');
         }
+
+        return $this->module->l('API connection successful for all configured currencies', 'apiconnectionchecker');
     }
 
     public function getName(): string

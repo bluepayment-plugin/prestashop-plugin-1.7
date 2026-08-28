@@ -115,6 +115,7 @@ class Admin extends AbstractHook
     {
         $apiUrl = 'https://api-addons.prestashop.com/';
         $version = $this->module->version;
+
         // Connect to Prestashop addons API
         return $this->getAddonsUpdate($apiUrl, $version);
     }

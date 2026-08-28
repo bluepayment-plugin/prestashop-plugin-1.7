@@ -34,6 +34,10 @@ class AdminTestConnectionController extends ModuleAdminController
     private const ACTION_EXECUTE_TEST_STEP = 'execute';
     private const ACTION_DOWNLOAD_TEST_LOGS = 'downloadLogs';
 
+    private const ALLOWED_TEST_TYPES = ['connection', 'transaction'];
+
+    private const DEFAULT_TEST_TYPE = 'connection';
+
     /** @var TestExecutorFactory */
     private $factory;
 
@@ -58,7 +62,7 @@ class AdminTestConnectionController extends ModuleAdminController
     public function postProcess(): void
     {
         if (Tools::isSubmit('ajax')) {
-            $testType = Tools::getValue('test_type', 'connection');
+            $testType = $this->getRequestedTestType();
             $testStep = Tools::getValue('test_step', '');
 
             try {
@@ -79,13 +83,20 @@ class AdminTestConnectionController extends ModuleAdminController
                 }
             } catch (TestException $e) {
                 $this->ajaxTestException($e, $testType, $testStep);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->errorHandler->logException($e);
                 $this->ajaxError($this->l('An unexpected error occurred during the test. Please check the logs for details.'), $testType, $testStep);
             }
         }
 
         parent::postProcess();
+    }
+
+    private function getRequestedTestType(): string
+    {
+        $testType = (string) Tools::getValue('test_type', self::DEFAULT_TEST_TYPE);
+
+        return in_array($testType, self::ALLOWED_TEST_TYPES, true) ? $testType : self::DEFAULT_TEST_TYPE;
     }
 
     private function getTestExecutor(string $testType): TestExecutorInterface

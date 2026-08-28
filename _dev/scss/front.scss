@@ -14,7 +14,7 @@
  * @license        https://www.gnu.org/licenses/lgpl-3.0.en.html GNU Lesser General Public License
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto+Condensed:wght@300;400;500;600;700&display=swap');
 
 .bluepayment-loader-bg {
   display: none;
@@ -121,7 +121,7 @@ div.payment-option > label > img {
   align-items: center;
   font-size: 14px;
   color: #2f3237;
-  font-family: Lato, "Open Sans", BlinkMacSystemFont, sans-serif !important
+  font-family: "Open Sans", Helvetica, Arial, sans-serif !important
 }
 
 .blue-media-body .bm-redirect-page-content .logo {
@@ -134,7 +134,7 @@ div.payment-option > label > img {
 }
 
 .blue-media-body .bm-redirect-page p {
-  font-family: Lato, "Open Sans", BlinkMacSystemFont, sans-serif !important;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif !important;
   color: #2f3237;
   margin-bottom: 10px;
   font-size: 14px;
@@ -143,6 +143,10 @@ div.payment-option > label > img {
 
 .blue-media-body .bm-redirect-page input[type=submit] {
   display: none
+}
+
+.bluepayment-gateways {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif
 }
 
 .bluepayment-gateways__wrap {
@@ -370,6 +374,7 @@ body#checkout section.checkout-step .payment-options > div .payment-option > lab
 }
 
 body#checkout section.checkout-step .payment-options > div .payment-option > label span.bm-promo-desc {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   margin-top: 3px;
   display: block;
   font-weight: 400;
@@ -377,11 +382,13 @@ body#checkout section.checkout-step .payment-options > div .payment-option > lab
 }
 
 body#checkout section.checkout-step .payment-options > div .payment-option > label span.bm-promo-desc--info {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   margin-top: 9px;
   color: #767676;
   display: block;
   font-weight: 400;
-  font-size: 12px
+  font-size: 12px;
+  line-height: 16px
 }
 
 body#checkout section.checkout-step .payment-options body#checkout section.checkout-step .payment-options > div .payment-option > label.bm-payment-hide {
@@ -389,8 +396,10 @@ body#checkout section.checkout-step .payment-options body#checkout section.check
 }
 
 .bm-small-info {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   color: #767676;
   font-size: 12px;
+  line-height: 16px;
   margin-bottom: 10px;
   display: block
 }
@@ -454,6 +463,7 @@ body#checkout section.checkout-step .payment-options .custom-radio {
 }
 
 .bm-modal {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   position: fixed;
   top: 0;
   right: 0;
@@ -496,6 +506,14 @@ body#checkout section.checkout-step .payment-options .custom-radio {
   display: flex;
   align-items: flex-start;
   justify-content: space-between
+}
+
+.bm-modal__title {
+  font-family: "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 34px;
+  margin: 0
 }
 
 .bm-modal__content {
@@ -549,8 +567,11 @@ body#checkout section.checkout-step .payment-options .custom-radio {
 }
 
 .bm-promo-label {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   padding: 1px 6px;
   font-size: 12px;
+  font-weight: 400;
+  line-height: 12px;
   text-transform: uppercase;
   position: absolute;
   right: 20px
@@ -567,8 +588,10 @@ body#checkout section.checkout-step .payment-options .custom-radio {
 }
 
 .bm-payment-name {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   text-align: left;
   font-size: 16px;
+  line-height: 26px;
   display: flex;
   align-items: center
 }
@@ -578,10 +601,16 @@ body#checkout section.checkout-step .payment-options .custom-radio {
 }
 
 .bm-payment-desc {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   margin-top: 16px;
   text-align: left;
   font-size: 12px;
+  line-height: 16px;
   color: #767676
+}
+
+.bm-payment-description {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif
 }
 
 body#checkout section.checkout-step .payment-options > div .payment-option > label.bm-selected-payment {
@@ -710,6 +739,7 @@ p.bm-legals--first {
 }
 
 .tc-main-title {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   min-height: 85px;
   margin-bottom: 0;
   margin-top: 15px;
@@ -800,6 +830,7 @@ p.bm-legals--first {
 }
 
 .bm-promo-icons {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
   width: 100%
@@ -836,17 +867,20 @@ p.bm-legals--first {
 }
 
 .bm-promo-icons__label {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   padding: 2px 5px;
   margin-right: 6px;
-  font-weight: 700;
+  font-weight: 400;
   font-size: 12px;
-  line-height: 14px
+  line-height: 12px
 }
 
 .bm-promo-icons__desc {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   color: #000;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 12px;
+  line-height: 16px;
   display: none
 }
 
@@ -872,13 +906,13 @@ p.bm-legals--first {
 }
 
 .bm-modal-bliklater {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   color: #000;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 24px;
-  letter-spacing: -0.32px;
+  line-height: 26px;
+  letter-spacing: normal;
   .bm-modal__dialog {
     display: flex;
     align-items: center;
@@ -919,13 +953,14 @@ p.bm-legals--first {
     margin: 0 0 19px 0;
   }
   .bliklater-modal-content .bliklater-modal-content--header {
+    font-family: "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
     margin: 0 0 17px 0;
     padding: 0;
     font-size: 24px;
     font-style: normal;
-    font-weight: 600;
-    line-height: 48px;
-    letter-spacing: -0.24px;
+    font-weight: 500;
+    line-height: 34px;
+    letter-spacing: normal;
     text-align: center;
   }
   .bliklater-modal-content .bliklater-modal-content--items {
@@ -956,11 +991,12 @@ p.bm-legals--first {
     z-index: 1;
   }
   .bliklater-modal-content .bliklater-modal-content--item-header {
-    font-size: 10px;
+    font-family: "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
+    font-size: 12px;
     font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    letter-spacing: 0.3px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: normal;
     text-transform: uppercase;
     padding-top: 2px;
     margin-bottom: 6px;
@@ -1021,9 +1057,9 @@ p.bm-legals--first {
       margin: 0 auto 24px;
       font-size: 20px;
       font-style: normal;
-      font-weight: 600;
+      font-weight: 500;
       line-height: 30px;
-      letter-spacing: -0.2px;
+      letter-spacing: normal;
       max-width: 200px;
     }
     .bliklater-modal-content .bliklater-modal-content--item {
@@ -1036,4 +1072,149 @@ p.bm-legals--first {
   text-align: center;
   font-size: 13px;
   margin-top: 10px;
+}
+
+.bm-payment-status {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.bm-payment-status__title {
+  font-family: "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 46px;
+}
+
+.bm-payment-status__text {
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.bm-payment-status__btn {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+}
+
+.bm-order-confirmation {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.payment-options__list .payment-option {
+  position: relative;
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid #f1f1f1;
+  transition: all .1s cubic-bezier(0.2, 0.3, 0, 1)
+}
+
+.payment-options__list .payment-option:hover {
+  border-color: #87ca8d
+}
+
+.payment-options__list .payment-option.active {
+  border-color: #63bb6c;
+  transition: all .3s cubic-bezier(0.2, 0.3, 0, 1)
+}
+
+.payment-option__form-check {
+  display: flex;
+  align-items: center;
+  min-height: 85px;
+  margin: 0;
+  padding: 16px
+}
+
+.payment-option__form-check .payment-option__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none
+}
+
+.payment-option__label {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.35;
+  cursor: pointer
+}
+
+.payment-option__label img {
+  flex-shrink: 0;
+  width: 75px;
+  height: auto;
+  padding-right: 25px
+}
+
+.payment-option__label .bm-slideshow {
+  order: -1;
+  flex: 0 0 75px;
+  padding-right: 25px
+}
+
+.payment-option__label.bm-payment-hide {
+  display: none
+}
+
+.payment-option__label span.bm-promo-desc {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  flex: 0 0 100%;
+  display: block;
+  margin-top: 3px;
+  padding-left: 75px;
+  font-weight: 400;
+  font-size: 13px
+}
+
+.payment-option__label span.bm-promo-desc--info {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  flex: 0 0 100%;
+  display: block;
+  margin-top: 9px;
+  padding-left: 75px;
+  color: #767676;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px
+}
+
+.payment-option__additional-information .bm-small-info {
+  display: none
+}
+
+.payment-option__additional-information.active {
+  padding: 0 16px 16px 16px
+}
+
+.payment-option__additional-information.active .bm-small-info {
+  display: block
+}
+
+.payment-option__additional-information[data-payment-bm=true].active {
+  padding: 0 16px 16px 92px
+}
+
+[data-payment-bm=true] .has-error input {
+  outline: 3px solid #ff4c4c
+}
+
+[data-payment-bm=true] .has-error .help-block {
+  color: #ff4c4c
 }

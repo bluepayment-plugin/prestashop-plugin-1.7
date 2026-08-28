@@ -65,7 +65,7 @@ class AdminHelper
 
         if ($gatewayLogo === $name . 'payments.png') {
             $context->smarty->assign([
-                'gateway_slideshow' => \BluePayment\Until\Helper::getImgPayments(
+                'gateway_slideshow' => Helper::getImgPayments(
                     'transfers',
                     $context->currency->iso_code,
                     $context->shop->id
@@ -79,7 +79,7 @@ class AdminHelper
             );
         } elseif ($gatewayLogo === $name . 'cards.png') {
             $context->smarty->assign([
-                'gateway_slideshow' => \BluePayment\Until\Helper::getImgPayments(
+                'gateway_slideshow' => Helper::getImgPayments(
                     'wallet',
                     $context->currency->iso_code,
                     $context->shop->id
@@ -102,14 +102,14 @@ class AdminHelper
     {
         if ($gatewayLogo == 1) {
             return '<div class="btn-info" data-toggle="modal" data-target="#' . str_replace(
-                    ' ',
-                    '_',
-                    (string) $object['gateway_id']
-                ) . '_' . $object['gateway_currency'] . '">
+                ' ',
+                '_',
+                (string) $object['gateway_id']
+            ) . '_' . $object['gateway_currency'] . '">
             <img class="img-fluid" width="24" src="' . Config::BM_IMAGES_PATH . 'question.png" alt=""></div>';
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     public function getListChannels($currency)
@@ -172,9 +172,9 @@ class AdminHelper
 
         $q = '';
         if ($type === 'wallet') {
-            $q = 'IN (' . \BluePayment\Until\Helper::getWalletsList() . ')';
+            $q = 'IN (' . Helper::getWalletsList() . ')';
         } elseif ($type === 'transfer') {
-            $q = 'NOT IN (' . \BluePayment\Until\Helper::getGatewaysList() . ')';
+            $q = 'NOT IN (' . Helper::getGatewaysList() . ')';
         }
 
         $query = new \DbQuery();
@@ -202,7 +202,7 @@ class AdminHelper
      *
      * @return array
      */
-    public static function getSortCurrencies(array $currency = null): array
+    public static function getSortCurrencies(?array $currency = null): array
     {
         $sortCurrencies = $currency ?? self::getCurrenciesByIdShop(\Context::getContext()->shop->id);
 
