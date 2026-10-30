@@ -42,7 +42,7 @@ class ITNReturnUrlChecker implements CheckerInterface
     public function check(): array
     {
         $shopUrl = $this->context->shop->getBaseURL(true);
-        $returnUrl = $shopUrl . 'module/bluepayment/back';
+        $returnUrl = $shopUrl . strtok(\Configuration::get('PS_ROUTE_module'), '/') . '/bluepayment/back';
 
         $urlAccessibility = $this->checkUrlAccessibility($returnUrl);
 

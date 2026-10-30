@@ -42,7 +42,7 @@ class ITNStatusUrlChecker implements CheckerInterface
     public function check(): array
     {
         $shopUrl = $this->context->shop->getBaseURL(true);
-        $itnUrl = $shopUrl . 'module/bluepayment/status';
+        $itnUrl = $shopUrl . strtok(\Configuration::get('PS_ROUTE_module'), '/') . '/bluepayment/status';
 
         $urlAccessibility = $this->checkUrlAccessibility($itnUrl);
 
