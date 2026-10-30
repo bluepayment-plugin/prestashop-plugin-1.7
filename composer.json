@@ -10,7 +10,9 @@
       "BlueMedia\\ProductFeed\\": "src/ProductFeed"
     },
     "classmap": [
-      "bluepayment.php"
+      "bluepayment.php",
+      "vendor/prefixed/prestashop/module-lib-mbo-installer/src",
+      "vendor/prefixed/segmentio/analytics-php/lib"
     ]
   },
   "autoload-dev": {
@@ -39,6 +41,15 @@
     "optimize-autoloader": true,
     "platform": {
       "php": "7.1.3"
+    },
+    "allow-plugins": {
+      "bamarni/composer-bin-plugin": true
+    }
+  },
+  "extra": {
+    "bamarni-bin": {
+      "bin-links": false,
+      "target-directory": "vendor-bin"
     }
   },
   "require-dev": {
@@ -48,7 +59,8 @@
     "phpmd/phpmd": "@stable",
     "phpunit/phpunit": "7.5.20",
     "mockery/mockery": "^1.2",
-    "prestashop/php-dev-tools": "^2.1"
+    "prestashop/php-dev-tools": "^2.1",
+    "bamarni/composer-bin-plugin": "^1.5"
   },
   "type": "prestashop-module",
   "scripts": {
@@ -63,6 +75,10 @@
       "@putenv XDEBUG_MODE=coverage",
       "phpunit --color=always --coverage-html=\"build\""
     ],
-    "php-cs-fixer": "php-cs-fixer --config=./php_cs.dist.php_cs"
+    "php-cs-fixer": "php-cs-fixer --config=./php_cs.dist.php_cs",
+    "scope-vendor": [
+      "composer bin php-scoper install",
+      "php -d error_reporting=\"E_ALL & ~E_DEPRECATED\" vendor-bin/php-scoper/vendor/bin/php-scoper add-prefix --config=scoper.inc.php --output-dir=vendor/prefixed --force"
+    ]
   }
 }

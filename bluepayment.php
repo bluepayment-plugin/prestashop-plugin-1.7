@@ -32,6 +32,7 @@ use BluePayment\Configure\Configure;
 use BluePayment\Hook\HookDispatcher;
 use BluePayment\Install\Installer;
 use BluePayment\Service\FactoryPaymentMethods;
+use BluePayment\Tracking\PrestashopModuleTracking;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 use Symfony\Component\Dotenv\Dotenv;
@@ -128,7 +129,7 @@ class BluePayment extends PaymentModule
         $this->name_upper = Tools::strtoupper($this->name);
 
         $this->tab = 'payments_gateways';
-        $this->version = '3.5.1';
+        $this->version = '3.6.0';
         $this->author = 'Autopay S.A.';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
@@ -175,6 +176,14 @@ class BluePayment extends PaymentModule
             'paymentOptions'
         );
 
+        if ($state) {
+            PrestashopModuleTracking::track(
+                getenv('SEGMENT_WRITE_KEY') ?: '',
+                $this,
+                Config::SEGMENT_EVENT_MODULE_INSTALLED
+            );
+        }
+
         return $state;
     }
 
@@ -205,6 +214,14 @@ class BluePayment extends PaymentModule
             }
         }
 
+        if ($state) {
+            PrestashopModuleTracking::track(
+                getenv('SEGMENT_WRITE_KEY') ?: '',
+                $this,
+                Config::SEGMENT_EVENT_MODULE_UNINSTALLED
+            );
+        }
+
         return $state;
     }
 
@@ -231,6 +248,12 @@ class BluePayment extends PaymentModule
         $amplitude = Amplitude::getInstance();
         $amplitude->sendEvent($data);
 
+        PrestashopModuleTracking::track(
+            getenv('SEGMENT_WRITE_KEY') ?: '',
+            $this,
+            Config::SEGMENT_EVENT_MODULE_ENABLED
+        );
+
         return parent::enable($force_all);
     }
 
@@ -248,7 +271,35 @@ class BluePayment extends PaymentModule
         $amplitude = Amplitude::getInstance();
         $amplitude->sendEvent($data);
 
+        PrestashopModuleTracking::track(
+            getenv('SEGMENT_WRITE_KEY') ?: '',
+            $this,
+            Config::SEGMENT_EVENT_MODULE_DISABLED
+        );
+
         return parent::disable($force_all);
+    }
+
+    /**
+     * Overridden so "Module Upgraded" fires exactly once per real upgrade action,
+     * regardless of how many (if any) upgrade/install-X.Y.Z.php files ran in between -
+     * new version bumps don't need to remember to add this call themselves.
+     *
+     * @return array
+     */
+    public function runUpgradeModule()
+    {
+        $upgrade = parent::runUpgradeModule();
+
+        if (!empty($upgrade['success'])) {
+            PrestashopModuleTracking::track(
+                getenv('SEGMENT_WRITE_KEY') ?: '',
+                $this,
+                Config::SEGMENT_EVENT_MODULE_UPGRADED
+            );
+        }
+
+        return $upgrade;
     }
 
     /**

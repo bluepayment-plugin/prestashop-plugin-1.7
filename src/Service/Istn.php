@@ -142,7 +142,9 @@ class Istn
             $sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'blue_gateways_refunds` 
                     WHERE `remote_id` = \'' . pSQL($istnRemoteID) . '\'
                       AND `amount` = ' . (float) $istnAmount . '
-                      AND `currency` = \'' . pSQL($istnCurrency) . '\'';
+                      AND `currency` = \'' . pSQL($istnCurrency) . '\'
+                      AND (`remote_out_id` IS NULL OR `remote_out_id` = \'\' OR `remote_out_id` = \'' . pSQL($istnRemoteOutID) . '\')
+                    ORDER BY (`remote_out_id` = \'' . pSQL($istnRemoteOutID) . '\') DESC, `id_blue_gateway_refunds` ASC';
 
             $refundRecord = $db->getRow($sql);
 

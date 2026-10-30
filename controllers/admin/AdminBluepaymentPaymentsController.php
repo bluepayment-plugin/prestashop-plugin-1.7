@@ -24,7 +24,9 @@ use BluePayment\Config\Config;
 use BluePayment\Config\ConfigBanner;
 use BluePayment\Config\ConfigHelp;
 use BluePayment\Config\ConfigServices;
+use BluePayment\Dependency\DependencyManager;
 use BluePayment\Until\AdminHelper;
+use BluePayment\Until\EmployeeAccess;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 
@@ -110,6 +112,33 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
         }
     }
 
+    /**
+     * Renders the module dependency-resolver widget (installs ps_accounts/ps_eventbus
+     * when missing) above the configuration form. Returns an empty string when the
+     * dependencies are already met or when the check itself fails.
+     */
+    private function getDependencyBuilderBanner(): string
+    {
+        try {
+            $dependencyManager = new DependencyManager();
+
+            if ($dependencyManager->areDependenciesMet()) {
+                return '';
+            }
+
+            $tpl = $this->context->smarty->createTemplate(
+                $this->module->getLocalPath() . 'views/templates/admin/_partials/dependency_builder.tpl'
+            );
+            $tpl->assign('dependencies', $dependencyManager->getDependencies());
+
+            return $tpl->fetch();
+        } catch (Exception $e) {
+            $this->module->debug($e->getMessage());
+
+            return '';
+        }
+    }
+
     public function renderView()
     {
         return $this->renderForm();
@@ -151,6 +180,7 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
             $this->context->controller->addJS($this->module->getPathUrl() . 'views/js/admin-test.js');
         }
 
+        $this->content .= $this->getDependencyBuilderBanner();
         $this->content .= $this->renderForm();
 
         try {
@@ -168,6 +198,11 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
 
     public function ajaxProcessUpdatePositions()
     {
+        if (!EmployeeAccess::canEditPayments($this->context->employee)) {
+            http_response_code(403);
+            exit(json_encode(['hasError' => true, 'errors' => $this->l('You do not have permission to change Autopay configuration.')]));
+        }
+
         $idPosition = (int) Tools::getValue('id');
         $way = (int) Tools::getValue('way');
         $positions = Tools::getValue('blue_gateway_channels');
@@ -446,6 +481,24 @@ class AdminBluepaymentPaymentsController extends ModuleAdminController
                     'name' => $this->module->name_upper . '_GPAY_REDIRECT',
                     'size' => 'full',
                     'modal' => 'bm-helper-gpay',
+                    'values' => [
+                        [
+                            'id' => 'active_on',
+                            'value' => 0,
+                            'label' => $this->l('No redirection'),
+                        ],
+                        [
+                            'id' => 'active_off',
+                            'value' => 1,
+                            'label' => $this->l('With redirection'),
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'switch-choose',
+                    'label' => $this->l('Card'),
+                    'name' => $this->module->name_upper . '_CARD_REDIRECT',
+                    'size' => 'full',
                     'values' => [
                         [
                             'id' => 'active_on',

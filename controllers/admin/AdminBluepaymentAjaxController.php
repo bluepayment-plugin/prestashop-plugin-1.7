@@ -21,7 +21,9 @@ use BluePayment\Analyse\Amplitude;
 use BluePayment\Api\BlueAPI;
 use BluePayment\Api\BlueGateway;
 use BluePayment\Config\Config;
+use BluePayment\Tracking\PrestashopModuleTracking;
 use BluePayment\Until\AdminHelper;
+use BluePayment\Until\EmployeeAccess;
 use BluePayment\Until\Helper;
 use Configuration as Cfg;
 
@@ -75,6 +77,11 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
     public function ajaxProcessSaveConfiguration()
     {
+        if (!EmployeeAccess::canEditPayments($this->context->employee)) {
+            http_response_code(403);
+            exit(json_encode(['success' => false, 'error' => $this->module->l('You do not have permission to change Autopay configuration.', 'AdminBluepaymentAjaxController')]));
+        }
+
         try {
             foreach (Helper::getFields() as $configField) {
                 $value = Tools::getValue($configField, Cfg::get($configField));
@@ -99,6 +106,7 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
 
             $serviceId = [];
             $sharedKey = [];
+            $configuredSid = null;
 
             foreach (AdminHelper::getSortCurrencies() as $currency) {
                 $parseServiceId = Tools::getValue(
@@ -109,6 +117,10 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                 );
 
                 if ($parseServiceId && $parseHashKey) {
+                    if ($configuredSid === null) {
+                        $configuredSid = $parseServiceId;
+                    }
+
                     $api = new BlueAPI($this->module);
 
                     $testMode = Cfg::get($this->module->name_upper . '_TEST_ENV');
@@ -183,6 +195,20 @@ class AdminBluepaymentAjaxController extends ModuleAdminController
                 $fileRemover = new FileRemover($fileMenage);
                 $fileRemover->removeAllFeedFile();
             }
+
+            // Autopay-required properties for revshare declarations (confirmed in Jira
+            // DV-12685): "sid" (ServicePartnerID) presence is what Autopay treats as
+            // "service configured"; "plan_amount" is always 0 since bluepayment has no
+            // merchant subscription plan concept.
+            PrestashopModuleTracking::track(
+                getenv('SEGMENT_WRITE_KEY') ?: '',
+                $this->module,
+                Config::SEGMENT_EVENT_MODULE_CONFIGURED,
+                [
+                    'sid' => (string) $configuredSid,
+                    'plan_amount' => 0,
+                ]
+            );
 
             exit(json_encode(['success' => true]));
         } catch (Exception $exception) {

@@ -4,16 +4,15 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
+class ComposerStaticInit2005dd8f8bc756c8e7a42cd6b120bdb2
 {
     public static $prefixLengthsPsr4 = array (
-        'S' => 
+        'S' =>
         array (
             'Symfony\\Component\\Dotenv\\' => 25,
         ),
-        'B' => 
+        'B' =>
         array (
-            'BluePayment\\Tests\\' => 18,
             'BluePayment\\' => 12,
             'BlueMedia\\ProductFeed\\' => 22,
             'BlueMedia\\OnlinePayments\\' => 25,
@@ -21,28 +20,21 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
     );
 
     public static $prefixDirsPsr4 = array (
-        'Symfony\\Component\\Dotenv\\' => 
+        'Symfony\\Component\\Dotenv\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/dotenv',
         ),
-        'BluePayment\\Tests\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/tests/php',
-        ),
-        'BluePayment\\' => 
+        'BluePayment\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
-            1 => __DIR__ . '/../..' . '/src',
         ),
-        'BlueMedia\\ProductFeed\\' => 
+        'BlueMedia\\ProductFeed\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src/ProductFeed',
-            1 => __DIR__ . '/../..' . '/src/ProductFeed',
         ),
-        'BlueMedia\\OnlinePayments\\' => 
+        'BlueMedia\\OnlinePayments\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src/OnlinePayments',
-            1 => __DIR__ . '/../..' . '/src/OnlinePayments',
         ),
     );
 
@@ -79,7 +71,22 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
         'BlueMedia\\ProductFeed\\Presenter\\ProductPresenter' => __DIR__ . '/../..' . '/src/ProductFeed/Presenter/ProductPresenter.php',
         'BlueMedia\\ProductFeed\\Remover\\FileRemover' => __DIR__ . '/../..' . '/src/ProductFeed/Remover/FileRemover.php',
         'BluePayment' => __DIR__ . '/../..' . '/bluepayment.php',
+        'BluePaymentAddons\\Prestashop\\ModuleLibMboInstaller\\DependencyBuilder' => __DIR__ . '/..' . '/prefixed/prestashop/module-lib-mbo-installer/src/DependencyBuilder.php',
+        'BluePaymentAddons\\Prestashop\\ModuleLibMboInstaller\\HttpClient' => __DIR__ . '/..' . '/prefixed/prestashop/module-lib-mbo-installer/src/HttpClient.php',
+        'BluePaymentAddons\\Prestashop\\ModuleLibMboInstaller\\Installer' => __DIR__ . '/..' . '/prefixed/prestashop/module-lib-mbo-installer/src/Installer.php',
+        'BluePaymentAddons\\Prestashop\\ModuleLibMboInstaller\\Presenter' => __DIR__ . '/..' . '/prefixed/prestashop/module-lib-mbo-installer/src/Presenter.php',
+        'BluePaymentAddons\\Prestashop\\ModuleLibMboInstaller\\Response' => __DIR__ . '/..' . '/prefixed/prestashop/module-lib-mbo-installer/src/Response.php',
+        'BluePaymentAddons\\Segment' => __DIR__ . '/..' . '/prefixed/segmentio/analytics-php/lib/Segment.php',
+        'BluePaymentAddons\\Segment_Client' => __DIR__ . '/..' . '/prefixed/segmentio/analytics-php/lib/Segment/Client.php',
+        'BluePaymentAddons\\Segment_Consumer' => __DIR__ . '/..' . '/prefixed/segmentio/analytics-php/lib/Segment/Consumer.php',
+        'BluePaymentAddons\\Segment_Consumer_File' => __DIR__ . '/..' . '/prefixed/segmentio/analytics-php/lib/Segment/Consumer/File.php',
+        'BluePaymentAddons\\Segment_Consumer_ForkCurl' => __DIR__ . '/..' . '/prefixed/segmentio/analytics-php/lib/Segment/Consumer/ForkCurl.php',
+        'BluePaymentAddons\\Segment_Consumer_LibCurl' => __DIR__ . '/..' . '/prefixed/segmentio/analytics-php/lib/Segment/Consumer/LibCurl.php',
+        'BluePaymentAddons\\Segment_Consumer_Socket' => __DIR__ . '/..' . '/prefixed/segmentio/analytics-php/lib/Segment/Consumer/Socket.php',
+        'BluePaymentAddons\\Segment_QueueConsumer' => __DIR__ . '/..' . '/prefixed/segmentio/analytics-php/lib/Segment/QueueConsumer.php',
         'BluePayment\\Adapter\\ConfigurationAdapter' => __DIR__ . '/../..' . '/src/Adapter/ConfigurationAdapter.php',
+        'BluePayment\\Adapter\\Interfaces\\BaseTranslatorInterface' => __DIR__ . '/../..' . '/src/Adapter/Interfaces/BaseTranslatorInterface.php',
+        'BluePayment\\Adapter\\TranslatorAdapter' => __DIR__ . '/../..' . '/src/Adapter/TranslatorAdapter.php',
         'BluePayment\\Analyse\\Amplitude' => __DIR__ . '/../..' . '/src/Analyse/Amplitude.php',
         'BluePayment\\Analyse\\AnalyticsTracking' => __DIR__ . '/../..' . '/src/Analyse/AnalyticsTracking.php',
         'BluePayment\\Api\\BlueAPI' => __DIR__ . '/../..' . '/src/Api/BlueAPI.php',
@@ -87,8 +94,10 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
         'BluePayment\\Api\\BlueGatewayChannels' => __DIR__ . '/../..' . '/src/Api/BlueGatewayChannels.php',
         'BluePayment\\Api\\BlueGatewayTransfers' => __DIR__ . '/../..' . '/src/Api/BlueGatewayTransfers.php',
         'BluePayment\\Api\\GatewayInterface' => __DIR__ . '/../..' . '/src/Api/GatewayInterface.php',
+        'BluePayment\\CloudSync\\DependencyManager' => __DIR__ . '/../..' . '/src/CloudSync/DependencyManager.php',
         'BluePayment\\Config\\Config' => __DIR__ . '/../..' . '/src/Config/Config.php',
         'BluePayment\\Config\\ConfigBanner' => __DIR__ . '/../..' . '/src/Config/ConfigBanner.php',
+        'BluePayment\\Config\\ConfigHelp' => __DIR__ . '/../..' . '/src/Config/ConfigHelp.php',
         'BluePayment\\Config\\ConfigServices' => __DIR__ . '/../..' . '/src/Config/ConfigServices.php',
         'BluePayment\\Configure\\Configure' => __DIR__ . '/../..' . '/src/Configure/Configure.php',
         'BluePayment\\Hook\\AbstractHook' => __DIR__ . '/../..' . '/src/Hook/AbstractHook.php',
@@ -99,6 +108,7 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
         'BluePayment\\Install\\Installer' => __DIR__ . '/../..' . '/src/Install/Installer.php',
         'BluePayment\\Service\\FactoryPaymentMethods' => __DIR__ . '/../..' . '/src/Service/FactoryPaymentMethods.php',
         'BluePayment\\Service\\Gateway' => __DIR__ . '/../..' . '/src/Service/Gateway.php',
+        'BluePayment\\Service\\Istn' => __DIR__ . '/../..' . '/src/Service/Istn.php',
         'BluePayment\\Service\\PaymentMethods\\AliorInstallment' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/AliorInstallment.php',
         'BluePayment\\Service\\PaymentMethods\\Blik' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/Blik.php',
         'BluePayment\\Service\\PaymentMethods\\BlikLater' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/BlikLater.php',
@@ -110,17 +120,77 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
         'BluePayment\\Service\\PaymentMethods\\Spingo' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/Spingo.php',
         'BluePayment\\Service\\PaymentMethods\\VirtualWallet' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/VirtualWallet.php',
         'BluePayment\\Service\\PaymentMethods\\VisaMobile' => __DIR__ . '/../..' . '/src/Service/PaymentMethods/VisaMobile.php',
+        'BluePayment\\Service\\Payment\\GatewayInitParametersProvider' => __DIR__ . '/../..' . '/src/Service/Payment/GatewayInitParametersProvider.php',
         'BluePayment\\Service\\Refund' => __DIR__ . '/../..' . '/src/Service/Refund.php',
         'BluePayment\\Service\\Transactions' => __DIR__ . '/../..' . '/src/Service/Transactions.php',
+        'BluePayment\\Services\\PrestashopModuleTracking' => __DIR__ . '/../..' . '/src/Services/PrestashopModuleTracking.php',
         'BluePayment\\Statuses\\CustomStatus' => __DIR__ . '/../..' . '/src/Statuses/CustomStatus.php',
         'BluePayment\\Statuses\\OrderStatusMessageDictionary' => __DIR__ . '/../..' . '/src/Statuses/OrderStatusMessageDictionary.php',
-        'BluePayment\\Test\\Config\\ConnectionTestConfig' => __DIR__ . '/../..' . '/src/Test/Config/ConnectionTestConfig.php',
-        'BluePayment\\Test\\Config\\TransactionTestConfig' => __DIR__ . '/../..' . '/src/Test/Config/TransactionTestConfig.php',
+        'BluePayment\\Test\\Checker\\Common\\ConfigurationChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/ConfigurationChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\DatabaseEnvironmentChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/DatabaseEnvironmentChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Database\\ConnectionAvailabilityChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Database/ConnectionAvailabilityChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Database\\InnoDBChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Database/InnoDBChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Database\\ReadPermissionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Database/ReadPermissionChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Database\\WritePermissionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Database/WritePermissionChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\HttpsChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/HttpsChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\InternetConnectionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/InternetConnectionChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\LogPermissionsChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/LogPermissionsChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\ModuleVersionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/ModuleVersionChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\PhpEnvironmentChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/PhpEnvironmentChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Php\\ExtensionCurlChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Php/ExtensionCurlChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Php\\ExtensionOpenSSLChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Php/ExtensionOpenSSLChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Php\\ExtensionXmlChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Php/ExtensionXmlChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Php\\ExtensionZipChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Php/ExtensionZipChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Php\\MemoryLimitChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Php/MemoryLimitChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Php\\TimeoutChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Php/TimeoutChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\Php\\VersionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/Php/VersionChecker.php',
+        'BluePayment\\Test\\Checker\\Common\\PrestaShopVersionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Common/PrestaShopVersionChecker.php',
+        'BluePayment\\Test\\Checker\\Connection\\ApiConnectionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Connection/ApiConnectionChecker.php',
+        'BluePayment\\Test\\Checker\\Connection\\GatewayChannelsConnectionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Connection/GatewayChannelsConnectionChecker.php',
+        'BluePayment\\Test\\Checker\\Connection\\GatewayTransfersConnectionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Connection/GatewayTransfersConnectionChecker.php',
+        'BluePayment\\Test\\Checker\\Interfaces\\CheckerInterface' => __DIR__ . '/../..' . '/src/Test/Checker/Interfaces/CheckerInterface.php',
+        'BluePayment\\Test\\Checker\\Transaction\\BlikChannelChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Transaction/BlikChannelChecker.php',
+        'BluePayment\\Test\\Checker\\Transaction\\BlikTransactionChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Transaction/BlikTransactionChecker.php',
+        'BluePayment\\Test\\Checker\\Transaction\\ITNCheckChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Transaction/ITNCheckChecker.php',
+        'BluePayment\\Test\\Checker\\Transaction\\ITN\\FriendlyUrlChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Transaction/ITN/FriendlyUrlChecker.php',
+        'BluePayment\\Test\\Checker\\Transaction\\ITN\\ITNReturnUrlChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Transaction/ITN/ITNReturnUrlChecker.php',
+        'BluePayment\\Test\\Checker\\Transaction\\ITN\\ITNStatusUrlChecker' => __DIR__ . '/../..' . '/src/Test/Checker/Transaction/ITN/ITNStatusUrlChecker.php',
+        'BluePayment\\Test\\Config\\Data\\TestDataConfig' => __DIR__ . '/../..' . '/src/Test/Config/Data/TestDataConfig.php',
+        'BluePayment\\Test\\Config\\Logger\\TestLoggerConfig' => __DIR__ . '/../..' . '/src/Test/Config/Logger/TestLoggerConfig.php',
+        'BluePayment\\Test\\Config\\Test\\ConnectionTestConfig' => __DIR__ . '/../..' . '/src/Test/Config/Test/ConnectionTestConfig.php',
+        'BluePayment\\Test\\Config\\Test\\TransactionTestConfig' => __DIR__ . '/../..' . '/src/Test/Config/Test/TransactionTestConfig.php',
+        'BluePayment\\Test\\Error\\Handler\\ErrorHandler' => __DIR__ . '/../..' . '/src/Test/Error/Handler/ErrorHandler.php',
         'BluePayment\\Test\\Exception\\TestException' => __DIR__ . '/../..' . '/src/Test/Exception/TestException.php',
-        'BluePayment\\Test\\Interface\\TestServiceInterface' => __DIR__ . '/../..' . '/src/Test/Interface/TestServiceInterface.php',
+        'BluePayment\\Test\\Executor\\AbstractTestExecutor' => __DIR__ . '/../..' . '/src/Test/Executor/AbstractTestExecutor.php',
+        'BluePayment\\Test\\Executor\\ConnectionExecutor' => __DIR__ . '/../..' . '/src/Test/Executor/ConnectionExecutor.php',
+        'BluePayment\\Test\\Executor\\Interfaces\\TestExecutorInterface' => __DIR__ . '/../..' . '/src/Test/Executor/Interfaces/TestExecutorInterface.php',
+        'BluePayment\\Test\\Executor\\TransactionExecutor' => __DIR__ . '/../..' . '/src/Test/Executor/TransactionExecutor.php',
+        'BluePayment\\Test\\Factory\\CheckerFactory' => __DIR__ . '/../..' . '/src/Test/Factory/CheckerFactory.php',
+        'BluePayment\\Test\\Factory\\TestExecutorFactory' => __DIR__ . '/../..' . '/src/Test/Factory/TestExecutorFactory.php',
+        'BluePayment\\Test\\Factory\\TestObjectFactory' => __DIR__ . '/../..' . '/src/Test/Factory/TestObjectFactory.php',
+        'BluePayment\\Test\\Logger\\FileTestLogger' => __DIR__ . '/../..' . '/src/Test/Logger/FileTestLogger.php',
+        'BluePayment\\Test\\Logger\\Interfaces\\TestLoggerInterface' => __DIR__ . '/../..' . '/src/Test/Logger/Interfaces/TestLoggerInterface.php',
+        'BluePayment\\Test\\Logger\\LogFileManager' => __DIR__ . '/../..' . '/src/Test/Logger/LogFileManager.php',
+        'BluePayment\\Test\\Processor\\BlikTransactionProcessor' => __DIR__ . '/../..' . '/src/Test/Processor/BlikTransactionProcessor.php',
+        'BluePayment\\Test\\Processor\\OrderProcessor' => __DIR__ . '/../..' . '/src/Test/Processor/OrderProcessor.php',
+        'BluePayment\\Test\\Provider\\AddressProvider' => __DIR__ . '/../..' . '/src/Test/Provider/AddressProvider.php',
+        'BluePayment\\Test\\Provider\\BlikCodeProvider' => __DIR__ . '/../..' . '/src/Test/Provider/BlikCodeProvider.php',
+        'BluePayment\\Test\\Provider\\CarrierProvider' => __DIR__ . '/../..' . '/src/Test/Provider/CarrierProvider.php',
+        'BluePayment\\Test\\Provider\\CartProvider' => __DIR__ . '/../..' . '/src/Test/Provider/CartProvider.php',
+        'BluePayment\\Test\\Provider\\CustomerProvider' => __DIR__ . '/../..' . '/src/Test/Provider/CustomerProvider.php',
+        'BluePayment\\Test\\Provider\\ProductProvider' => __DIR__ . '/../..' . '/src/Test/Provider/ProductProvider.php',
+        'BluePayment\\Test\\Repository\\TransactionRepository' => __DIR__ . '/../..' . '/src/Test/Repository/TransactionRepository.php',
+        'BluePayment\\Test\\Sender\\BlikTransactionSender' => __DIR__ . '/../..' . '/src/Test/Sender/BlikTransactionSender.php',
+        'BluePayment\\Test\\Validator\\BlikTransactionValidator' => __DIR__ . '/../..' . '/src/Test/Validator/BlikTransactionValidator.php',
+        'BluePayment\\Traits\\MultilingualGatewayTrait' => __DIR__ . '/../..' . '/src/Traits/MultilingualGatewayTrait.php',
         'BluePayment\\Until\\AdminHelper' => __DIR__ . '/../..' . '/src/Until/AdminHelper.php',
         'BluePayment\\Until\\AnaliticsHelper' => __DIR__ . '/../..' . '/src/Until/AnaliticsHelper.php',
+        'BluePayment\\Until\\EmployeeAccess' => __DIR__ . '/../..' . '/src/Until/EmployeeAccess.php',
         'BluePayment\\Until\\Helper' => __DIR__ . '/../..' . '/src/Until/Helper.php',
+        'BluePayment\\Until\\PaymentPresentationHelper' => __DIR__ . '/../..' . '/src/Until/PaymentPresentationHelper.php',
+        'BluePayment\\Utility\\Converter\\MemoryUnitConverter' => __DIR__ . '/../..' . '/src/Utility/Converter/MemoryUnitConverter.php',
+        'BluePayment\\Utility\\Converter\\ObjectToArrayConverter' => __DIR__ . '/../..' . '/src/Utility/Converter/ObjectToArrayConverter.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Symfony\\Component\\Dotenv\\Dotenv' => __DIR__ . '/..' . '/symfony/dotenv/Dotenv.php',
         'Symfony\\Component\\Dotenv\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/dotenv/Exception/ExceptionInterface.php',
         'Symfony\\Component\\Dotenv\\Exception\\FormatException' => __DIR__ . '/..' . '/symfony/dotenv/Exception/FormatException.php',
@@ -131,9 +201,9 @@ class ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitb4865d03bfe66f9224ec9cc1d9636384::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2005dd8f8bc756c8e7a42cd6b120bdb2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2005dd8f8bc756c8e7a42cd6b120bdb2::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit2005dd8f8bc756c8e7a42cd6b120bdb2::$classMap;
 
         }, null, ClassLoader::class);
     }

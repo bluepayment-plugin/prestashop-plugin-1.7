@@ -176,6 +176,21 @@ class Configure
 
                 $res &= empty(
                     $this->configurationAdapter->get(
+                        $this->name . '_CARD_REDIRECT',
+                        null,
+                        $group_id,
+                        $shop_id
+                    )
+                ) ? $this->configurationAdapter->updateValue(
+                    $this->name . '_CARD_REDIRECT',
+                    0,
+                    false,
+                    $group_id,
+                    $shop_id
+                ) : true;
+
+                $res &= empty(
+                    $this->configurationAdapter->get(
                         $this->name . '_SEND_CUSTOM_PHONE',
                         null,
                         $group_id,
@@ -317,6 +332,7 @@ class Configure
             $res &= empty($this->configurationAdapter->get($this->name . '_GA4_SECRET')) ? $this->configurationAdapter->updateValue($this->name . '_GA4_SECRET', 0) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_BLIK_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_BLIK_REDIRECT', 0) : true;
             $res &= empty($this->configurationAdapter->get($this->name . '_GPAY_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_GPAY_REDIRECT', 0) : true;
+            $res &= empty($this->configurationAdapter->get($this->name . '_CARD_REDIRECT')) ? $this->configurationAdapter->updateValue($this->name . '_CARD_REDIRECT', 0) : true;
 
             $res &= empty($this->configurationAdapter->get($this->name . '_SEND_CUSTOM_PHONE')) ? $this->configurationAdapter->updateValue($this->name . '_SEND_CUSTOM_PHONE', 0) : true;
 

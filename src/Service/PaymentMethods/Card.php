@@ -23,6 +23,7 @@ use BluePayment\Api\BlueGatewayTransfers;
 use BluePayment\Config\Config;
 use BluePayment\Until\Helper;
 use BluePayment\Until\PaymentPresentationHelper;
+use Configuration as Cfg;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class Card implements GatewayType
@@ -62,10 +63,36 @@ class Card implements GatewayType
                     'value' => $cardIdTime,
                 ],
             ])
-            ->setLogo($data['gateway_logo_url'])
-            ->setAdditionalInformation(
+            ->setLogo($data['gateway_logo_url']);
+
+        if (Cfg::get($module->name_upper . '_CARD_REDIRECT')) {
+            $option->setAdditionalInformation(
                 $module->fetch('module:bluepayment/views/templates/hook/paymentRedirectCard.tpl')
             );
+
+            return $option;
+        }
+
+        $currency = \Context::getContext()->currency->iso_code;
+        $cart = \Context::getContext()->cart;
+        $totalPaid = (float) $cart->getOrderTotal(true, \Cart::BOTH);
+
+        \Context::getContext()->smarty->assign([
+            'cardWidget_moduleLinkCharge' => \Context::getContext()->link->getModuleLink(
+                'bluepayment',
+                'chargeCardWidget',
+                [],
+                true
+            ),
+            'cardWidget_serviceId' => Helper::parseConfigByCurrency($module->name_upper . Config::SERVICE_PARTNER_ID, $currency),
+            'cardWidget_amount' => number_format(round($totalPaid, 2), 2, '.', ''),
+            'cardWidget_currency' => $currency,
+            'cardWidget_language' => \Context::getContext()->language->iso_code ?: Config::DEFAULT_PAYMENT_FORM_LANGUAGE,
+        ]);
+
+        $option->setAdditionalInformation(
+            $module->fetch('module:bluepayment/views/templates/hook/paymentCardWidget.tpl')
+        );
 
         return $option;
     }

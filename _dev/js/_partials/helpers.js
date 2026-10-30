@@ -44,3 +44,8 @@ export function getPaymentContent(index) {
 export function getPaymentForm(index) {
 	return document.querySelector('#pay-with-payment-option-' + index + '-form');
 }
+
+export function appendSelectedPaymentLabel(container, label) {
+	const target = container.querySelector('.payment-option__form-check') || container;
+	target.appendChild(label);
+}

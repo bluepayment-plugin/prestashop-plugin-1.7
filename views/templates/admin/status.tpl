@@ -58,6 +58,9 @@
                             </form>
                         </div>
                     </div>
+                {elseif $REFUND_PERMISSION_DENIED}
+                    <div class="alert alert-info">{l s='You do not have permission to refund Autopay payments. Ask an administrator for edit access to the "Autopay - Configuration" tab.' mod='bluepayment'}</div>
+                {/if}
 
                 {if $REFUND_ERRORS|count}
                     <div role="alert" class="alert alert-danger">
@@ -77,6 +80,7 @@
                         </p>
                     </div>
                 {/if}
+                {if $SHOW_REFUND}
                     <script>
                         {literal}
                         $(document).ready(function () {
@@ -95,35 +99,35 @@
                         });
                         {/literal}
                     </script>
+                {/if}
 
-                    {if isset($BM_REFUNDS) && $BM_REFUNDS|count}
-                        <hr>
-                        <p><b>{l s='Refunds history' mod='bluepayment'}</b></p>
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
+                {if isset($BM_REFUNDS) && $BM_REFUNDS|count}
+                    <hr>
+                    <p><b>{l s='Refunds history' mod='bluepayment'}</b></p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>{l s='ID' mod='bluepayment'}</th>
+                                <th>{l s='Remote Out ID' mod='bluepayment'}</th>
+                                <th>{l s='Amount' mod='bluepayment'}</th>
+                                <th>{l s='Status' mod='bluepayment'}</th>
+                                <th>{l s='Date' mod='bluepayment'}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach from=$BM_REFUNDS item=refund}
                                 <tr>
-                                    <th>{l s='ID' mod='bluepayment'}</th>
-                                    <th>{l s='Remote Out ID' mod='bluepayment'}</th>
-                                    <th>{l s='Amount' mod='bluepayment'}</th>
-                                    <th>{l s='Status' mod='bluepayment'}</th>
-                                    <th>{l s='Date' mod='bluepayment'}</th>
+                                    <td>{$refund.id_blue_gateway_refunds|escape:'html':'UTF-8'}</td>
+                                    <td>{$refund.remote_out_id|escape:'html':'UTF-8'}</td>
+                                    <td>{$refund.amount|escape:'html':'UTF-8'} {$refund.currency|escape:'html':'UTF-8'}</td>
+                                    <td>{$refund.status|escape:'html':'UTF-8'}</td>
+                                    <td>{dateFormat date=$refund.created_at full=true}</td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                {foreach from=$BM_REFUNDS item=refund}
-                                    <tr>
-                                        <td>{$refund.id_blue_gateway_refunds|escape:'html':'UTF-8'}</td>
-                                        <td>{$refund.remote_out_id|escape:'html':'UTF-8'}</td>
-                                        <td>{$refund.amount|escape:'html':'UTF-8'} {$refund.currency|escape:'html':'UTF-8'}</td>
-                                        <td>{$refund.status|escape:'html':'UTF-8'}</td>
-                                        <td>{dateFormat date=$refund.created_at full=true}</td>
-                                    </tr>
-                                {/foreach}
-                                </tbody>
-                            </table>
-                        </div>
-                    {/if}
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
                 {/if}
             </div>
         </div>

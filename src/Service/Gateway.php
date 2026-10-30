@@ -37,7 +37,14 @@ class Gateway
 
     public function getPaymentOption(array $data = []): PaymentOption
     {
-        return $this->gateway->getPaymentOption($this->module, $data);
+        $option = $this->gateway->getPaymentOption($this->module, $data);
+
+        // ps_onepagecheckout selects the payment by data-module-name / selection_key built from it
+        if (!$option->getModuleName()) {
+            $option->setModuleName($this->module->name);
+        }
+
+        return $option;
     }
 
     public function isActive(): bool

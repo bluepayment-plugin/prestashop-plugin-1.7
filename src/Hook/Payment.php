@@ -25,8 +25,8 @@ use Configuration as Cfg;
 class Payment extends AbstractHook
 {
     public const AVAILABLE_HOOKS = [
-        'paymentReturn',
-        'orderConfirmation',
+        'displayPaymentReturn',
+        'displayOrderConfirmation',
     ];
 
     /**
@@ -36,7 +36,7 @@ class Payment extends AbstractHook
      *
      * @return string|void
      */
-    public function paymentReturn($params)
+    public function displayPaymentReturn($params)
     {
         if (
             !$this->module->active
@@ -94,7 +94,7 @@ class Payment extends AbstractHook
         return true;
     }
 
-    public function orderConfirmation($params)
+    public function displayOrderConfirmation($params)
     {
         if (!$params['order'] || !$params['order']->id) {
             return null;
@@ -111,5 +111,21 @@ class Payment extends AbstractHook
         ]);
 
         return $this->module->fetch('module:bluepayment/views/templates/hook/order-confirmation.tpl');
+    }
+
+    /**
+     * Deprecated hook alias, kept for shops where the 3.6.0 upgrade has not run yet
+     */
+    public function paymentReturn($params)
+    {
+        return $this->displayPaymentReturn($params);
+    }
+
+    /**
+     * Deprecated hook alias, kept for shops where the 3.6.0 upgrade has not run yet
+     */
+    public function orderConfirmation($params)
+    {
+        return $this->displayOrderConfirmation($params);
     }
 }

@@ -467,3 +467,16 @@ $_MODULE['<{bluepayment}prestashop>chargeblik_2dd485e2578bd9ca38f3b864e97a8fa4']
 $_MODULE['<{bluepayment}prestashop>chargeblik_15353e64372e441517b87fcea7cdf570'] = 'Il codice BLIK è scaduto.';
 $_MODULE['<{bluepayment}prestashop>payment_e2b7dec8fa4b498156dfee6e4c84b156'] = 'Questo metodo di pagamento non è disponibile.';
 $_MODULE['<{bluepayment}prestashop>payment_638e3e69e028995b3fa7b0e02c11ad55'] = 'Questo carrello è vuoto.';
+$_MODULE['<{bluepayment}prestashop>paymentcardwidget_1c74c739cf0055ffebcf64ed9ad64bd2'] = 'Inserisci di seguito i dati della tua carta.';
+$_MODULE['<{bluepayment}prestashop>paymentcardwidget_4b5eb5c31c249afde7b9961eb8e73400'] = 'Widget di pagamento con carta';
+$_MODULE['<{bluepayment}prestashop>paymentcardwidget_99938b17c91170dfb0c2f3f8bc9f2a85'] = 'Paga';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_e3c2a4b7674434194f201a1f99eabb7b'] = 'Identificativo del cliente non fornito.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_1b23ee99b5ce206d7ef7dedebc06ea78'] = 'Il token del widget è scaduto. Riprova.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_30297c7919840f44c800a6268da0bbae'] = 'Si è verificato un errore durante la transazione.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_f42608a961407ba5dc4895b8c655caea'] = 'La tua transazione è già stata pagata.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_b7e4e02d4b35be29705ccaef1634b50a'] = 'Il pagamento è stato completato con successo.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_2c9b072d9f479281caf814392b41f7fd'] = 'Transazione in corso.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_3606cf00a4b48f2eb528442c17dafcff'] = 'Siamo in attesa della conferma del pagamento';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_eb8eaea2a95414c0b01ceda5e00d921f'] = 'La transazione non è riuscita.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_2dd485e2578bd9ca38f3b864e97a8fa4'] = 'Il codice è scaduto. Riprova.';
+$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_1d565b9e5303987bb1b1938d5d458bca'] = 'Carta';

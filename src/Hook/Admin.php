@@ -24,6 +24,7 @@ use BluePayment\Service\FactoryPaymentMethods;
 use BluePayment\Service\Gateway;
 use BluePayment\Service\Refund;
 use BluePayment\Until\AdminHelper;
+use BluePayment\Until\EmployeeAccess;
 use BluePayment\Until\Helper;
 
 class Admin extends AbstractHook
@@ -178,9 +179,12 @@ class Admin extends AbstractHook
             : (float) str_replace(',', '.', \Tools::getValue('bm_refund_amount'));
         $refund_errors = [];
         $refund_success = [];
+        $canRefund = EmployeeAccess::canEditPayments($this->context->employee);
 
         if ($refundable && \Tools::getValue('go-to-refund-bm')) {
-            if ($refund_amount > $order->total_paid) {
+            if (!$canRefund) {
+                $refund_errors[] = $this->module->l('You do not have permission to refund Autopay payments.', 'admin');
+            } elseif ($refund_amount > $order->total_paid) {
                 $refund_errors[] = $this->module->l('The refund amount you entered is greater than paid amount.');
             } else {
                 $refund = new Refund($this->module);
@@ -210,7 +214,8 @@ class Admin extends AbstractHook
             'BM_ORDERS' => Helper::getOrdersByOrderId($params['id_order']),
             'BM_ORDER_ID' => $this->module->id_order,
             'BM_CANCEL_ORDER_MESSAGE' => $updateOrderStatusMessage,
-            'SHOW_REFUND' => $refundable,
+            'SHOW_REFUND' => $refundable && $canRefund,
+            'REFUND_PERMISSION_DENIED' => $refundable && !$canRefund,
             'REFUND_FULL_AMOUNT' => number_format((float) $order->total_paid, 2, '.', ''),
             'REFUND_ERRORS' => $refund_errors,
             'REFUND_SUCCESS' => $refund_success,

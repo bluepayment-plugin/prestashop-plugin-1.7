@@ -1,5 +1,15 @@
 # Changelog
-## [3.5.1] 28.08.2026
+## [3.6.0] 30.10.2026
+- add support for the PrestaShop 9.2 native One Page Checkout (ps_onepagecheckout)
+- replace deprecated order confirmation hook aliases with displayPaymentReturn / displayOrderConfirmation
+- fix fatal error in admin connection test and configuration save error messages on PrestaShop 8+ (AdminController::l() removed)
+- add Segment lifecycle event tracking (Module Installed/Uninstalled/Enabled/Disabled/Configured/Upgraded)
+- add PrestaShop Dependencies Manager integration (ps_accounts/ps_eventbus)
+- add Autopay card widget payment (GatewayID 1500) with translations
+- restrict sensitive back-office actions to employee profiles with edit permission on the module configuration
+
+
+## [3.5.1] 22.07.2026
 - enhance currency grouping and validation for gateway and transfer connection
 - handle RuntimeException in gateway list retrieval
 - use the description field in exception messages when available

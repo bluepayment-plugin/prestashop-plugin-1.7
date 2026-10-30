@@ -41,7 +41,19 @@ Thumbs.db
 *.wmv
 *.zip
 
-vendor/
+/vendor/*
+!/vendor/prefixed/
+
+# Keep the logs directory (index.php blocks direct access) but never the logs,
+# they contain shop credentials
+/logs/*
+!/logs/index.php
+
+# Isolated php-scoper build toolset (bamarni/composer-bin-plugin). Its
+# composer.json/composer.lock ARE committed (they're the only record of which
+# exact packages/versions to reinstall) — only the downloaded vendor/ code
+# inside it is regenerated via `composer bin php-scoper install` and ignored.
+vendor-bin/*/vendor/
 
 
 config_pl.xml

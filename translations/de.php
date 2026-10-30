@@ -477,3 +477,16 @@ $_MODULE['<{bluepayment}prestashop>chargeblik_2dd485e2578bd9ca38f3b864e97a8fa4']
 $_MODULE['<{bluepayment}prestashop>chargeblik_15353e64372e441517b87fcea7cdf570'] = 'Der BLIK-Code ist abgelaufen';
 $_MODULE['<{bluepayment}prestashop>payment_e2b7dec8fa4b498156dfee6e4c84b156'] = 'Die ausgewählte Zahlungsart ist nicht verfügbar.';
 $_MODULE['<{bluepayment}prestashop>payment_638e3e69e028995b3fa7b0e02c11ad55'] = 'Der Warenkorb ist leer.';
+$_MODULE['<{bluepayment}prestashop>paymentcardwidget_1c74c739cf0055ffebcf64ed9ad64bd2'] = 'Geben Sie unten Ihre Kartendaten ein.';
+$_MODULE['<{bluepayment}prestashop>paymentcardwidget_4b5eb5c31c249afde7b9961eb8e73400'] = 'Widget für Kartenzahlung';
+$_MODULE['<{bluepayment}prestashop>paymentcardwidget_99938b17c91170dfb0c2f3f8bc9f2a85'] = 'Bezahlen';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_e3c2a4b7674434194f201a1f99eabb7b'] = 'Kunden-ID fehlt';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_1b23ee99b5ce206d7ef7dedebc06ea78'] = 'Das Widget-Token ist abgelaufen. Bitte versuchen Sie es erneut.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_30297c7919840f44c800a6268da0bbae'] = 'Bei der Transaktion ist ein Fehler aufgetreten.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_f42608a961407ba5dc4895b8c655caea'] = 'Ihre Transaktion wurde bereits bezahlt.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_b7e4e02d4b35be29705ccaef1634b50a'] = 'Die Zahlung wurde erfolgreich durchgeführt.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_2c9b072d9f479281caf814392b41f7fd'] = 'Transaktion wird bearbeitet.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_3606cf00a4b48f2eb528442c17dafcff'] = 'Wir warten auf die Zahlungsbestätigung';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_eb8eaea2a95414c0b01ceda5e00d921f'] = 'Transaktion fehlgeschlagen.';
+$_MODULE['<{bluepayment}prestashop>chargecardwidget_2dd485e2578bd9ca38f3b864e97a8fa4'] = 'Der Code ist abgelaufen. Bitte versuchen Sie es erneut.';
+$_MODULE['<{bluepayment}prestashop>adminbluepaymentpaymentscontroller_1d565b9e5303987bb1b1938d5d458bca'] = 'Karte';

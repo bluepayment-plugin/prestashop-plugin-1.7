@@ -53,6 +53,15 @@ div.payment-option > label > img {
   z-index: 99
 }
 
+// Above the Hummingbird sticky header (1021) and checkout aside (1020)
+.payment-option__additional-information .bluepayment-loader-bg {
+  z-index: 1040
+}
+
+.payment-option__additional-information .bluepayment-loader {
+  z-index: 1041
+}
+
 @keyframes bluepayment_spin {
   0% {
     transform: rotate(0deg)
@@ -1105,7 +1114,8 @@ p.bm-legals--first {
   line-height: 20px;
 }
 
-.payment-options__list .payment-option {
+.payment-options__list .payment-option,
+#opc-payment-methods .payment-option {
   position: relative;
   display: block;
   margin-top: 15px;
@@ -1116,13 +1126,19 @@ p.bm-legals--first {
   transition: all .1s cubic-bezier(0.2, 0.3, 0, 1)
 }
 
-.payment-options__list .payment-option:hover {
+.payment-options__list .payment-option:hover,
+#opc-payment-methods .payment-option:hover {
   border-color: #87ca8d
 }
 
-.payment-options__list .payment-option.active {
+.payment-options__list .payment-option.active,
+#opc-payment-methods .payment-option.active {
   border-color: #63bb6c;
   transition: all .3s cubic-bezier(0.2, 0.3, 0, 1)
+}
+
+#opc-payment-methods .payment-option.active .bm-selected-payment {
+  display: flex
 }
 
 .payment-option__form-check {
@@ -1156,7 +1172,8 @@ p.bm-legals--first {
   cursor: pointer
 }
 
-.payment-option__label img {
+.payment-option__label img,
+.payment-option__form-check .bm-selected-payment img {
   flex-shrink: 0;
   width: 75px;
   height: auto;
@@ -1171,6 +1188,11 @@ p.bm-legals--first {
 
 .payment-option__label.bm-payment-hide {
   display: none
+}
+
+.payment-option__form-check .bm-selected-payment {
+  align-items: center;
+  margin: 0
 }
 
 .payment-option__label span.bm-promo-desc {
@@ -1195,8 +1217,41 @@ p.bm-legals--first {
   line-height: 16px
 }
 
+.payment-option__label:has(> .bm-promo-desc) {
+  display: grid;
+  grid-template-columns: 75px 1fr;
+  align-items: end
+}
+
+.payment-option__label:has(> .bm-promo-desc) img {
+  grid-row: span 2;
+  align-self: center
+}
+
+.payment-option__label:has(> .bm-promo-desc) span.bm-promo-desc {
+  align-self: start;
+  padding-left: 0
+}
+
 .payment-option__additional-information .bm-small-info {
   display: none
+}
+
+.payment-option__additional-information .bm-payment-description h1 {
+  margin-bottom: 8px;
+  font-size: 22px;
+  line-height: 1.1
+}
+
+.payment-option__additional-information .bm-payment-description h2 {
+  margin-bottom: 8px;
+  font-size: 21px;
+  line-height: 1.1
+}
+
+.payment-option__additional-information .bm-payment-description p {
+  font-size: 13px;
+  line-height: 20px
 }
 
 .payment-option__additional-information.active {

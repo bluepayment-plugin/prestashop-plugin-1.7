@@ -37,14 +37,24 @@ $(document).ready(function () {
                 $('.bluepayment-loader-bg').fadeOut(300);
             }
 
+            function initBlik() {
+                $('#wrongBlikCode').hide();
+                $('#bluepaymentForm #bm-termofuse').hide();
+                $('#responseMessages').hide();
+            }
 
-            $('#wrongBlikCode').hide();
-            $('#bm-termofuse').hide();
-            $('#responseMessages').hide();
+            initBlik();
 
-            $('#bluepaymentForm').on('submit', function () {
+            // Checkouts which re-render payment options (ps_onepagecheckout) call it after each refresh
+            window.bluepaymentBlik = {
+                init: initBlik,
+            };
+
+            // Delegated, so the handlers survive payment options re-rendered by the checkout
+            $(document).on('submit', '#bluepaymentForm', function () {
                 hideBlikErrors();
                 var blikAction = $(this).attr('action');
+                submitter = $(this).find('[type="submit"]');
 
                 var submitFlag = validateBlikCode();
                 var blikCode = $('[name="bluepayment_input_blikCode"]').val();
@@ -56,12 +66,38 @@ $(document).ready(function () {
                 submitter.attr('disabled', 'disabled');
                 bmSubmitBlikData.blikCode = blikCode;
 
-                sendBlikCode(blikAction);
+                beforePayment().then(function (canPay) {
+                    if (!canPay) {
+                        bmHideLoader();
+                        submitter.removeAttr('disabled');
+
+                        return;
+                    }
+
+                    sendBlikCode(blikAction);
+                });
+
                 return false;
             });
 
+            /**
+             * Checkout integrations (e.g. ps_onepagecheckout) may define
+             * window.bluepaymentCheckout.beforePayment() to save and validate the checkout first.
+             */
+            function beforePayment() {
+                var checkout = window.bluepaymentCheckout;
+
+                // A retry pays for the order already created from this cart, so there is no checkout to save
+                if (!checkout || typeof checkout.beforePayment !== 'function' || bmSubmitBlikData.postOrderId) {
+                    return Promise.resolve(true);
+                }
+
+                return Promise.resolve(checkout.beforePayment()).catch(function () {
+                    return false;
+                });
+            }
+
             function sendBlikCode(blikAction) {
-                var blik_verify_check = null;
                 var responseMessages = $('#responseMessages');
                 $.ajax(blikAction, {
                     method: 'POST',
@@ -77,10 +113,11 @@ $(document).ready(function () {
                                 responseMessages.html('<b>' + response.message + '</b>');
                                 responseMessages.show();
                                 bmSubmitBlikData.postOrderId = response.postOrderId;
-                                blik_verify_check = setInterval(sendBlikCode(blikAction), 1000)
+                                setTimeout(function () {
+                                    sendBlikCode(blikAction);
+                                }, 2000);
                             }
                             else if (response.status === 'SUCCESS') {
-                                clearInterval(blik_verify_check);
                                 window.location.href = response.backUrl
                             }
                             else if (response.status === 'FAILURE') {
@@ -88,14 +125,12 @@ $(document).ready(function () {
                                     ? response.message
                                     : 'Transaction ERROR - Empty data.';
                                 bmSubmitBlikData.postOrderId = response.postOrderId;
-                                clearInterval(blik_verify_check)
                                 bmHideLoader()
                                 responseMessages.parent('div').addClass('has-error')
                                 responseMessages.html('<span class="bm-blik-failure">' + message + '</span>')
                                 responseMessages.show()
                                 submitter.removeAttr('disabled')
                             } else {
-                                clearInterval(blik_verify_check)
                                 bmHideLoader()
                                 responseMessages.parent('div').addClass('has-error')
                                 responseMessages.html('Transaction ERROR - Empty data.')
@@ -120,11 +155,11 @@ $(document).ready(function () {
                     $('#wrongBlikCode').show();
                     show = false;
                 }
-                $('#bm-termofuse').hide();
+                $('#bluepaymentForm #bm-termofuse').hide();
                 $(conditionsSelector + ' input[type="checkbox"]').each(function (_, checkbox) {
                     if (!checkbox.checked) {
                         blikCodeInput.parent('div').addClass('has-error');
-                        $('#bm-termofuse').show();
+                        $('#bluepaymentForm #bm-termofuse').show();
                         show = false;
                     }
                 });
@@ -137,17 +172,17 @@ $(document).ready(function () {
 
                 $('#blikSubmit').removeAttr('disabled').removeClass('disabled');
                 $('#wrongBlikCode').hide();
-                $('#bm-termofuse').hide();
+                $('#bluepaymentForm #bm-termofuse').hide();
                 $('.bm-blik-failure').hide();
                 blikCodeInput.parent('div').removeClass('has-error');
 
             }
 
-            $(conditionsSelector + ' input[type="checkbox"]').click(function () {
+            $(document).on('click', conditionsSelector + ' input[type="checkbox"]', function () {
                 clearValidateBlik();
             });
 
-            $('#bluepayment-blikCode').on('keyup', function () {
+            $(document).on('keyup', '#bluepayment-blikCode', function () {
                 clearValidateBlik();
             });
     }, 1000);

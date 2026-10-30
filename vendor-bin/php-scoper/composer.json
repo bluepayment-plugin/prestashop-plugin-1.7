@@ -1,0 +1,7 @@
+{
+    "require": {
+        "humbug/php-scoper": "^0.18.18",
+        "prestashop/module-lib-mbo-installer": "^3.0",
+        "segmentio/analytics-php": "^1.8"
+    }
+}

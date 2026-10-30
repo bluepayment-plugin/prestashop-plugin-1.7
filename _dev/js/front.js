@@ -17,6 +17,7 @@
 /* eslint-enable */
 
 import {
+	appendSelectedPaymentLabel,
 	getIdElement,
 	getPaymentContainer,
 	getPaymentContent, getPaymentTitle,
@@ -48,6 +49,31 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 		bmModalSimple();
 		movePaymentFormForCheckout();
 	});
+
+	/**
+	 * Checkouts which re-render payment options (e.g. ps_onepagecheckout) call init() again,
+	 * so every listener is bound once per DOM element.
+	 */
+	function bindOnce(element, key) {
+		const attribute = 'data-bm-bound-' + key;
+
+		if (element.hasAttribute(attribute)) {
+			return false;
+		}
+
+		element.setAttribute(attribute, '1');
+
+		return true;
+	}
+
+	window.bluepaymentFront = {
+		init: function () {
+			bindPsdCheckboxValidator();
+			bmModalSimple();
+			initBM();
+		},
+		restoreState: restorePaymentStateFromLocalStorage,
+	};
 
 
 	/**
@@ -94,7 +120,10 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 	}
 
 	function bindPsdCheckboxValidator() {
-		$('.payment-options input, .payment-options__list input, .payment__list input, #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]')
+		$('.payment-options input, .payment-options__list input, .payment__list input, #opc-payment-methods input, #conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]')
+			.filter(function () {
+				return bindOnce(this, 'psd');
+			})
 			.on('click', function () {
 				const triggerName = this.getAttribute('name');
 				setTimeout(function () {
@@ -102,9 +131,13 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 				}, 55);
 			});
 
-		$('#conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]').on('click', function () {
-			actionValidate();
-		});
+		$('#conditions-to-approve input[id="conditions_to_approve[terms-and-conditions]"]')
+			.filter(function () {
+				return bindOnce(this, 'psd-terms');
+			})
+			.on('click', function () {
+				actionValidate();
+			});
 	}
 
 
@@ -187,7 +220,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 			selectedPaymentLabel.className = "bm-selected-payment";
 			selectedPaymentLabel.append(createSelectedPaymentImgElement(gatewayElement));
 			selectedPaymentLabel.append(createSelectedPaymentWrapElement(gatewayElement));
-			container.appendChild(selectedPaymentLabel);
+			appendSelectedPaymentLabel(container, selectedPaymentLabel);
 		} else {
 			selectedPaymentLabel.innerHTML = "";
 			selectedPaymentLabel.append(createSelectedPaymentImgElement(gatewayElement));
@@ -223,7 +256,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 
 
 	function initBM() {
-		if (!document.querySelector('.payment-options, .payment-options__list, .payment__list')) {
+		if (!document.querySelector('.payment-options, .payment-options__list, .payment__list, #opc-payment-methods')) {
 			return;
 		}
 
@@ -256,6 +289,17 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 
 		const content = getPaymentContent(key);
 		const btn = document.querySelector('#payment-confirmation');
+
+		// ps_onepagecheckout has its own pay button which must stay in place, it is only hidden
+		if (!btn) {
+			const opcPayButton = document.querySelector('#opc-pay-button');
+
+			if (opcPayButton) {
+				opcPayButton.classList.toggle('bm-d-none', behavior === 'hide' || behavior === 'hideByClass');
+			}
+
+			return;
+		}
 
 		let style;
 		let className = 'bm-d-none';
@@ -301,6 +345,10 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 		const getAllPaymentOptions = document.querySelectorAll('input[name=payment-option]');
 
 		for (const item of getAllPaymentOptions) {
+			if (!bindOnce(item, 'radio')) {
+				continue;
+			}
+
 			item.addEventListener('click', (e) => {
 
 				AllResetState();
@@ -355,6 +403,10 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 		const getAllModalSimpleHandlers = document.querySelectorAll('[data-bm-modal-siimple]');
 
 		for (const item of getAllModalSimpleHandlers) {
+			if (!bindOnce(item, 'modal-simple')) {
+				continue;
+			}
+
 			item.addEventListener('click', (e) => {
 				e.preventDefault();
 
@@ -477,7 +529,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 							o.style.display = "flex";
 							element.append(createSelectedPaymentImgElement(n));
 							element.append(createSelectedPaymentWrapElement(n));
-							r.appendChild(element);
+							appendSelectedPaymentLabel(r, element);
 							if (n) {
 								n.style.display = "flex";
 							}
@@ -503,7 +555,14 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 		var gateways = document.querySelectorAll('.bm-modal-' + item + ' .bluepayment-gateways__item');
 
 		gateways.forEach(item => {
+			item.setAttribute('data-bm-option-key', key);
+
+			if (!bindOnce(item, 'gateway')) {
+				return;
+			}
+
 			item.addEventListener('click', () => {
+				const key = item.getAttribute('data-bm-option-key');
 
 				const container = getPaymentContainer(key);
 				const content = getPaymentContent(key);
@@ -576,7 +635,7 @@ import { AllResetState, removeGatewayState, getGatewayState, setGatewayState, Cl
 
 				}
 
-				container.appendChild(createLabel);
+				appendSelectedPaymentLabel(container, createLabel);
 
 				document.querySelector('.bm-modal .bm-modal__close').click();
 				if (selectedPayment) {

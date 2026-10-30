@@ -57,6 +57,21 @@ class Design extends AbstractHook
         $this->context->controller->registerJavascript('bm-front-js', $path . 'js/front.min.js');
         $this->context->controller->registerJavascript('bm-blik-js', $path . 'js/blik_v3.js');
         $this->context->controller->registerJavascript('bm-gpay-js', $path . 'js/gpay.js');
+        $this->context->controller->registerJavascript('bm-card-widget-js', $path . 'js/cardWidget.js');
+
+        if ($this->isNativeOnePageCheckout()) {
+            $this->context->controller->registerJavascript('bm-front-opc-js', $path . 'js/front-opc.min.js', ['priority' => 200]);
+        }
+    }
+
+    /**
+     * Native One Page Checkout shipped as ps_onepagecheckout since PrestaShop 9.2
+     */
+    private function isNativeOnePageCheckout(): bool
+    {
+        return $this->context->controller instanceof \OrderController
+            && \Module::isEnabled('ps_onepagecheckout')
+            && (bool) Cfg::get('PS_ONE_PAGE_CHECKOUT_ENABLED');
     }
 
     /**

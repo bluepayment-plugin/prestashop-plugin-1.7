@@ -41,6 +41,7 @@ class Helper
 
             'BLUEPAYMENT_BLIK_REDIRECT',
             'BLUEPAYMENT_GPAY_REDIRECT',
+            'BLUEPAYMENT_CARD_REDIRECT',
             'BLUEPAYMENT_SEND_CUSTOM_PHONE',
             'BLUEPAYMENT_PROMO_PAY_LATER',
             'BLUEPAYMENT_PROMO_MATCHED_INSTALMENTS',
@@ -395,7 +396,7 @@ class Helper
     {
         $data = [];
 
-        foreach (\BluePayment\Until\AdminHelper::getSortCurrencies() as $currency) {
+        foreach (AdminHelper::getSortCurrencies() as $currency) {
             $data[$currency['iso_code']] =
                     Helper::parseConfigByCurrency('BLUEPAYMENT_SERVICE_PARTNER_ID', $currency['iso_code']) == ''
                     || Helper::parseConfigByCurrency('BLUEPAYMENT_SHARED_KEY', $currency['iso_code']) == '' ? false : true;

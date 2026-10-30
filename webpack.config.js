@@ -41,6 +41,9 @@ let config = {
       './_dev/js/front.js',
       './_dev/scss/front.scss',
     ],
+    'front-opc': [
+      './_dev/js/checkout/opc.js',
+    ],
     admin: [
       './_dev/js/admin.js',
       './_dev/scss/admin.scss',

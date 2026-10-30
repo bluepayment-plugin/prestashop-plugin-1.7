@@ -54,4 +54,12 @@ class Config
     public const PLUGIN_AUTH = 'plugin authorized';
     public const API_AUTHENTICATION_SUCCESS = 'authorization completed';
     public const API_AUTHENTICATION_FAILED = 'authorization failed';
+
+    // Segment events
+    public const SEGMENT_EVENT_MODULE_INSTALLED = 'Module Installed';
+    public const SEGMENT_EVENT_MODULE_UNINSTALLED = 'Module Uninstalled';
+    public const SEGMENT_EVENT_MODULE_ENABLED = 'Module Enabled';
+    public const SEGMENT_EVENT_MODULE_DISABLED = 'Module Disabled';
+    public const SEGMENT_EVENT_MODULE_CONFIGURED = 'Module Configured';
+    public const SEGMENT_EVENT_MODULE_UPGRADED = 'Module Upgraded';
 }

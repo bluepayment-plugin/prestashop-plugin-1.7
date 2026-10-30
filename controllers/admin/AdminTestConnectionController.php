@@ -19,10 +19,8 @@ use BluePayment\Test\Exception\TestException;
 use BluePayment\Test\Executor\Interfaces\TestExecutorInterface;
 use BluePayment\Test\Factory\TestExecutorFactory;
 use BluePayment\Test\Logger\LogFileManager;
+use BluePayment\Until\EmployeeAccess;
 
-/**
- * @method string l(string $string, string $class = null, bool $addslashes = false, bool $htmlentities = true)
- */
 class AdminTestConnectionController extends ModuleAdminController
 {
     /** @var BluePayment */
@@ -73,23 +71,33 @@ class AdminTestConnectionController extends ModuleAdminController
                         $this->processGetTestSteps($testType);
                         break;
                     case self::ACTION_EXECUTE_TEST_STEP:
+                        $this->denyUnlessCanEdit($testType, $testStep);
                         $this->processExecuteTestStep($testType, $testStep);
                         break;
                     case self::ACTION_DOWNLOAD_TEST_LOGS:
+                        $this->denyUnlessCanEdit($testType, null);
                         $this->processDownloadTestLogs($testType);
                         break;
                     default:
-                        $this->ajaxError($this->l('Unknown action'), $testType, null);
+                        $this->ajaxError($this->module->l('Unknown action', 'AdminTestConnectionController'), $testType, null);
                 }
             } catch (TestException $e) {
                 $this->ajaxTestException($e, $testType, $testStep);
             } catch (Throwable $e) {
                 $this->errorHandler->logException($e);
-                $this->ajaxError($this->l('An unexpected error occurred during the test. Please check the logs for details.'), $testType, $testStep);
+                $this->ajaxError($this->module->l('An unexpected error occurred during the test. Please check the logs for details.', 'AdminTestConnectionController'), $testType, $testStep);
             }
         }
 
         parent::postProcess();
+    }
+
+    private function denyUnlessCanEdit(string $testType, ?string $testStep): void
+    {
+        if (!EmployeeAccess::canEditPayments($this->context->employee)) {
+            http_response_code(403);
+            $this->ajaxError($this->module->l('You do not have permission to run Autopay connection tests or download their logs.', 'AdminTestConnectionController'), $testType, $testStep);
+        }
     }
 
     private function getRequestedTestType(): string
@@ -104,7 +112,7 @@ class AdminTestConnectionController extends ModuleAdminController
         try {
             return $this->factory->createTestExecutor($testType);
         } catch (Exception $e) {
-            throw new Exception($this->l('Unknown test type') . ': ' . $testType);
+            throw new Exception($this->module->l('Unknown test type', 'AdminTestConnectionController') . ': ' . $testType);
         }
     }
 
@@ -122,7 +130,7 @@ class AdminTestConnectionController extends ModuleAdminController
                 'test_type' => $testType,
             ]);
         } catch (Exception $e) {
-            $this->ajaxError($this->l('Error getting test steps') . ': ' . $e->getMessage(), $testType, null);
+            $this->ajaxError($this->module->l('Error getting test steps', 'AdminTestConnectionController') . ': ' . $e->getMessage(), $testType, null);
         }
     }
 
@@ -135,7 +143,7 @@ class AdminTestConnectionController extends ModuleAdminController
     private function processExecuteTestStep(string $testType, string $testStep): void
     {
         if (empty($testStep)) {
-            $this->ajaxError($this->l('Test step not specified'), $testType, null);
+            $this->ajaxError($this->module->l('Test step not specified', 'AdminTestConnectionController'), $testType, null);
 
             return;
         }
@@ -207,7 +215,7 @@ class AdminTestConnectionController extends ModuleAdminController
      */
     private function handleGenericException(string $testType, string $testStep, Exception $e): void
     {
-        $this->ajaxError($this->l('Test error') . ': ' . $e->getMessage(), $testType, $testStep);
+        $this->ajaxError($this->module->l('Test error', 'AdminTestConnectionController') . ': ' . $e->getMessage(), $testType, $testStep);
     }
 
     private function ajaxResponse(array $data): void
@@ -253,7 +261,7 @@ class AdminTestConnectionController extends ModuleAdminController
             $logFilePath = $logFileManager->getLogFilePath($testExecutor->getLogger());
             $logFileManager->downloadLogFile($logFilePath, $testType);
         } catch (Exception $e) {
-            $this->ajaxError($this->l('Error downloading test logs') . ': ' . $e->getMessage(), $testType, null);
+            $this->ajaxError($this->module->l('Error downloading test logs', 'AdminTestConnectionController') . ': ' . $e->getMessage(), $testType, null);
         }
     }
 }
